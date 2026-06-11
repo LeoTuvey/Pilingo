@@ -1,208 +1,61 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>Lesson 5: Singular & Plural</title>
-
-<style>
-body{
-    font-family: Arial;
-    background:#f5f9ff;
-    text-align:center;
-    margin:0;
-    padding:20px;
-}
-
-.card{
-    background:white;
-    max-width:500px;
-    margin:auto;
-    padding:20px;
-    border-radius:15px;
-    box-shadow:0 3px 10px rgba(0,0,0,0.1);
-}
-
-img{
-    width:120px;
-    height:120px;
-    margin:10px 0;
-}
-
-button{
-    display:block;
-    width:90%;
-    margin:10px auto;
-    padding:15px;
-    font-size:16px;
-    border:none;
-    border-radius:10px;
-    background:#1976d2;
-    color:white;
-    cursor:pointer;
-    transition:0.2s;
-}
-
-button:hover{
-    transform:scale(1.02);
-}
-
-#feedback{
-    margin-top:15px;
-    font-size:18px;
-    min-height:25px;
-}
-
-.bigText{
-    font-size:20px;
-    font-weight:bold;
-    margin:10px 0;
-}
-</style>
+<title>Lesson 5</title>
 </head>
-
 <body>
-
-<div class="card">
-
-<h2 id="question">Loading...</h2>
-
-<div class="bigText" id="word"></div>
-
-<img id="image" src="">
-
-<div id="options"></div>
-
-<div id="feedback"></div>
-
-</div>
 
 <script>
 
-/* ======================
-   VOICE SYSTEM
-====================== */
+let course = localStorage.getItem("course") || "en-ku";
 
-function speak(text){
-    let msg = new SpeechSynthesisUtterance(text);
-    msg.lang = "en-US";
-    msg.rate = 0.85;
-    speechSynthesis.speak(msg);
+function t(en,ku,sv){
+if(course==="en-ku") return ku;
+if(course==="en-sv") return sv;
+return en;
 }
 
-/* ======================
-   LESSON DATA
-====================== */
-
-let questions = [
+let questions=[
 {
-q:"What is the plural?",
-word:"cat 🐱",
-img:"https://cdn-icons-png.flaticon.com/512/616/616430.png",
-options:["cats","cat"],
-answer:0
-},
-{
-q:"What is the plural?",
-word:"dog 🐶",
-img:"https://cdn-icons-png.flaticon.com/512/616/616408.png",
-options:["dog","dogs"],
-answer:1
-},
-{
-q:"What is the plural?",
-word:"apple 🍎",
-img:"https://cdn-icons-png.flaticon.com/512/415/415733.png",
-options:["apples","apple"],
-answer:0
-},
-{
-q:"What is the plural?",
-word:"bird 🐦",
-img:"https://cdn-icons-png.flaticon.com/512/616/616596.png",
-options:["birds","bird"],
+q:t("One apple","Yek sêv","Ett äpple"),
+options:[
+t("One apple","Yek sêv","Ett äpple"),
+t("Two apples","Du sêv","Två äpplen")
+],
 answer:0
 }
 ];
 
-let current = 0;
-
-/* ======================
-   LOAD QUESTION
-====================== */
+let current=0;
 
 function load(){
-
-let q = questions[current];
-
-document.getElementById("question").innerText = q.q;
-document.getElementById("word").innerText = q.word;
-document.getElementById("image").src = q.img;
-
-speak(q.q);
-
-let html = "";
-
-q.options.forEach((opt,i)=>{
-html += `<button onclick="check(${i})">${opt}</button>`;
-});
-
-document.getElementById("options").innerHTML = html;
-document.getElementById("feedback").innerHTML = "";
+let q=questions[current];
+document.body.innerHTML="<h2>"+q.q+"</h2>"+q.options.map((o,i)=>
+`<button onclick='check(${i})'>${o}</button>`).join("");
 }
-
-load();
-
-/* ======================
-   CHECK ANSWER
-====================== */
 
 function check(i){
+if(i===questions[current].answer){
+finish();
+}
+}
 
-let q = questions[current];
+function finish(){
+let xpKey=course+"_xp";
+let unlockKey=course+"_unlocked";
 
-if(i === q.answer){
-document.getElementById("feedback").innerHTML = "✅ Correct!";
-speak("Correct");
+let xp=parseInt(localStorage.getItem(xpKey)||"0");
+localStorage.setItem(xpKey,xp+10);
 
-current++;
+let unlocked=JSON.parse(localStorage.getItem(unlockKey)||"[true,false,false,false,false,false,false]");
+unlocked[5]=true;
+localStorage.setItem(unlockKey,JSON.stringify(unlocked));
 
-setTimeout(()=>{
-if(current < questions.length){
+window.location.href="engine.html";
+}
+
 load();
-}else{
-finishGame();
-}
-},900);
-
-}else{
-document.getElementById("feedback").innerHTML = "❌ Try again";
-speak("Try again");
-}
-}
-
-/* ======================
-   FINISH GAME
-====================== */
-
-function finishGame(){
-
-speak("Great job!");
-
-// XP
-let xp = parseInt(localStorage.getItem("xp") || "0");
-xp += 10;
-localStorage.setItem("xp", xp);
-
-// unlock Game 6
-let unlocked = JSON.parse(localStorage.getItem("unlocked") || "[true,false,false,false,false,false,false]");
-unlocked[5] = true;
-localStorage.setItem("unlocked", JSON.stringify(unlocked));
-
-// return to engine
-setTimeout(()=>{
-window.location.href = "engine.html";
-},1500);
-}
 
 </script>
 

@@ -16,56 +16,32 @@ header{
     background:#1976d2;
     color:white;
     padding:15px;
-    font-size:20px;
-}
-
-#xpBox{
-    margin:5px;
     font-size:18px;
-    font-weight:bold;
 }
 
-#streakBox{
+#info{
+    font-weight:bold;
     margin:5px;
-    font-size:16px;
-    font-weight:bold;
-    color:#ff6f00;
 }
 
-/* MAP */
 .map{
     max-width:500px;
     margin:auto;
     padding:20px;
-    position:relative;
 }
 
-.line{
-    position:absolute;
-    width:4px;
-    background:#ccc;
-    top:0;
-    bottom:0;
-    left:50%;
-    transform:translateX(-50%);
-    z-index:0;
-}
-
-/* NODE */
 .node{
     width:120px;
     height:120px;
+    margin:35px auto;
     border-radius:50%;
     background:white;
-    margin:40px auto;
     display:flex;
     align-items:center;
     justify-content:center;
     flex-direction:column;
     box-shadow:0 3px 10px rgba(0,0,0,0.2);
     cursor:pointer;
-    position:relative;
-    z-index:1;
     transition:0.2s;
 }
 
@@ -74,11 +50,10 @@ header{
 }
 
 .locked{
-    opacity:0.4;
+    opacity:0.3;
     pointer-events:none;
 }
 
-/* COLORS */
 .green{ border:4px solid #4caf50; }
 .orange{ border:4px solid #ff9800; }
 .blue{ border:4px solid #2196f3; }
@@ -93,74 +68,36 @@ header{
 
 <body>
 
-<header>🦉 Owl-Lingo Learning Path</header>
+<header>🦉 Owl-Lingo Course Engine</header>
 
-<div id="xpBox">⭐ XP: 0</div>
-<div id="streakBox">🔥 Streak: 0</div>
+<div id="info">Loading course...</div>
 
 <div class="map">
-
-<div class="line"></div>
-
 <div id="levels"></div>
-
 </div>
 
 <script>
 
 /////////////////////////////////////
-// XP SYSTEM
+// COURSE SYSTEM
 /////////////////////////////////////
 
-let xp = parseInt(localStorage.getItem("xp") || "0");
+let course = localStorage.getItem("course") || "en-ku";
 
-/////////////////////////////////////
-// STREAK SYSTEM (FULL)
-/////////////////////////////////////
+// COURSE KEYS
+let xpKey = course + "_xp";
+let unlockKey = course + "_unlocked";
 
-let today = new Date().toDateString();
+// LOAD DATA
+let xp = parseInt(localStorage.getItem(xpKey) || "0");
+let unlocked = JSON.parse(localStorage.getItem(unlockKey) || "[true,false,false,false,false,false,false]");
 
-let lastDay = localStorage.getItem("lastDay");
-let streak = parseInt(localStorage.getItem("streak") || "0");
-
-if(lastDay === today){
-    // already counted today
-}else{
-    if(lastDay){
-        let prev = new Date(lastDay);
-        let diff = (new Date(today) - prev) / (1000 * 60 * 60 * 24);
-
-        if(diff === 1){
-            streak += 1;
-        }else{
-            streak = 1;
-        }
-    }else{
-        streak = 1;
-    }
-
-    localStorage.setItem("streak", streak);
-    localStorage.setItem("lastDay", today);
-}
-
-/////////////////////////////////////
-// UNLOCK SYSTEM
-/////////////////////////////////////
-
-let unlocked = JSON.parse(
-    localStorage.getItem("unlocked") ||
-    "[true,false,false,false,false,false,false]"
-);
-
-/////////////////////////////////////
 // DISPLAY
-/////////////////////////////////////
-
-document.getElementById("xpBox").innerText = "⭐ XP: " + xp;
-document.getElementById("streakBox").innerText = "🔥 Streak: " + streak;
+document.getElementById("info").innerText =
+"Course: " + course + " | XP: " + xp;
 
 /////////////////////////////////////
-// LEVELS
+// LEVELS (same for all courses)
 /////////////////////////////////////
 
 let levels = [
@@ -194,10 +131,6 @@ html += `
 });
 
 document.getElementById("levels").innerHTML = html;
-
-/////////////////////////////////////
-// NAVIGATION
-/////////////////////////////////////
 
 function go(i){
     window.location.href = levels[i].file;

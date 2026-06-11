@@ -2,76 +2,100 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Owl-Lingo Lesson</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Owl-Lingo</title>
 
 <style>
 body{
-  font-family:Arial;
-  background:#f5f9ff;
-  text-align:center;
   margin:0;
-  padding:20px;
-  transition:0.3s;
+  font-family:Arial;
+  background:#eaf2ff;
+  display:flex;
+  justify-content:center;
 }
 
-/* OWL */
+/* PHONE FRAME */
+.app{
+  width:100%;
+  max-width:420px;
+  min-height:100vh;
+  background:#f5f9ff;
+  padding:16px;
+  box-sizing:border-box;
+  position:relative;
+}
+
+/* OWL HEADER */
 #owl{
-  font-size:64px;
-  margin:10px;
-  animation:idle 2s infinite ease-in-out;
+  font-size:58px;
+  text-align:center;
+  margin-top:10px;
+  animation:float 2.5s infinite ease-in-out;
 }
 
-@keyframes idle{
+@keyframes float{
   0%,100%{transform:translateY(0);}
-  50%{transform:translateY(-4px);}
+  50%{transform:translateY(-6px);}
 }
 
-.owl-happy{ transform:scale(1.2) rotate(-6deg); }
-.owl-sad{ transform:scale(0.9) rotate(6deg); }
-.owl-win{ animation:celebrate 0.7s ease; }
-
-@keyframes celebrate{
-  0%{transform:translateY(0);}
-  30%{transform:translateY(-12px);}
-  60%{transform:translateY(0);}
+/* STREAK */
+#streak{
+  position:absolute;
+  top:15px;
+  right:15px;
+  background:#ff9800;
+  color:white;
+  padding:6px 10px;
+  border-radius:20px;
+  font-weight:bold;
+  font-size:14px;
 }
 
 /* CARD */
 .card{
+  margin-top:20px;
   background:white;
-  max-width:550px;
-  margin:auto;
-  padding:22px;
   border-radius:18px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.08);
+  padding:18px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.08);
   transition:0.25s;
 }
 
-/* BUTTONS */
+/* QUESTION */
+#question{
+  font-size:18px;
+  margin-bottom:12px;
+}
+
+/* BUTTONS (MOBILE OPTIMIZED) */
 button{
-  width:90%;
-  padding:14px;
-  margin:10px;
+  width:100%;
+  padding:16px;
+  margin:10px 0;
   border:none;
   border-radius:14px;
   background:#1976d2;
   color:white;
   font-size:16px;
-  cursor:pointer;
+
+  /* touch feel */
+  transform:translateZ(0);
   transition:0.12s;
 }
 
 button:active{
-  transform:scale(0.96);
+  transform:scale(0.97);
+  opacity:0.9;
 }
 
 /* PROGRESS */
 #bar{
   height:10px;
   background:#58cc02;
-  width:0%;
   border-radius:10px;
-  transition:0.45s ease;
+  width:0%;
+  transition:0.4s ease;
+  margin-top:10px;
 }
 
 /* XP POP */
@@ -84,21 +108,9 @@ button:active{
   color:white;
   padding:10px 16px;
   border-radius:20px;
+  font-weight:bold;
   opacity:0;
   transition:0.3s;
-  font-weight:bold;
-}
-
-/* STREAK */
-#streak{
-  position:fixed;
-  right:15px;
-  top:15px;
-  background:#ff9800;
-  color:white;
-  padding:8px 12px;
-  border-radius:20px;
-  font-weight:bold;
 }
 
 /* COMPLETION SCREEN */
@@ -111,12 +123,25 @@ button:active{
   height:100%;
   background:white;
   text-align:center;
-  padding-top:120px;
+  padding-top:140px;
+}
+
+/* SOFT TAP FEEDBACK */
+.tapFlash{
+  animation:tap 0.25s ease;
+}
+
+@keyframes tap{
+  0%{transform:scale(1);}
+  50%{transform:scale(1.02);}
+  100%{transform:scale(1);}
 }
 </style>
 </head>
 
 <body>
+
+<div class="app">
 
 <div id="streak">🔥 0</div>
 <div id="xpPopup">+10 XP</div>
@@ -132,9 +157,11 @@ button:active{
 </div>
 
 <div id="complete">
-  <h1>🎉 Great Job!</h1>
-  <p>You completed the lesson</p>
+  <h1>🎉 Completed!</h1>
+  <p>Great work — lesson finished</p>
   <button onclick="home()">Continue</button>
+</div>
+
 </div>
 
 <script src="engine-core.js"></script>
@@ -144,49 +171,12 @@ button:active{
 
 const SKILL_MAP = ["animals","verbs","people","food","objects","places","adjectives"];
 
-let hearts = Engine.getHearts();
 let skillIndex = new URLSearchParams(location.search).get("s") || 0;
 let pool = VOCAB_A1[SKILL_MAP[skillIndex]];
 
+let hearts = Engine.getHearts();
 let questions = [];
 let current = 0;
-
-/* ---------------- SOUND ---------------- */
-function sound(type){
-  let a = new Audio();
-
-  if(type==="correct")
-    a.src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg";
-
-  if(type==="wrong")
-    a.src="https://actions.google.com/sounds/v1/cartoon/boing.ogg";
-
-  a.volume = 0.5;
-  a.play();
-}
-
-/* ---------------- OWL ---------------- */
-function owl(state){
-  let o = document.getElementById("owl");
-  o.className = "";
-
-  if(state==="happy") o.classList.add("owl-happy");
-  if(state==="sad") o.classList.add("owl-sad");
-  if(state==="win") o.classList.add("owl-win");
-}
-
-/* ---------------- XP ---------------- */
-function xpPop(){
-  let el = document.getElementById("xpPopup");
-  el.style.opacity = 1;
-  setTimeout(()=>el.style.opacity=0,800);
-}
-
-/* ---------------- STREAK ---------------- */
-function streakUI(){
-  document.getElementById("streak").innerText =
-    "🔥 " + Engine.updateStreak();
-}
 
 /* ---------------- BUILD ---------------- */
 function build(){
@@ -204,6 +194,12 @@ function build(){
   }
 }
 
+/* ---------------- STREAK ---------------- */
+function streakUI(){
+  document.getElementById("streak").innerText =
+    "🔥 " + Engine.updateStreak();
+}
+
 /* ---------------- LOAD ---------------- */
 function load(){
   let q = questions[current];
@@ -214,7 +210,7 @@ function load(){
   let html = "";
 
   q.options.forEach((opt,i)=>{
-    html += `<button onclick="check(${i})">${opt.en}</button>`;
+    html += `<button onclick="check(${i}, this)">${opt.en}</button>`;
   });
 
   document.getElementById("options").innerHTML = html;
@@ -224,30 +220,26 @@ function load(){
 }
 
 /* ---------------- CHECK ---------------- */
-function check(i){
+function check(i, el){
+
+  el.classList.add("tapFlash");
+  setTimeout(()=>el.classList.remove("tapFlash"),200);
 
   let q = questions[current];
 
   if(q.options[i] === q.correct){
 
-    sound("correct");
-    owl("happy");
+    current++;
 
-    setTimeout(()=>current++,200);
-
-    setTimeout(()=>{
-      if(current < questions.length){
-        load();
-      } else {
-        finish();
-      }
-    },400);
+    if(current < questions.length){
+      load();
+    } else {
+      finish();
+    }
 
   } else {
 
-    sound("wrong");
     hearts = Engine.loseHeart();
-    owl("sad");
 
     if(hearts <= 0){
       location.reload();
@@ -258,20 +250,14 @@ function check(i){
 /* ---------------- FINISH ---------------- */
 function finish(){
 
-  owl("win");
+  Engine.addXP(10);
+  Engine.resetHearts();
+  Engine.updateStreak();
 
-  setTimeout(()=>{
+  document.getElementById("xpPopup").style.opacity = 1;
+  setTimeout(()=>document.getElementById("xpPopup").style.opacity = 0,800);
 
-    Engine.addXP(10);
-    Engine.resetHearts();
-    Engine.updateStreak();
-
-    xpPop();
-    streakUI();
-
-    document.getElementById("complete").style.display = "block";
-
-  },600);
+  document.getElementById("complete").style.display = "block";
 }
 
 /* ---------------- HOME ---------------- */

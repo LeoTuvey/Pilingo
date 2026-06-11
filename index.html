@@ -2,34 +2,29 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Owl-Lingo</title>
+<title>Owl-Lingo - Choose Course</title>
 
 <style>
 body{
     font-family: Arial;
     text-align:center;
-    background:linear-gradient(135deg,#e3f2fd,#fce4ec);
     margin:0;
     padding:40px;
+    background: linear-gradient(135deg,#e3f2fd,#fce4ec);
 }
 
 h1{
-    margin-bottom:5px;
-}
-
-.subtitle{
-    color:#555;
-    margin-bottom:30px;
+    font-size:28px;
 }
 
 .card{
     background:white;
-    padding:20px;
+    max-width:300px;
     margin:15px auto;
-    max-width:350px;
+    padding:20px;
     border-radius:15px;
-    cursor:pointer;
     box-shadow:0 3px 10px rgba(0,0,0,0.1);
+    cursor:pointer;
     transition:0.2s;
 }
 
@@ -39,37 +34,40 @@ h1{
 
 .small{
     font-size:13px;
-    color:#777;
-    margin-top:5px;
+    opacity:0.7;
 }
 </style>
 </head>
 
 <body>
 
-<h1>🦉 Owl-Lingo</h1>
-<p class="subtitle">Learn languages through games</p>
+<h1>🦉 Choose Your Course</h1>
 
-<div class="card" onclick="start('english')">
-🇬🇧 English
-<div class="small">Start learning English</div>
+<div class="card" onclick="select('en-ku')">
+🇬🇧 English → 🟠 Kurdish
+<div class="small">Beginner Course</div>
 </div>
 
-<div class="card" onclick="start('swedish')">
-🇸🇪 Swedish
-<div class="small">Learn Swedish</div>
-</div>
-
-<div class="card" onclick="start('kurdish')">
-🟡 Kurdish
-<div class="small">Learn Kurdish</div>
+<div class="card" onclick="select('en-sv')">
+🇬🇧 English → 🔵 Swedish
+<div class="small">Beginner Course</div>
 </div>
 
 <script>
 
-function start(lang){
-localStorage.setItem("language", lang);
-window.location.href = "engine.html";
+function select(course){
+
+    // save selected course
+    localStorage.setItem("course", course);
+
+    // reset course data if new
+    if(!localStorage.getItem(course + "_init")){
+        localStorage.setItem(course + "_xp", "0");
+        localStorage.setItem(course + "_unlocked", JSON.stringify([true,false,false,false,false,false,false]));
+        localStorage.setItem(course + "_init", "true");
+    }
+
+    window.location.href = "engine.html";
 }
 
 </script>

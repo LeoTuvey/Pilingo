@@ -21,7 +21,8 @@ header{
 
 #info{
     font-weight:bold;
-    margin:5px;
+    margin:10px;
+    font-size:16px;
 }
 
 .map{
@@ -84,20 +85,29 @@ header{
 
 let course = localStorage.getItem("course") || "en-ku";
 
-// COURSE KEYS
+// PRETTY COURSE NAME
+let courseName =
+course === "en-ku" ? "English → Kurdish" :
+course === "en-sv" ? "English → Swedish" :
+course;
+
+// KEYS
 let xpKey = course + "_xp";
 let unlockKey = course + "_unlocked";
 
-// LOAD DATA
+// DATA
 let xp = parseInt(localStorage.getItem(xpKey) || "0");
-let unlocked = JSON.parse(localStorage.getItem(unlockKey) || "[true,false,false,false,false,false,false]");
+let unlocked = JSON.parse(
+    localStorage.getItem(unlockKey) ||
+    "[true,false,false,false,false,false,false]"
+);
 
-// DISPLAY
+// INFO DISPLAY
 document.getElementById("info").innerText =
-"Course: " + course + " | XP: " + xp;
+"📘 Course: " + courseName + " | ⭐ XP: " + xp;
 
 /////////////////////////////////////
-// LEVELS (same for all courses)
+// LEVELS
 /////////////////////////////////////
 
 let levels = [
@@ -131,6 +141,10 @@ html += `
 });
 
 document.getElementById("levels").innerHTML = html;
+
+/////////////////////////////////////
+// NAVIGATION
+/////////////////////////////////////
 
 function go(i){
     window.location.href = levels[i].file;

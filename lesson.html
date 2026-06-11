@@ -22,13 +22,8 @@ body{
   display:inline-block;
 }
 
-.owl-happy{
-  transform: scale(1.2) rotate(-10deg);
-}
-
-.owl-sad{
-  transform: scale(0.9) rotate(10deg);
-}
+.owl-happy{ transform: scale(1.2) rotate(-10deg); }
+.owl-sad{ transform: scale(0.9) rotate(10deg); }
 
 .owl-celebrate{
   animation: bounce 0.6s ease;
@@ -89,13 +84,8 @@ button:active{
 }
 
 /* FEEDBACK */
-.correctFlash{
-  animation:popGreen 0.4s ease;
-}
-
-.wrongShake{
-  animation:shake 0.4s ease;
-}
+.correctFlash{ animation:popGreen 0.4s ease; }
+.wrongShake{ animation:shake 0.4s ease; }
 
 @keyframes popGreen{
   0%{background:#f5f9ff;}
@@ -130,13 +120,8 @@ button:active{
 
 <body>
 
-<!-- OWL -->
 <div id="owl">🦉</div>
-
-<!-- STREAK -->
 <div id="streakBox">🔥 Streak: 0</div>
-
-<!-- XP POPUP -->
 <div id="xpPopup">+10 XP</div>
 
 <div class="card">
@@ -158,8 +143,11 @@ let course = Engine.getCourse();
 let hearts = Engine.getHearts();
 
 let params = new URLSearchParams(location.search);
-let skill = params.get("skill");
+let skill = params.get("skill") || "animals";
 
+/* --------------------
+   SAFE POOL
+-------------------- */
 function getPool(){
   return VOCAB_A1[skill] || VOCAB_A1.animals;
 }
@@ -167,10 +155,12 @@ function getPool(){
 let questions = [];
 let current = 0;
 
-// --------------------
-// GENERATE QUESTIONS
-// --------------------
+/* --------------------
+   GENERATE (FIXED)
+-------------------- */
 function generate(){
+
+questions = []; // FIX 1: prevent duplication
 
 let pool = getPool();
 
@@ -188,55 +178,45 @@ if(!options.includes(r)) options.push(r);
 options.sort(()=>Math.random()-0.5);
 
 questions.push({correct, options});
-
 }
 
 }
 
-// --------------------
-// OWL SYSTEM
-// --------------------
+/* --------------------
+   OWL
+-------------------- */
 function owl(state){
 
 let o = document.getElementById("owl");
 
 o.classList.remove("owl-happy","owl-sad","owl-celebrate");
 
-if(state === "happy"){
-  o.classList.add("owl-happy");
+if(state === "happy") o.classList.add("owl-happy");
+if(state === "sad") o.classList.add("owl-sad");
+if(state === "win") o.classList.add("owl-celebrate");
 }
 
-if(state === "sad"){
-  o.classList.add("owl-sad");
-}
-
-if(state === "win"){
-  o.classList.add("owl-celebrate");
-}
-
-}
-
-// --------------------
-// STREAK SYSTEM
-// --------------------
+/* --------------------
+   STREAK
+-------------------- */
 function updateStreakUI(){
   let streak = Engine.updateStreak();
   document.getElementById("streakBox").innerText =
     "🔥 Streak: " + streak;
 }
 
-// --------------------
-// XP POPUP
-// --------------------
+/* --------------------
+   XP POPUP
+-------------------- */
 function showXP(){
   let el = document.getElementById("xpPopup");
   el.style.opacity = 1;
   setTimeout(()=> el.style.opacity = 0, 800);
 }
 
-// --------------------
-// LOAD
-// --------------------
+/* --------------------
+   LOAD QUESTION
+-------------------- */
 function load(){
 
 let q = questions[current];
@@ -253,20 +233,19 @@ html += `<button onclick="check(${i})">${opt.en}</button>`;
 document.getElementById("options").innerHTML = html;
 
 updateBar();
-
 }
 
-// --------------------
-// PROGRESS BAR
-// --------------------
+/* --------------------
+   PROGRESS
+-------------------- */
 function updateBar(){
 document.getElementById("bar").style.width =
 (current/questions.length)*100 + "%";
 }
 
-// --------------------
-// CHECK ANSWER
-// --------------------
+/* --------------------
+   CHECK ANSWER
+-------------------- */
 function check(i){
 
 let q = questions[current];
@@ -300,12 +279,11 @@ alert("Game Over");
 location.reload();
 }
 }
-
 }
 
-// --------------------
-// FINISH
-// --------------------
+/* --------------------
+   FINISH
+-------------------- */
 function finish(){
 
 Engine.addXP(10);
@@ -319,12 +297,11 @@ updateStreakUI();
 setTimeout(()=>{
 window.location.href = "engine.html";
 },1200);
-
 }
 
-// --------------------
-// START
-// --------------------
+/* --------------------
+   START (FIXED)
+-------------------- */
 generate();
 load();
 updateStreakUI();

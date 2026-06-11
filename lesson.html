@@ -16,18 +16,23 @@ body{
 
 /* OWL */
 #owl{
-  font-size:60px;
+  font-size:64px;
   margin:10px;
-  transition:0.3s;
+  animation:idle 2s infinite ease-in-out;
 }
 
-.owl-happy{ transform:scale(1.2) rotate(-8deg); }
-.owl-sad{ transform:scale(0.9) rotate(8deg); }
-.owl-win{ animation:bounce 0.6s ease; }
+@keyframes idle{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-4px);}
+}
 
-@keyframes bounce{
+.owl-happy{ transform:scale(1.2) rotate(-6deg); }
+.owl-sad{ transform:scale(0.9) rotate(6deg); }
+.owl-win{ animation:celebrate 0.7s ease; }
+
+@keyframes celebrate{
   0%{transform:translateY(0);}
-  30%{transform:translateY(-10px);}
+  30%{transform:translateY(-12px);}
   60%{transform:translateY(0);}
 }
 
@@ -36,10 +41,10 @@ body{
   background:white;
   max-width:550px;
   margin:auto;
-  padding:20px;
-  border-radius:15px;
-  box-shadow:0 4px 15px rgba(0,0,0,0.1);
-  transition:0.3s;
+  padding:22px;
+  border-radius:18px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.08);
+  transition:0.25s;
 }
 
 /* BUTTONS */
@@ -48,16 +53,16 @@ button{
   padding:14px;
   margin:10px;
   border:none;
-  border-radius:12px;
+  border-radius:14px;
   background:#1976d2;
   color:white;
   font-size:16px;
   cursor:pointer;
-  transition:0.15s;
+  transition:0.12s;
 }
 
 button:active{
-  transform:scale(0.97);
+  transform:scale(0.96);
 }
 
 /* PROGRESS */
@@ -66,10 +71,10 @@ button:active{
   background:#58cc02;
   width:0%;
   border-radius:10px;
-  transition:0.4s;
+  transition:0.45s ease;
 }
 
-/* XP POPUP */
+/* XP POP */
 #xpPopup{
   position:fixed;
   top:20px;
@@ -126,11 +131,10 @@ button:active{
 
 </div>
 
-<!-- COMPLETION SCREEN -->
 <div id="complete">
-  <h1>🎉 Lesson Complete!</h1>
-  <p>You earned XP + streak boost</p>
-  <button onclick="goHome()">Continue</button>
+  <h1>🎉 Great Job!</h1>
+  <p>You completed the lesson</p>
+  <button onclick="home()">Continue</button>
 </div>
 
 <script src="engine-core.js"></script>
@@ -140,14 +144,26 @@ button:active{
 
 const SKILL_MAP = ["animals","verbs","people","food","objects","places","adjectives"];
 
-let course = Engine.getCourse();
 let hearts = Engine.getHearts();
-
 let skillIndex = new URLSearchParams(location.search).get("s") || 0;
 let pool = VOCAB_A1[SKILL_MAP[skillIndex]];
 
 let questions = [];
 let current = 0;
+
+/* ---------------- SOUND ---------------- */
+function sound(type){
+  let a = new Audio();
+
+  if(type==="correct")
+    a.src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg";
+
+  if(type==="wrong")
+    a.src="https://actions.google.com/sounds/v1/cartoon/boing.ogg";
+
+  a.volume = 0.5;
+  a.play();
+}
 
 /* ---------------- OWL ---------------- */
 function owl(state){
@@ -159,14 +175,14 @@ function owl(state){
   if(state==="win") o.classList.add("owl-win");
 }
 
-/* ---------------- XP POP ---------------- */
+/* ---------------- XP ---------------- */
 function xpPop(){
   let el = document.getElementById("xpPopup");
   el.style.opacity = 1;
-  setTimeout(()=>el.style.opacity=0,700);
+  setTimeout(()=>el.style.opacity=0,800);
 }
 
-/* ---------------- STREAK UI ---------------- */
+/* ---------------- STREAK ---------------- */
 function streakUI(){
   document.getElementById("streak").innerText =
     "🔥 " + Engine.updateStreak();
@@ -214,18 +230,22 @@ function check(i){
 
   if(q.options[i] === q.correct){
 
+    sound("correct");
     owl("happy");
 
-    current++;
+    setTimeout(()=>current++,200);
 
-    if(current < questions.length){
-      load();
-    } else {
-      finish();
-    }
+    setTimeout(()=>{
+      if(current < questions.length){
+        load();
+      } else {
+        finish();
+      }
+    },400);
 
   } else {
 
+    sound("wrong");
     hearts = Engine.loseHeart();
     owl("sad");
 
@@ -240,18 +260,22 @@ function finish(){
 
   owl("win");
 
-  Engine.addXP(10);
-  Engine.resetHearts();
-  Engine.updateStreak();
+  setTimeout(()=>{
 
-  xpPop();
-  streakUI();
+    Engine.addXP(10);
+    Engine.resetHearts();
+    Engine.updateStreak();
 
-  document.getElementById("complete").style.display = "block";
+    xpPop();
+    streakUI();
+
+    document.getElementById("complete").style.display = "block";
+
+  },600);
 }
 
 /* ---------------- HOME ---------------- */
-function goHome(){
+function home(){
   window.location.href = "index.html";
 }
 

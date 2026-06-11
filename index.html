@@ -55,16 +55,50 @@ h1{
 
 <script>
 
+/////////////////////////////////////
+// APP VERSION CONTROL (IMPORTANT FIX)
+/////////////////////////////////////
+
+const APP_VERSION = "1.0";
+
+function checkVersion(){
+
+    let savedVersion = localStorage.getItem("app_version");
+
+    if(savedVersion !== APP_VERSION){
+        localStorage.clear();
+        localStorage.setItem("app_version", APP_VERSION);
+    }
+}
+
+checkVersion();
+
+/////////////////////////////////////
+// COURSE SELECT
+/////////////////////////////////////
+
 function select(course){
 
     // save selected course
     localStorage.setItem("course", course);
 
-    // reset course data if new
+    /////////////////////////////////////
+    // SAFE INITIALIZATION (FIXED)
+    /////////////////////////////////////
+
     if(!localStorage.getItem(course + "_init")){
+
         localStorage.setItem(course + "_xp", "0");
-        localStorage.setItem(course + "_unlocked", JSON.stringify([true,false,false,false,false,false,false]));
+
+        // safe unlock system (future-proof)
+        const unlocked = [true, ...Array(6).fill(false)];
+        localStorage.setItem(course + "_unlocked", JSON.stringify(unlocked));
+
         localStorage.setItem(course + "_init", "true");
+
+        // optional: reset streak per course start
+        localStorage.setItem("streak", "0");
+        localStorage.setItem("lastDay", "");
     }
 
     window.location.href = "engine.html";

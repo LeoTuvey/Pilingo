@@ -1,9 +1,10 @@
 /* =====================================
    🦉 OWL EVOLUTION SYSTEM (STEP 13)
+   DROP-IN FOR lesson.html
 ===================================== */
 
 /**
- * Determines owl state based on XP level
+ * Get owl state based on XP
  */
 function getOwlState(){
 
@@ -17,7 +18,7 @@ function getOwlState(){
 }
 
 /**
- * Updates owl emoji + visual state
+ * Update owl appearance
  */
 function updateOwl(){
 
@@ -29,7 +30,7 @@ function updateOwl(){
   // reset
   owl.className = "";
 
-  // set visual evolution
+  // evolve owl visually
   if(state === "neutral"){
     owl.innerText = "🦉";
   }
@@ -48,7 +49,7 @@ function updateOwl(){
 }
 
 /**
- * OPTIONAL: call this after every lesson action
+ * Helper (safe call wrapper)
  */
 function refreshOwl(){
   updateOwl();

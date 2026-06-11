@@ -2,76 +2,75 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Lesson 2: Actions</title>
+<title>Lesson 2: Actions (A1 Engine)</title>
 
 <style>
 body{
-    font-family: Arial, sans-serif;
-    background:#f5f9ff;
-    text-align:center;
-    margin:0;
-    padding:20px;
+font-family: Arial;
+background:#f5f9ff;
+margin:0;
+text-align:center;
+padding:20px;
 }
 
 .card{
-    background:white;
-    max-width:550px;
-    margin:auto;
-    padding:20px;
-    border-radius:15px;
-    box-shadow:0 3px 10px rgba(0,0,0,0.1);
+background:white;
+max-width:550px;
+margin:auto;
+padding:20px;
+border-radius:16px;
+box-shadow:0 3px 10px rgba(0,0,0,0.1);
 }
 
 #hearts{
-    font-size:28px;
-    margin-bottom:10px;
+font-size:26px;
+margin-bottom:10px;
 }
 
 #progress{
-    width:100%;
-    height:10px;
-    background:#ddd;
-    border-radius:10px;
-    overflow:hidden;
-    margin-bottom:15px;
+width:100%;
+height:10px;
+background:#ddd;
+border-radius:10px;
+overflow:hidden;
+margin-bottom:10px;
 }
 
 #bar{
-    height:100%;
-    width:0%;
-    background:#4caf50;
+height:100%;
+width:0%;
+background:#58cc02;
+transition:0.3s;
 }
 
-/* VISUAL (NEW) */
 #visual{
-    font-size:60px;
-    margin:10px 0;
+font-size:70px;
+margin:10px 0;
 }
 
 button{
-    display:block;
-    width:90%;
-    margin:10px auto;
-    padding:15px;
-    font-size:16px;
-    border:none;
-    border-radius:10px;
-    background:#1976d2;
-    color:white;
-    cursor:pointer;
-    transition:0.2s;
+width:90%;
+padding:14px;
+margin:8px auto;
+display:block;
+border:none;
+border-radius:12px;
+background:#1976d2;
+color:white;
+font-size:16px;
+cursor:pointer;
+transition:0.15s;
 }
 
 button:hover{
-    opacity:0.9;
-    transform:scale(1.02);
+transform:scale(1.02);
+background:#145ea8;
 }
 
 #feedback{
-    min-height:25px;
-    margin-top:10px;
-    font-size:18px;
-    font-weight:bold;
+min-height:25px;
+font-weight:bold;
+margin-top:10px;
 }
 </style>
 </head>
@@ -82,14 +81,11 @@ button:hover{
 
 <div id="hearts"></div>
 
-<div id="progress">
-    <div id="bar"></div>
-</div>
+<div id="progress"><div id="bar"></div></div>
+
+<div id="visual"></div>
 
 <h2 id="question">Loading...</h2>
-
-<!-- 🆕 EMOJI DISPLAY -->
-<div id="visual"></div>
 
 <div id="options"></div>
 
@@ -99,269 +95,176 @@ button:hover{
 
 <script>
 
-/////////////////////////////////////
+/////////////////////////
 // COURSE SYSTEM
-/////////////////////////////////////
+/////////////////////////
 
 let course = localStorage.getItem("course") || "en-ku";
 
-function t(en, ku, sv){
-    if(course === "en-ku") return ku;
-    if(course === "en-sv") return sv;
-    return en;
+function t(word){
+if(course === "en-ku") return word.ku;
+if(course === "en-sv") return word.sv;
+return word.en;
 }
 
-/////////////////////////////////////
+/////////////////////////
 // HEARTS
-/////////////////////////////////////
+/////////////////////////
 
 let hearts = parseInt(localStorage.getItem("hearts") || "5");
 
 function renderHearts(){
-
-    let html = "";
-
-    for(let i=0;i<hearts;i++){
-        html += "❤️ ";
-    }
-
-    for(let i=hearts;i<5;i++){
-        html += "🖤 ";
-    }
-
-    document.getElementById("hearts").innerHTML = html;
+document.getElementById("hearts").innerHTML =
+"❤️".repeat(hearts) + "🖤".repeat(5-hearts);
 }
 
-/////////////////////////////////////
-// SOUND
-/////////////////////////////////////
+/////////////////////////
+// VOCAB SYSTEM
+/////////////////////////
 
-function playSound(type){
+const verbs = VOCAB_A1.verbs;
 
-    let audio = new Audio();
-
-    if(type === "correct"){
-        audio.src =
-        "https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg";
-    }
-
-    if(type === "wrong"){
-        audio.src =
-        "https://actions.google.com/sounds/v1/cartoon/boing.ogg";
-    }
-
-    audio.play();
-}
-
-/////////////////////////////////////
-// VOICE
-/////////////////////////////////////
-
-function speak(text){
-    let msg = new SpeechSynthesisUtterance(text);
-    msg.lang = "en-US";
-    msg.rate = 0.9;
-    speechSynthesis.speak(msg);
-}
-
-/////////////////////////////////////
-// QUESTIONS (WITH EMOJIS)
-/////////////////////////////////////
-
-let questions = [
-
-{
-q: t("What is he doing?","Ew çi dike?","Vad gör han?"),
-emoji:"🍽️",
-options:[
-t("Eating","Xwarin","Äter"),
-t("Sleeping","Razane","Sover"),
-t("Running","Revîn","Springer")
-],
-answer:0
-},
-
-{
-q: t("What is she doing?","Ew çi dike?","Vad gör hon?"),
-emoji:"📖",
-options:[
-t("Reading","Xwendin","Läser"),
-t("Eating","Xwarin","Äter"),
-t("Swimming","Avjîn","Simmar")
-],
-answer:0
-},
-
-{
-q: t("What is the boy doing?","Kur çi dike?","Vad gör pojken?"),
-emoji:"🏃",
-options:[
-t("Drinking","Vexwarin","Dricker"),
-t("Writing","Nivîsandin","Skriver"),
-t("Running","Revîn","Springer")
-],
-answer:2
-},
-
-{
-q: t("What is the girl doing?","Keç çi dike?","Vad gör flickan?"),
-emoji:"😴",
-options:[
-t("Sleeping","Razane","Sover"),
-t("Reading","Xwendin","Läser"),
-t("Eating","Xwarin","Äter")
-],
-answer:0
-}
-
-];
+/////////////////////////
+// GAME STATE
+/////////////////////////
 
 let current = 0;
+let questions = [];
 
-/////////////////////////////////////
-// PROGRESS
-/////////////////////////////////////
+/////////////////////////
+// GENERATE QUESTIONS
+/////////////////////////
 
-function updateProgress(){
+function generateQuestions(){
 
-let percent =
-(current / questions.length) * 100;
+questions = [];
 
-document.getElementById("bar").style.width =
-percent + "%";
+for(let i=0;i<5;i++){
+
+let correct = verbs[Math.floor(Math.random()*verbs.length)];
+
+let options = [correct];
+
+// add wrong answers
+while(options.length < 3){
+let rand = verbs[Math.floor(Math.random()*verbs.length)];
+if(!options.includes(rand)){
+options.push(rand);
+}
+}
+
+// shuffle
+options.sort(()=>Math.random()-0.5);
+
+questions.push({
+word: correct,
+options: options
+});
 
 }
 
-/////////////////////////////////////
+}
+
+/////////////////////////
 // LOAD QUESTION
-/////////////////////////////////////
+/////////////////////////
 
 function load(){
 
 renderHearts();
-updateProgress();
 
 let q = questions[current];
 
-document.getElementById("question").innerText = q.q;
+document.getElementById("visual").innerText = q.word.emoji;
 
-/* 🆕 SHOW EMOJI */
-document.getElementById("visual").innerHTML = q.emoji || "";
-
-speak(q.q);
+document.getElementById("question").innerText =
+"What is this action?";
 
 let html = "";
 
 q.options.forEach((opt,i)=>{
-html += `<button onclick="check(${i})">${opt}</button>`;
+html += `<button onclick="check(${i})">${t(opt)}</button>`;
 });
 
 document.getElementById("options").innerHTML = html;
-document.getElementById("feedback").innerHTML = "";
+
+updateProgress();
+
 }
 
-/////////////////////////////////////
+/////////////////////////
+// PROGRESS
+/////////////////////////
+
+function updateProgress(){
+let percent = (current / questions.length) * 100;
+document.getElementById("bar").style.width = percent + "%";
+}
+
+/////////////////////////
 // CHECK ANSWER
-/////////////////////////////////////
+/////////////////////////
 
 function check(i){
 
 let q = questions[current];
 
-if(i === q.answer){
+if(q.options[i] === q.word){
 
-    playSound("correct");
+document.getElementById("feedback").innerText =
+"✅ Correct!";
 
-    document.getElementById("feedback").innerHTML =
-    t("✅ Correct!","✅ Rast e!","✅ Rätt!");
+current++;
 
-    current++;
-
-    setTimeout(()=>{
-
-        if(current < questions.length){
-            load();
-        }else{
-            finish();
-        }
-
-    },800);
+if(current < questions.length){
+load();
+}else{
+finish();
+}
 
 }else{
 
-    hearts--;
+hearts--;
+renderHearts();
 
-    localStorage.setItem("hearts", hearts);
+document.getElementById("feedback").innerText =
+"❌ Try again";
 
-    renderHearts();
-
-    playSound("wrong");
-
-    document.getElementById("feedback").innerHTML =
-    t("❌ Try again","❌ Dîsa biceribîne","❌ Försök igen");
-
-    if(hearts <= 0){
-        gameOver();
-    }
+if(hearts <= 0){
+alert("Game Over");
+location.reload();
+}
 }
 
 }
 
-/////////////////////////////////////
-// GAME OVER
-/////////////////////////////////////
-
-function gameOver(){
-
-document.body.innerHTML = `
-<div class="card">
-<h1>💔</h1>
-<h2>${t("Out of Hearts","Hevî tune ye","Inga hjärtan kvar")}</h2>
-<button onclick="restart()">
-${t("Try Again","Dîsa Biceribîne","Försök igen")}
-</button>
-</div>
-`;
-
-}
-
-function restart(){
-localStorage.setItem("hearts","5");
-window.location.reload();
-}
-
-/////////////////////////////////////
+/////////////////////////
 // FINISH
-/////////////////////////////////////
+/////////////////////////
 
 function finish(){
 
-localStorage.setItem("hearts","5");
-
-let xpKey = course + "_xp";
-let unlockKey = course + "_unlocked";
+let course = localStorage.getItem("course") || "en-ku";
+let xpKey = course+"_xp";
 
 let xp = parseInt(localStorage.getItem(xpKey) || "0");
 xp += 10;
 
 localStorage.setItem(xpKey, xp);
 
-let unlocked = JSON.parse(localStorage.getItem(unlockKey) || "[true,false,false,false,false,false,false]");
-unlocked[2] = true;
-
-localStorage.setItem(unlockKey, JSON.stringify(unlocked));
-
-document.getElementById("bar").style.width = "100%";
+localStorage.setItem("hearts","5");
 
 setTimeout(()=>{
 window.location.href = "engine.html";
-},1500);
+},1200);
+
 }
 
-/////////////////////////////////////
+/////////////////////////
 // START
-/////////////////////////////////////
+/////////////////////////
 
+generateQuestions();
 load();
 
 </script>

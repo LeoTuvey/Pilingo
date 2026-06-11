@@ -1,8 +1,25 @@
-/* =====================================
-   🦉 OWL-LINGO UX LAYER (STEP 11)
-===================================== */
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Owl-Lingo Lesson</title>
 
-/* ---------------- OWL BASE ---------------- */
+<style>
+
+/* =========================
+   🦉 BASE UI
+========================= */
+
+body{
+  font-family:Arial;
+  background:#f5f9ff;
+  text-align:center;
+  margin:0;
+  padding:20px;
+}
+
+/* OWL */
 #owl{
   font-size:60px;
   margin-top:10px;
@@ -10,25 +27,11 @@
   display:inline-block;
 }
 
-/* ---------------- OWL STATES ---------------- */
-#owl.happy{
-  transform:scale(1.2) rotate(-10deg);
-}
+/* OWL STATES */
+#owl.happy{ transform:scale(1.2) rotate(-10deg); }
+#owl.sad{ transform:scale(0.9) rotate(10deg); }
+#owl.celebrate{ animation:bounce 0.6s ease; }
 
-#owl.sad{
-  transform:scale(0.9) rotate(10deg);
-  filter:grayscale(20%);
-}
-
-#owl.celebrate{
-  animation:bounce 0.6s ease;
-}
-
-#owl.thinking{
-  opacity:0.7;
-}
-
-/* ---------------- OWL ANIMATION ---------------- */
 @keyframes bounce{
   0%{transform:translateY(0);}
   30%{transform:translateY(-10px);}
@@ -36,29 +39,7 @@
   100%{transform:translateY(-5px);}
 }
 
-/* ---------------- SCREEN FLASH: CORRECT ---------------- */
-.flash-correct{
-  animation:flashGreen 0.4s ease;
-}
-
-@keyframes flashGreen{
-  0%{background:white;}
-  50%{background:#b9f6ca;}
-  100%{background:white;}
-}
-
-/* ---------------- SCREEN FLASH: WRONG ---------------- */
-.flash-wrong{
-  animation:flashRed 0.4s ease;
-}
-
-@keyframes flashRed{
-  0%{background:white;}
-  50%{background:#ffcdd2;}
-  100%{background:white;}
-}
-
-/* ---------------- CARD POLISH ---------------- */
+/* CARD */
 .card{
   background:white;
   max-width:550px;
@@ -68,7 +49,7 @@
   box-shadow:0 3px 10px rgba(0,0,0,0.1);
 }
 
-/* ---------------- STREAK ---------------- */
+/* STREAK */
 #streakBox{
   font-size:18px;
   font-weight:bold;
@@ -77,17 +58,17 @@
   transition:0.2s ease;
 }
 
-/* ---------------- PROGRESS BAR ---------------- */
+/* PROGRESS */
 #bar{
   height:10px;
   background:#4caf50;
   width:0%;
+  transition:0.4s ease;
   border-radius:10px;
   margin-bottom:15px;
-  transition:0.4s ease;
 }
 
-/* ---------------- BUTTONS ---------------- */
+/* BUTTONS */
 button{
   display:block;
   width:90%;
@@ -99,14 +80,13 @@ button{
   color:white;
   font-size:16px;
   cursor:pointer;
-  transition:0.15s ease;
 }
 
 button:active{
   transform:scale(0.96);
 }
 
-/* ---------------- XP POPUP ---------------- */
+/* XP POPUP */
 #xpPopup{
   position:fixed;
   top:20px;
@@ -118,11 +98,204 @@ button:active{
   border-radius:20px;
   font-weight:bold;
   opacity:0;
-  transition:0.4s ease;
+  transition:0.4s;
 }
 
-/* ---------------- BACKGROUND FEEDBACK ---------------- */
-.flash-correct,
-.flash-wrong{
-  transition:0.2s;
+/* FLASH EFFECTS */
+.flash-correct{
+  animation:flashGreen 0.4s ease;
 }
+
+.flash-wrong{
+  animation:flashRed 0.4s ease;
+}
+
+@keyframes flashGreen{
+  0%{background:white;}
+  50%{background:#b9f6ca;}
+  100%{background:white;}
+}
+
+@keyframes flashRed{
+  0%{background:white;}
+  50%{background:#ffcdd2;}
+  100%{background:white;}
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- OWL -->
+<div id="owl">🦉</div>
+
+<!-- STREAK -->
+<div id="streakBox">🔥 Streak: 0</div>
+
+<!-- XP POPUP -->
+<div id="xpPopup">+10 XP</div>
+
+<div class="card">
+
+<h2 id="question"></h2>
+<div id="options"></div>
+<div id="bar"></div>
+
+</div>
+
+<!-- ENGINE FILES -->
+<script src="engine-core.js"></script>
+<script src="vocab_a1.js"></script>
+<script src="ux-layer.js"></script>
+
+<script>
+
+/* =========================
+   STATE
+========================= */
+
+let course = Engine.getCourse();
+let hearts = Engine.getHearts();
+
+let params = new URLSearchParams(location.search);
+let skill = params.get("s") || 0;
+
+/* =========================
+   VOCAB POOL
+========================= */
+
+function getPool(){
+  let keys = ["animals","verbs","people","food","objects","places","adjectives"];
+  return VOCAB_A1[keys[skill]] || VOCAB_A1.animals;
+}
+
+let questions = [];
+let current = 0;
+
+/* =========================
+   GENERATE QUESTIONS
+========================= */
+
+function generate(){
+
+  let pool = getPool();
+
+  for(let i=0;i<5;i++){
+
+    let correct = pool[Math.floor(Math.random()*pool.length)];
+
+    let options = [correct];
+
+    while(options.length < 3){
+      let r = pool[Math.floor(Math.random()*pool.length)];
+      if(!options.includes(r)) options.push(r);
+    }
+
+    options.sort(()=>Math.random()-0.5);
+
+    questions.push({correct, options});
+  }
+}
+
+/* =========================
+   LOAD QUESTION
+========================= */
+
+function load(){
+
+  let q = questions[current];
+
+  document.getElementById("question").innerText =
+    "Select: " + q.correct.en;
+
+  let html = "";
+
+  q.options.forEach((opt,i)=>{
+    html += `<button onclick="check(${i})">${opt.en}</button>`;
+  });
+
+  document.getElementById("options").innerHTML = html;
+
+  document.getElementById("bar").style.width =
+    (current/questions.length)*100 + "%";
+}
+
+/* =========================
+   CHECK ANSWER (STEP 11 CORE)
+========================= */
+
+function check(i){
+
+  let q = questions[current];
+
+  if(q.options[i] === q.correct){
+
+    UX.owl("happy");
+    UX.flash("correct");
+
+    Engine.markCorrect(q.correct);
+    Engine.addXP(2);
+
+    current++;
+
+    setTimeout(()=>{
+
+      if(current < questions.length){
+        load();
+      } else {
+        finish();
+      }
+
+    },300);
+
+  } else {
+
+    UX.owl("sad");
+    UX.flash("wrong");
+
+    Engine.markWrong(q.correct);
+
+    hearts = Engine.loseHeart();
+
+    if(hearts <= 0){
+      setTimeout(()=> location.reload(),500);
+    }
+  }
+}
+
+/* =========================
+   FINISH
+========================= */
+
+function finish(){
+
+  Engine.addXP(10);
+  Engine.resetHearts();
+  Engine.updateStreak();
+
+  UX.owl("celebrate");
+  UX.xp(10);
+
+  document.getElementById("streakBox").innerText =
+    "🔥 Streak: " + Engine.updateStreak();
+
+  setTimeout(()=>{
+    window.location.href = "engine.html";
+  },1200);
+}
+
+/* =========================
+   INIT
+========================= */
+
+generate();
+load();
+
+document.getElementById("streakBox").innerText =
+  "🔥 Streak: " + Engine.updateStreak();
+
+</script>
+
+</body>
+</html>

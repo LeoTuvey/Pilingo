@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Owl-Lingo Path</title>
 
 <style>
@@ -13,8 +14,21 @@ body{
   background: linear-gradient(135deg,#e3f2fd,#fce4ec);
 }
 
+/* HEADER */
 h1{
   margin-bottom:20px;
+}
+
+/* XP */
+#xp{
+  position:fixed;
+  top:15px;
+  right:15px;
+  background:#58cc02;
+  color:white;
+  padding:8px 12px;
+  border-radius:20px;
+  font-weight:bold;
 }
 
 /* PATH */
@@ -24,7 +38,7 @@ h1{
   position:relative;
 }
 
-/* CONNECTING LINE */
+/* LINE */
 .line{
   position:absolute;
   left:50%;
@@ -35,39 +49,39 @@ h1{
   transform:translateX(-50%);
 }
 
-/* OWL GUIDE */
+/* OWL */
 #owlGuide{
   position:absolute;
   left:50%;
   transform:translate(-50%,0);
   font-size:34px;
-  transition:0.6s ease;
+  transition:0.5s ease;
   z-index:5;
 }
 
 /* NODE */
 .node{
-  width:150px;
+  width:160px;
   margin:30px auto;
   padding:18px;
   border-radius:50%;
   background:white;
   box-shadow:0 4px 10px rgba(0,0,0,0.1);
   cursor:pointer;
-  transition:0.25s;
+  transition:0.2s;
   position:relative;
   z-index:2;
 
   opacity:0;
   transform: translateY(20px);
-  animation: popIn 0.5s forwards;
+  animation: popIn 0.4s forwards;
 }
 
 .node:hover{
-  transform: scale(1.07);
+  transform: scale(1.06);
 }
 
-/* ANIMATION */
+/* POP ANIMATION */
 @keyframes popIn{
   to{
     opacity:1;
@@ -82,34 +96,21 @@ h1{
 }
 
 .unlocked{
-  border:4px solid #58cc02;
-  box-shadow:0 0 10px rgba(88,204,2,0.3);
+  border:3px solid #58cc02;
 }
 
 .completed{
-  border:4px solid gold;
-  box-shadow:0 0 12px rgba(255,215,0,0.4);
+  border:3px solid gold;
 }
 
 /* TEXT */
 .icon{
   font-size:28px;
 }
+
 .small{
   font-size:12px;
   opacity:0.7;
-}
-
-/* XP BADGE */
-#xp{
-  position:fixed;
-  top:15px;
-  right:15px;
-  background:#58cc02;
-  color:white;
-  padding:10px 14px;
-  border-radius:20px;
-  font-weight:bold;
 }
 </style>
 </head>
@@ -123,8 +124,6 @@ h1{
 <div class="path">
 
 <div class="line"></div>
-
-<!-- OWL GUIDE -->
 <div id="owlGuide">🦉</div>
 
 <div id="map"></div>
@@ -145,6 +144,10 @@ const skills = [
   { name:"Adjectives 🎯", id:"adjectives" }
 ];
 
+/* ---------------- SESSION MEMORY ---------------- */
+let lastSkill = localStorage.getItem("lastSkill");
+
+/* ---------------- ENGINE DATA ---------------- */
 let unlocked = Engine.getUnlocked();
 let xp = Engine.getXP();
 
@@ -160,7 +163,7 @@ function render(){
     let state = "";
 
     if(unlocked[i]) state = "unlocked";
-    else if(i > 0 && !unlocked[i]) state = "locked";
+    else state = "locked";
 
     html += `
       <div class="node ${state}" onclick="openSkill(${i}, this)">
@@ -176,13 +179,15 @@ function render(){
   setTimeout(placeOwl, 300);
 }
 
-/* ---------------- OWL FOLLOW PATH ---------------- */
+/* ---------------- OWL POSITION ---------------- */
 function placeOwl(){
 
   let owl = document.getElementById("owlGuide");
   let nodes = document.querySelectorAll(".node");
 
-  if(nodes.length > 0){
+  if(lastSkill !== null){
+    moveOwl(parseInt(lastSkill));
+  } else if(nodes.length > 0){
     let first = nodes[0].getBoundingClientRect();
     let container = document.querySelector(".path").getBoundingClientRect();
 
@@ -201,15 +206,12 @@ function moveOwl(index){
   let rect = node.getBoundingClientRect();
 
   owl.style.top = (rect.top - container.top + 10) + "px";
-
-  owl.style.transform = "translate(-50%,0) scale(1.2)";
-  setTimeout(()=>{
-    owl.style.transform = "translate(-50%,0) scale(1)";
-  },300);
 }
 
 /* ---------------- OPEN SKILL ---------------- */
 function openSkill(i){
+
+  localStorage.setItem("lastSkill", i);
 
   moveOwl(i);
 

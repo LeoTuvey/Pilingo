@@ -17,14 +17,14 @@ h1{
   margin-bottom:20px;
 }
 
-/* PATH WRAPPER */
+/* PATH */
 .path{
-  max-width:400px;
+  max-width:420px;
   margin:auto;
   position:relative;
 }
 
-/* LINE CONNECTOR */
+/* CONNECTING LINE */
 .line{
   position:absolute;
   left:50%;
@@ -33,48 +33,83 @@ h1{
   height:100%;
   background:#cfd8dc;
   transform:translateX(-50%);
-  z-index:0;
+}
+
+/* OWL GUIDE */
+#owlGuide{
+  position:absolute;
+  left:50%;
+  transform:translate(-50%,0);
+  font-size:34px;
+  transition:0.6s ease;
+  z-index:5;
 }
 
 /* NODE */
 .node{
-  position:relative;
-  z-index:1;
-  width:140px;
-  margin:25px auto;
-  padding:15px;
+  width:150px;
+  margin:30px auto;
+  padding:18px;
   border-radius:50%;
   background:white;
   box-shadow:0 4px 10px rgba(0,0,0,0.1);
   cursor:pointer;
-  transition:0.2s;
+  transition:0.25s;
+  position:relative;
+  z-index:2;
+
+  opacity:0;
+  transform: translateY(20px);
+  animation: popIn 0.5s forwards;
 }
 
 .node:hover{
-  transform:scale(1.05);
+  transform: scale(1.07);
+}
+
+/* ANIMATION */
+@keyframes popIn{
+  to{
+    opacity:1;
+    transform: translateY(0);
+  }
 }
 
 /* STATES */
 .locked{
-  opacity:0.3;
+  opacity:0.25;
   pointer-events:none;
 }
 
 .unlocked{
   border:4px solid #58cc02;
+  box-shadow:0 0 10px rgba(88,204,2,0.3);
 }
 
 .completed{
   border:4px solid gold;
+  box-shadow:0 0 12px rgba(255,215,0,0.4);
 }
 
-/* ICONS */
+/* TEXT */
 .icon{
   font-size:28px;
 }
 .small{
   font-size:12px;
   opacity:0.7;
+}
+
+/* XP BADGE */
+#xp{
+  position:fixed;
+  top:15px;
+  right:15px;
+  background:#58cc02;
+  color:white;
+  padding:10px 14px;
+  border-radius:20px;
+  font-weight:bold;
 }
 </style>
 </head>
@@ -83,8 +118,14 @@ h1{
 
 <h1>🦉 Your Learning Path</h1>
 
+<div id="xp">XP: 0</div>
+
 <div class="path">
+
 <div class="line"></div>
+
+<!-- OWL GUIDE -->
+<div id="owlGuide">🦉</div>
 
 <div id="map"></div>
 
@@ -107,6 +148,9 @@ const skills = [
 let unlocked = Engine.getUnlocked();
 let xp = Engine.getXP();
 
+document.getElementById("xp").innerText = "XP: " + xp;
+
+/* ---------------- RENDER MAP ---------------- */
 function render(){
 
   let html = "";
@@ -115,30 +159,66 @@ function render(){
 
     let state = "";
 
-    if(i < unlocked.length && unlocked[i]){
-      state = "unlocked";
-    }
-
-    if(i > 0 && !unlocked[i]){
-      state = "locked";
-    }
+    if(unlocked[i]) state = "unlocked";
+    else if(i > 0 && !unlocked[i]) state = "locked";
 
     html += `
-      <div class="node ${state}" onclick="openSkill(${i})">
+      <div class="node ${state}" onclick="openSkill(${i}, this)">
         <div class="icon">🦉</div>
         <div>${s.name}</div>
-        <div class="small">Tap to start</div>
+        <div class="small">Tap to learn</div>
       </div>
     `;
   });
 
   document.getElementById("map").innerHTML = html;
+
+  setTimeout(placeOwl, 300);
 }
 
+/* ---------------- OWL FOLLOW PATH ---------------- */
+function placeOwl(){
+
+  let owl = document.getElementById("owlGuide");
+  let nodes = document.querySelectorAll(".node");
+
+  if(nodes.length > 0){
+    let first = nodes[0].getBoundingClientRect();
+    let container = document.querySelector(".path").getBoundingClientRect();
+
+    owl.style.top = (first.top - container.top + 10) + "px";
+  }
+}
+
+/* ---------------- MOVE OWL ---------------- */
+function moveOwl(index){
+
+  let owl = document.getElementById("owlGuide");
+  let nodes = document.querySelectorAll(".node");
+
+  let node = nodes[index];
+  let container = document.querySelector(".path").getBoundingClientRect();
+  let rect = node.getBoundingClientRect();
+
+  owl.style.top = (rect.top - container.top + 10) + "px";
+
+  owl.style.transform = "translate(-50%,0) scale(1.2)";
+  setTimeout(()=>{
+    owl.style.transform = "translate(-50%,0) scale(1)";
+  },300);
+}
+
+/* ---------------- OPEN SKILL ---------------- */
 function openSkill(i){
-  window.location.href = "lesson.html?s=" + i;
+
+  moveOwl(i);
+
+  setTimeout(()=>{
+    window.location.href = "lesson.html?s=" + i;
+  },400);
 }
 
+/* ---------------- INIT ---------------- */
 render();
 
 </script>

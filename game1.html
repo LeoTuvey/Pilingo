@@ -1,17 +1,77 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Game 1</title>
+<title>Lesson 1: Animals (A1 Engine)</title>
 
 <style>
-body{font-family:Arial;text-align:center;background:#f5f9ff;margin:0;padding:20px;}
-.card{background:white;max-width:550px;margin:auto;padding:20px;border-radius:15px;box-shadow:0 3px 10px rgba(0,0,0,0.1);}
-#visual{font-size:60px;margin:10px;}
-#progress{height:10px;background:#ddd;border-radius:10px;overflow:hidden;}
-#bar{height:100%;width:0%;background:#4caf50;}
-button{display:block;width:90%;margin:10px auto;padding:15px;border:none;border-radius:10px;background:#1976d2;color:white;}
-#hearts{font-size:24px;}
+body{
+font-family: Arial;
+background:#f5f9ff;
+margin:0;
+text-align:center;
+padding:20px;
+}
+
+.card{
+background:white;
+max-width:550px;
+margin:auto;
+padding:20px;
+border-radius:16px;
+box-shadow:0 3px 10px rgba(0,0,0,0.1);
+}
+
+#hearts{
+font-size:26px;
+margin-bottom:10px;
+}
+
+#progress{
+width:100%;
+height:10px;
+background:#ddd;
+border-radius:10px;
+overflow:hidden;
+margin-bottom:10px;
+}
+
+#bar{
+height:100%;
+width:0%;
+background:#58cc02;
+transition:0.3s;
+}
+
+#visual{
+font-size:70px;
+margin:10px 0;
+}
+
+button{
+width:90%;
+padding:14px;
+margin:8px auto;
+display:block;
+border:none;
+border-radius:12px;
+background:#1976d2;
+color:white;
+font-size:16px;
+cursor:pointer;
+transition:0.15s;
+}
+
+button:hover{
+transform:scale(1.02);
+background:#145ea8;
+}
+
+#feedback{
+min-height:25px;
+font-weight:bold;
+margin-top:10px;
+}
 </style>
 </head>
 
@@ -20,80 +80,197 @@ button{display:block;width:90%;margin:10px auto;padding:15px;border:none;border-
 <div class="card">
 
 <div id="hearts"></div>
+
 <div id="progress"><div id="bar"></div></div>
 
-<h2 id="question"></h2>
 <div id="visual"></div>
+
+<h2 id="question">Loading...</h2>
+
 <div id="options"></div>
+
 <div id="feedback"></div>
 
 </div>
 
 <script>
 
+/////////////////////////
+// COURSE SYSTEM
+/////////////////////////
+
 let course = localStorage.getItem("course") || "en-ku";
 
-function t(en,ku,sv){
-if(course==="en-ku") return ku;
-if(course==="en-sv") return sv;
-return en;
+function t(word){
+if(course === "en-ku") return word.ku;
+if(course === "en-sv") return word.sv;
+return word.en;
 }
 
-let hearts = 5;
+/////////////////////////
+// HEARTS
+/////////////////////////
+
+let hearts = parseInt(localStorage.getItem("hearts") || "5");
 
 function renderHearts(){
 document.getElementById("hearts").innerHTML =
 "❤️".repeat(hearts) + "🖤".repeat(5-hearts);
 }
 
-let questions=[
-{
-q:"What is this?",
-visual:"🐶",
-options:["Dog","Cat","Bird"],
-answer:0
-},
-{
-q:"What is this?",
-visual:"🐱",
-options:["Cat","Dog","Fish"],
-answer:0
-}
+/////////////////////////
+// VOCAB (from engine)
+/////////////////////////
+
+const animals = [
+{ en:"dog", ku:"kûçik", sv:"hund", emoji:"🐶" },
+{ en:"cat", ku:"pisîk", sv:"katt", emoji:"🐱" },
+{ en:"bird", ku:"teyr", sv:"fågel", emoji:"🐦" },
+{ en:"fish", ku:"masî", sv:"fisk", emoji:"🐟" },
+{ en:"cow", ku:"ga", sv:"ko", emoji:"🐄" }
 ];
 
-let current=0;
+/////////////////////////
+// GAME STATE
+/////////////////////////
+
+let current = 0;
+let questions = [];
+
+/////////////////////////
+// GENERATE QUESTIONS
+/////////////////////////
+
+function generateQuestions(){
+
+questions = [];
+
+for(let i=0;i<5;i++){
+
+let correct = animals[Math.floor(Math.random()*animals.length)];
+
+let options = [correct];
+
+// add 2 random wrong answers
+while(options.length < 3){
+let rand = animals[Math.floor(Math.random()*animals.length)];
+if(!options.includes(rand)){
+options.push(rand);
+}
+}
+
+// shuffle
+options.sort(()=>Math.random()-0.5);
+
+questions.push({
+word: correct,
+options: options
+});
+
+}
+
+}
+
+/////////////////////////
+// LOAD
+/////////////////////////
 
 function load(){
-renderHearts();
-let q=questions[current];
-document.getElementById("question").innerText=q.q;
-document.getElementById("visual").innerText=q.visual;
 
-let html="";
-q.options.forEach((o,i)=>{
-html+=`<button onclick="check(${i})">${o}</button>`;
+renderHearts();
+
+let q = questions[current];
+
+document.getElementById("visual").innerText = q.word.emoji;
+
+document.getElementById("question").innerText =
+"What is this?";
+
+let html = "";
+
+q.options.forEach((opt,i)=>{
+html += `<button onclick="check(${i})">${t(opt)}</button>`;
 });
-document.getElementById("options").innerHTML=html;
+
+document.getElementById("options").innerHTML = html;
+
+updateProgress();
+
 }
+
+/////////////////////////
+// PROGRESS
+/////////////////////////
+
+function updateProgress(){
+let percent = (current / questions.length) * 100;
+document.getElementById("bar").style.width = percent + "%";
+}
+
+/////////////////////////
+// CHECK ANSWER
+/////////////////////////
 
 function check(i){
-if(i===questions[current].answer){
+
+let q = questions[current];
+
+if(q.options[i] === q.word){
+
+document.getElementById("feedback").innerText =
+"✅ Correct!";
+
 current++;
-if(current<questions.length) load();
-else finish();
+
+if(current < questions.length){
+load();
 }else{
+finish();
+}
+
+}else{
+
 hearts--;
 renderHearts();
+
+document.getElementById("feedback").innerText =
+"❌ Try again";
+
+if(hearts <= 0){
+alert("Game Over");
+location.reload();
 }
 }
+
+}
+
+/////////////////////////
+// FINISH
+/////////////////////////
 
 function finish(){
-let xp=parseInt(localStorage.getItem(course+"_xp")||0);
-xp+=10;
-localStorage.setItem(course+"_xp",xp);
-window.location.href="engine.html";
+
+let course = localStorage.getItem("course") || "en-ku";
+let xpKey = course+"_xp";
+
+let xp = parseInt(localStorage.getItem(xpKey) || "0");
+xp += 10;
+
+localStorage.setItem(xpKey, xp);
+
+localStorage.setItem("hearts","5");
+
+setTimeout(()=>{
+window.location.href = "engine.html";
+},1200);
+
 }
 
+/////////////////////////
+// START
+/////////////////////////
+
+generateQuestions();
 load();
 
 </script>

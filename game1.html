@@ -22,6 +22,13 @@ body{
     box-shadow:0 3px 10px rgba(0,0,0,0.1);
 }
 
+img{
+    width:120px;
+    height:120px;
+    object-fit:cover;
+    margin:10px 0;
+}
+
 button{
     display:block;
     width:90%;
@@ -33,11 +40,32 @@ button{
     background:#1976d2;
     color:white;
     cursor:pointer;
+    transition:0.2s;
+}
+
+button:hover{
+    transform:scale(1.02);
 }
 
 #feedback{
     margin-top:15px;
     font-size:18px;
+    min-height:25px;
+}
+
+#progress{
+    height:10px;
+    width:100%;
+    background:#ddd;
+    border-radius:10px;
+    margin-bottom:15px;
+    overflow:hidden;
+}
+
+#bar{
+    height:10px;
+    width:0%;
+    background:#4caf50;
 }
 </style>
 </head>
@@ -48,6 +76,10 @@ button{
 
 <h2 id="question">Loading...</h2>
 
+<div id="progress"><div id="bar"></div></div>
+
+<img id="image" src="" alt="">
+
 <div id="options"></div>
 
 <div id="feedback"></div>
@@ -56,7 +88,10 @@ button{
 
 <script>
 
-/* VOICE */
+/* ======================
+   VOICE SYSTEM
+====================== */
+
 function speak(text){
     let msg = new SpeechSynthesisUtterance(text);
     msg.lang = "en-US";
@@ -64,25 +99,32 @@ function speak(text){
     speechSynthesis.speak(msg);
 }
 
-/* QUESTIONS */
+/* ======================
+   GAME DATA (with images)
+====================== */
+
 let questions = [
 {
-q:"🐱 What is this?",
+q:"What is this?",
+img:"https://cdn-icons-png.flaticon.com/512/616/616430.png",
 options:["Dog","Cat","Bird"],
 answer:1
 },
 {
-q:"🐶 What is this?",
+q:"What is this?",
+img:"https://cdn-icons-png.flaticon.com/512/616/616408.png",
 options:["Cat","Dog","Apple"],
 answer:1
 },
 {
-q:"🍎 What is this?",
+q:"What is this?",
+img:"https://cdn-icons-png.flaticon.com/512/415/415733.png",
 options:["Apple","Bird","Cat"],
 answer:0
 },
 {
-q:"🐦 What is this?",
+q:"What is this?",
+img:"https://cdn-icons-png.flaticon.com/512/616/616596.png",
 options:["Fish","Bird","Dog"],
 answer:1
 }
@@ -90,13 +132,18 @@ answer:1
 
 let current = 0;
 
+/* ======================
+   LOAD QUESTION
+====================== */
+
 function load(){
 
 let q = questions[current];
 
 document.getElementById("question").innerText = q.q;
+document.getElementById("image").src = q.img;
 
-speak("What is this?");
+speak(q.q);
 
 let html = "";
 
@@ -106,9 +153,20 @@ html += `<button onclick="check(${i})">${opt}</button>`;
 
 document.getElementById("options").innerHTML = html;
 document.getElementById("feedback").innerHTML = "";
+
+updateProgress();
+}
+
+function updateProgress(){
+let percent = (current / questions.length) * 100;
+document.getElementById("bar").style.width = percent + "%";
 }
 
 load();
+
+/* ======================
+   CHECK ANSWER
+====================== */
 
 function check(i){
 
@@ -126,13 +184,17 @@ load();
 }else{
 finishGame();
 }
-},1000);
+},800);
 
 }else{
 document.getElementById("feedback").innerHTML = "❌ Try again";
 speak("Try again");
 }
 }
+
+/* ======================
+   FINISH GAME
+====================== */
 
 function finishGame(){
 
@@ -147,6 +209,9 @@ localStorage.setItem("xp", xp);
 let unlocked = JSON.parse(localStorage.getItem("unlocked") || "[true,false,false,false,false,false,false]");
 unlocked[1] = true;
 localStorage.setItem("unlocked", JSON.stringify(unlocked));
+
+// finish progress bar
+document.getElementById("bar").style.width = "100%";
 
 // return to engine
 setTimeout(()=>{

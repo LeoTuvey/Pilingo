@@ -1,80 +1,75 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
 <title>Owl-Lingo Engine</title>
 
 <style>
 body{
-    font-family: Arial;
-    margin:0;
-    background: linear-gradient(135deg,#e3f2fd,#fce4ec);
-    text-align:center;
+font-family:Arial;
+margin:0;
+background:#f5f9ff;
+text-align:center;
 }
 
-header{
-    background:#1976d2;
-    color:white;
-    padding:15px;
-    font-size:18px;
+.card{
+max-width:550px;
+margin:auto;
+background:white;
+padding:20px;
+border-radius:15px;
+box-shadow:0 3px 10px rgba(0,0,0,0.1);
+margin-top:30px;
 }
 
-#info{
-    font-weight:bold;
-    margin:10px;
-    font-size:16px;
+#visual{
+font-size:60px;
+margin:10px;
 }
 
-.map{
-    max-width:500px;
-    margin:auto;
-    padding:20px;
+#hearts{
+font-size:24px;
 }
 
-.node{
-    width:120px;
-    height:120px;
-    margin:35px auto;
-    border-radius:50%;
-    background:white;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    flex-direction:column;
-    box-shadow:0 3px 10px rgba(0,0,0,0.2);
-    cursor:pointer;
-    transition:0.2s;
+#progress{
+height:10px;
+background:#ddd;
+border-radius:10px;
+overflow:hidden;
+margin:10px 0;
 }
 
-.node:hover{
-    transform:scale(1.05);
+#bar{
+height:100%;
+width:0%;
+background:#4caf50;
 }
 
-.locked{
-    opacity:0.3;
-    pointer-events:none;
-}
-
-.green{ border:4px solid #4caf50; }
-.orange{ border:4px solid #ff9800; }
-.blue{ border:4px solid #2196f3; }
-.purple{ border:4px solid #9c27b0; }
-
-.small{
-    font-size:12px;
-    opacity:0.7;
+button{
+display:block;
+width:90%;
+margin:10px auto;
+padding:15px;
+border:none;
+border-radius:10px;
+background:#1976d2;
+color:white;
 }
 </style>
 </head>
 
 <body>
 
-<header>🦉 Owl-Lingo Course Engine</header>
+<div class="card">
 
-<div id="info">Loading course...</div>
+<div id="hearts"></div>
+<div id="progress"><div id="bar"></div></div>
 
-<div class="map">
-<div id="levels"></div>
+<h2 id="question"></h2>
+<div id="visual"></div>
+<div id="options"></div>
+<div id="feedback"></div>
+
 </div>
 
 <script>
@@ -85,70 +80,140 @@ header{
 
 let course = localStorage.getItem("course") || "en-ku";
 
-// PRETTY COURSE NAME
-let courseName =
-course === "en-ku" ? "English → Kurdish" :
-course === "en-sv" ? "English → Swedish" :
-course;
-
-// KEYS
-let xpKey = course + "_xp";
-let unlockKey = course + "_unlocked";
-
-// DATA
-let xp = parseInt(localStorage.getItem(xpKey) || "0");
-let unlocked = JSON.parse(
-    localStorage.getItem(unlockKey) ||
-    "[true,false,false,false,false,false,false]"
-);
-
-// INFO DISPLAY
-document.getElementById("info").innerText =
-"📘 Course: " + courseName + " | ⭐ XP: " + xp;
+function t(en,ku,sv){
+if(course==="en-ku") return ku;
+if(course==="en-sv") return sv;
+return en;
+}
 
 /////////////////////////////////////
-// LEVELS
+// GLOBAL DATA (ALL LESSONS)
 /////////////////////////////////////
 
-let levels = [
-{ name:"Animals", file:"game1.html", color:"green" },
-{ name:"Actions", file:"game2.html", color:"green" },
-{ name:"This / That", file:"game3.html", color:"orange" },
-{ name:"A / An", file:"game4.html", color:"blue" },
-{ name:"Plural", file:"game5.html", color:"blue" },
-{ name:"Listening", file:"game6.html", color:"purple" },
-{ name:"Final Test", file:"game7.html", color:"purple" }
+const lessons = [
+
+{
+name:"Animals",
+questions:[
+{q:"What is this?",visual:"🐶",options:["Dog","Cat","Bird"],answer:0},
+{q:"What is this?",visual:"🐱",options:["Cat","Dog","Fish"],answer:0}
+]
+},
+
+{
+name:"Actions",
+questions:[
+{q:"What is he doing?",visual:"🍽️",options:["Eating","Sleeping","Running"],answer:0},
+{q:"What is she doing?",visual:"📖",options:["Reading","Eating","Swimming"],answer:0}
+]
+},
+
+{
+name:"This / That",
+questions:[
+{q:"What is this?",visual:"👈",options:["This","That","He"],answer:0},
+{q:"What is that?",visual:"👉",options:["This","That","She"],answer:1}
+]
+}
+
 ];
 
 /////////////////////////////////////
-// RENDER MAP
+// STATE
 /////////////////////////////////////
 
-let html = "";
+let lessonIndex = 0;
+let qIndex = 0;
+let hearts = 5;
 
-levels.forEach((lvl,i)=>{
+/////////////////////////////////////
+// UI
+/////////////////////////////////////
 
-let locked = !unlocked[i];
+function renderHearts(){
+document.getElementById("hearts").innerHTML =
+"❤️".repeat(hearts)+"🖤".repeat(5-hearts);
+}
 
-html += `
-<div class="node ${lvl.color} ${locked ? "locked":""}" onclick="go(${i})">
-<div>🦉</div>
-<div>${lvl.name}</div>
-<div class="small">Level ${i+1}</div>
-</div>
-`;
+function updateProgress(){
+let total = lessons[lessonIndex].questions.length;
+let percent = (qIndex/total)*100;
+document.getElementById("bar").style.width = percent + "%";
+}
 
+/////////////////////////////////////
+// LOAD QUESTION
+/////////////////////////////////////
+
+function load(){
+renderHearts();
+
+let q = lessons[lessonIndex].questions[qIndex];
+
+document.getElementById("question").innerText = q.q;
+document.getElementById("visual").innerText = q.visual;
+
+let html="";
+q.options.forEach((o,i)=>{
+html+=`<button onclick="check(${i})">${o}</button>`;
 });
 
-document.getElementById("levels").innerHTML = html;
-
-/////////////////////////////////////
-// NAVIGATION
-/////////////////////////////////////
-
-function go(i){
-    window.location.href = levels[i].file;
+document.getElementById("options").innerHTML=html;
+updateProgress();
 }
+
+/////////////////////////////////////
+// CHECK
+/////////////////////////////////////
+
+function check(i){
+
+let q = lessons[lessonIndex].questions[qIndex];
+
+if(i===q.answer){
+
+qIndex++;
+
+if(qIndex<lessons[lessonIndex].questions.length){
+load();
+}else{
+nextLesson();
+}
+
+}else{
+
+hearts--;
+renderHearts();
+
+if(hearts<=0){
+alert("Game Over");
+location.reload();
+}
+}
+}
+
+/////////////////////////////////////
+// NEXT LESSON
+/////////////////////////////////////
+
+function nextLesson(){
+
+lessonIndex++;
+qIndex=0;
+
+if(lessonIndex>=lessons.length){
+alert("🎉 All lessons completed!");
+return;
+}
+
+load();
+}
+
+/////////////////////////////////////
+// START
+/////////////////////////////////////
+
+load();
 
 </script>
 

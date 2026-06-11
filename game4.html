@@ -1,125 +1,61 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>Lesson 4: Articles</title>
-
-<style>
-body{
-    font-family: Arial;
-    background:#f5f9ff;
-    text-align:center;
-    margin:0;
-    padding:20px;
-}
-
-.card{
-    background:white;
-    max-width:500px;
-    margin:auto;
-    padding:20px;
-    border-radius:15px;
-    box-shadow:0 3px 10px rgba(0,0,0,0.1);
-}
-
-button{
-    display:block;
-    width:90%;
-    margin:10px auto;
-    padding:15px;
-    border:none;
-    border-radius:10px;
-    background:#1976d2;
-    color:white;
-    font-size:16px;
-    cursor:pointer;
-}
-
-#feedback{
-    margin-top:15px;
-    font-size:18px;
-}
-</style>
-</head>
-
+<html>
+<head><meta charset="UTF-8"><title>Game 4</title></head>
 <body>
 
-<div class="card">
-
-<h2 id="question">Loading...</h2>
-
-<div id="options"></div>
-
-<div id="feedback"></div>
-
-</div>
+<h2 id="q"></h2>
+<div id="opt"></div>
 
 <script>
 
-let course = localStorage.getItem("course") || "en-ku";
+let course=localStorage.getItem("course")||"en-ku";
 
-function t(en, ku, sv){
-    if(course === "en-ku") return ku;
-    if(course === "en-sv") return sv;
-    return en;
+function t(e,k,s){
+if(course==="en-ku") return k;
+if(course==="en-sv") return s;
+return e;
 }
 
-let questions = [
-{
-q: t("Choose correct article","Hilbijêre","Välj rätt artikel"),
-options:["a","an","the"],
-answer:0
-},
-{
-q: t("___ apple","___ sêv","___ äpple"),
-options:["a","an","the"],
-answer:1
+function playSound(type){
+new Audio(type==="correct"
+?"https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"
+:"https://actions.google.com/sounds/v1/cartoon/boing.ogg").play();
 }
-];
 
-let current = 0;
+let q=[{
+q:t("Choose article","Hilbijêre","Välj artikel"),
+opt:["a","an","the"],
+a:1
+}];
 
 function load(){
-let q = questions[current];
-
-document.getElementById("question").innerText = q.q;
-
-let html = "";
-
-q.options.forEach((opt,i)=>{
-html += `<button onclick="check(${i})">${opt}</button>`;
-});
-
-document.getElementById("options").innerHTML = html;
+let x=q[0];
+document.getElementById("q").innerText=x.q;
+document.getElementById("opt").innerHTML=
+x.opt.map((o,i)=>`<button onclick="check(${i})">${o}</button>`).join("");
 }
-
-load();
 
 function check(i){
-if(i === questions[current].answer){
-current++;
-if(current < questions.length){
-load();
-}else{
+if(i===q[0].a){
+playSound("correct");
 finish();
-}
-}
+}else playSound("wrong");
 }
 
 function finish(){
+let c=localStorage.getItem("course")||"en-ku";
 
-let xpKey = course + "_xp";
-let unlockKey = course + "_unlocked";
+let xp=parseInt(localStorage.getItem(c+"_xp")||"0");
+localStorage.setItem(c+"_xp",xp+10);
 
-let xp = parseInt(localStorage.getItem(xpKey) || "0");
-localStorage.setItem(xpKey, xp + 10);
+let u=JSON.parse(localStorage.getItem(c+"_unlocked")||"[true,false,false,false,false,false,false]");
+u[4]=true;
+localStorage.setItem(c+"_unlocked",JSON.stringify(u));
 
-let unlocked = JSON.parse(localStorage.getItem(unlockKey) || "[true,false,false,false,false,false,false]");
-unlocked[4] = true;
-localStorage.setItem(unlockKey, JSON.stringify(unlocked));
-
-window.location.href = "engine.html";
+window.location.href="engine.html";
 }
+
+load();
 
 </script>
 

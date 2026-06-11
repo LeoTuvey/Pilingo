@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lesson 2: Actions</title>
+
+<style>
+body{
+    font-family: Arial;
+    background:#f5f9ff;
+    text-align:center;
+    margin:0;
+    padding:20px;
+}
+
+.card{
+    background:white;
+    max-width:500px;
+    margin:auto;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 3px 10px rgba(0,0,0,0.1);
+}
+
+img{
+    width:120px;
+    height:120px;
+    margin:10px 0;
+}
+
+button{
+    display:block;
+    width:90%;
+    margin:10px auto;
+    padding:15px;
+    font-size:16px;
+    border:none;
+    border-radius:10px;
+    background:#1976d2;
+    color:white;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+button:hover{
+    transform:scale(1.02);
+}
+
+#feedback{
+    margin-top:15px;
+    font-size:18px;
+    min-height:25px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+<h2 id="question">Loading...</h2>
+
+<img id="image" src="">
+
+<div id="options"></div>
+
+<div id="feedback"></div>
+
+</div>
+
+<script>
+
+/* ======================
+   VOICE SYSTEM
+====================== */
+
+function speak(text){
+    let msg = new SpeechSynthesisUtterance(text);
+    msg.lang = "en-US";
+    msg.rate = 0.85;
+    speechSynthesis.speak(msg);
+}
+
+/* ======================
+   LESSON DATA
+====================== */
+
+let questions = [
+{
+q:"What is this action?",
+img:"https://cdn-icons-png.flaticon.com/512/4149/4149687.png",
+options:["Run","Eat","Sleep"],
+answer:0
+},
+{
+q:"What is this action?",
+img:"https://cdn-icons-png.flaticon.com/512/1147/1147808.png",
+options:["Sleep","Eat","Jump"],
+answer:1
+},
+{
+q:"What is this action?",
+img:"https://cdn-icons-png.flaticon.com/512/3062/3062634.png",
+options:["Jump","Run","Sleep"],
+answer:2
+},
+{
+q:"What is this action?",
+img:"https://cdn-icons-png.flaticon.com/512/616/616408.png",
+options:["Eat","Run","Jump"],
+answer:0
+}
+];
+
+let current = 0;
+
+/* ======================
+   LOAD QUESTION
+====================== */
+
+function load(){
+
+let q = questions[current];
+
+document.getElementById("question").innerText = q.q;
+document.getElementById("image").src = q.img;
+
+speak(q.q);
+
+let html = "";
+
+q.options.forEach((opt,i)=>{
+html += `<button onclick="check(${i})">${opt}</button>`;
+});
+
+document.getElementById("options").innerHTML = html;
+document.getElementById("feedback").innerHTML = "";
+}
+
+load();
+
+/* ======================
+   CHECK ANSWER
+====================== */
+
+function check(i){
+
+let q = questions[current];
+
+if(i === q.answer){
+document.getElementById("feedback").innerHTML = "✅ Correct!";
+speak("Correct");
+
+current++;
+
+setTimeout(()=>{
+if(current < questions.length){
+load();
+}else{
+finishGame();
+}
+},900);
+
+}else{
+document.getElementById("feedback").innerHTML = "❌ Try again";
+speak("Try again");
+}
+}
+
+/* ======================
+   FINISH GAME
+====================== */
+
+function finishGame(){
+
+speak("Great job!");
+
+// XP
+let xp = parseInt(localStorage.getItem("xp") || "0");
+xp += 10;
+localStorage.setItem("xp", xp);
+
+// unlock Game 3
+let unlocked = JSON.parse(localStorage.getItem("unlocked") || "[true,false,false,false,false,false,false]");
+unlocked[2] = true;
+localStorage.setItem("unlocked", JSON.stringify(unlocked));
+
+// return to engine
+setTimeout(()=>{
+window.location.href = "engine.html";
+},1500);
+}
+
+</script>
+
+</body>
+</html>

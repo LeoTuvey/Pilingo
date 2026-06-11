@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Owl-Lingo</title>
+<title>Owl-Lingo Engine</title>
 
 <style>
 body{
@@ -32,32 +32,20 @@ header{
     border-radius:15px;
     cursor:pointer;
     box-shadow:0 3px 10px rgba(0,0,0,0.1);
-    transition:0.2s;
 }
 
-.card:hover{
-    transform:scale(1.03);
-}
-
-.title{
-    font-size:20px;
-    font-weight:bold;
-}
-
-.small{
-    font-size:13px;
-    color:#666;
-    margin-top:5px;
+.locked{
+    opacity:0.4;
+    pointer-events:none;
 }
 
 button{
-    padding:10px 15px;
     margin-top:20px;
+    padding:10px 15px;
     border:none;
     border-radius:10px;
     background:#1976d2;
     color:white;
-    cursor:pointer;
 }
 </style>
 </head>
@@ -65,43 +53,66 @@ button{
 <body>
 
 <header>
-🦉 Owl-Lingo Engine
+🦉 Owl-Lingo
 </header>
 
 <div class="container">
 
-<h2 id="welcome">Choose your lesson path</h2>
+<h2>Choose your lesson</h2>
 
-<div class="card" onclick="startLesson()">
-<div class="title">📘 Lesson 1</div>
-<div class="small">Start your first learning game</div>
-</div>
+<div id="menu"></div>
 
-<button onclick="resetLang()">Change Language</button>
+<p>⭐ XP: <span id="xp">0</span></p>
 
 </div>
 
 <script>
 
-// get selected language
-let lang = localStorage.getItem("language");
+// XP + progress system
+let xp = parseInt(localStorage.getItem("xp") || "0");
 
-// update title based on language
-if(lang){
-document.getElementById("welcome").innerText =
-"Welcome! Language: " + lang;
+let unlocked = JSON.parse(localStorage.getItem("unlocked") || "[true,false,false,false,false,false,false]");
+
+let lessons = [
+"game1.html",
+"game2.html",
+"game3.html",
+"game4.html",
+"game5.html",
+"game6.html",
+"game7.html"
+];
+
+function render(){
+
+let html = "";
+
+lessons.forEach((g,i)=>{
+
+if(unlocked[i]){
+html += `
+<div class="card" onclick="start(${i})">
+Lesson ${i+1}
+</div>`;
+}else{
+html += `
+<div class="card locked">
+🔒 Locked
+</div>`;
 }
 
-// start first game
-function startLesson(){
-window.location.href = "game1.html";
+});
+
+document.getElementById("menu").innerHTML = html;
+document.getElementById("xp").innerText = xp;
+
 }
 
-// reset language choice
-function resetLang(){
-localStorage.removeItem("language");
-window.location.href = "index.html";
+function start(i){
+window.location.href = lessons[i];
 }
+
+render();
 
 </script>
 

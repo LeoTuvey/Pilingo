@@ -11,52 +11,126 @@ body{
   text-align:center;
   margin:0;
   padding:20px;
+  transition:0.3s;
 }
 
-#owl{ font-size:60px; }
+/* OWL */
+#owl{
+  font-size:60px;
+  margin:10px;
+  transition:0.3s;
+}
 
+.owl-happy{ transform:scale(1.2) rotate(-8deg); }
+.owl-sad{ transform:scale(0.9) rotate(8deg); }
+.owl-win{ animation:bounce 0.6s ease; }
+
+@keyframes bounce{
+  0%{transform:translateY(0);}
+  30%{transform:translateY(-10px);}
+  60%{transform:translateY(0);}
+}
+
+/* CARD */
 .card{
   background:white;
   max-width:550px;
   margin:auto;
   padding:20px;
   border-radius:15px;
+  box-shadow:0 4px 15px rgba(0,0,0,0.1);
+  transition:0.3s;
 }
 
+/* BUTTONS */
 button{
   width:90%;
   padding:14px;
   margin:10px;
   border:none;
-  border-radius:10px;
+  border-radius:12px;
   background:#1976d2;
   color:white;
   font-size:16px;
+  cursor:pointer;
+  transition:0.15s;
 }
 
-button:active{ transform:scale(0.98); }
+button:active{
+  transform:scale(0.97);
+}
 
+/* PROGRESS */
 #bar{
   height:10px;
-  background:#4caf50;
+  background:#58cc02;
   width:0%;
-  margin-bottom:10px;
+  border-radius:10px;
+  transition:0.4s;
+}
+
+/* XP POPUP */
+#xpPopup{
+  position:fixed;
+  top:20px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#58cc02;
+  color:white;
+  padding:10px 16px;
+  border-radius:20px;
+  opacity:0;
+  transition:0.3s;
+  font-weight:bold;
+}
+
+/* STREAK */
+#streak{
+  position:fixed;
+  right:15px;
+  top:15px;
+  background:#ff9800;
+  color:white;
+  padding:8px 12px;
+  border-radius:20px;
+  font-weight:bold;
+}
+
+/* COMPLETION SCREEN */
+#complete{
+  display:none;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:white;
+  text-align:center;
+  padding-top:120px;
 }
 </style>
 </head>
 
 <body>
 
+<div id="streak">🔥 0</div>
+<div id="xpPopup">+10 XP</div>
+
 <div id="owl">🦉</div>
 
 <div class="card">
 
 <h2 id="question"></h2>
-
 <div id="options"></div>
-
 <div id="bar"></div>
 
+</div>
+
+<!-- COMPLETION SCREEN -->
+<div id="complete">
+  <h1>🎉 Lesson Complete!</h1>
+  <p>You earned XP + streak boost</p>
+  <button onclick="goHome()">Continue</button>
 </div>
 
 <script src="engine-core.js"></script>
@@ -64,56 +138,58 @@ button:active{ transform:scale(0.98); }
 
 <script>
 
-const SKILL_MAP = [
-  "animals",
-  "verbs",
-  "people",
-  "food",
-  "objects",
-  "places",
-  "adjectives"
-];
+const SKILL_MAP = ["animals","verbs","people","food","objects","places","adjectives"];
 
 let course = Engine.getCourse();
-
 let hearts = Engine.getHearts();
 
-let params = new URLSearchParams(location.search);
-let skillIndex = parseInt(params.get("s") || 0);
-
-let skillKey = SKILL_MAP[skillIndex];
-let pool = VOCAB_A1[skillKey];
+let skillIndex = new URLSearchParams(location.search).get("s") || 0;
+let pool = VOCAB_A1[SKILL_MAP[skillIndex]];
 
 let questions = [];
 let current = 0;
 
-// --------------------
-// BUILD QUESTIONS
-// --------------------
-function generate(){
+/* ---------------- OWL ---------------- */
+function owl(state){
+  let o = document.getElementById("owl");
+  o.className = "";
 
+  if(state==="happy") o.classList.add("owl-happy");
+  if(state==="sad") o.classList.add("owl-sad");
+  if(state==="win") o.classList.add("owl-win");
+}
+
+/* ---------------- XP POP ---------------- */
+function xpPop(){
+  let el = document.getElementById("xpPopup");
+  el.style.opacity = 1;
+  setTimeout(()=>el.style.opacity=0,700);
+}
+
+/* ---------------- STREAK UI ---------------- */
+function streakUI(){
+  document.getElementById("streak").innerText =
+    "🔥 " + Engine.updateStreak();
+}
+
+/* ---------------- BUILD ---------------- */
+function build(){
   for(let i=0;i<5;i++){
-
     let correct = pool[Math.floor(Math.random()*pool.length)];
-
     let options = [correct];
 
-    while(options.length < 3){
+    while(options.length<3){
       let r = pool[Math.floor(Math.random()*pool.length)];
       if(!options.includes(r)) options.push(r);
     }
 
     options.sort(()=>Math.random()-0.5);
-
-    questions.push({correct, options});
+    questions.push({correct,options});
   }
 }
 
-// --------------------
-// LOAD QUESTION
-// --------------------
+/* ---------------- LOAD ---------------- */
 function load(){
-
   let q = questions[current];
 
   document.getElementById("question").innerText =
@@ -127,17 +203,18 @@ function load(){
 
   document.getElementById("options").innerHTML = html;
 
-  updateBar();
+  document.getElementById("bar").style.width =
+    (current/questions.length)*100 + "%";
 }
 
-// --------------------
-// CHECK
-// --------------------
+/* ---------------- CHECK ---------------- */
 function check(i){
 
   let q = questions[current];
 
   if(q.options[i] === q.correct){
+
+    owl("happy");
 
     current++;
 
@@ -150,44 +227,38 @@ function check(i){
   } else {
 
     hearts = Engine.loseHeart();
+    owl("sad");
 
     if(hearts <= 0){
-      alert("Game Over");
       location.reload();
     }
   }
 }
 
-// --------------------
-// PROGRESS BAR
-// --------------------
-function updateBar(){
-  document.getElementById("bar").style.width =
-    (current / questions.length) * 100 + "%";
-}
-
-// --------------------
-// FINISH
-// --------------------
+/* ---------------- FINISH ---------------- */
 function finish(){
+
+  owl("win");
 
   Engine.addXP(10);
   Engine.resetHearts();
   Engine.updateStreak();
 
-  // unlock next skill
-  let unlocked = Engine.getUnlocked();
-  unlocked[skillIndex + 1] = true;
-  Engine.saveUnlocked(unlocked);
+  xpPop();
+  streakUI();
 
+  document.getElementById("complete").style.display = "block";
+}
+
+/* ---------------- HOME ---------------- */
+function goHome(){
   window.location.href = "index.html";
 }
 
-// --------------------
-// START
-// --------------------
-generate();
+/* ---------------- INIT ---------------- */
+build();
 load();
+streakUI();
 
 </script>
 

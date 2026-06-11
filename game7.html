@@ -1,205 +1,46 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>Final Lesson: Review Challenge</title>
-
-<style>
-body{
-    font-family: Arial;
-    background:#f5f9ff;
-    text-align:center;
-    margin:0;
-    padding:20px;
-}
-
-.card{
-    background:white;
-    max-width:500px;
-    margin:auto;
-    padding:20px;
-    border-radius:15px;
-    box-shadow:0 3px 10px rgba(0,0,0,0.1);
-}
-
-button{
-    display:block;
-    width:90%;
-    margin:10px auto;
-    padding:15px;
-    font-size:16px;
-    border:none;
-    border-radius:10px;
-    background:#1976d2;
-    color:white;
-    cursor:pointer;
-    transition:0.2s;
-}
-
-button:hover{
-    transform:scale(1.02);
-}
-
-#feedback{
-    margin-top:15px;
-    font-size:18px;
-    min-height:25px;
-}
-
-#title{
-    font-size:20px;
-    font-weight:bold;
-    margin-bottom:10px;
-}
-</style>
+<title>Final Test</title>
 </head>
-
 <body>
-
-<div class="card">
-
-<div id="title">🎓 Final Review Challenge</div>
-
-<h2 id="question">Loading...</h2>
-
-<div id="options"></div>
-
-<div id="feedback"></div>
-
-</div>
 
 <script>
 
-/* ======================
-   VOICE SYSTEM
-====================== */
+let course=localStorage.getItem("course")||"en-ku";
 
-function speak(text){
-    let msg = new SpeechSynthesisUtterance(text);
-    msg.lang = "en-US";
-    msg.rate = 0.85;
-    speechSynthesis.speak(msg);
-}
-
-/* ======================
-   MIXED QUESTIONS
-====================== */
-
-let questions = [
+let q=[
 {
-q:"🐱 What is this?",
+q:"Cat",
 options:["Cat","Dog","Bird"],
-answer:0
-},
-{
-q:"🏃 What is this action?",
-options:["Run","Sleep","Eat"],
-answer:0
-},
-{
-q:"Is this near or far? 📍",
-options:["This","That"],
-answer:0
-},
-{
-q:"🍎 Choose correct article",
-options:["an apple","a apple"],
-answer:0
-},
-{
-q:"What is plural of dog?",
-options:["dogs","dog"],
-answer:0
-},
-{
-q:"🎧 Listen: apple",
-options:["Apple","Bird","Cat"],
-answer:0
-},
-{
-q:"🐦 What is this?",
-options:["Bird","Fish","Dog"],
 answer:0
 }
 ];
 
-let current = 0;
-
-/* ======================
-   LOAD QUESTION
-====================== */
-
 function load(){
-
-let q = questions[current];
-
-document.getElementById("question").innerText = q.q;
-
-speak("Question");
-
-let html = "";
-
-q.options.forEach((opt,i)=>{
-html += `<button onclick="check(${i})">${opt}</button>`;
-});
-
-document.getElementById("options").innerHTML = html;
-document.getElementById("feedback").innerHTML = "";
+let x=q[0];
+document.body.innerHTML="<h2>Final Test</h2>"+
+x.options.map((o,i)=>`<button onclick='check(${i})'>${o}</button>`).join("");
 }
-
-load();
-
-/* ======================
-   CHECK ANSWER
-====================== */
 
 function check(i){
+if(i===q[0].answer){
+finish();
+}
+}
 
-let q = questions[current];
+function finish(){
+let xpKey=course+"_xp";
+let unlockKey=course+"_unlocked";
 
-if(i === q.answer){
-document.getElementById("feedback").innerHTML = "✅ Correct!";
-speak("Correct");
+let xp=parseInt(localStorage.getItem(xpKey)||"0");
+localStorage.setItem(xpKey,xp+20);
 
-current++;
+window.location.href="engine.html";
+}
 
-setTimeout(()=>{
-if(current < questions.length){
 load();
-}else{
-finishGame();
-}
-},900);
-
-}else{
-document.getElementById("feedback").innerHTML = "❌ Try again";
-speak("Try again");
-}
-}
-
-/* ======================
-   FINISH GAME
-====================== */
-
-function finishGame(){
-
-speak("Congratulations! You finished the course!");
-
-// XP
-let xp = parseInt(localStorage.getItem("xp") || "0");
-xp += 20; // bigger reward for final lesson
-localStorage.setItem("xp", xp);
-
-// ALL DONE — reset or keep completed state
-let unlocked = JSON.parse(localStorage.getItem("unlocked") || "[true,false,false,false,false,false,false]");
-unlocked[6] = true;
-localStorage.setItem("unlocked", JSON.stringify(unlocked));
-
-// return to engine
-setTimeout(()=>{
-window.location.href = "engine.html";
-},2000);
-}
 
 </script>
 

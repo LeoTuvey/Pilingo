@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Owl-Lingo</title>
+
+<style>
+body{
+    font-family: Arial;
+    text-align:center;
+    background:linear-gradient(135deg,#e3f2fd,#fce4ec);
+    margin:0;
+    padding:40px;
+}
+
+h1{
+    margin-bottom:5px;
+}
+
+.subtitle{
+    color:#555;
+    margin-bottom:30px;
+}
+
+.card{
+    background:white;
+    padding:20px;
+    margin:15px auto;
+    max-width:350px;
+    border-radius:15px;
+    cursor:pointer;
+    box-shadow:0 3px 10px rgba(0,0,0,0.1);
+    transition:0.2s;
+}
+
+.card:hover{
+    transform:scale(1.03);
+}
+
+.small{
+    font-size:13px;
+    color:#777;
+    margin-top:5px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🦉 Owl-Lingo</h1>
+<p class="subtitle">Learn languages through games</p>
+
+<div class="card" onclick="start('english')">
+🇬🇧 English
+<div class="small">Start learning English</div>
+</div>
+
+<div class="card" onclick="start('swedish')">
+🇸🇪 Swedish
+<div class="small">Learn Swedish</div>
+</div>
+
+<div class="card" onclick="start('kurdish')">
+🟡 Kurdish
+<div class="small">Learn Kurdish</div>
+</div>
+
+<script>
+
+function start(lang){
+localStorage.setItem("language", lang);
+window.location.href = "engine.html";
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lesson 1: Animals</title>
+
+<style>
+body{
+    font-family: Arial;
+    background:#f5f9ff;
+    text-align:center;
+    margin:0;
+    padding:20px;
+}
+
+.card{
+    background:white;
+    max-width:500px;
+    margin:auto;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 3px 10px rgba(0,0,0,0.1);
+}
+
+button{
+    display:block;
+    width:90%;
+    margin:10px auto;
+    padding:15px;
+    font-size:16px;
+    border:none;
+    border-radius:10px;
+    background:#1976d2;
+    color:white;
+    cursor:pointer;
+}
+
+#feedback{
+    margin-top:15px;
+    font-size:18px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+<h2 id="question">Loading...</h2>
+
+<div id="options"></div>
+
+<div id="feedback"></div>
+
+</div>
+
+<script>
+
+/* VOICE */
+function speak(text){
+    let msg = new SpeechSynthesisUtterance(text);
+    msg.lang = "en-US";
+    msg.rate = 0.85;
+    speechSynthesis.speak(msg);
+}
+
+/* QUESTIONS */
+let questions = [
+{
+q:"🐱 What is this?",
+options:["Dog","Cat","Bird"],
+answer:1
+},
+{
+q:"🐶 What is this?",
+options:["Cat","Dog","Apple"],
+answer:1
+},
+{
+q:"🍎 What is this?",
+options:["Apple","Bird","Cat"],
+answer:0
+},
+{
+q:"🐦 What is this?",
+options:["Fish","Bird","Dog"],
+answer:1
+}
+];
+
+let current = 0;
+
+function load(){
+
+let q = questions[current];
+
+document.getElementById("question").innerText = q.q;
+
+speak("What is this?");
+
+let html = "";
+
+q.options.forEach((opt,i)=>{
+html += `<button onclick="check(${i})">${opt}</button>`;
+});
+
+document.getElementById("options").innerHTML = html;
+document.getElementById("feedback").innerHTML = "";
+}
+
+load();
+
+function check(i){
+
+let q = questions[current];
+
+if(i === q.answer){
+document.getElementById("feedback").innerHTML = "✅ Correct!";
+speak("Correct");
+
+current++;
+
+setTimeout(()=>{
+if(current < questions.length){
+load();
+}else{
+finishGame();
+}
+},1000);
+
+}else{
+document.getElementById("feedback").innerHTML = "❌ Try again";
+speak("Try again");
+}
+}
+
+function finishGame(){
+
+speak("Great job!");
+
+// XP
+let xp = parseInt(localStorage.getItem("xp") || "0");
+xp += 10;
+localStorage.setItem("xp", xp);
+
+// unlock Game 2
+let unlocked = JSON.parse(localStorage.getItem("unlocked") || "[true,false,false,false,false,false,false]");
+unlocked[1] = true;
+localStorage.setItem("unlocked", JSON.stringify(unlocked));
+
+// return to engine
+setTimeout(()=>{
+window.location.href = "engine.html";
+},1500);
+}
+
+</script>
+
+</body>
+</html>

@@ -1,33 +1,34 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Owl-Lingo Lesson</title>
+/* =====================================
+   🦉 OWL-LINGO UX LAYER (STEP 11)
+===================================== */
 
-<style>
-body{
-  font-family:Arial;
-  background:#f5f9ff;
-  text-align:center;
-  margin:0;
-  padding:20px;
-  transition:0.2s;
-}
-
-/* OWL */
+/* ---------------- OWL BASE ---------------- */
 #owl{
   font-size:60px;
   margin-top:10px;
-  transition:0.3s;
+  transition:0.3s ease;
   display:inline-block;
 }
 
-/* STATES */
-.owl-happy{ transform: scale(1.2) rotate(-10deg); }
-.owl-sad{ transform: scale(0.9) rotate(10deg); }
-.owl-celebrate{ animation: bounce 0.6s ease; }
+/* ---------------- OWL STATES ---------------- */
+#owl.happy{
+  transform:scale(1.2) rotate(-10deg);
+}
 
+#owl.sad{
+  transform:scale(0.9) rotate(10deg);
+  filter:grayscale(20%);
+}
+
+#owl.celebrate{
+  animation:bounce 0.6s ease;
+}
+
+#owl.thinking{
+  opacity:0.7;
+}
+
+/* ---------------- OWL ANIMATION ---------------- */
 @keyframes bounce{
   0%{transform:translateY(0);}
   30%{transform:translateY(-10px);}
@@ -35,7 +36,29 @@ body{
   100%{transform:translateY(-5px);}
 }
 
-/* CARD */
+/* ---------------- SCREEN FLASH: CORRECT ---------------- */
+.flash-correct{
+  animation:flashGreen 0.4s ease;
+}
+
+@keyframes flashGreen{
+  0%{background:white;}
+  50%{background:#b9f6ca;}
+  100%{background:white;}
+}
+
+/* ---------------- SCREEN FLASH: WRONG ---------------- */
+.flash-wrong{
+  animation:flashRed 0.4s ease;
+}
+
+@keyframes flashRed{
+  0%{background:white;}
+  50%{background:#ffcdd2;}
+  100%{background:white;}
+}
+
+/* ---------------- CARD POLISH ---------------- */
 .card{
   background:white;
   max-width:550px;
@@ -45,25 +68,26 @@ body{
   box-shadow:0 3px 10px rgba(0,0,0,0.1);
 }
 
-/* STREAK */
+/* ---------------- STREAK ---------------- */
 #streakBox{
   font-size:18px;
   font-weight:bold;
   margin:10px;
   color:#ff9800;
+  transition:0.2s ease;
 }
 
-/* PROGRESS */
+/* ---------------- PROGRESS BAR ---------------- */
 #bar{
   height:10px;
   background:#4caf50;
   width:0%;
-  transition:0.4s ease;
   border-radius:10px;
   margin-bottom:15px;
+  transition:0.4s ease;
 }
 
-/* BUTTONS */
+/* ---------------- BUTTONS ---------------- */
 button{
   display:block;
   width:90%;
@@ -74,15 +98,15 @@ button{
   background:#1976d2;
   color:white;
   font-size:16px;
-  transition:0.15s;
   cursor:pointer;
+  transition:0.15s ease;
 }
 
 button:active{
   transform:scale(0.96);
 }
 
-/* XP POPUP */
+/* ---------------- XP POPUP ---------------- */
 #xpPopup{
   position:fixed;
   top:20px;
@@ -94,195 +118,11 @@ button:active{
   border-radius:20px;
   font-weight:bold;
   opacity:0;
-  transition:0.4s;
-}
-</style>
-</head>
-
-<body>
-
-<!-- OWL -->
-<div id="owl">🦉</div>
-
-<!-- STREAK -->
-<div id="streakBox">🔥 Streak: 0</div>
-
-<!-- XP POPUP -->
-<div id="xpPopup">+10 XP</div>
-
-<div class="card">
-
-<h2 id="question"></h2>
-<div id="options"></div>
-<div id="bar"></div>
-
-</div>
-
-<script src="engine-core.js"></script>
-<script src="vocab_a1.js"></script>
-
-<script>
-
-/* =========================================
-   🧠 RESUME SYSTEM (STEP 9 CORE ADDITION)
-========================================= */
-let lastSkill = localStorage.getItem("lastSkill");
-
-/* =========================================
-   ENGINE STATE
-========================================= */
-let course = Engine.getCourse();
-let hearts = Engine.getHearts();
-
-/* skill from URL */
-let params = new URLSearchParams(location.search);
-let skill = params.get("s") || lastSkill || 0;
-
-/* vocabulary pool */
-function getPool(){
-  let keys = ["animals","verbs","people","food","objects","places","adjectives"];
-  return VOCAB_A1[keys[skill]] || VOCAB_A1.animals;
+  transition:0.4s ease;
 }
 
-let questions = [];
-let current = 0;
-
-/* =========================================
-   GENERATE QUESTIONS
-========================================= */
-function generate(){
-
-  let pool = getPool();
-
-  for(let i=0;i<5;i++){
-
-    let correct = pool[Math.floor(Math.random()*pool.length)];
-
-    let options = [correct];
-
-    while(options.length < 3){
-      let r = pool[Math.floor(Math.random()*pool.length)];
-      if(!options.includes(r)) options.push(r);
-    }
-
-    options.sort(()=>Math.random()-0.5);
-
-    questions.push({correct, options});
-  }
+/* ---------------- BACKGROUND FEEDBACK ---------------- */
+.flash-correct,
+.flash-wrong{
+  transition:0.2s;
 }
-
-/* =========================================
-   OWL ANIMATION
-========================================= */
-function owl(state){
-
-  let o = document.getElementById("owl");
-
-  o.classList.remove("owl-happy","owl-sad","owl-celebrate");
-
-  if(state === "happy") o.classList.add("owl-happy");
-  if(state === "sad") o.classList.add("owl-sad");
-  if(state === "win") o.classList.add("owl-celebrate");
-}
-
-/* =========================================
-   STREAK UI
-========================================= */
-function updateStreakUI(){
-  let streak = Engine.updateStreak();
-  document.getElementById("streakBox").innerText =
-    "🔥 Streak: " + streak;
-}
-
-/* =========================================
-   XP POPUP
-========================================= */
-function showXP(){
-  let el = document.getElementById("xpPopup");
-  el.style.opacity = 1;
-  setTimeout(()=> el.style.opacity = 0, 800);
-}
-
-/* =========================================
-   LOAD QUESTION
-========================================= */
-function load(){
-
-  let q = questions[current];
-
-  document.getElementById("question").innerText =
-    "Select: " + q.correct.en;
-
-  let html = "";
-
-  q.options.forEach((opt,i)=>{
-    html += `<button onclick="check(${i})">${opt.en}</button>`;
-  });
-
-  document.getElementById("options").innerHTML = html;
-
-  document.getElementById("bar").style.width =
-    (current/questions.length)*100 + "%";
-}
-
-/* =========================================
-   CHECK ANSWER
-========================================= */
-function check(i){
-
-  let q = questions[current];
-
-  if(q.options[i] === q.correct){
-
-    owl("happy");
-
-    current++;
-
-    if(current < questions.length){
-      load();
-    } else {
-      finish();
-    }
-
-  } else {
-
-    hearts = Engine.loseHeart();
-    owl("sad");
-
-    if(hearts <= 0){
-      location.reload();
-    }
-  }
-}
-
-/* =========================================
-   FINISH LESSON
-========================================= */
-function finish(){
-
-  Engine.addXP(10);
-  Engine.resetHearts();
-  Engine.updateStreak();
-
-  localStorage.setItem("lastSkill", skill);
-
-  owl("win");
-  showXP();
-  updateStreakUI();
-
-  setTimeout(()=>{
-    window.location.href = "engine.html";
-  },1200);
-}
-
-/* =========================================
-   INIT
-========================================= */
-generate();
-load();
-updateStreakUI();
-
-</script>
-
-</body>
-</html>

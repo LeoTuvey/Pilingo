@@ -8,7 +8,7 @@
 body{
     font-family: Arial;
     margin:0;
-    background:#f5f9ff;
+    background: linear-gradient(135deg,#e3f2fd,#fce4ec);
     text-align:center;
 }
 
@@ -19,136 +19,141 @@ header{
     font-size:20px;
 }
 
-.container{
+#xpBox{
+    margin:10px;
+    font-size:18px;
+    font-weight:bold;
+}
+
+.map{
     max-width:500px;
     margin:auto;
     padding:20px;
+    position:relative;
 }
 
-.card{
+/* PATH LINE */
+.line{
+    position:absolute;
+    width:4px;
+    background:#ccc;
+    top:0;
+    bottom:0;
+    left:50%;
+    transform:translateX(-50%);
+    z-index:0;
+}
+
+/* LEVEL NODE */
+.node{
+    width:120px;
+    height:120px;
+    border-radius:50%;
     background:white;
-    margin:15px 0;
-    padding:18px;
-    border-radius:15px;
+    margin:40px auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    box-shadow:0 3px 10px rgba(0,0,0,0.2);
     cursor:pointer;
-    box-shadow:0 3px 10px rgba(0,0,0,0.1);
+    position:relative;
+    z-index:1;
+    transition:0.2s;
 }
 
+.node:hover{
+    transform:scale(1.05);
+}
+
+/* LOCKED */
 .locked{
     opacity:0.4;
     pointer-events:none;
 }
 
-.lessonTitle{
-    font-size:18px;
-    font-weight:bold;
-}
+/* COLORS */
+.green{ border:4px solid #4caf50; }
+.blue{ border:4px solid #2196f3; }
+.orange{ border:4px solid #ff9800; }
+.purple{ border:4px solid #9c27b0; }
 
-.xpBox{
-    margin:15px 0;
-    font-size:18px;
+.small{
+    font-size:12px;
+    opacity:0.7;
 }
 </style>
 </head>
 
 <body>
 
-<header>
-🦉 Owl-Lingo
-</header>
+<header>🦉 Owl-Lingo Learning Path</header>
 
-<div class="container">
+<div id="xpBox">⭐ XP: 0</div>
 
-<h2>Choose your lesson</h2>
+<div class="map">
 
-<div class="xpBox">⭐ XP: <span id="xp">0</span></div>
+<div class="line"></div>
 
-<div id="menu"></div>
+<div id="levels"></div>
 
 </div>
 
 <script>
 
 /* ======================
-   LOAD DATA
+   LOAD PROGRESS
 ====================== */
 
 let xp = parseInt(localStorage.getItem("xp") || "0");
 
-let unlocked = JSON.parse(
-localStorage.getItem("unlocked") ||
-"[true,false,false,false,false,false,false]"
-);
+let unlocked = JSON.parse(localStorage.getItem("unlocked") || "[true,false,false,false,false,false,false]");
+
+document.getElementById("xpBox").innerText = "⭐ XP: " + xp;
 
 /* ======================
-   LESSON LIST (SIMPLE MODE)
+   LEVEL DATA
 ====================== */
 
-let lessons = [
-{
-name:"🐱 Lesson 1: Animals",
-file:"game1.html"
-},
-{
-name:"🐶 Lesson 2: Coming Soon",
-file:"game2.html"
-},
-{
-name:"🍎 Lesson 3: Coming Soon",
-file:"game3.html"
-},
-{
-name:"📘 Lesson 4: Coming Soon",
-file:"game4.html"
-},
-{
-name:"🎮 Lesson 5: Coming Soon",
-file:"game5.html"
-},
-{
-name:"🎤 Lesson 6: Coming Soon",
-file:"game6.html"
-},
-{
-name:"🏁 Final Lesson",
-file:"game7.html"
-}
+let levels = [
+{ name:"Animals", file:"game1.html", color:"green" },
+{ name:"Actions", file:"game2.html", color:"green" },
+{ name:"This / That", file:"game3.html", color:"orange" },
+{ name:"A / An", file:"game4.html", color:"blue" },
+{ name:"Plural", file:"game5.html", color:"blue" },
+{ name:"Listening", file:"game6.html", color:"purple" },
+{ name:"Final Test", file:"game7.html", color:"purple" }
 ];
 
 /* ======================
-   RENDER UI
+   RENDER MAP
 ====================== */
-
-function render(){
 
 let html = "";
 
-lessons.forEach((lesson,i)=>{
+levels.forEach((lvl,i)=>{
 
-if(unlocked[i]){
+let locked = !unlocked[i];
+
 html += `
-<div class="card" onclick="start(${i})">
-<div class="lessonTitle">${lesson.name}</div>
-</div>`;
-}else{
-html += `
-<div class="card locked">
-🔒 Locked
-</div>`;
-}
+<div class="node ${lvl.color} ${locked ? "locked":""}" onclick="go(${i})">
+<div>🦉</div>
+<div>${lvl.name}</div>
+<div class="small">Level ${i+1}</div>
+</div>
+`;
 
 });
 
-document.getElementById("menu").innerHTML = html;
-document.getElementById("xp").innerText = xp;
+document.getElementById("levels").innerHTML = html;
 
+/* ======================
+   NAVIGATION
+====================== */
+
+function go(i){
+    window.location.href = levels[i].file;
 }
-
-function start(i){
-window.location.href = lessons[i].file;
-}
-
-render();
 
 </script>
 

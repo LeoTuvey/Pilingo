@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lesson 4: A / An</title>
+
+<style>
+body{
+    font-family: Arial;
+    background:#f5f9ff;
+    text-align:center;
+    margin:0;
+    padding:20px;
+}
+
+.card{
+    background:white;
+    max-width:500px;
+    margin:auto;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 3px 10px rgba(0,0,0,0.1);
+}
+
+img{
+    width:140px;
+    height:140px;
+    margin:10px 0;
+}
+
+button{
+    display:block;
+    width:90%;
+    margin:10px auto;
+    padding:15px;
+    font-size:16px;
+    border:none;
+    border-radius:10px;
+    background:#1976d2;
+    color:white;
+    cursor:pointer;
+}
+
+#feedback{
+    margin-top:15px;
+    font-size:18px;
+    min-height:25px;
+}
+
+.article{
+    font-size:22px;
+    font-weight:bold;
+    margin:10px 0;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+<h2 id="question">Loading...</h2>
+
+<div class="article" id="article"></div>
+
+<img id="image" src="">
+
+<div id="options"></div>
+
+<div id="feedback"></div>
+
+</div>
+
+<script>
+
+/* ======================
+   VOICE SYSTEM
+====================== */
+
+function speak(text){
+    let msg = new SpeechSynthesisUtterance(text);
+    msg.lang = "en-US";
+    msg.rate = 0.85;
+    speechSynthesis.speak(msg);
+}
+
+/* ======================
+   LESSON DATA
+====================== */
+
+let questions = [
+{
+q:"Choose correct article",
+article:"cat 🐱",
+img:"https://cdn-icons-png.flaticon.com/512/616/616430.png",
+options:["a cat","an cat"],
+answer:0
+},
+{
+q:"Choose correct article",
+article:"apple 🍎",
+img:"https://cdn-icons-png.flaticon.com/512/415/415733.png",
+options:["a apple","an apple"],
+answer:1
+},
+{
+q:"Choose correct article",
+article:"dog 🐶",
+img:"https://cdn-icons-png.flaticon.com/512/616/616408.png",
+options:["an dog","a dog"],
+answer:1
+},
+{
+q:"Choose correct article",
+article:"bird 🐦",
+img:"https://cdn-icons-png.flaticon.com/512/616/616596.png",
+options:["a bird","an bird"],
+answer:0
+}
+];
+
+let current = 0;
+
+/* ======================
+   LOAD QUESTION
+====================== */
+
+function load(){
+
+let q = questions[current];
+
+document.getElementById("question").innerText = q.q;
+document.getElementById("article").innerText = q.article;
+document.getElementById("image").src = q.img;
+
+speak(q.q);
+
+let html = "";
+
+q.options.forEach((opt,i)=>{
+html += `<button onclick="check(${i})">${opt}</button>`;
+});
+
+document.getElementById("options").innerHTML = html;
+document.getElementById("feedback").innerHTML = "";
+}
+
+load();
+
+/* ======================
+   CHECK ANSWER
+====================== */
+
+function check(i){
+
+let q = questions[current];
+
+if(i === q.answer){
+document.getElementById("feedback").innerHTML = "✅ Correct!";
+speak("Correct");
+
+current++;
+
+setTimeout(()=>{
+if(current < questions.length){
+load();
+}else{
+finishGame();
+}
+},900);
+
+}else{
+document.getElementById("feedback").innerHTML = "❌ Try again";
+speak("Try again");
+}
+}
+
+/* ======================
+   FINISH GAME
+====================== */
+
+function finishGame(){
+
+speak("Great job!");
+
+// XP
+let xp = parseInt(localStorage.getItem("xp") || "0");
+xp += 10;
+localStorage.setItem("xp", xp);
+
+// unlock Game 5
+let unlocked = JSON.parse(localStorage.getItem("unlocked") || "[true,false,false,false,false,false,false]");
+unlocked[4] = true;
+localStorage.setItem("unlocked", JSON.stringify(unlocked));
+
+// return to engine
+setTimeout(()=>{
+window.location.href = "engine.html";
+},1500);
+}
+
+</script>
+
+</body>
+</html>

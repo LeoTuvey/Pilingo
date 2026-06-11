@@ -11,6 +11,7 @@ background:#f5f9ff;
 text-align:center;
 margin:0;
 padding:20px;
+transition:0.2s;
 }
 
 .card{
@@ -22,13 +23,17 @@ border-radius:15px;
 box-shadow:0 3px 10px rgba(0,0,0,0.1);
 }
 
+/* PROGRESS */
 #bar{
 height:10px;
 background:#4caf50;
 width:0%;
-transition:0.3s;
+transition:0.4s ease;
+border-radius:10px;
+margin-bottom:15px;
 }
 
+/* BUTTONS */
 button{
 display:block;
 width:90%;
@@ -39,11 +44,58 @@ border-radius:10px;
 background:#1976d2;
 color:white;
 font-size:16px;
+transition:0.15s;
+cursor:pointer;
 }
+
+button:active{
+transform:scale(0.96);
+}
+
+/* FEEDBACK ANIMATIONS */
+.correctFlash{
+animation:popGreen 0.4s ease;
+}
+
+.wrongShake{
+animation:shake 0.4s ease;
+}
+
+@keyframes popGreen{
+0%{background:#f5f9ff;}
+50%{background:#4caf50; transform:scale(1.03);}
+100%{background:#f5f9ff;}
+}
+
+@keyframes shake{
+0%{transform:translateX(0);}
+25%{transform:translateX(-5px);}
+50%{transform:translateX(5px);}
+75%{transform:translateX(-5px);}
+100%{transform:translateX(0);}
+}
+
+/* XP POPUP */
+#xpPopup{
+position:fixed;
+top:20px;
+left:50%;
+transform:translateX(-50%);
+background:#58cc02;
+color:white;
+padding:10px 18px;
+border-radius:20px;
+font-weight:bold;
+opacity:0;
+transition:0.4s;
+}
+
 </style>
 </head>
 
 <body>
+
+<div id="xpPopup">+10 XP</div>
 
 <div class="card">
 
@@ -66,16 +118,10 @@ let hearts = Engine.getHearts();
 let params = new URLSearchParams(location.search);
 let skill = params.get("skill");
 
-// --------------------
-// GET VOCAB BY SKILL
-// --------------------
 function getPool(){
   return VOCAB_A1[skill] || VOCAB_A1.animals;
 }
 
-// --------------------
-// QUESTION ENGINE
-// --------------------
 let questions = [];
 let current = 0;
 
@@ -102,9 +148,6 @@ questions.push({correct, options});
 
 }
 
-// --------------------
-// RENDER
-// --------------------
 function load(){
 
 let q = questions[current];
@@ -125,18 +168,27 @@ updateBar();
 }
 
 function updateBar(){
-document.getElementById("bar").style.width =
-(current/questions.length)*100 + "%";
+let bar = document.getElementById("bar");
+bar.style.width = (current/questions.length)*100 + "%";
 }
 
-// --------------------
-// CHECK
-// --------------------
+function showXP(){
+let el = document.getElementById("xpPopup");
+el.style.opacity = 1;
+
+setTimeout(()=>{
+el.style.opacity = 0;
+},800);
+}
+
 function check(i){
 
 let q = questions[current];
 
 if(q.options[i] === q.correct){
+
+document.body.classList.add("correctFlash");
+setTimeout(()=>document.body.classList.remove("correctFlash"),400);
 
 current++;
 
@@ -150,6 +202,9 @@ finish();
 
 hearts = Engine.loseHeart();
 
+document.body.classList.add("wrongShake");
+setTimeout(()=>document.body.classList.remove("wrongShake"),400);
+
 if(hearts <= 0){
 alert("Game Over");
 location.reload();
@@ -158,26 +213,20 @@ location.reload();
 
 }
 
-// --------------------
-// FINISH
-// --------------------
 function finish(){
 
 Engine.addXP(10);
 Engine.resetHearts();
-
-// unlock next skill automatically
 Engine.updateStreak();
+
+showXP();
 
 setTimeout(()=>{
 window.location.href = "engine.html";
-},800);
+},1200);
 
 }
 
-// --------------------
-// START
-// --------------------
 generate();
 load();
 

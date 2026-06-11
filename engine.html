@@ -32,11 +32,6 @@ header{
     border-radius:15px;
     cursor:pointer;
     box-shadow:0 3px 10px rgba(0,0,0,0.1);
-    transition:0.2s;
-}
-
-.card:hover{
-    transform:scale(1.03);
 }
 
 .locked{
@@ -44,7 +39,18 @@ header{
     pointer-events:none;
 }
 
-.xpBox{
+.lessonTitle{
+    font-size:18px;
+    font-weight:bold;
+}
+
+.small{
+    font-size:13px;
+    color:#666;
+    margin-top:5px;
+}
+
+.xp{
     margin:15px 0;
     font-size:18px;
 }
@@ -61,7 +67,7 @@ header{
 
 <h2>Choose your lesson</h2>
 
-<div class="xpBox">⭐ XP: <span id="xp">0</span></div>
+<div class="xp">⭐ XP: <span id="xp">0</span></div>
 
 <div id="menu"></div>
 
@@ -69,9 +75,9 @@ header{
 
 <script>
 
-/* =========================
-   LOAD DATA
-========================= */
+/* ======================
+   DATA
+====================== */
 
 let xp = parseInt(localStorage.getItem("xp") || "0");
 
@@ -80,34 +86,56 @@ localStorage.getItem("unlocked") ||
 "[true,false,false,false,false,false,false]"
 );
 
-/* =========================
-   LESSONS
-========================= */
+/* ======================
+   LESSONS (REAL STRUCTURE)
+====================== */
 
 let lessons = [
-"game1.html",
-"game2.html",
-"game3.html",
-"game4.html",
-"game5.html",
-"game6.html",
-"game7.html"
+{
+name:"🐱 Lesson 1: Animals",
+file:"game1.html"
+},
+{
+name:"🐶 Lesson 2: Coming Soon",
+file:"game2.html"
+},
+{
+name:"🍎 Lesson 3: Coming Soon",
+file:"game3.html"
+},
+{
+name:"📘 Lesson 4: Coming Soon",
+file:"game4.html"
+},
+{
+name:"🎮 Lesson 5: Coming Soon",
+file:"game5.html"
+},
+{
+name:"🎤 Lesson 6: Coming Soon",
+file:"game6.html"
+},
+{
+name:"🏁 Final Lesson",
+file:"game7.html"
+}
 ];
 
-/* =========================
-   RENDER ENGINE
-========================= */
+/* ======================
+   RENDER
+====================== */
 
 function render(){
 
 let html = "";
 
-lessons.forEach((g,i)=>{
+lessons.forEach((lesson,i)=>{
 
 if(unlocked[i]){
 html += `
 <div class="card" onclick="start(${i})">
-Lesson ${i+1}
+<div class="lessonTitle">${lesson.name}</div>
+<div class="small">Tap to start</div>
 </div>`;
 }else{
 html += `
@@ -123,42 +151,13 @@ document.getElementById("xp").innerText = xp;
 
 }
 
-/* =========================
+/* ======================
    START LESSON
-========================= */
+====================== */
 
 function start(i){
-window.location.href = lessons[i];
+window.location.href = lessons[i].file;
 }
-
-/* =========================
-   ADD XP (CALL FROM GAMES)
-========================= */
-
-function addXP(amount){
-
-xp += amount;
-localStorage.setItem("xp", xp);
-
-render();
-}
-
-/* =========================
-   UNLOCK NEXT LEVEL
-========================= */
-
-function unlockNext(level){
-
-if(level + 1 < unlocked.length){
-unlocked[level + 1] = true;
-localStorage.setItem("unlocked", JSON.stringify(unlocked));
-}
-
-}
-
-/* =========================
-   INIT
-========================= */
 
 render();
 

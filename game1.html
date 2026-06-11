@@ -1,74 +1,400 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Game 1</title>
+<title>Lesson 1: Animals</title>
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+    background:#f5f9ff;
+    text-align:center;
+    margin:0;
+    padding:20px;
+}
+
+.card{
+    background:white;
+    max-width:550px;
+    margin:auto;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 3px 10px rgba(0,0,0,0.1);
+}
+
+#hearts{
+    font-size:28px;
+    margin-bottom:10px;
+}
+
+#progress{
+    width:100%;
+    height:10px;
+    background:#ddd;
+    border-radius:10px;
+    overflow:hidden;
+    margin-bottom:15px;
+}
+
+#bar{
+    height:100%;
+    width:0%;
+    background:#4caf50;
+}
+
+img{
+    width:120px;
+    height:120px;
+    object-fit:contain;
+    margin:15px 0;
+}
+
+button{
+    display:block;
+    width:90%;
+    margin:10px auto;
+    padding:15px;
+    font-size:16px;
+    border:none;
+    border-radius:10px;
+    background:#1976d2;
+    color:white;
+    cursor:pointer;
+}
+
+button:hover{
+    opacity:0.9;
+}
+
+#feedback{
+    min-height:25px;
+    margin-top:10px;
+    font-size:18px;
+    font-weight:bold;
+}
+</style>
 </head>
+
 <body>
 
-<h2 id="q"></h2>
-<div id="opt"></div>
-<div id="fb"></div>
+<div class="card">
+
+<div id="hearts"></div>
+
+<div id="progress">
+    <div id="bar"></div>
+</div>
+
+<h2 id="question">Loading...</h2>
+
+<img id="image" src="" alt="">
+
+<div id="options"></div>
+
+<div id="feedback"></div>
+
+</div>
 
 <script>
 
+/////////////////////////////////////
+// COURSE SYSTEM
+/////////////////////////////////////
+
 let course = localStorage.getItem("course") || "en-ku";
 
-function t(en,ku,sv){
-    if(course==="en-ku") return ku;
-    if(course==="en-sv") return sv;
+function t(en, ku, sv){
+    if(course === "en-ku") return ku;
+    if(course === "en-sv") return sv;
     return en;
 }
 
+/////////////////////////////////////
+// HEARTS
+/////////////////////////////////////
+
+let hearts = parseInt(localStorage.getItem("hearts") || "5");
+
+function renderHearts(){
+
+    let html = "";
+
+    for(let i=0;i<hearts;i++){
+        html += "❤️ ";
+    }
+
+    for(let i=hearts;i<5;i++){
+        html += "🖤 ";
+    }
+
+    document.getElementById("hearts").innerHTML = html;
+}
+
+/////////////////////////////////////
+// SOUND SYSTEM
+/////////////////////////////////////
+
 function playSound(type){
-    let audio=new Audio();
-    audio.src = type==="correct"
-        ? "https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"
-        : "https://actions.google.com/sounds/v1/cartoon/boing.ogg";
+
+    let audio = new Audio();
+
+    if(type === "correct"){
+        audio.src =
+        "https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg";
+    }
+
+    if(type === "wrong"){
+        audio.src =
+        "https://actions.google.com/sounds/v1/cartoon/boing.ogg";
+    }
+
     audio.play();
 }
 
-let q=[
-{
-q:t("Cat","Pisîk","Katt"),
-opt:[t("Cat","Pisîk","Katt"),t("Dog","Kûçik","Hund"),t("Bird","Teyr","Fågel")],
-a:0
+/////////////////////////////////////
+// VOICE
+/////////////////////////////////////
+
+function speak(text){
+    let msg = new SpeechSynthesisUtterance(text);
+    msg.lang = "en-US";
+    msg.rate = 0.9;
+    speechSynthesis.speak(msg);
 }
+
+/////////////////////////////////////
+// QUESTIONS
+/////////////////////////////////////
+
+let questions = [
+
+{
+q:t("What is this?","Ev çi ye?","Vad är detta?"),
+img:"https://cdn-icons-png.flaticon.com/512/616/616430.png",
+options:[
+t("Dog","Kûçik","Hund"),
+t("Cat","Pisîk","Katt"),
+t("Bird","Teyr","Fågel")
+],
+answer:1
+},
+
+{
+q:t("What is this?","Ev çi ye?","Vad är detta?"),
+img:"https://cdn-icons-png.flaticon.com/512/616/616408.png",
+options:[
+t("Cat","Pisîk","Katt"),
+t("Dog","Kûçik","Hund"),
+t("Apple","Sêv","Äpple")
+],
+answer:1
+},
+
+{
+q:t("What is this?","Ev çi ye?","Vad är detta?"),
+img:"https://cdn-icons-png.flaticon.com/512/415/415733.png",
+options:[
+t("Apple","Sêv","Äpple"),
+t("Bird","Teyr","Fågel"),
+t("Cat","Pisîk","Katt")
+],
+answer:0
+},
+
+{
+q:t("What is this?","Ev çi ye?","Vad är detta?"),
+img:"https://cdn-icons-png.flaticon.com/512/616/616596.png",
+options:[
+t("Fish","Masî","Fisk"),
+t("Bird","Teyr","Fågel"),
+t("Dog","Kûçik","Hund")
+],
+answer:1
+}
+
 ];
 
-let i=0;
+let current = 0;
+
+/////////////////////////////////////
+// PROGRESS
+/////////////////////////////////////
+
+function updateProgress(){
+
+let percent =
+((current) / questions.length) * 100;
+
+document.getElementById("bar").style.width =
+percent + "%";
+
+}
+
+/////////////////////////////////////
+// LOAD QUESTION
+/////////////////////////////////////
 
 function load(){
-let x=q[i];
-document.getElementById("q").innerText=x.q;
 
-document.getElementById("opt").innerHTML =
-x.opt.map((o,idx)=>`<button onclick="check(${idx})">${o}</button>`).join("");
+renderHearts();
+
+updateProgress();
+
+let q = questions[current];
+
+document.getElementById("question").innerText = q.q;
+document.getElementById("image").src = q.img;
+
+speak(q.q);
+
+let html = "";
+
+q.options.forEach((opt,i)=>{
+html += `<button onclick="check(${i})">${opt}</button>`;
+});
+
+document.getElementById("options").innerHTML = html;
+document.getElementById("feedback").innerHTML = "";
 }
 
-function check(ans){
-if(ans===q[i].a){
-playSound("correct");
-finish();
+/////////////////////////////////////
+// CHECK ANSWER
+/////////////////////////////////////
+
+function check(i){
+
+let q = questions[current];
+
+if(i === q.answer){
+
+    playSound("correct");
+
+    document.getElementById("feedback").innerHTML =
+    t("✅ Correct!","✅ Rast e!","✅ Rätt!");
+
+    current++;
+
+    setTimeout(()=>{
+
+        if(current < questions.length){
+            load();
+        }else{
+            finish();
+        }
+
+    },800);
+
 }else{
-playSound("wrong");
-document.getElementById("fb").innerText="Try again";
+
+    hearts--;
+
+    localStorage.setItem("hearts", hearts);
+
+    renderHearts();
+
+    playSound("wrong");
+
+    document.getElementById("feedback").innerHTML =
+    t("❌ Try again","❌ Dîsa biceribîne","❌ Försök igen");
+
+    if(hearts <= 0){
+        gameOver();
+    }
 }
+
 }
+
+/////////////////////////////////////
+// GAME OVER
+/////////////////////////////////////
+
+function gameOver(){
+
+document.body.innerHTML = `
+
+<div class="card">
+
+<h1>💔</h1>
+
+<h2>${t(
+"Out of Hearts",
+"Hevî tune ye",
+"Inga hjärtan kvar"
+)}</h2>
+
+<button onclick="restart()">
+
+${t(
+"Try Again",
+"Dîsa Biceribîne",
+"Försök igen"
+)}
+
+</button>
+
+</div>
+
+`;
+
+}
+
+/////////////////////////////////////
+// RESTART
+/////////////////////////////////////
+
+function restart(){
+
+localStorage.setItem("hearts","5");
+
+window.location.reload();
+
+}
+
+/////////////////////////////////////
+// FINISH
+/////////////////////////////////////
 
 function finish(){
-let xpKey=course+"_xp";
-let unlockKey=course+"_unlocked";
 
-let xp=parseInt(localStorage.getItem(xpKey)||"0");
-localStorage.setItem(xpKey,xp+10);
+playSound("correct");
 
-let u=JSON.parse(localStorage.getItem(unlockKey)||"[true,false,false,false,false,false,false]");
-u[1]=true;
-localStorage.setItem(unlockKey,JSON.stringify(u));
+localStorage.setItem("hearts","5");
 
-window.location.href="engine.html";
+let xpKey = course + "_xp";
+let unlockKey = course + "_unlocked";
+
+let xp =
+parseInt(localStorage.getItem(xpKey) || "0");
+
+xp += 10;
+
+localStorage.setItem(xpKey, xp);
+
+let unlocked =
+JSON.parse(
+localStorage.getItem(unlockKey)
+||
+"[true,false,false,false,false,false,false]"
+);
+
+unlocked[1] = true;
+
+localStorage.setItem(
+unlockKey,
+JSON.stringify(unlocked)
+);
+
+document.getElementById("bar").style.width = "100%";
+
+setTimeout(()=>{
+window.location.href = "engine.html";
+},1500);
+
 }
+
+/////////////////////////////////////
+// START
+/////////////////////////////////////
 
 load();
 

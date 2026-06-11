@@ -1,61 +1,383 @@
 <!DOCTYPE html>
-<html>
-<head><meta charset="UTF-8"><title>Game 2</title></head>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lesson 2: Actions</title>
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+    background:#f5f9ff;
+    text-align:center;
+    margin:0;
+    padding:20px;
+}
+
+.card{
+    background:white;
+    max-width:550px;
+    margin:auto;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 3px 10px rgba(0,0,0,0.1);
+}
+
+#hearts{
+    font-size:28px;
+    margin-bottom:10px;
+}
+
+#progress{
+    width:100%;
+    height:10px;
+    background:#ddd;
+    border-radius:10px;
+    overflow:hidden;
+    margin-bottom:15px;
+}
+
+#bar{
+    height:100%;
+    width:0%;
+    background:#4caf50;
+}
+
+button{
+    display:block;
+    width:90%;
+    margin:10px auto;
+    padding:15px;
+    font-size:16px;
+    border:none;
+    border-radius:10px;
+    background:#1976d2;
+    color:white;
+    cursor:pointer;
+}
+
+button:hover{
+    opacity:0.9;
+}
+
+#feedback{
+    min-height:25px;
+    margin-top:10px;
+    font-size:18px;
+    font-weight:bold;
+}
+</style>
+</head>
+
 <body>
 
-<h2 id="q"></h2>
-<div id="opt"></div>
+<div class="card">
+
+<div id="hearts"></div>
+
+<div id="progress">
+    <div id="bar"></div>
+</div>
+
+<h2 id="question">Loading...</h2>
+
+<div id="options"></div>
+
+<div id="feedback"></div>
+
+</div>
 
 <script>
 
-let course=localStorage.getItem("course")||"en-ku";
+/////////////////////////////////////
+// COURSE SYSTEM
+/////////////////////////////////////
 
-function t(e,k,s){
-if(course==="en-ku") return k;
-if(course==="en-sv") return s;
-return e;
+let course = localStorage.getItem("course") || "en-ku";
+
+function t(en, ku, sv){
+    if(course === "en-ku") return ku;
+    if(course === "en-sv") return sv;
+    return en;
 }
+
+/////////////////////////////////////
+// HEARTS
+/////////////////////////////////////
+
+let hearts = parseInt(localStorage.getItem("hearts") || "5");
+
+function renderHearts(){
+
+    let html = "";
+
+    for(let i=0;i<hearts;i++){
+        html += "❤️ ";
+    }
+
+    for(let i=hearts;i<5;i++){
+        html += "🖤 ";
+    }
+
+    document.getElementById("hearts").innerHTML = html;
+}
+
+/////////////////////////////////////
+// SOUNDS
+/////////////////////////////////////
 
 function playSound(type){
-new Audio(type==="correct"
-?"https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"
-:"https://actions.google.com/sounds/v1/cartoon/boing.ogg").play();
+
+    let audio = new Audio();
+
+    if(type === "correct"){
+        audio.src =
+        "https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg";
+    }
+
+    if(type === "wrong"){
+        audio.src =
+        "https://actions.google.com/sounds/v1/cartoon/boing.ogg";
+    }
+
+    audio.play();
 }
 
-let q=[{
+/////////////////////////////////////
+// VOICE
+/////////////////////////////////////
+
+function speak(text){
+    let msg = new SpeechSynthesisUtterance(text);
+    msg.lang = "en-US";
+    msg.rate = 0.9;
+    speechSynthesis.speak(msg);
+}
+
+/////////////////////////////////////
+// QUESTIONS
+/////////////////////////////////////
+
+let questions = [
+
+{
 q:t("What is he doing?","Ew çi dike?","Vad gör han?"),
-opt:[t("Eating","Xwarin","Äter"),t("Sleeping","Razane","Sover"),t("Running","Revîn","Springer")],
-a:0
-}];
+options:[
+t("Eating","Xwarin","Äter"),
+t("Sleeping","Razane","Sover"),
+t("Running","Revîn","Springer")
+],
+answer:0
+},
+
+{
+q:t("What is she doing?","Ew çi dike?","Vad gör hon?"),
+options:[
+t("Reading","Xwendin","Läser"),
+t("Eating","Xwarin","Äter"),
+t("Swimming","Avjîn","Simmar")
+],
+answer:0
+},
+
+{
+q:t("What is the boy doing?","Kur çi dike?","Vad gör pojken?"),
+options:[
+t("Drinking","Vexwarin","Dricker"),
+t("Writing","Nivîsandin","Skriver"),
+t("Running","Revîn","Springer")
+],
+answer:2
+},
+
+{
+q:t("What is the girl doing?","Keç çi dike?","Vad gör flickan?"),
+options:[
+t("Sleeping","Razane","Sover"),
+t("Reading","Xwendin","Läser"),
+t("Eating","Xwarin","Äter")
+],
+answer:1
+}
+
+];
+
+let current = 0;
+
+/////////////////////////////////////
+// PROGRESS
+/////////////////////////////////////
+
+function updateProgress(){
+
+let percent =
+((current) / questions.length) * 100;
+
+document.getElementById("bar").style.width =
+percent + "%";
+
+}
+
+/////////////////////////////////////
+// LOAD
+/////////////////////////////////////
 
 function load(){
-let x=q[0];
-document.getElementById("q").innerText=x.q;
-document.getElementById("opt").innerHTML=
-x.opt.map((o,i)=>`<button onclick="check(${i})">${o}</button>`).join("");
+
+renderHearts();
+updateProgress();
+
+let q = questions[current];
+
+document.getElementById("question").innerText = q.q;
+
+speak(q.q);
+
+let html = "";
+
+q.options.forEach((opt,i)=>{
+html += `<button onclick="check(${i})">${opt}</button>`;
+});
+
+document.getElementById("options").innerHTML = html;
+document.getElementById("feedback").innerHTML = "";
 }
+
+/////////////////////////////////////
+// CHECK
+/////////////////////////////////////
 
 function check(i){
-if(i===q[0].a){
-playSound("correct");
-finish();
+
+let q = questions[current];
+
+if(i === q.answer){
+
+    playSound("correct");
+
+    document.getElementById("feedback").innerHTML =
+    t("✅ Correct!","✅ Rast e!","✅ Rätt!");
+
+    current++;
+
+    setTimeout(()=>{
+
+        if(current < questions.length){
+            load();
+        }else{
+            finish();
+        }
+
+    },800);
+
 }else{
-playSound("wrong");
+
+    hearts--;
+
+    localStorage.setItem("hearts", hearts);
+
+    renderHearts();
+
+    playSound("wrong");
+
+    document.getElementById("feedback").innerHTML =
+    t("❌ Try again","❌ Dîsa biceribîne","❌ Försök igen");
+
+    if(hearts <= 0){
+        gameOver();
+    }
 }
+
 }
+
+/////////////////////////////////////
+// GAME OVER
+/////////////////////////////////////
+
+function gameOver(){
+
+document.body.innerHTML = `
+
+<div class="card">
+
+<h1>💔</h1>
+
+<h2>${t(
+"Out of Hearts",
+"Hevî tune ye",
+"Inga hjärtan kvar"
+)}</h2>
+
+<button onclick="restart()">
+
+${t(
+"Try Again",
+"Dîsa Biceribîne",
+"Försök igen"
+)}
+
+</button>
+
+</div>
+
+`;
+
+}
+
+/////////////////////////////////////
+// RESTART
+/////////////////////////////////////
+
+function restart(){
+
+localStorage.setItem("hearts","5");
+
+window.location.reload();
+
+}
+
+/////////////////////////////////////
+// FINISH
+/////////////////////////////////////
 
 function finish(){
-let c=localStorage.getItem("course")||"en-ku";
 
-let xp=parseInt(localStorage.getItem(c+"_xp")||"0");
-localStorage.setItem(c+"_xp",xp+10);
+localStorage.setItem("hearts","5");
 
-let u=JSON.parse(localStorage.getItem(c+"_unlocked")||"[true,false,false,false,false,false,false]");
-u[2]=true;
-localStorage.setItem(c+"_unlocked",JSON.stringify(u));
+let xpKey = course + "_xp";
+let unlockKey = course + "_unlocked";
 
-window.location.href="engine.html";
+let xp =
+parseInt(localStorage.getItem(xpKey) || "0");
+
+xp += 10;
+
+localStorage.setItem(xpKey, xp);
+
+let unlocked =
+JSON.parse(
+localStorage.getItem(unlockKey)
+||
+"[true,false,false,false,false,false,false]"
+);
+
+unlocked[2] = true;
+
+localStorage.setItem(
+unlockKey,
+JSON.stringify(unlocked)
+);
+
+document.getElementById("bar").style.width = "100%";
+
+setTimeout(()=>{
+window.location.href = "engine.html";
+},1500);
+
 }
+
+/////////////////////////////////////
+// START
+/////////////////////////////////////
 
 load();
 

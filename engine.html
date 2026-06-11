@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Owl-Lingo</title>
+
+<style>
+body{
+    font-family: Arial;
+    margin:0;
+    background:#f5f9ff;
+    text-align:center;
+}
+
+header{
+    background:#1976d2;
+    color:white;
+    padding:15px;
+    font-size:20px;
+}
+
+.container{
+    max-width:500px;
+    margin:auto;
+    padding:20px;
+}
+
+.card{
+    background:white;
+    margin:15px 0;
+    padding:18px;
+    border-radius:15px;
+    cursor:pointer;
+    box-shadow:0 3px 10px rgba(0,0,0,0.1);
+    transition:0.2s;
+}
+
+.card:hover{
+    transform:scale(1.03);
+}
+
+.title{
+    font-size:20px;
+    font-weight:bold;
+}
+
+.small{
+    font-size:13px;
+    color:#666;
+    margin-top:5px;
+}
+
+button{
+    padding:10px 15px;
+    margin-top:20px;
+    border:none;
+    border-radius:10px;
+    background:#1976d2;
+    color:white;
+    cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+🦉 Owl-Lingo Engine
+</header>
+
+<div class="container">
+
+<h2 id="welcome">Choose your lesson path</h2>
+
+<div class="card" onclick="startLesson()">
+<div class="title">📘 Lesson 1</div>
+<div class="small">Start your first learning game</div>
+</div>
+
+<button onclick="resetLang()">Change Language</button>
+
+</div>
+
+<script>
+
+// get selected language
+let lang = localStorage.getItem("language");
+
+// update title based on language
+if(lang){
+document.getElementById("welcome").innerText =
+"Welcome! Language: " + lang;
+}
+
+// start first game
+function startLesson(){
+window.location.href = "game1.html";
+}
+
+// reset language choice
+function resetLang(){
+localStorage.removeItem("language");
+window.location.href = "index.html";
+}
+
+</script>
+
+</body>
+</html>

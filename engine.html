@@ -8,100 +8,123 @@
 body{
 margin:0;
 font-family: system-ui, Arial;
-background:#f2f7ff;
-text-align:center;
+background:#eef3ff;
 }
 
-/* TOP BAR */
+/* APP HEADER */
 header{
-background:#58cc02;
+background:linear-gradient(135deg,#58cc02,#46a302);
 color:white;
-padding:14px 16px;
+padding:16px;
 display:flex;
 justify-content:space-between;
 align-items:center;
-font-weight:bold;
 }
 
-header .left{
+.brand{
 display:flex;
 align-items:center;
 gap:10px;
+font-weight:bold;
 }
 
-.owl{
+.brand span{
 font-size:22px;
-animation:bounce 2s infinite;
 }
 
-@keyframes bounce{
-0%,100%{transform:translateY(0);}
-50%{transform:translateY(-3px);}
-}
-
-/* STATS */
-#stats{
-font-size:14px;
+.topStats{
+font-size:13px;
 opacity:0.95;
 }
 
-/* MAIN CARD */
-.card{
-max-width:520px;
-margin:25px auto;
-background:white;
-padding:25px;
-border-radius:20px;
-box-shadow:0 10px 30px rgba(0,0,0,0.08);
-animation:fadeIn 0.25s ease;
+/* APP WRAPPER */
+.app{
+max-width:480px;
+margin:0 auto;
+padding:15px;
 }
 
-@keyframes fadeIn{
-from{opacity:0;transform:translateY(8px);}
+/* NAV BAR */
+.nav{
+display:flex;
+justify-content:space-around;
+background:white;
+padding:10px;
+border-radius:14px;
+margin:10px 0;
+box-shadow:0 4px 15px rgba(0,0,0,0.06);
+}
+
+.nav button{
+border:none;
+background:none;
+font-weight:bold;
+cursor:pointer;
+color:#555;
+}
+
+/* SCREEN */
+.screen{
+display:none;
+animation:fade 0.2s ease;
+}
+
+.active{
+display:block;
+}
+
+@keyframes fade{
+from{opacity:0;transform:translateY(5px);}
 to{opacity:1;transform:translateY(0);}
 }
 
-/* VISUAL */
+/* CARD */
+.card{
+background:white;
+padding:18px;
+border-radius:18px;
+box-shadow:0 6px 20px rgba(0,0,0,0.07);
+margin-top:10px;
+}
+
+/* LESSON TILE */
+.lesson{
+padding:14px;
+border-radius:14px;
+background:#fff;
+margin:10px 0;
+box-shadow:0 4px 10px rgba(0,0,0,0.05);
+cursor:pointer;
+display:flex;
+justify-content:space-between;
+}
+
+/* GAME UI */
 #visual{
-font-size:72px;
+font-size:64px;
 margin:10px;
 }
 
-/* QUESTION */
-#question{
-font-size:20px;
-margin:10px 0;
-}
-
-/* OPTIONS */
-button{
+button.option{
 width:100%;
-padding:14px;
-margin:10px 0;
-border-radius:14px;
-border:2px solid #e5e5e5;
+padding:12px;
+margin:8px 0;
+border-radius:12px;
+border:2px solid #eee;
 background:white;
-font-size:16px;
 cursor:pointer;
 transition:0.15s;
 }
 
-button:hover{
-transform:scale(1.02);
+button.option:hover{
 border-color:#58cc02;
-}
-
-/* FEEDBACK */
-#feedback{
-min-height:22px;
-font-weight:bold;
-margin-top:8px;
+transform:scale(1.02);
 }
 
 /* PROGRESS */
 #progress{
-height:12px;
-background:#e6e6e6;
+height:10px;
+background:#ddd;
 border-radius:10px;
 overflow:hidden;
 margin:10px 0;
@@ -114,7 +137,7 @@ background:#58cc02;
 transition:0.3s;
 }
 
-/* XP POPUP */
+/* XP POP */
 #xpPopup{
 position:fixed;
 top:20px;
@@ -123,33 +146,35 @@ background:#58cc02;
 color:white;
 padding:10px 14px;
 border-radius:12px;
-font-weight:bold;
 display:none;
-animation:pop 0.6s ease;
+font-weight:bold;
 }
 
-@keyframes pop{
-0%{transform:scale(0);}
-50%{transform:scale(1.2);}
-100%{transform:scale(1);}
+/* STATS BOX */
+.statBox{
+display:flex;
+justify-content:space-between;
+margin:10px 0;
+font-size:14px;
+color:#444;
 }
 
 /* HEARTS */
 #hearts{
-font-size:22px;
-margin-top:5px;
+font-size:20px;
+margin:5px 0;
 }
 
-/* SCREEN SHAKE (wrong answer feel) */
-.shake{
-animation:shake 0.2s;
-}
-
-@keyframes shake{
-0%{transform:translateX(0);}
-25%{transform:translateX(-5px);}
-50%{transform:translateX(5px);}
-100%{transform:translateX(0);}
+/* BUTTON PRIMARY */
+.primary{
+background:#58cc02;
+color:white;
+padding:12px;
+border:none;
+border-radius:14px;
+width:100%;
+font-weight:bold;
+cursor:pointer;
 }
 </style>
 </head>
@@ -157,18 +182,61 @@ animation:shake 0.2s;
 <body>
 
 <header>
-<div class="left">
-<div class="owl">🦉</div>
-<div>Owl-Lingo</div>
+<div class="brand">
+<span>🦉</span> Owl-Lingo
 </div>
-<div id="stats">⭐ XP: 0 | 🔥 0</div>
+<div class="topStats" id="topStats">XP: 0 | 🔥 0</div>
 </header>
 
-<div id="hearts"></div>
+<div class="app">
+
+<!-- NAV -->
+<div class="nav">
+<button onclick="show('home')">Home</button>
+<button onclick="show('lessons')">Lessons</button>
+<button onclick="show('profile')">Profile</button>
+</div>
 
 <div id="xpPopup">+10 XP</div>
 
+<!-- HOME -->
+<div id="home" class="screen active">
 <div class="card">
+<h2>Welcome 👋</h2>
+<p>Continue your learning streak!</p>
+<button class="primary" onclick="startLesson()">Start Learning</button>
+</div>
+</div>
+
+<!-- LESSONS -->
+<div id="lessons" class="screen">
+
+<div class="lesson" onclick="startLesson(0)">
+Animals 🐶
+<span>▶</span>
+</div>
+
+<div class="lesson" onclick="startLesson(1)">
+Actions 🏃
+<span>▶</span>
+</div>
+
+<div class="lesson" onclick="startLesson(2)">
+This / That 👉
+<span>▶</span>
+</div>
+
+</div>
+
+<!-- GAME -->
+<div id="game" class="screen">
+
+<div class="card">
+
+<div class="statBox">
+<div id="hearts"></div>
+<div id="xpMini"></div>
+</div>
 
 <div id="progress"><div id="bar"></div></div>
 
@@ -176,35 +244,33 @@ animation:shake 0.2s;
 <h2 id="question"></h2>
 
 <div id="options"></div>
-<div id="feedback"></div>
+</div>
+
+</div>
+
+<!-- PROFILE -->
+<div id="profile" class="screen">
+<div class="card">
+<h2>Profile</h2>
+<div id="stats"></div>
+</div>
+</div>
 
 </div>
 
 <script>
 
-///////////////////////
-// COURSE SYSTEM
-///////////////////////
-
 let course = localStorage.getItem("course") || "en-ku";
-
-///////////////////////
-// STATE
-///////////////////////
-
-let lessonIndex = 0;
-let qIndex = 0;
-let hearts = 5;
 
 let xpKey = course+"_xp";
 let streakKey = course+"_streak";
 
-let xp = parseInt(localStorage.getItem(xpKey) || "0");
-let streak = parseInt(localStorage.getItem(streakKey) || "0");
+let xp = parseInt(localStorage.getItem(xpKey) || 0);
+let streak = parseInt(localStorage.getItem(streakKey) || 0);
 
-///////////////////////
-// DATA
-///////////////////////
+let lessonIndex = 0;
+let qIndex = 0;
+let hearts = 5;
 
 const lessons = [
 {
@@ -217,29 +283,28 @@ questions:[
 {
 name:"Actions",
 questions:[
-{q:"What is he doing?",visual:"🍽️",options:["Eating","Sleeping","Running"],answer:0},
-{q:"What is she doing?",visual:"📖",options:["Reading","Eating","Swimming"],answer:0}
+{q:"What is he doing?",visual:"🏃",options:["Running","Eating","Sleeping"],answer:0}
 ]
 },
 {
 name:"This / That",
 questions:[
-{q:"What is this?",visual:"👈",options:["This","That","He"],answer:0},
-{q:"What is that?",visual:"👉",options:["This","That","She"],answer:1}
+{q:"What is this?",visual:"👈",options:["This","That","He"],answer:0}
 ]
 }
 ];
 
-///////////////////////
-// UI HELPERS
-///////////////////////
-
-function updateStats(){
-document.getElementById("stats").innerText =
-"⭐ XP: " + xp + " | 🔥 " + streak;
+function show(id){
+document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+document.getElementById(id).classList.add("active");
 }
 
-function showXP(){
+function updateTop(){
+document.getElementById("topStats").innerText =
+"XP: "+xp+" | 🔥 "+streak;
+}
+
+function popup(){
 let p=document.getElementById("xpPopup");
 p.style.display="block";
 setTimeout(()=>p.style.display="none",700);
@@ -250,106 +315,70 @@ document.getElementById("hearts").innerHTML =
 "❤️".repeat(hearts)+"🖤".repeat(5-hearts);
 }
 
-function updateProgress(){
-let total = lessons[lessonIndex].questions.length;
-let percent = (qIndex/total)*100;
-document.getElementById("bar").style.width = percent + "%";
+function startLesson(i=0){
+lessonIndex=i;
+qIndex=0;
+hearts=5;
+show("game");
+load();
 }
 
-///////////////////////
-// LOAD QUESTION
-///////////////////////
-
 function load(){
-
-document.body.classList.remove("shake");
-
-updateStats();
 renderHearts();
 
 let q = lessons[lessonIndex].questions[qIndex];
 
-document.getElementById("question").innerText = q.q;
-document.getElementById("visual").innerText = q.visual;
+document.getElementById("visual").innerText=q.visual;
+document.getElementById("question").innerText=q.q;
 
 let html="";
 q.options.forEach((o,i)=>{
-html+=`<button onclick="check(${i})">${o}</button>`;
+html+=`<button class="option" onclick="check(${i})">${o}</button>`;
 });
 
 document.getElementById("options").innerHTML=html;
-document.getElementById("feedback").innerHTML="";
 
-updateProgress();
+let percent=(qIndex/q.options.length)*100;
+document.getElementById("bar").style.width=percent+"%";
 }
 
-///////////////////////
-// CHECK ANSWER
-///////////////////////
-
 function check(i){
-
 let q = lessons[lessonIndex].questions[qIndex];
 
 if(i===q.answer){
 
-xp += 10;
+xp+=10;
 localStorage.setItem(xpKey,xp);
-
-showXP();
+popup();
 
 qIndex++;
 
 if(qIndex<lessons[lessonIndex].questions.length){
 load();
 }else{
-nextLesson();
+finish();
 }
 
 }else{
-
 hearts--;
 renderHearts();
-
-document.body.classList.add("shake");
-
-document.getElementById("feedback").innerText =
-"❌ Try again";
-
 if(hearts<=0){
 alert("Game Over");
-location.reload();
+show("home");
 }
 }
 
-updateStats();
+updateTop();
 }
 
-///////////////////////
-// NEXT LESSON
-///////////////////////
-
-function nextLesson(){
-
-lessonIndex++;
-qIndex=0;
-
+function finish(){
 streak++;
 localStorage.setItem(streakKey,streak);
-
-if(lessonIndex>=lessons.length){
-alert("🎉 You completed Owl-Lingo!");
-return;
+show("home");
+updateTop();
 }
 
-load();
-}
-
-///////////////////////
-// START
-///////////////////////
-
-load();
+updateTop();
 
 </script>
 

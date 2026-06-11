@@ -1,120 +1,135 @@
-// =====================================
-// 🦉 OWL-LINGO PROGRESSION ENGINE
-// =====================================
-
 const Engine = {
 
-  /* ---------------- COURSE ---------------- */
-  getCourse(){
-    return localStorage.getItem("course") || "en-ku";
-  },
+/* =========================
+   COURSE
+========================= */
+getCourse(){
+  return localStorage.getItem("course") || "en-ku";
+},
 
-  /* ---------------- GLOBAL XP ---------------- */
-  getXP(){
-    let c = this.getCourse();
-    return parseInt(localStorage.getItem(c+"_xp") || "0");
-  },
+/* =========================
+   XP + LEVEL SYSTEM
+========================= */
+getXP(){
+  let c = this.getCourse();
+  return parseInt(localStorage.getItem(c+"_xp") || "0");
+},
 
-  addXP(v){
-    let c = this.getCourse();
-    let key = c+"_xp";
-    let xp = parseInt(localStorage.getItem(key) || "0");
-    localStorage.setItem(key, xp + v);
-  },
+addXP(v){
+  let c = this.getCourse();
+  let key = c+"_xp";
+  let xp = this.getXP();
+  xp += v;
+  localStorage.setItem(key, xp);
+},
 
-  /* ---------------- HEARTS ---------------- */
-  getHearts(){
-    return parseInt(localStorage.getItem("hearts") || "5");
-  },
+getLevel(){
+  let xp = this.getXP();
+  return Math.floor(xp / 50) + 1;
+},
 
-  loseHeart(){
-    let h = this.getHearts() - 1;
-    localStorage.setItem("hearts", h);
-    return h;
-  },
+/* =========================
+   HEARTS
+========================= */
+getHearts(){
+  return parseInt(localStorage.getItem("hearts") || "5");
+},
 
-  resetHearts(){
-    localStorage.setItem("hearts","5");
-  },
+loseHeart(){
+  let h = this.getHearts() - 1;
+  localStorage.setItem("hearts", h);
+  return h;
+},
 
-  /* ---------------- STREAK ---------------- */
-  updateStreak(){
+resetHearts(){
+  localStorage.setItem("hearts","5");
+},
 
-    let today = new Date().toDateString();
-    let last = localStorage.getItem("lastDay");
-    let streak = parseInt(localStorage.getItem("streak") || "0");
+/* =========================
+   STREAK SYSTEM
+========================= */
+updateStreak(){
 
-    if(last !== today){
+  let today = new Date().toDateString();
+  let last = localStorage.getItem("lastDay");
+  let streak = parseInt(localStorage.getItem("streak") || "0");
 
-      if(last){
-        let diff = (new Date(today)-new Date(last))/(1000*60*60*24);
-        streak = (diff === 1) ? streak + 1 : 1;
-      } else {
-        streak = 1;
-      }
+  if(last !== today){
 
-      localStorage.setItem("streak", streak);
-      localStorage.setItem("lastDay", today);
+    if(last){
+      let diff = (new Date(today)-new Date(last))/(1000*60*60*24);
+      streak = (diff === 1) ? streak + 1 : 1;
+    } else {
+      streak = 1;
     }
 
-    return streak;
-  },
-
-  /* ---------------- SKILL PROGRESS ---------------- */
-  getSkillState(index){
-    let key = "skill_"+index;
-    return parseInt(localStorage.getItem(key) || "0");
-  },
-
-  setSkillState(index, value){
-    localStorage.setItem("skill_"+index, value);
-  },
-
-  upgradeSkill(index){
-
-    let state = this.getSkillState(index);
-
-    if(state < 4){
-      state++;
-      this.setSkillState(index, state);
-    }
-
-    return state;
-  },
-
-  /* ---------------- SKILL XP ---------------- */
-  addSkillXP(skillId, amount){
-
-    let key = skillId + "_xp";
-    let xp = parseInt(localStorage.getItem(key) || "0");
-
-    localStorage.setItem(key, xp + amount);
-  },
-
-  getSkillXP(skillId){
-    return parseInt(localStorage.getItem(skillId+"_xp") || "0");
-  },
-
-  /* ---------------- ADAPTIVE WEIGHT SYSTEM ---------------- */
-  getWeakWeight(word){
-
-    // simulate weakness tracking
-    let wrong = parseInt(localStorage.getItem(word.en+"_wrong") || "0");
-    let correct = parseInt(localStorage.getItem(word.en+"_correct") || "0");
-
-    return Math.max(1, wrong - correct);
-  },
-
-  markCorrect(word){
-    let key = word.en+"_correct";
-    let v = parseInt(localStorage.getItem(key) || "0");
-    localStorage.setItem(key, v+1);
-  },
-
-  markWrong(word){
-    let key = word.en+"_wrong";
-    let v = parseInt(localStorage.getItem(key) || "0");
-    localStorage.setItem(key, v+1);
+    localStorage.setItem("streak", streak);
+    localStorage.setItem("lastDay", today);
   }
+
+  return streak;
+},
+
+/* =========================
+   SKILL MASTERY SYSTEM
+========================= */
+getSkillState(index){
+  return parseInt(localStorage.getItem("skill_"+index) || "0");
+},
+
+setSkillState(index, value){
+  localStorage.setItem("skill_"+index, value);
+},
+
+upgradeSkill(index){
+
+  let s = this.getSkillState(index);
+
+  if(s < 4){
+    s++;
+    this.setSkillState(index, s);
+  }
+
+  return s;
+},
+
+/* =========================
+   WORD MEMORY TRACKING
+========================= */
+markCorrect(word){
+  let key = word.en+"_c";
+  let v = parseInt(localStorage.getItem(key) || "0");
+  localStorage.setItem(key, v+1);
+},
+
+markWrong(word){
+  let key = word.en+"_w";
+  let v = parseInt(localStorage.getItem(key) || "0");
+  localStorage.setItem(key, v+1);
+},
+
+getWeakScore(word){
+  let c = parseInt(localStorage.getItem(word.en+"_c") || "0");
+  let w = parseInt(localStorage.getItem(word.en+"_w") || "0");
+  return Math.max(1, w - c);
+},
+
+/* =========================
+   REVIEW SYSTEM (IMPORTANT)
+========================= */
+getReviewWords(pool){
+
+  let weighted = [];
+
+  pool.forEach(w=>{
+    let weight = this.getWeakScore(w);
+
+    for(let i=0;i<weight;i++){
+      weighted.push(w);
+    }
+  });
+
+  return weighted.length > 0 ? weighted : pool;
+}
 
 };

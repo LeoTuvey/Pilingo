@@ -1,49 +1,28 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
 <title>Owl-Lingo Lesson</title>
 
 <style>
 body{
-  font-family: Arial;
+  font-family:Arial;
   background:#f5f9ff;
   text-align:center;
   margin:0;
   padding:20px;
-  transition:0.2s;
 }
 
-/* OWL */
-#owl{
-  font-size:65px;
-  margin:10px;
-  display:inline-block;
-  transition:0.3s;
-}
+#owl{ font-size:60px; }
 
-.owl-happy{ transform: scale(1.2) rotate(-8deg); }
-.owl-sad{ transform: scale(0.9) rotate(8deg); }
-.owl-win{ animation: bounce 0.6s ease; }
-
-@keyframes bounce{
-  0%{transform:translateY(0);}
-  40%{transform:translateY(-10px);}
-  70%{transform:translateY(0);}
-  100%{transform:translateY(-5px);}
-}
-
-/* CARD */
 .card{
   background:white;
   max-width:550px;
   margin:auto;
   padding:20px;
   border-radius:15px;
-  box-shadow:0 3px 10px rgba(0,0,0,0.1);
 }
 
-/* BUTTONS */
 button{
   width:90%;
   padding:14px;
@@ -53,78 +32,15 @@ button{
   background:#1976d2;
   color:white;
   font-size:16px;
-  cursor:pointer;
-  transition:0.15s;
 }
 
-button:active{
-  transform:scale(0.96);
-}
-
-/* STREAK */
-#streak{
-  font-weight:bold;
-  color:#ff9800;
-}
-
-/* HEARTS */
-#hearts{
-  font-size:20px;
-  margin:10px;
-}
-
-/* PROGRESS */
-#progress{
-  height:10px;
-  background:#ddd;
-  border-radius:10px;
-  margin:10px 0;
-  overflow:hidden;
-}
+button:active{ transform:scale(0.98); }
 
 #bar{
-  height:100%;
-  width:0%;
+  height:10px;
   background:#4caf50;
-  transition:0.4s ease;
-}
-
-/* XP POPUP */
-#xpPopup{
-  position:fixed;
-  top:20px;
-  left:50%;
-  transform:translateX(-50%);
-  background:#58cc02;
-  color:white;
-  padding:10px 18px;
-  border-radius:20px;
-  font-weight:bold;
-  opacity:0;
-  transition:0.3s;
-}
-
-/* FEEDBACK EFFECTS */
-.correctFlash{
-  animation: greenFlash 0.4s ease;
-}
-
-.wrongShake{
-  animation: shake 0.4s ease;
-}
-
-@keyframes greenFlash{
-  0%{background:#f5f9ff;}
-  50%{background:#4caf50;}
-  100%{background:#f5f9ff;}
-}
-
-@keyframes shake{
-  0%{transform:translateX(0);}
-  25%{transform:translateX(-5px);}
-  50%{transform:translateX(5px);}
-  75%{transform:translateX(-5px);}
-  100%{transform:translateX(0);}
+  width:0%;
+  margin-bottom:10px;
 }
 </style>
 </head>
@@ -132,88 +48,52 @@ button:active{
 <body>
 
 <div id="owl">🦉</div>
-<div id="streak">🔥 Streak: 0</div>
-<div id="hearts">❤️❤️❤️❤️❤️</div>
-
-<div id="xpPopup">+10 XP</div>
 
 <div class="card">
 
 <h2 id="question"></h2>
 
-<div id="progress">
-  <div id="bar"></div>
-</div>
-
 <div id="options"></div>
 
+<div id="bar"></div>
+
 </div>
 
+<script src="engine-core.js"></script>
 <script src="vocab_a1.js"></script>
 
 <script>
 
+const SKILL_MAP = [
+  "animals",
+  "verbs",
+  "people",
+  "food",
+  "objects",
+  "places",
+  "adjectives"
+];
+
+let course = Engine.getCourse();
+
+let hearts = Engine.getHearts();
+
 let params = new URLSearchParams(location.search);
-let skillIndex = parseInt(params.get("s") || "0");
+let skillIndex = parseInt(params.get("s") || 0);
 
-const skills = Object.keys(VOCAB_A1).filter(k => k !== "meta");
-let skill = skills[skillIndex];
-let pool = VOCAB_A1[skill];
+let skillKey = SKILL_MAP[skillIndex];
+let pool = VOCAB_A1[skillKey];
 
-let hearts = 5;
-let xp = 0;
-let current = 0;
 let questions = [];
+let current = 0;
 
-/* ---------------- OWL ---------------- */
-function owl(state){
-  let o = document.getElementById("owl");
-
-  o.classList.remove("owl-happy","owl-sad","owl-win");
-
-  if(state === "happy") o.classList.add("owl-happy");
-  if(state === "sad") o.classList.add("owl-sad");
-  if(state === "win") o.classList.add("owl-win");
-}
-
-/* ---------------- STREAK ---------------- */
-function updateStreak(){
-  let today = new Date().toDateString();
-  let last = localStorage.getItem("lastDay");
-  let streak = parseInt(localStorage.getItem("streak") || "0");
-
-  if(last !== today){
-    if(last){
-      let diff = (new Date(today) - new Date(last)) / 86400000;
-      streak = diff === 1 ? streak + 1 : 1;
-    } else {
-      streak = 1;
-    }
-
-    localStorage.setItem("streak", streak);
-    localStorage.setItem("lastDay", today);
-  }
-
-  document.getElementById("streak").innerText =
-    "🔥 Streak: " + streak;
-}
-
-/* ---------------- XP POPUP ---------------- */
-function showXP(){
-  let el = document.getElementById("xpPopup");
-  el.style.opacity = 1;
-  setTimeout(()=> el.style.opacity = 0, 800);
-}
-
-/* ---------------- HEARTS ---------------- */
-function renderHearts(){
-  document.getElementById("hearts").innerText =
-    "❤️".repeat(hearts) + "🖤".repeat(5-hearts);
-}
-
-/* ---------------- GENERATE ---------------- */
+// --------------------
+// BUILD QUESTIONS
+// --------------------
 function generate(){
+
   for(let i=0;i<5;i++){
+
     let correct = pool[Math.floor(Math.random()*pool.length)];
 
     let options = [correct];
@@ -229,12 +109,15 @@ function generate(){
   }
 }
 
-/* ---------------- LOAD ---------------- */
+// --------------------
+// LOAD QUESTION
+// --------------------
 function load(){
+
   let q = questions[current];
 
   document.getElementById("question").innerText =
-    "Select: " + q.correct.en;
+    "Translate: " + q.correct.en;
 
   let html = "";
 
@@ -247,28 +130,16 @@ function load(){
   updateBar();
 }
 
-/* ---------------- BAR ---------------- */
-function updateBar(){
-  document.getElementById("bar").style.width =
-    (current / questions.length) * 100 + "%";
-}
-
-/* ---------------- CHECK ---------------- */
+// --------------------
+// CHECK
+// --------------------
 function check(i){
 
   let q = questions[current];
 
   if(q.options[i] === q.correct){
 
-    owl("happy");
-
-    document.body.classList.add("correctFlash");
-    setTimeout(()=>document.body.classList.remove("correctFlash"),400);
-
-    xp += 10;
     current++;
-
-    showXP();
 
     if(current < questions.length){
       load();
@@ -278,13 +149,7 @@ function check(i){
 
   } else {
 
-    owl("sad");
-
-    hearts--;
-    renderHearts();
-
-    document.body.classList.add("wrongShake");
-    setTimeout(()=>document.body.classList.remove("wrongShake"),400);
+    hearts = Engine.loseHeart();
 
     if(hearts <= 0){
       alert("Game Over");
@@ -293,26 +158,35 @@ function check(i){
   }
 }
 
-/* ---------------- FINISH ---------------- */
-function finish(){
-
-  owl("win");
-
-  localStorage.setItem("xp",
-    parseInt(localStorage.getItem("xp")||0) + xp
-  );
-
-  updateStreak();
-
-  setTimeout(()=>{
-    window.location.href = "index.html";
-  },1200);
+// --------------------
+// PROGRESS BAR
+// --------------------
+function updateBar(){
+  document.getElementById("bar").style.width =
+    (current / questions.length) * 100 + "%";
 }
 
-/* ---------------- START ---------------- */
+// --------------------
+// FINISH
+// --------------------
+function finish(){
+
+  Engine.addXP(10);
+  Engine.resetHearts();
+  Engine.updateStreak();
+
+  // unlock next skill
+  let unlocked = Engine.getUnlocked();
+  unlocked[skillIndex + 1] = true;
+  Engine.saveUnlocked(unlocked);
+
+  window.location.href = "index.html";
+}
+
+// --------------------
+// START
+// --------------------
 generate();
-renderHearts();
-updateStreak();
 load();
 
 </script>

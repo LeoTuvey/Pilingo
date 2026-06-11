@@ -2,37 +2,100 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Owl-Lingo Engine</title>
+<title>Owl-Lingo</title>
 
 <style>
 body{
-font-family:Arial;
+font-family: system-ui, Arial;
 margin:0;
-background:#f5f9ff;
+background:#f1f7ff;
 text-align:center;
 }
 
-.card{
-max-width:550px;
-margin:auto;
-background:white;
-padding:20px;
-border-radius:15px;
-box-shadow:0 3px 10px rgba(0,0,0,0.1);
-margin-top:30px;
+/* HEADER */
+header{
+background:#58cc02;
+color:white;
+padding:15px;
+font-size:20px;
+font-weight:bold;
+display:flex;
+justify-content:space-between;
+align-items:center;
 }
 
-#visual{
-font-size:60px;
-margin:10px;
+header .left{
+display:flex;
+align-items:center;
+gap:10px;
 }
 
-#hearts{
+header .owl{
 font-size:24px;
 }
 
+/* STATS */
+#stats{
+font-size:14px;
+}
+
+/* CARD */
+.card{
+max-width:520px;
+margin:25px auto;
+background:white;
+padding:25px;
+border-radius:18px;
+box-shadow:0 8px 20px rgba(0,0,0,0.08);
+animation:fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn{
+from{opacity:0;transform:translateY(10px);}
+to{opacity:1;transform:translateY(0);}
+}
+
+/* VISUAL */
+#visual{
+font-size:70px;
+margin:15px;
+}
+
+/* QUESTION */
+#question{
+font-size:20px;
+margin:10px 0;
+}
+
+/* BUTTONS */
+button{
+display:block;
+width:100%;
+margin:10px 0;
+padding:14px;
+border-radius:14px;
+border:2px solid #e5e5e5;
+background:white;
+font-size:16px;
+cursor:pointer;
+transition:0.15s;
+}
+
+button:hover{
+transform:scale(1.02);
+border-color:#58cc02;
+}
+
+/* FEEDBACK */
+#feedback{
+min-height:20px;
+font-weight:bold;
+margin-top:10px;
+}
+
+/* PROGRESS */
 #progress{
-height:10px;
+height:12px;
 background:#ddd;
 border-radius:10px;
 overflow:hidden;
@@ -42,31 +105,51 @@ margin:10px 0;
 #bar{
 height:100%;
 width:0%;
-background:#4caf50;
+background:#58cc02;
+transition:0.3s;
 }
 
-button{
-display:block;
-width:90%;
-margin:10px auto;
-padding:15px;
-border:none;
-border-radius:10px;
-background:#1976d2;
+/* XP POPUP */
+#xpPopup{
+position:fixed;
+top:20px;
+right:20px;
+background:#58cc02;
 color:white;
+padding:10px 15px;
+border-radius:12px;
+display:none;
+font-weight:bold;
+animation:pop 0.6s ease;
+}
+
+@keyframes pop{
+0%{transform:scale(0);}
+50%{transform:scale(1.2);}
+100%{transform:scale(1);}
 }
 </style>
 </head>
 
 <body>
 
+<header>
+<div class="left">
+<div class="owl">🦉</div>
+<div>Owl-Lingo</div>
+</div>
+<div id="stats">⭐ XP: 0 | 🔥 0</div>
+</header>
+
+<div id="xpPopup">+10 XP</div>
+
 <div class="card">
 
-<div id="hearts"></div>
 <div id="progress"><div id="bar"></div></div>
 
-<h2 id="question"></h2>
 <div id="visual"></div>
+<h2 id="question"></h2>
+
 <div id="options"></div>
 <div id="feedback"></div>
 
@@ -74,24 +157,31 @@ color:white;
 
 <script>
 
-/////////////////////////////////////
+///////////////////////
 // COURSE SYSTEM
-/////////////////////////////////////
+///////////////////////
 
 let course = localStorage.getItem("course") || "en-ku";
 
-function t(en,ku,sv){
-if(course==="en-ku") return ku;
-if(course==="en-sv") return sv;
-return en;
-}
+///////////////////////
+// STATE
+///////////////////////
 
-/////////////////////////////////////
-// GLOBAL DATA (ALL LESSONS)
-/////////////////////////////////////
+let lessonIndex = 0;
+let qIndex = 0;
+let hearts = 5;
+
+let xpKey = course+"_xp";
+let streakKey = course+"_streak";
+
+let xp = parseInt(localStorage.getItem(xpKey) || "0");
+let streak = parseInt(localStorage.getItem(streakKey) || "0");
+
+///////////////////////
+// LESSON DATA
+///////////////////////
 
 const lessons = [
-
 {
 name:"Animals",
 questions:[
@@ -99,7 +189,6 @@ questions:[
 {q:"What is this?",visual:"🐱",options:["Cat","Dog","Fish"],answer:0}
 ]
 },
-
 {
 name:"Actions",
 questions:[
@@ -107,7 +196,6 @@ questions:[
 {q:"What is she doing?",visual:"📖",options:["Reading","Eating","Swimming"],answer:0}
 ]
 },
-
 {
 name:"This / That",
 questions:[
@@ -115,24 +203,21 @@ questions:[
 {q:"What is that?",visual:"👉",options:["This","That","She"],answer:1}
 ]
 }
-
 ];
 
-/////////////////////////////////////
-// STATE
-/////////////////////////////////////
+///////////////////////
+// UI UPDATE
+///////////////////////
 
-let lessonIndex = 0;
-let qIndex = 0;
-let hearts = 5;
+function updateStats(){
+document.getElementById("stats").innerText =
+"⭐ XP: " + xp + " | 🔥 " + streak;
+}
 
-/////////////////////////////////////
-// UI
-/////////////////////////////////////
-
-function renderHearts(){
-document.getElementById("hearts").innerHTML =
-"❤️".repeat(hearts)+"🖤".repeat(5-hearts);
+function showXP(){
+let p=document.getElementById("xpPopup");
+p.style.display="block";
+setTimeout(()=>p.style.display="none",800);
 }
 
 function updateProgress(){
@@ -141,12 +226,12 @@ let percent = (qIndex/total)*100;
 document.getElementById("bar").style.width = percent + "%";
 }
 
-/////////////////////////////////////
-// LOAD QUESTION
-/////////////////////////////////////
+///////////////////////
+// LOAD
+///////////////////////
 
 function load(){
-renderHearts();
+updateStats();
 
 let q = lessons[lessonIndex].questions[qIndex];
 
@@ -159,18 +244,23 @@ html+=`<button onclick="check(${i})">${o}</button>`;
 });
 
 document.getElementById("options").innerHTML=html;
+document.getElementById("feedback").innerHTML="";
 updateProgress();
 }
 
-/////////////////////////////////////
+///////////////////////
 // CHECK
-/////////////////////////////////////
+///////////////////////
 
 function check(i){
-
 let q = lessons[lessonIndex].questions[qIndex];
 
 if(i===q.answer){
+
+xp += 10;
+localStorage.setItem(xpKey,xp);
+
+showXP();
 
 qIndex++;
 
@@ -181,37 +271,38 @@ nextLesson();
 }
 
 }else{
-
 hearts--;
-renderHearts();
-
 if(hearts<=0){
 alert("Game Over");
 location.reload();
 }
 }
+
+updateStats();
 }
 
-/////////////////////////////////////
+///////////////////////
 // NEXT LESSON
-/////////////////////////////////////
+///////////////////////
 
 function nextLesson(){
-
 lessonIndex++;
 qIndex=0;
 
+streak++;
+localStorage.setItem(streakKey,streak);
+
 if(lessonIndex>=lessons.length){
-alert("🎉 All lessons completed!");
+alert("🎉 Completed!");
 return;
 }
 
 load();
 }
 
-/////////////////////////////////////
+///////////////////////
 // START
-/////////////////////////////////////
+///////////////////////
 
 load();
 

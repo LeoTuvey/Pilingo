@@ -22,33 +22,22 @@ body{
     box-shadow:0 3px 10px rgba(0,0,0,0.1);
 }
 
-img{
-    width:140px;
-    height:140px;
-    margin:10px 0;
-}
-
 button{
     display:block;
     width:90%;
     margin:10px auto;
     padding:15px;
-    font-size:16px;
     border:none;
     border-radius:10px;
     background:#1976d2;
     color:white;
+    font-size:16px;
     cursor:pointer;
-}
-
-button:hover{
-    opacity:0.9;
 }
 
 #feedback{
     margin-top:15px;
     font-size:18px;
-    min-height:25px;
 }
 </style>
 </head>
@@ -59,8 +48,6 @@ button:hover{
 
 <h2 id="question">Loading...</h2>
 
-<img id="image" src="">
-
 <div id="options"></div>
 
 <div id="feedback"></div>
@@ -69,62 +56,41 @@ button:hover{
 
 <script>
 
-/* ======================
-   VOICE SYSTEM
-====================== */
+let course = localStorage.getItem("course") || "en-ku";
 
-function speak(text){
-    let msg = new SpeechSynthesisUtterance(text);
-    msg.lang = "en-US";
-    msg.rate = 0.85;
-    speechSynthesis.speak(msg);
+function t(en, ku, sv){
+    if(course === "en-ku") return ku;
+    if(course === "en-sv") return sv;
+    return en;
 }
-
-/* ======================
-   LESSON DATA
-====================== */
 
 let questions = [
 {
-q:"Is this near or far?",
-img:"https://cdn-icons-png.flaticon.com/512/616/616430.png",
-options:["This","That"],
+q: t("What is this?","Ev çi ye?","Vad är detta?"),
+options:[
+t("This","Ev","Det här"),
+t("That","Ew","Det där"),
+t("It","Ew e","Den")
+],
 answer:0
 },
 {
-q:"Is this near or far?",
-img:"https://cdn-icons-png.flaticon.com/512/616/616408.png",
-options:["That","This"],
+q: t("What is that?","Ew çi ye?","Vad är det där?"),
+options:[
+t("This","Ev","Det här"),
+t("That","Ew","Det där"),
+t("He","Ew mirov","Han")
+],
 answer:1
-},
-{
-q:"Is this near or far?",
-img:"https://cdn-icons-png.flaticon.com/512/415/415733.png",
-options:["This","That"],
-answer:1
-},
-{
-q:"Is this near or far?",
-img:"https://cdn-icons-png.flaticon.com/512/616/616596.png",
-options:["That","This"],
-answer:0
 }
 ];
 
 let current = 0;
 
-/* ======================
-   LOAD QUESTION
-====================== */
-
 function load(){
-
 let q = questions[current];
 
 document.getElementById("question").innerText = q.q;
-document.getElementById("image").src = q.img;
-
-speak(q.q);
 
 let html = "";
 
@@ -138,56 +104,33 @@ document.getElementById("feedback").innerHTML = "";
 
 load();
 
-/* ======================
-   CHECK ANSWER
-====================== */
-
 function check(i){
-
-let q = questions[current];
-
-if(i === q.answer){
-document.getElementById("feedback").innerHTML = "✅ Correct!";
-speak("Correct");
-
+if(i === questions[current].answer){
 current++;
-
-setTimeout(()=>{
 if(current < questions.length){
 load();
 }else{
-finishGame();
+finish();
 }
-},900);
-
 }else{
-document.getElementById("feedback").innerHTML = "❌ Try again";
-speak("Try again");
+document.getElementById("feedback").innerText =
+t("Try again","Dîsa biceribîne","Försök igen");
 }
 }
 
-/* ======================
-   FINISH GAME
-====================== */
+function finish(){
 
-function finishGame(){
+let xpKey = course + "_xp";
+let unlockKey = course + "_unlocked";
 
-speak("Great job!");
+let xp = parseInt(localStorage.getItem(xpKey) || "0");
+localStorage.setItem(xpKey, xp + 10);
 
-// XP
-let xp = parseInt(localStorage.getItem("xp") || "0");
-xp += 10;
-localStorage.setItem("xp", xp);
-
-// unlock Game 4
-let unlocked = JSON.parse(localStorage.getItem("unlocked") || "[true,false,false,false,false,false,false]");
+let unlocked = JSON.parse(localStorage.getItem(unlockKey) || "[true,false,false,false,false,false,false]");
 unlocked[3] = true;
-localStorage.setItem("unlocked", JSON.stringify(unlocked));
+localStorage.setItem(unlockKey, JSON.stringify(unlocked));
 
-// return to engine
-setTimeout(()=>{
 window.location.href = "engine.html";
-},1500);
 }
 
 </script>

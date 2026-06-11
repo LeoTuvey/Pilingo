@@ -44,13 +44,7 @@ header{
     font-weight:bold;
 }
 
-.small{
-    font-size:13px;
-    color:#666;
-    margin-top:5px;
-}
-
-.xp{
+.xpBox{
     margin:15px 0;
     font-size:18px;
 }
@@ -67,7 +61,7 @@ header{
 
 <h2>Choose your lesson</h2>
 
-<div class="xp">⭐ XP: <span id="xp">0</span></div>
+<div class="xpBox">⭐ XP: <span id="xp">0</span></div>
 
 <div id="menu"></div>
 
@@ -76,7 +70,7 @@ header{
 <script>
 
 /* ======================
-   DATA
+   LOAD DATA
 ====================== */
 
 let xp = parseInt(localStorage.getItem("xp") || "0");
@@ -87,7 +81,7 @@ localStorage.getItem("unlocked") ||
 );
 
 /* ======================
-   LESSONS (REAL STRUCTURE)
+   LESSON LIST (SIMPLE MODE)
 ====================== */
 
 let lessons = [
@@ -122,7 +116,7 @@ file:"game7.html"
 ];
 
 /* ======================
-   RENDER
+   RENDER UI
 ====================== */
 
 function render(){
@@ -135,7 +129,6 @@ if(unlocked[i]){
 html += `
 <div class="card" onclick="start(${i})">
 <div class="lessonTitle">${lesson.name}</div>
-<div class="small">Tap to start</div>
 </div>`;
 }else{
 html += `
@@ -150,10 +143,6 @@ document.getElementById("menu").innerHTML = html;
 document.getElementById("xp").innerText = xp;
 
 }
-
-/* ======================
-   START LESSON
-====================== */
 
 function start(i){
 window.location.href = lessons[i].file;

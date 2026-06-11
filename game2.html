@@ -22,12 +22,6 @@ body{
     box-shadow:0 3px 10px rgba(0,0,0,0.1);
 }
 
-img{
-    width:120px;
-    height:120px;
-    margin:10px 0;
-}
-
 button{
     display:block;
     width:90%;
@@ -39,7 +33,6 @@ button{
     background:#1976d2;
     color:white;
     cursor:pointer;
-    transition:0.2s;
 }
 
 button:hover{
@@ -60,8 +53,6 @@ button:hover{
 
 <h2 id="question">Loading...</h2>
 
-<img id="image" src="">
-
 <div id="options"></div>
 
 <div id="feedback"></div>
@@ -70,9 +61,21 @@ button:hover{
 
 <script>
 
-/* ======================
-   VOICE SYSTEM
-====================== */
+/////////////////////////////////////
+// COURSE SYSTEM
+/////////////////////////////////////
+
+let course = localStorage.getItem("course") || "en-ku";
+
+function t(en, ku, sv){
+    if(course === "en-ku") return ku;
+    if(course === "en-sv") return sv;
+    return en;
+}
+
+/////////////////////////////////////
+// SPEECH
+/////////////////////////////////////
 
 function speak(text){
     let msg = new SpeechSynthesisUtterance(text);
@@ -81,51 +84,53 @@ function speak(text){
     speechSynthesis.speak(msg);
 }
 
-/* ======================
-   LESSON DATA
-====================== */
+/////////////////////////////////////
+// QUESTIONS (COURSE-AWARE)
+/////////////////////////////////////
 
 let questions = [
 {
-q:"What is this action?",
-img:"https://cdn-icons-png.flaticon.com/512/4149/4149687.png",
-options:["Run","Eat","Sleep"],
+q: t("What is he doing?","Ew çi dike?","Vad gör han?"),
+options:[
+t("Eating","Xwarin","Äter"),
+t("Sleeping","Razane","Sover"),
+t("Running","Revîn","Springer")
+],
 answer:0
 },
 {
-q:"What is this action?",
-img:"https://cdn-icons-png.flaticon.com/512/1147/1147808.png",
-options:["Sleep","Eat","Jump"],
-answer:1
+q: t("What is she doing?","Ew çi dike?","Vad gör hon?"),
+options:[
+t("Reading","Xwendin","Läser"),
+t("Eating","Xwarin","Äter"),
+t("Swimming","Avjîn","Simmar")
+],
+answer:0
 },
 {
-q:"What is this action?",
-img:"https://cdn-icons-png.flaticon.com/512/3062/3062634.png",
-options:["Jump","Run","Sleep"],
+q: t("What is the boy doing?","Kur çi dike?","Vad gör pojken?"),
+options:[
+t("Drinking","Vexwarin","Dricker"),
+t("Writing","Nivîsandin","Skriver"),
+t("Running","Revîn","Springer")
+],
 answer:2
-},
-{
-q:"What is this action?",
-img:"https://cdn-icons-png.flaticon.com/512/616/616408.png",
-options:["Eat","Run","Jump"],
-answer:0
 }
 ];
 
 let current = 0;
 
-/* ======================
-   LOAD QUESTION
-====================== */
+/////////////////////////////////////
+// LOAD QUESTION
+/////////////////////////////////////
 
 function load(){
 
 let q = questions[current];
 
 document.getElementById("question").innerText = q.q;
-document.getElementById("image").src = q.img;
 
-speak(q.q);
+speak("Question");
 
 let html = "";
 
@@ -139,17 +144,17 @@ document.getElementById("feedback").innerHTML = "";
 
 load();
 
-/* ======================
-   CHECK ANSWER
-====================== */
+/////////////////////////////////////
+// CHECK ANSWER
+/////////////////////////////////////
 
 function check(i){
 
 let q = questions[current];
 
 if(i === q.answer){
-document.getElementById("feedback").innerHTML = "✅ Correct!";
-speak("Correct");
+document.getElementById("feedback").innerHTML =
+t("✅ Correct!","Rast e!","Rätt!");
 
 current++;
 
@@ -157,38 +162,43 @@ setTimeout(()=>{
 if(current < questions.length){
 load();
 }else{
-finishGame();
+finish();
 }
-},900);
+},800);
 
 }else{
-document.getElementById("feedback").innerHTML = "❌ Try again";
+document.getElementById("feedback").innerHTML =
+t("❌ Try again","Dîsa biceribîne","Försök igen");
+
 speak("Try again");
 }
 }
 
-/* ======================
-   FINISH GAME
-====================== */
+/////////////////////////////////////
+// FINISH GAME (COURSE-AWARE)
+/////////////////////////////////////
 
-function finishGame(){
+function finish(){
 
-speak("Great job!");
+let course = localStorage.getItem("course") || "en-ku";
+
+let xpKey = course + "_xp";
+let unlockKey = course + "_unlocked";
 
 // XP
-let xp = parseInt(localStorage.getItem("xp") || "0");
+let xp = parseInt(localStorage.getItem(xpKey) || "0");
 xp += 10;
-localStorage.setItem("xp", xp);
+localStorage.setItem(xpKey, xp);
 
-// unlock Game 3
-let unlocked = JSON.parse(localStorage.getItem("unlocked") || "[true,false,false,false,false,false,false]");
+// UNLOCK NEXT LEVEL (Game 3)
+let unlocked = JSON.parse(localStorage.getItem(unlockKey) || "[true,false,false,false,false,false,false]");
 unlocked[2] = true;
-localStorage.setItem("unlocked", JSON.stringify(unlocked));
+localStorage.setItem(unlockKey, JSON.stringify(unlocked));
 
 // return to engine
 setTimeout(()=>{
 window.location.href = "engine.html";
-},1500);
+},1000);
 }
 
 </script>

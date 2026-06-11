@@ -6,22 +6,21 @@
 
 <style>
 body{
-font-family: system-ui, Arial;
 margin:0;
-background:#f1f7ff;
+font-family: system-ui, Arial;
+background:#f2f7ff;
 text-align:center;
 }
 
-/* HEADER */
+/* TOP BAR */
 header{
 background:#58cc02;
 color:white;
-padding:15px;
-font-size:20px;
-font-weight:bold;
+padding:14px 16px;
 display:flex;
 justify-content:space-between;
 align-items:center;
+font-weight:bold;
 }
 
 header .left{
@@ -30,35 +29,42 @@ align-items:center;
 gap:10px;
 }
 
-header .owl{
-font-size:24px;
+.owl{
+font-size:22px;
+animation:bounce 2s infinite;
+}
+
+@keyframes bounce{
+0%,100%{transform:translateY(0);}
+50%{transform:translateY(-3px);}
 }
 
 /* STATS */
 #stats{
 font-size:14px;
+opacity:0.95;
 }
 
-/* CARD */
+/* MAIN CARD */
 .card{
 max-width:520px;
 margin:25px auto;
 background:white;
 padding:25px;
-border-radius:18px;
-box-shadow:0 8px 20px rgba(0,0,0,0.08);
-animation:fadeIn 0.3s ease;
+border-radius:20px;
+box-shadow:0 10px 30px rgba(0,0,0,0.08);
+animation:fadeIn 0.25s ease;
 }
 
 @keyframes fadeIn{
-from{opacity:0;transform:translateY(10px);}
+from{opacity:0;transform:translateY(8px);}
 to{opacity:1;transform:translateY(0);}
 }
 
 /* VISUAL */
 #visual{
-font-size:70px;
-margin:15px;
+font-size:72px;
+margin:10px;
 }
 
 /* QUESTION */
@@ -67,12 +73,11 @@ font-size:20px;
 margin:10px 0;
 }
 
-/* BUTTONS */
+/* OPTIONS */
 button{
-display:block;
 width:100%;
-margin:10px 0;
 padding:14px;
+margin:10px 0;
 border-radius:14px;
 border:2px solid #e5e5e5;
 background:white;
@@ -88,15 +93,15 @@ border-color:#58cc02;
 
 /* FEEDBACK */
 #feedback{
-min-height:20px;
+min-height:22px;
 font-weight:bold;
-margin-top:10px;
+margin-top:8px;
 }
 
 /* PROGRESS */
 #progress{
 height:12px;
-background:#ddd;
+background:#e6e6e6;
 border-radius:10px;
 overflow:hidden;
 margin:10px 0;
@@ -116,10 +121,10 @@ top:20px;
 right:20px;
 background:#58cc02;
 color:white;
-padding:10px 15px;
+padding:10px 14px;
 border-radius:12px;
-display:none;
 font-weight:bold;
+display:none;
 animation:pop 0.6s ease;
 }
 
@@ -127,6 +132,24 @@ animation:pop 0.6s ease;
 0%{transform:scale(0);}
 50%{transform:scale(1.2);}
 100%{transform:scale(1);}
+}
+
+/* HEARTS */
+#hearts{
+font-size:22px;
+margin-top:5px;
+}
+
+/* SCREEN SHAKE (wrong answer feel) */
+.shake{
+animation:shake 0.2s;
+}
+
+@keyframes shake{
+0%{transform:translateX(0);}
+25%{transform:translateX(-5px);}
+50%{transform:translateX(5px);}
+100%{transform:translateX(0);}
 }
 </style>
 </head>
@@ -140,6 +163,8 @@ animation:pop 0.6s ease;
 </div>
 <div id="stats">⭐ XP: 0 | 🔥 0</div>
 </header>
+
+<div id="hearts"></div>
 
 <div id="xpPopup">+10 XP</div>
 
@@ -178,7 +203,7 @@ let xp = parseInt(localStorage.getItem(xpKey) || "0");
 let streak = parseInt(localStorage.getItem(streakKey) || "0");
 
 ///////////////////////
-// LESSON DATA
+// DATA
 ///////////////////////
 
 const lessons = [
@@ -206,7 +231,7 @@ questions:[
 ];
 
 ///////////////////////
-// UI UPDATE
+// UI HELPERS
 ///////////////////////
 
 function updateStats(){
@@ -217,7 +242,12 @@ document.getElementById("stats").innerText =
 function showXP(){
 let p=document.getElementById("xpPopup");
 p.style.display="block";
-setTimeout(()=>p.style.display="none",800);
+setTimeout(()=>p.style.display="none",700);
+}
+
+function renderHearts(){
+document.getElementById("hearts").innerHTML =
+"❤️".repeat(hearts)+"🖤".repeat(5-hearts);
 }
 
 function updateProgress(){
@@ -227,11 +257,15 @@ document.getElementById("bar").style.width = percent + "%";
 }
 
 ///////////////////////
-// LOAD
+// LOAD QUESTION
 ///////////////////////
 
 function load(){
+
+document.body.classList.remove("shake");
+
 updateStats();
+renderHearts();
 
 let q = lessons[lessonIndex].questions[qIndex];
 
@@ -245,14 +279,16 @@ html+=`<button onclick="check(${i})">${o}</button>`;
 
 document.getElementById("options").innerHTML=html;
 document.getElementById("feedback").innerHTML="";
+
 updateProgress();
 }
 
 ///////////////////////
-// CHECK
+// CHECK ANSWER
 ///////////////////////
 
 function check(i){
+
 let q = lessons[lessonIndex].questions[qIndex];
 
 if(i===q.answer){
@@ -271,7 +307,15 @@ nextLesson();
 }
 
 }else{
+
 hearts--;
+renderHearts();
+
+document.body.classList.add("shake");
+
+document.getElementById("feedback").innerText =
+"❌ Try again";
+
 if(hearts<=0){
 alert("Game Over");
 location.reload();
@@ -286,6 +330,7 @@ updateStats();
 ///////////////////////
 
 function nextLesson(){
+
 lessonIndex++;
 qIndex=0;
 
@@ -293,7 +338,7 @@ streak++;
 localStorage.setItem(streakKey,streak);
 
 if(lessonIndex>=lessons.length){
-alert("🎉 Completed!");
+alert("🎉 You completed Owl-Lingo!");
 return;
 }
 

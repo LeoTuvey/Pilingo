@@ -20,11 +20,19 @@ header{
 }
 
 #xpBox{
-    margin:10px;
+    margin:5px;
     font-size:18px;
     font-weight:bold;
 }
 
+#streakBox{
+    margin:5px;
+    font-size:16px;
+    font-weight:bold;
+    color:#ff6f00;
+}
+
+/* MAP */
 .map{
     max-width:500px;
     margin:auto;
@@ -32,7 +40,6 @@ header{
     position:relative;
 }
 
-/* PATH LINE */
 .line{
     position:absolute;
     width:4px;
@@ -44,7 +51,7 @@ header{
     z-index:0;
 }
 
-/* LEVEL NODE */
+/* NODE */
 .node{
     width:120px;
     height:120px;
@@ -66,7 +73,6 @@ header{
     transform:scale(1.05);
 }
 
-/* LOCKED */
 .locked{
     opacity:0.4;
     pointer-events:none;
@@ -74,8 +80,8 @@ header{
 
 /* COLORS */
 .green{ border:4px solid #4caf50; }
-.blue{ border:4px solid #2196f3; }
 .orange{ border:4px solid #ff9800; }
+.blue{ border:4px solid #2196f3; }
 .purple{ border:4px solid #9c27b0; }
 
 .small{
@@ -90,6 +96,7 @@ header{
 <header>🦉 Owl-Lingo Learning Path</header>
 
 <div id="xpBox">⭐ XP: 0</div>
+<div id="streakBox">🔥 Streak: 0</div>
 
 <div class="map">
 
@@ -101,19 +108,60 @@ header{
 
 <script>
 
-/* ======================
-   LOAD PROGRESS
-====================== */
+/////////////////////////////////////
+// XP SYSTEM
+/////////////////////////////////////
 
 let xp = parseInt(localStorage.getItem("xp") || "0");
 
-let unlocked = JSON.parse(localStorage.getItem("unlocked") || "[true,false,false,false,false,false,false]");
+/////////////////////////////////////
+// STREAK SYSTEM (FULL)
+/////////////////////////////////////
+
+let today = new Date().toDateString();
+
+let lastDay = localStorage.getItem("lastDay");
+let streak = parseInt(localStorage.getItem("streak") || "0");
+
+if(lastDay === today){
+    // already counted today
+}else{
+    if(lastDay){
+        let prev = new Date(lastDay);
+        let diff = (new Date(today) - prev) / (1000 * 60 * 60 * 24);
+
+        if(diff === 1){
+            streak += 1;
+        }else{
+            streak = 1;
+        }
+    }else{
+        streak = 1;
+    }
+
+    localStorage.setItem("streak", streak);
+    localStorage.setItem("lastDay", today);
+}
+
+/////////////////////////////////////
+// UNLOCK SYSTEM
+/////////////////////////////////////
+
+let unlocked = JSON.parse(
+    localStorage.getItem("unlocked") ||
+    "[true,false,false,false,false,false,false]"
+);
+
+/////////////////////////////////////
+// DISPLAY
+/////////////////////////////////////
 
 document.getElementById("xpBox").innerText = "⭐ XP: " + xp;
+document.getElementById("streakBox").innerText = "🔥 Streak: " + streak;
 
-/* ======================
-   LEVEL DATA
-====================== */
+/////////////////////////////////////
+// LEVELS
+/////////////////////////////////////
 
 let levels = [
 { name:"Animals", file:"game1.html", color:"green" },
@@ -125,9 +173,9 @@ let levels = [
 { name:"Final Test", file:"game7.html", color:"purple" }
 ];
 
-/* ======================
-   RENDER MAP
-====================== */
+/////////////////////////////////////
+// RENDER MAP
+/////////////////////////////////////
 
 let html = "";
 
@@ -147,9 +195,9 @@ html += `
 
 document.getElementById("levels").innerHTML = html;
 
-/* ======================
-   NAVIGATION
-====================== */
+/////////////////////////////////////
+// NAVIGATION
+/////////////////////////////////////
 
 function go(i){
     window.location.href = levels[i].file;

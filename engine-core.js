@@ -1,89 +1,53 @@
+// =====================================
+// 🦉 OWL-LINGO PROGRESSION ENGINE
+// =====================================
+
 const Engine = {
 
-  // ------------------------
-  // COURSE
-  // ------------------------
-  getCourse() {
+  /* ---------------- COURSE ---------------- */
+  getCourse(){
     return localStorage.getItem("course") || "en-ku";
   },
 
-  // ------------------------
-  // XP SYSTEM
-  // ------------------------
-  getXP() {
-    let course = this.getCourse();
-    return parseInt(localStorage.getItem(course + "_xp") || "0");
+  /* ---------------- GLOBAL XP ---------------- */
+  getXP(){
+    let c = this.getCourse();
+    return parseInt(localStorage.getItem(c+"_xp") || "0");
   },
 
-  addXP(amount) {
-    let course = this.getCourse();
-    let xpKey = course + "_xp";
-
-    let xp = parseInt(localStorage.getItem(xpKey) || "0");
-    xp += amount;
-
-    localStorage.setItem(xpKey, xp);
+  addXP(v){
+    let c = this.getCourse();
+    let key = c+"_xp";
+    let xp = parseInt(localStorage.getItem(key) || "0");
+    localStorage.setItem(key, xp + v);
   },
 
-  // ------------------------
-  // UNLOCK SYSTEM
-  // ------------------------
-  getUnlocked() {
-    let course = this.getCourse();
-    return JSON.parse(
-      localStorage.getItem(course + "_unlocked") ||
-      "[true,false,false,false,false,false,false]"
-    );
-  },
-
-  saveUnlocked(arr) {
-    let course = this.getCourse();
-    localStorage.setItem(course + "_unlocked", JSON.stringify(arr));
-  },
-
-  unlockLevel(index) {
-    let u = this.getUnlocked();
-    u[index] = true;
-    this.saveUnlocked(u);
-  },
-
-  isUnlocked(index) {
-    return this.getUnlocked()[index];
-  },
-
-  // ------------------------
-  // HEARTS
-  // ------------------------
-  getHearts() {
+  /* ---------------- HEARTS ---------------- */
+  getHearts(){
     return parseInt(localStorage.getItem("hearts") || "5");
   },
 
-  setHearts(v) {
-    localStorage.setItem("hearts", v);
-  },
-
-  loseHeart() {
-    let h = this.getHearts();
-    h--;
-    this.setHearts(h);
+  loseHeart(){
+    let h = this.getHearts() - 1;
+    localStorage.setItem("hearts", h);
     return h;
   },
 
-  resetHearts() {
-    this.setHearts(5);
+  resetHearts(){
+    localStorage.setItem("hearts","5");
   },
 
-  // ------------------------
-  // STREAK
-  // ------------------------
-  updateStreak() {
+  /* ---------------- STREAK ---------------- */
+  updateStreak(){
+
     let today = new Date().toDateString();
     let last = localStorage.getItem("lastDay");
     let streak = parseInt(localStorage.getItem("streak") || "0");
 
-    if (last !== today) {
-      if (last) {
-        let diff = (new Date(today) - new Date(last)) / (1000*60*60*24);
+    if(last !== today){
+
+      if(last){
+        let diff = (new Date(today)-new Date(last))/(1000*60*60*24);
         streak = (diff === 1) ? streak + 1 : 1;
       } else {
         streak = 1;
@@ -94,6 +58,63 @@ const Engine = {
     }
 
     return streak;
+  },
+
+  /* ---------------- SKILL PROGRESS ---------------- */
+  getSkillState(index){
+    let key = "skill_"+index;
+    return parseInt(localStorage.getItem(key) || "0");
+  },
+
+  setSkillState(index, value){
+    localStorage.setItem("skill_"+index, value);
+  },
+
+  upgradeSkill(index){
+
+    let state = this.getSkillState(index);
+
+    if(state < 4){
+      state++;
+      this.setSkillState(index, state);
+    }
+
+    return state;
+  },
+
+  /* ---------------- SKILL XP ---------------- */
+  addSkillXP(skillId, amount){
+
+    let key = skillId + "_xp";
+    let xp = parseInt(localStorage.getItem(key) || "0");
+
+    localStorage.setItem(key, xp + amount);
+  },
+
+  getSkillXP(skillId){
+    return parseInt(localStorage.getItem(skillId+"_xp") || "0");
+  },
+
+  /* ---------------- ADAPTIVE WEIGHT SYSTEM ---------------- */
+  getWeakWeight(word){
+
+    // simulate weakness tracking
+    let wrong = parseInt(localStorage.getItem(word.en+"_wrong") || "0");
+    let correct = parseInt(localStorage.getItem(word.en+"_correct") || "0");
+
+    return Math.max(1, wrong - correct);
+  },
+
+  markCorrect(word){
+    let key = word.en+"_correct";
+    let v = parseInt(localStorage.getItem(key) || "0");
+    localStorage.setItem(key, v+1);
+  },
+
+  markWrong(word){
+    let key = word.en+"_wrong";
+    let v = parseInt(localStorage.getItem(key) || "0");
+    localStorage.setItem(key, v+1);
   }
 
 };

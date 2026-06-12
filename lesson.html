@@ -1,12 +1,12 @@
 /* =========================
    🏆 LESSON REWARD ENGINE
-   STEP 24 — FINAL PRODUCTION STABLE VERSION (STEP 25 READY FIXED)
+   STEP 25 — FINAL ADAPTIVE ORCHESTRATOR
 ========================= */
 
 function runFinishLogic(){
 
   // =========================
-  // GUARD: prevent double trigger
+  // GUARD (prevent double XP exploit)
   // =========================
   if(window.__finishLock) return;
 
@@ -16,18 +16,19 @@ function runFinishLogic(){
   }, 1500);
 
   // =========================
-  // SAFE LEVEL FUNCTION
+  // SAFE LEVEL SNAPSHOT (BEFORE)
   // =========================
   const safeLevelFn =
     (typeof getSafeLevel === "function")
       ? getSafeLevel
-      : () => 0;
+      : () => (window.Engine?.getLevel?.() ?? 0);
 
   const oldLevel = safeLevelFn();
+
   const xpReward = 10;
 
   // =========================
-  // ENGINE REWARDS
+  // ENGINE UPDATE (TRUTH SOURCE)
   // =========================
   const engine = window.Engine;
 
@@ -37,104 +38,83 @@ function runFinishLogic(){
       engine.addXP(xpReward);
     }
 
-    if(typeof engine.resetHearts === "function"){
-      engine.resetHearts();
-    }
-
     if(typeof engine.updateStreak === "function"){
       engine.updateStreak();
+    }
+
+    if(typeof engine.resetHearts === "function"){
+      engine.resetHearts();
     }
   }
 
   // =========================
-  // RESUME CLEANUP (STEP 18)
+  // LEVEL SNAPSHOT (AFTER XP)
+  // =========================
+  const newLevel = safeLevelFn();
+  const leveledUp = newLevel > oldLevel;
+
+  // =========================
+  // RESUME SAVE → CLEAR (SAFE ORDER)
   // =========================
   const state = window.AppState;
 
-  if(state && typeof state.clearLessonProgress === "function"){
+  if(state?.clearLessonProgress){
     state.clearLessonProgress();
   }
 
   // =========================
-  // EFFECTS LAYER (FEEL FIRST)
+  // EFFECTS (FIRST FEEL LAYER)
   // =========================
   const effects = window.AppEffects;
 
   if(effects){
 
-    if(typeof effects.xpBurst === "function"){
-      effects.xpBurst(xpReward);
-    }
+    effects.xpBurst?.(xpReward);
+    effects.flash?.("correct");
 
-    if(typeof effects.flash === "function"){
-      effects.flash("correct");
+    if(leveledUp){
+      effects.streakFire?.();
+      effects.flash?.("levelup");
     }
   }
 
   // =========================
-  // POLISH UI LAYER
+  // UI POLISH LAYER (SECONDARY FEEDBACK)
   // =========================
   const polish = window.AppPolish;
 
-  let moodSet = false;
+  let moodControlled = false;
 
   if(polish){
 
     if(typeof polish.xpPopup === "function"){
       polish.xpPopup(xpReward);
-
     } else if(typeof polish.notify === "function"){
       polish.notify("+" + xpReward + " XP");
     }
 
     if(typeof polish.setMood === "function"){
       polish.setMood("correct");
-      moodSet = true;
+      moodControlled = true;
     }
   }
 
   // =========================
-  // LEVEL CHECK (AFTER REWARD)
-  // =========================
-  const newLevel = safeLevelFn();
-  const leveledUp = newLevel > oldLevel;
-
-  // =========================
-  // LEVEL UP HANDLING
+  // LEVEL UP SYSTEM (HIGHEST PRIORITY FEEDBACK)
   // =========================
   if(leveledUp){
 
-    if(typeof levelUpAnimation === "function"){
-      levelUpAnimation();
-    }
+    window.levelUpAnimation?.();
 
-    const ui = window.AppUI;
+    window.AppUI?.notify?.("🏆 Level Up!");
 
-    if(ui && typeof ui.notify === "function"){
-      ui.notify("🏆 Level Up!");
-    }
-
-    // override mood ONLY if not already set
-    if(polish &&
-       typeof polish.setMood === "function" &&
-       !moodSet){
+    if(polish?.setMood && !moodControlled){
       polish.setMood("levelup");
-    }
-
-    if(effects){
-
-      if(typeof effects.streakFire === "function"){
-        effects.streakFire();
-      }
-
-      if(typeof effects.flash === "function"){
-        effects.flash("levelup");
-      }
     }
   }
 
   // =========================
-  // RESULT (analytics-ready)
+  // RETURN (ADAPTIVE ANALYTICS CORE)
   // =========================
   return {
     oldLevel,

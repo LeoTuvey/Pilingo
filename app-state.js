@@ -1,6 +1,6 @@
 /* =====================================
    🧠 OWL-LINGO APP STATE SYSTEM
-   STEP 22B — REAL RESUME ENGINE (FIXED)
+   STEP 22B — REAL RESUME ENGINE (STEP 25 HARDENED)
 ===================================== */
 
 const AppState = {
@@ -13,7 +13,7 @@ const AppState = {
   },
 
   /* =========================
-     📥 SAFE LOAD (FIXED)
+     📥 SAFE LOAD (HARDENED)
   ========================= */
   load(){
     try{
@@ -37,10 +37,14 @@ const AppState = {
       timestamp: Date.now()
     };
 
-    localStorage.setItem(
-      this._key(),
-      JSON.stringify(updated)
-    );
+    try{
+      localStorage.setItem(
+        this._key(),
+        JSON.stringify(updated)
+      );
+    }catch(e){
+      // fail silently (prevents lesson breakage)
+    }
   },
 
   /* =========================
@@ -64,49 +68,42 @@ const AppState = {
 
     this.save({
       lesson: {
-        skill: data.skill ?? 0,
-        question: data.question ?? 0,
-        score: data.score ?? 0
+        skill: Number.isFinite(data.skill) ? data.skill : 0,
+        question: Number.isFinite(data.question) ? data.question : 0,
+        score: Number.isFinite(data.score) ? data.score : 0
       }
     });
   },
 
   /* =========================
-     📍 LESSON RESUME (SAFE DEFAULTS)
+     📍 LESSON RESUME (ROBUST)
   ========================= */
   resume(){
 
     const state = this.load();
 
-    if(!state || !state.lesson){
-      return {
-        skill: 0,
-        question: 0,
-        score: 0
-      };
-    }
+    const lesson = state?.lesson;
 
     return {
-      skill: state.lesson.skill ?? 0,
-      question: state.lesson.question ?? 0,
-      score: state.lesson.score ?? 0
+      skill: Number.isFinite(lesson?.skill) ? lesson.skill : 0,
+      question: Number.isFinite(lesson?.question) ? lesson.question : 0,
+      score: Number.isFinite(lesson?.score) ? lesson.score : 0
     };
   },
 
   /* =========================
-     🧹 CLEAR LESSON ONLY (SAFE)
+     🧹 CLEAR LESSON ONLY (ATOMIC SAFE)
   ========================= */
   clearLessonProgress(){
 
     const state = this.load();
-    if(!state) return;
 
-    delete state.lesson;
+    if(!state || typeof state !== "object") return;
 
-    localStorage.setItem(
-      this._key(),
-      JSON.stringify(state)
-    );
+    // atomic rebuild (prevents race overwrite bugs)
+    const { lesson, ...rest } = state;
+
+    this.save(rest);
   },
 
   /* =========================
@@ -114,15 +111,12 @@ const AppState = {
   ========================= */
   set(key, value){
 
-    if(!key) return;
+    if(typeof key !== "string") return;
 
     const state = this.load() || {};
     state[key] = value;
 
-    localStorage.setItem(
-      this._key(),
-      JSON.stringify(state)
-    );
+    this.save(state);
   },
 
   get(key){

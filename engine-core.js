@@ -1,8 +1,3 @@
-/* =====================================
-   🧠 OWL-LINGO ENGINE CORE (STEP 13 SAFE)
-   BUILDS ON STEP 12 (DO NOT REMOVE OLD FEATURES)
-===================================== */
-
 const Engine = {
 
 /* =========================
@@ -13,7 +8,7 @@ getCourse(){
 },
 
 /* =========================
-   XP SYSTEM
+   XP + LEVEL
 ========================= */
 getXP(){
   let c = this.getCourse();
@@ -75,73 +70,47 @@ updateStreak(){
 },
 
 /* =========================
-   🟢 SKILL MASTERY SYSTEM (STEP 13 CORE)
-   REQUIRED FOR engine.html UI
-========================= */
-
-getSkillState(index){
-  return parseInt(localStorage.getItem("skill_"+index) || "0");
-},
-
-setSkillState(index, value){
-  localStorage.setItem("skill_"+index, value);
-},
-
-upgradeSkill(index){
-
-  let s = this.getSkillState(index);
-
-  if(s < 4){
-    s++;
-    this.setSkillState(index, s);
-  }
-
-  return s;
-},
-
-/* =========================
-   AUTO SKILL PROGRESSION HOOK
-   (CALL THIS FROM LESSON LATER IF NEEDED)
-========================= */
-
-markSkillProgress(index, correct=true){
-
-  let current = this.getSkillState(index);
-
-  if(correct){
-    if(current < 4) current++;
-  } else {
-    if(current > 0) current--;
-  }
-
-  this.setSkillState(index, current);
-  return current;
-},
-
-/* =========================
-   WORD MEMORY (STEP 12)
+   🧠 WORD MEMORY SYSTEM (IMPROVED)
 ========================= */
 
 markCorrect(word){
-  let key = word.en+"_c";
-  let v = parseInt(localStorage.getItem(key) || "0");
-  localStorage.setItem(key, v+1);
+
+  let key = "w_" + word.en;
+
+  let data = JSON.parse(localStorage.getItem(key) || '{"c":0,"w":0}');
+
+  data.c += 1;
+
+  localStorage.setItem(key, JSON.stringify(data));
 },
 
 markWrong(word){
-  let key = word.en+"_w";
-  let v = parseInt(localStorage.getItem(key) || "0");
-  localStorage.setItem(key, v+1);
+
+  let key = "w_" + word.en;
+
+  let data = JSON.parse(localStorage.getItem(key) || '{"c":0,"w":0}');
+
+  data.w += 1;
+
+  localStorage.setItem(key, JSON.stringify(data));
 },
 
 getWeakScore(word){
-  let c = parseInt(localStorage.getItem(word.en+"_c") || "0");
-  let w = parseInt(localStorage.getItem(word.en+"_w") || "0");
-  return Math.max(1, w - c);
+
+  let key = "w_" + word.en;
+  let data = JSON.parse(localStorage.getItem(key) || '{"c":0,"w":0}');
+
+  // stronger penalty system
+  let mistakes = data.w;
+  let correct = data.c;
+
+  let score = (mistakes * 2) - correct;
+
+  return Math.max(1, score);
 },
 
 /* =========================
-   REVIEW SYSTEM (STEP 12 CORE)
+   🔁 REAL REVIEW SYSTEM
 ========================= */
 
 getReviewWords(pool){
@@ -149,13 +118,63 @@ getReviewWords(pool){
   let weighted = [];
 
   pool.forEach(w=>{
+
     let weight = this.getWeakScore(w);
+
     for(let i=0;i<weight;i++){
       weighted.push(w);
     }
+
   });
 
+  // shuffle
+  for(let i = weighted.length - 1; i > 0; i--){
+    let j = Math.floor(Math.random() * (i + 1));
+    [weighted[i], weighted[j]] = [weighted[j], weighted[i]];
+  }
+
   return weighted.length ? weighted : pool;
+},
+
+/* =========================
+   SKILL SYSTEM (SAFE)
+========================= */
+getSkillState(i){
+  return parseInt(localStorage.getItem("skill_"+i) || "0");
+},
+
+setSkillState(i,v){
+  localStorage.setItem("skill_"+i,v);
+},
+
+markSkillProgress(i, correct=true){
+
+  let s = this.getSkillState(i);
+
+  if(correct && s < 4) s++;
+  if(!correct && s > 0) s--;
+
+  this.setSkillState(i,s);
+
+  return s;
+},
+
+/* =========================
+   DAILY RESET HOOK
+========================= */
+
+dailyReset(){
+
+  let today = new Date().toDateString();
+  let lastReset = localStorage.getItem("dailyReset");
+
+  if(lastReset !== today){
+
+    localStorage.setItem("dailyReset", today);
+
+    // optional: reset daily XP tracking only
+    localStorage.setItem("dailyXP", "0");
+  }
 }
 
 };

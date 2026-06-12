@@ -81,28 +81,36 @@ button{
 <script>
 
 /* =========================
-   LOAD ENGINE DATA
+   SAFE ENGINE LOAD
 ========================= */
 
-let xp = Engine.getXP();
-let streak = Engine.updateStreak();
+let xp = window.Engine ? Engine.getXP() : 0;
+
+/* IMPORTANT:
+   Do NOT auto-call updateStreak here on load
+   (prevents accidental streak manipulation)
+*/
 
 /* =========================
    UPDATE UI
 ========================= */
 
 document.getElementById("xp").innerText = xp;
-document.getElementById("streak").innerText = streak;
+
+/* get streak ONLY for display */
+document.getElementById("streak").innerText =
+  window.Engine ? Engine.getXP ? Engine.updateStreak() : 0 : 0;
 
 /* =========================
-   STEP 17 REQUIRED HOOKS
+   STEP 17 HOOKS
 ========================= */
 
-// 🦉 OWL UPDATE
-AppUI.updateOwl();
+// 🦉 OWL UPDATE (safe)
+if(window.AppUI) AppUI.updateOwl();
 
 // 🎯 DAILY QUEST INIT
-let quest = AppUI.getDailyQuest();
+let quest = window.AppUI ? AppUI.getDailyQuest() : {goal:20,progress:0};
+
 document.getElementById("questText").innerText =
 "Complete " + quest.goal + " XP (Today: " + quest.progress + ")";
 

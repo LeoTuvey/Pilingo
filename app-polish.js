@@ -11,31 +11,40 @@ const AppPolish = {
     owl.classList.remove("happy","sad","celebrate","levelup");
 
     if(state === "correct") owl.classList.add("happy");
-    if(state === "wrong") owl.classList.add("sad");
-    if(state === "levelup") owl.classList.add("celebrate");
+    else if(state === "wrong") owl.classList.add("sad");
+    else if(state === "levelup") owl.classList.add("celebrate");
   },
 
   xpPopup(amount){
 
+    if (!document?.body) return;
+
+    const value = Number(amount) || 0;
+
     const el = document.createElement("div");
 
-    el.innerText = "+" + amount + " XP";
-    el.style.position = "fixed";
-    el.style.top = "20%";
-    el.style.left = "50%";
-    el.style.transform = "translateX(-50%)";
-    el.style.background = "#58cc02";
-    el.style.color = "white";
-    el.style.padding = "10px 16px";
-    el.style.borderRadius = "20px";
-    el.style.fontWeight = "bold";
-    el.style.zIndex = "9999";
-    el.style.opacity = "0";
-    el.style.transition = "0.3s";
+    el.innerText = "+" + value + " XP";
+
+    Object.assign(el.style, {
+      position: "fixed",
+      top: "20%",
+      left: "50%",
+      transform: "translateX(-50%)",
+      background: "#58cc02",
+      color: "white",
+      padding: "10px 16px",
+      borderRadius: "20px",
+      fontWeight: "bold",
+      zIndex: "9999",
+      opacity: "0",
+      transition: "opacity 0.3s"
+    });
 
     document.body.appendChild(el);
 
-    setTimeout(() => el.style.opacity = "1", 50);
+    requestAnimationFrame(() => {
+      el.style.opacity = "1";
+    });
 
     setTimeout(() => {
       el.style.opacity = "0";
@@ -45,29 +54,36 @@ const AppPolish = {
 
   unlockBadge(id){
 
-    const badges = JSON.parse(localStorage.getItem("badges") || "[]");
+    try {
+      const badges = JSON.parse(localStorage.getItem("badges") || "[]");
 
-    if(!badges.includes(id)){
-      badges.push(id);
-      localStorage.setItem("badges", JSON.stringify(badges));
-      this.showBadgePopup(id);
-    }
+      if(!badges.includes(id)){
+        badges.push(id);
+        localStorage.setItem("badges", JSON.stringify(badges));
+        this.showBadgePopup(id);
+      }
+    } catch {}
   },
 
   showBadgePopup(id){
 
+    if (!document?.body) return;
+
     const el = document.createElement("div");
 
     el.innerHTML = "🏅 Badge Unlocked: " + id;
-    el.style.position = "fixed";
-    el.style.top = "40%";
-    el.style.left = "50%";
-    el.style.transform = "translate(-50%,-50%)";
-    el.style.background = "#000";
-    el.style.color = "#fff";
-    el.style.padding = "20px";
-    el.style.borderRadius = "15px";
-    el.style.zIndex = "9999";
+
+    Object.assign(el.style, {
+      position: "fixed",
+      top: "40%",
+      left: "50%",
+      transform: "translate(-50%,-50%)",
+      background: "#000",
+      color: "#fff",
+      padding: "20px",
+      borderRadius: "15px",
+      zIndex: "9999"
+    });
 
     document.body.appendChild(el);
 
@@ -76,39 +92,51 @@ const AppPolish = {
 
   getStreakLevel(){
 
-    let streak = 0;
+    try {
+      const streak =
+        typeof window.Engine?.updateStreak === "function"
+          ? window.Engine.updateStreak()
+          : 0;
 
-    if(window.Engine && typeof Engine.updateStreak === "function"){
-      streak = Engine.updateStreak();
+      const safe = Number(streak) || 0;
+
+      if(safe >= 10) return "🔥🔥🔥";
+      if(safe >= 5) return "🔥🔥";
+      if(safe >= 1) return "🔥";
+
+      return "";
+
+    } catch {
+      return "";
     }
-
-    streak = isNaN(streak) ? 0 : streak;
-
-    if(streak >= 10) return "🔥🔥🔥";
-    if(streak >= 5) return "🔥🔥";
-    if(streak >= 1) return "🔥";
-
-    return "";
   },
 
   firstTimeCheck(){
 
-    const seen = localStorage.getItem("seenIntro");
+    try {
+      const seen = localStorage.getItem("seenIntro");
 
-    if(!seen){
-      localStorage.setItem("seenIntro", "true");
+      if(!seen){
+        localStorage.setItem("seenIntro", "true");
 
-      const path = window.location.pathname;
-      const isIndex =
-        path.endsWith("index.html") || path === "/";
+        const path = window.location.pathname || "";
+        const isIndex =
+          path.endsWith("index.html") || path === "/";
 
-      if(!isIndex){
-        window.location.href = "index.html";
+        if(!isIndex){
+          window.location.href = "index.html";
+        }
       }
-    }
+    } catch {}
   },
 
   flash(type){
+
+    if (!document?.body) return;
+
+    const safeType = ["correct","wrong","levelup"].includes(type)
+      ? type
+      : "default";
 
     const existing = document.getElementById("owl-flash");
     if(existing) existing.remove();
@@ -116,18 +144,25 @@ const AppPolish = {
     const el = document.createElement("div");
     el.id = "owl-flash";
 
-    el.style.position = "fixed";
-    el.style.top = "0";
-    el.style.left = "0";
-    el.style.width = "100%";
-    el.style.height = "100%";
-    el.style.pointerEvents = "none";
-    el.style.zIndex = "9999";
-    el.style.opacity = "0.12";
+    Object.assign(el.style, {
+      position: "fixed",
+      top: "0",
+      left: "0",
+      width: "100%",
+      height: "100%",
+      pointerEvents: "none",
+      zIndex: "9999",
+      opacity: "0.12"
+    });
 
-    if(type === "correct") el.style.background = "green";
-    if(type === "wrong") el.style.background = "red";
-    if(type === "levelup") el.style.background = "gold";
+    const colors = {
+      correct: "green",
+      wrong: "red",
+      levelup: "gold",
+      default: "white"
+    };
+
+    el.style.background = colors[safeType];
 
     document.body.appendChild(el);
 

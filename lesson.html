@@ -1,6 +1,6 @@
 /* =========================
    🏆 LESSON REWARD ENGINE
-   STEP 30 — FINAL ADAPTIVE ORCHESTRATOR (BRAIN-INTEGRATED)
+   STEP 30 — FINAL ADAPTIVE ORCHESTRATOR (BRAIN-INTEGRATED FIXED)
 ========================= */
 
 function runFinishLogic(){
@@ -16,38 +16,57 @@ function runFinishLogic(){
   }, 1500);
 
   // =========================
-  // SAFE LEVEL RESOLVER (STRICT)
+  // SAFE LEVEL RESOLVER (TRUTH-BASED)
   // =========================
   const resolveLevel = () => {
     try {
-      const raw =
-        typeof getSafeLevel === "function"
-          ? getSafeLevel()
-          : window.Engine?.getLevel?.();
+      const lvl =
+        window.Engine?.getLevel?.() ??
+        (typeof getSafeLevel === "function" ? getSafeLevel() : 0);
 
-      const lvl = Number(raw);
-      return Number.isFinite(lvl) ? lvl : 0;
+      const num = Number(lvl);
+      return Number.isFinite(num) ? num : 0;
     } catch (e) {
       return 0;
     }
   };
 
   const oldLevel = resolveLevel();
-  const xpReward = Number(10) || 0;
+
+  // =========================
+  // BASE XP (NOT FINAL XP)
+  // =========================
+  const baseXP = 10;
+
+  // =========================
+  // LEVEL SNAPSHOT (PRE-ENGINE CONTEXT)
+  // =========================
+  const engineXP = window.Engine?.getXP?.() ?? 0;
+
+  const context = {
+    oldLevel,
+    level: oldLevel,
+    xp: engineXP
+  };
+
+  // =========================
+  // 🧠 ADAPTIVE BRAIN DECISION
+  // =========================
+  const brainDecision =
+    window.AdaptiveBrain?.decide?.(context) || { xpMultiplier: 1, mood: "correct" };
+
+  const xpReward = Math.max(
+    1,
+    Math.round(baseXP * (brainDecision.xpMultiplier || 1))
+  );
 
   // =========================
   // ENGINE UPDATE (TRUTH SOURCE)
   // =========================
-  const engine = window.Engine;
-
   try {
-    if (engine) {
-      const xp = Number(xpReward) || 0;
-
-      engine.addXP?.(xp);
-      engine.updateStreak?.();
-      engine.resetHearts?.();
-    }
+    window.Engine?.addXP?.(xpReward);
+    window.Engine?.updateStreak?.();
+    window.Engine?.resetHearts?.();
   } catch (e) {}
 
   // =========================
@@ -56,39 +75,20 @@ function runFinishLogic(){
   const newLevel = resolveLevel();
 
   const leveledUp =
-    Number.isFinite(oldLevel) &&
-    Number.isFinite(newLevel) &&
     newLevel > oldLevel;
 
   // =========================
-  // 🧠 ADAPTIVE BRAIN INTEGRATION (STEP 30 CORE)
-  // =========================
-  const context = {
-    oldLevel,
-    newLevel,
-    leveledUp,
-    xpReward,
-    xp: window.Engine?.getXP?.() ?? 0,
-    level: newLevel
-  };
-
-  const brainDecision =
-    window.AdaptiveBrain?.decide?.(context) || null;
-
-  // =========================
-  // EFFECT LAYER (PRIMARY FEEDBACK)
+  // EFFECT LAYER
   // =========================
   const effects = window.AppEffects;
 
   try {
-    if (effects) {
-      effects.xpBurst?.(xpReward);
-      effects.flash?.("correct");
+    effects?.xpBurst?.(xpReward);
+    effects?.flash?.(brainDecision?.mood || "correct");
 
-      if (leveledUp) {
-        effects.streakFire?.();
-        effects.flash?.("levelup");
-      }
+    if (leveledUp) {
+      effects?.streakFire?.();
+      effects?.flash?.("levelup");
     }
   } catch (e) {}
 
@@ -102,20 +102,18 @@ function runFinishLogic(){
   try {
     if (polish) {
 
-      if (typeof polish.xpPopup === "function") {
+      if (polish.xpPopup) {
         polish.xpPopup(xpReward);
-
-      } else if (typeof polish.notify === "function") {
+      } else if (polish.notify) {
         polish.notify("+" + xpReward + " XP");
       }
 
-      if (typeof polish.setMood === "function") {
-
-        const mood =
+      if (polish.setMood) {
+        polish.setMood(
           brainDecision?.mood ||
-          (leveledUp ? "levelup" : "correct");
+          (leveledUp ? "levelup" : "correct")
+        );
 
-        polish.setMood(mood);
         moodControlled = true;
       }
     }
@@ -134,7 +132,7 @@ function runFinishLogic(){
   }
 
   // =========================
-  // FINAL RETURN (STEP 30 CONTRACT)
+  // RETURN (STEP 30 CONTRACT)
   // =========================
   return {
     oldLevel,

@@ -125,14 +125,16 @@ h1{ margin-bottom:10px; }
   <div id="map"></div>
 </div>
 
+<!-- CORE FILES -->
 <script src="engine-core.js"></script>
 <script src="vocab_a1.js"></script>
 <script src="app-ui.js"></script>
+<script src="app-state.js"></script>
 
 <script>
 
 /* =========================
-   SAFETY LOAD
+   SAFE LOAD
 ========================= */
 
 let xp = window.Engine ? Engine.getXP() : 0;
@@ -153,14 +155,11 @@ const skills = [
 ];
 
 /* =========================
-   SAFE SKILL STATE (FIXED)
+   SKILL LEVEL SYSTEM
 ========================= */
 
 function getSkillLevel(i){
 
-  if(!window.Engine) return 0;
-
-  // fallback system (since Engine.getSkillState doesn't exist yet)
   let key = "skill_" + i;
   let val = localStorage.getItem(key);
 
@@ -241,7 +240,7 @@ function placeOwl(){
 }
 
 /* =========================
-   NAVIGATION FIXED
+   NAVIGATION (STEP 18 FIX)
 ========================= */
 
 function openSkill(i){
@@ -255,10 +254,15 @@ function openSkill(i){
 
   owl.style.top = (rect.top - container.top + 10) + "px";
 
+  // save session (STEP 18 memory hook)
+  if(window.AppState){
+    AppState.setLastSkill(i);
+  }
+
   setTimeout(()=>{
 
-    if(window.AppUI){
-      AppUI.navigate("lesson.html?s=" + i);
+    if(window.AppState){
+      AppState.go("lesson.html?s=" + i);
     } else {
       window.location.href = "lesson.html?s=" + i;
     }

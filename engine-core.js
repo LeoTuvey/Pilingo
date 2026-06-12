@@ -1,6 +1,6 @@
 /* =========================
    🧠 ENGINE CORE
-   STEP 21 SAFE + APP POLISH COMPATIBLE
+   STEP 25 FINAL — ADAPTIVE READY + PRODUCTION SAFE
 ========================= */
 
 const Engine = {
@@ -13,7 +13,7 @@ const Engine = {
   },
 
   /* =========================
-     XP SYSTEM
+     XP SYSTEM (HARD SAFE)
   ========================= */
   getXP(){
     const c = this.getCourse();
@@ -28,9 +28,10 @@ const Engine = {
     let xp = this.getXP();
     xp = isNaN(xp) ? 0 : xp;
 
-    xp += v;
+    const safeValue = parseInt(v, 10);
+    xp += isNaN(safeValue) ? 0 : safeValue;
 
-    localStorage.setItem(key, xp);
+    localStorage.setItem(key, String(xp));
     return xp;
   },
 
@@ -60,8 +61,7 @@ const Engine = {
   loseHeart(){
     let h = this.getHearts();
     h = Math.max(0, h - 1);
-
-    localStorage.setItem("hearts", h);
+    localStorage.setItem("hearts", String(h));
     return h;
   },
 
@@ -71,19 +71,20 @@ const Engine = {
   },
 
   /* =========================
-     STREAK SYSTEM
+     STREAK SYSTEM (HARD SAFE)
   ========================= */
   updateStreak(){
 
-    const today = new Date().toDateString();
+    const today = new Date().toISOString().split("T")[0];
     const last = localStorage.getItem("lastDay");
-    let streak = parseInt(localStorage.getItem("streak") || "0", 10);
 
+    let streak = parseInt(localStorage.getItem("streak") || "0", 10);
     if(isNaN(streak)) streak = 0;
 
     if(last !== today){
 
       if(last){
+
         const diff =
           (new Date(today).getTime() - new Date(last).getTime())
           / (1000 * 60 * 60 * 24);
@@ -93,6 +94,7 @@ const Engine = {
         } else if(diff > 1){
           streak = 1;
         }
+
       } else {
         streak = 1;
       }
@@ -136,11 +138,13 @@ const Engine = {
     const mistakes = data.w || 0;
     const correct = data.c || 0;
 
-    return Math.max(1, (mistakes * 2) - correct);
+    const score = (mistakes * 2) - correct;
+
+    return Math.max(1, Math.floor(score));
   },
 
   /* =========================
-     REVIEW SYSTEM
+     REVIEW SYSTEM (ADAPTIVE SAFE)
   ========================= */
   getReviewWords(pool){
 
@@ -150,13 +154,16 @@ const Engine = {
 
     let weighted = [];
 
-    pool.forEach(w => {
+    for(const w of pool){
+
+      if(!w || typeof w !== "object") continue;
+
       const weight = this.getWeakScore(w);
 
       for(let i = 0; i < weight; i++){
         weighted.push(w);
       }
-    });
+    }
 
     // shuffle
     for(let i = weighted.length - 1; i > 0; i--){
@@ -196,7 +203,7 @@ const Engine = {
   ========================= */
   dailyReset(){
 
-    const today = new Date().toDateString();
+    const today = new Date().toISOString().split("T")[0];
     const lastReset = localStorage.getItem("dailyReset");
 
     if(lastReset !== today){

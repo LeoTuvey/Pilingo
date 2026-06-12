@@ -1,6 +1,6 @@
- /* =========================
+/* =========================
    🏆 LESSON REWARD ENGINE
-   STEP 19 SAFE + STEP 21 POLISHED VERSION
+   STEP 23 SAFE + POLISHED VERSION
 ========================= */
 
 function runFinishLogic(){
@@ -11,7 +11,7 @@ function runFinishLogic(){
   let oldLevel = getSafeLevel();
 
   // =========================
-  // APPLY REWARDS (SAFE)
+  // APPLY REWARDS
   // =========================
   const xpReward = 10;
 
@@ -39,10 +39,10 @@ function runFinishLogic(){
   }
 
   // =========================
-  // STEP 19 + STEP 21 POLISH HOOKS
+  // POLISH FEEDBACK LAYER
   // =========================
 
-  // XP FEEDBACK (safe fallback chain)
+  // XP popup / fallback
   if(window.AppPolish){
 
     if(typeof AppPolish.xpPopup === "function"){
@@ -51,9 +51,13 @@ function runFinishLogic(){
     else if(typeof AppPolish.notify === "function"){
       AppPolish.notify("+" + xpReward + " XP");
     }
+
+    if(typeof AppPolish.setMood === "function"){
+      AppPolish.setMood("correct");
+    }
   }
 
-  // STEP 21 EFFECTS SYSTEM (fully optional)
+  // EFFECTS LAYER (optional)
   if(window.AppEffects){
 
     if(typeof AppEffects.xpBurst === "function"){
@@ -66,7 +70,7 @@ function runFinishLogic(){
   }
 
   // =========================
-  // CHECK LEVEL UP
+  // LEVEL UP CHECK
   // =========================
   let newLevel = getSafeLevel();
   let leveledUp = newLevel > oldLevel;
@@ -100,37 +104,11 @@ function runFinishLogic(){
   }
 
   // =========================
-  // RETURN DATA (analytics-ready)
+  // RETURN DATA
   // =========================
   return {
     oldLevel,
     newLevel,
     leveledUp
   };
-}
-
-
-/* =========================
-   🧠 SAFE LEVEL SYSTEM
-========================= */
-
-function getSafeLevel(){
-
-  let xp = 0;
-
-  if(window.Engine &&
-     typeof Engine.getXP === "function"){
-    xp = Engine.getXP();
-  }
-  else{
-    xp = parseInt(localStorage.getItem("xp") || "0", 10);
-  }
-
-  if(xp < 50) return 0;
-  if(xp < 120) return 1;
-  if(xp < 220) return 2;
-  if(xp < 350) return 3;
-  if(xp < 500) return 4;
-
-  return 5;
 }

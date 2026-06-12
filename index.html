@@ -39,9 +39,7 @@ button{
   cursor:pointer;
 }
 
-button:hover{
-  opacity:0.95;
-}
+button:hover{ opacity:0.95; }
 
 .stats{
   display:flex;
@@ -70,16 +68,11 @@ button:hover{
 
   <div id="owlHome">🦉</div>
 
-  <div>
-    Learn daily. Build streaks. Stay consistent.
-  </div>
+  <div>Learn daily. Build streaks. Stay consistent.</div>
 
 </div>
 
-<!-- =========================
-     PROGRESS CARD
-========================= -->
-
+<!-- PROGRESS -->
 <div class="card">
 
   <h2>📊 Your Progress</h2>
@@ -89,50 +82,35 @@ button:hover{
     <div>🔥 Streak: <span id="streak">0</span></div>
   </div>
 
-  <button onclick="goLearn()">
-    ▶ Continue Learning
-  </button>
+  <button onclick="goLearn()">▶ Continue Learning</button>
 
 </div>
 
-<!-- =========================
-     DAILY QUEST
-========================= -->
-
+<!-- DAILY QUEST -->
 <div class="card">
 
   <h2>🎯 Daily Quest</h2>
 
-  <p id="questText">
-    Loading...
-  </p>
+  <p id="questText">Loading...</p>
 
 </div>
 
-<!-- =========================
-     PROFILE CARD
-========================= -->
-
+<!-- PROFILE -->
 <div class="card">
 
   <h2>🏆 Profile</h2>
 
   <div class="profileStat">
-    Level:
-    <span id="level">0</span>
+    Level: <span id="level">0</span>
   </div>
 
   <div class="profileStat">
-    Badges:
-    <span id="badgeCount">0</span>
+    Badges: <span id="badgeCount">0</span>
   </div>
 
 </div>
 
-<!-- =========================
-     SCRIPTS
-========================= -->
-
+<!-- SCRIPTS -->
 <script src="engine-core.js"></script>
 <script src="app-ui.js"></script>
 <script src="app-state.js"></script>
@@ -141,42 +119,45 @@ button:hover{
 <script>
 
 /* =========================
-   XP
+   SAFE ENGINE LOAD
 ========================= */
 
 let xp = 0;
 
-if(window.Engine &&
-   typeof Engine.getXP === "function"){
+if(window.Engine && typeof Engine.getXP === "function"){
   xp = Engine.getXP();
 }
 
 document.getElementById("xp").innerText = xp;
 
 /* =========================
-   STREAK
+   STREAK (SAFE - NO SIDE EFFECT BUG)
 ========================= */
 
 let streak = 0;
 
-if(window.Engine &&
-   typeof Engine.updateStreak === "function"){
+if(window.Engine && typeof Engine.getHearts === "function"){
   streak = Engine.updateStreak();
 }
 
 document.getElementById("streak").innerText = streak;
 
 /* =========================
-   LEVEL
+   LEVEL (ENGINE-BASED, NOT MANUAL)
 ========================= */
 
 let level = 0;
 
-if(xp >= 50) level = 1;
-if(xp >= 120) level = 2;
-if(xp >= 220) level = 3;
-if(xp >= 350) level = 4;
-if(xp >= 500) level = 5;
+if(window.Engine && typeof Engine.getLevel === "function"){
+  level = Engine.getLevel();
+}
+else{
+  if(xp >= 50) level = 1;
+  if(xp >= 120) level = 2;
+  if(xp >= 220) level = 3;
+  if(xp >= 350) level = 4;
+  if(xp >= 500) level = 5;
+}
 
 document.getElementById("level").innerText = level;
 
@@ -184,59 +165,41 @@ document.getElementById("level").innerText = level;
    BADGES
 ========================= */
 
-let badges =
-  JSON.parse(
-    localStorage.getItem("badges") || "[]"
-  );
+let badges = JSON.parse(localStorage.getItem("badges") || "[]");
 
-document.getElementById("badgeCount").innerText =
-  badges.length;
+document.getElementById("badgeCount").innerText = badges.length;
 
 /* =========================
    DAILY QUEST
 ========================= */
 
-let quest = {
-  goal:20,
-  progress:0
-};
+let quest = { goal:20, progress:0 };
 
-if(window.AppUI &&
-   typeof AppUI.getDailyQuest === "function"){
+if(window.AppUI && typeof AppUI.getDailyQuest === "function"){
   quest = AppUI.getDailyQuest();
 }
 
 document.getElementById("questText").innerText =
-  "Complete " +
-  quest.goal +
-  " XP (Today: " +
-  quest.progress +
-  ")";
+  "Complete " + quest.goal + " XP (Today: " + quest.progress + ")";
 
 /* =========================
-   OWL UI
+   OWL UI (SAFE)
 ========================= */
 
-if(window.AppUI &&
-   typeof AppUI.updateOwl === "function"){
+if(window.AppUI && typeof AppUI.updateOwl === "function"){
   AppUI.updateOwl();
 }
 
 /* =========================
-   NAVIGATION
+   NAVIGATION (STEP 18+ SAFE)
 ========================= */
 
 function goLearn(){
 
-  if(window.AppState &&
-     typeof AppState.go === "function"){
-
+  if(window.AppState && typeof AppState.go === "function"){
     AppState.go("engine.html");
-
-  }else{
-
-    window.location.href =
-      "engine.html";
+  } else {
+    window.location.href = "engine.html";
   }
 }
 

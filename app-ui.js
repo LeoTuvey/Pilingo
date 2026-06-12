@@ -1,15 +1,23 @@
 /* =====================================
-   📱 OWL-LINGO APP UI POLISH LAYER
-   STEP 17 — PRODUCT FEEL SYSTEM
+   📱 OWL-LINGO APP UI SYSTEM (FIXED)
+   STEP 17 — SAFE PRODUCTION VERSION
 ===================================== */
 
 const AppUI = {
 
 /* =========================
-   🦉 OWL PERSONALITY STATE
+   🧠 SAFE ENGINE ACCESS
+========================= */
+getXP(){
+  return window.Engine ? Engine.getXP() : 0;
+},
+
+/* =========================
+   🦉 OWL MOOD SYSTEM
 ========================= */
 getMood(){
-  let xp = Engine.getXP();
+
+  let xp = this.getXP();
 
   if(xp < 50) return "new";
   if(xp < 150) return "learning";
@@ -17,11 +25,14 @@ getMood(){
   return "master";
 },
 
+/* =========================
+   🦉 OWL UPDATE (SAFE)
+========================= */
 updateOwl(){
 
   let owl = document.getElementById("owl");
 
-  if(!owl) return;
+  if(!owl || !window.Engine) return;
 
   let mood = this.getMood();
 
@@ -34,7 +45,7 @@ updateOwl(){
 },
 
 /* =========================
-   🔔 FAKE PUSH NOTIFICATIONS
+   🔔 NOTIFICATIONS
 ========================= */
 notify(message){
 
@@ -53,6 +64,7 @@ notify(message){
   n.style.zIndex = "9999";
   n.style.fontSize = "14px";
   n.style.opacity = "0";
+  n.style.transition = "0.3s";
 
   document.body.appendChild(n);
 
@@ -60,7 +72,7 @@ notify(message){
 
   setTimeout(()=>{
     n.style.opacity = "0";
-    setTimeout(()=> n.remove(), 400);
+    setTimeout(()=> n.remove(), 300);
   }, 2500);
 },
 
@@ -77,16 +89,16 @@ getDailyQuest(){
     if(data.day === today) return data;
   }
 
-  let newQuest = {
+  let quest = {
     day: today,
     goal: 20,
     progress: 0,
     reward: 10
   };
 
-  localStorage.setItem("dailyQuest", JSON.stringify(newQuest));
+  localStorage.setItem("dailyQuest", JSON.stringify(quest));
 
-  return newQuest;
+  return quest;
 },
 
 updateQuestProgress(amount){
@@ -99,12 +111,15 @@ updateQuestProgress(amount){
 
   if(quest.progress >= quest.goal){
     this.notify("🎯 Daily Quest Complete! +10 XP");
-    Engine.addXP(quest.reward);
+
+    if(window.Engine){
+      Engine.addXP(quest.reward);
+    }
   }
 },
 
 /* =========================
-   📱 APP TRANSITION (SMOOTH FAKE NAV)
+   📱 NAVIGATION SYSTEM
 ========================= */
 navigate(url){
 
@@ -118,7 +133,7 @@ navigate(url){
   fade.style.background = "#fff";
   fade.style.zIndex = "9999";
   fade.style.opacity = "0";
-  fade.style.transition = "0.25s";
+  fade.style.transition = "0.25s ease";
 
   document.body.appendChild(fade);
 
@@ -127,6 +142,23 @@ navigate(url){
   setTimeout(()=>{
     window.location.href = url;
   }, 250);
+},
+
+/* =========================
+   🚀 INIT SYSTEM (IMPORTANT FIX)
+========================= */
+init(){
+
+  this.getDailyQuest();
+  this.updateOwl();
 }
 
 };
+
+/* =========================
+   AUTO START HOOK
+========================= */
+
+document.addEventListener("DOMContentLoaded", ()=>{
+  AppUI.init();
+});

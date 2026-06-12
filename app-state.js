@@ -1,6 +1,6 @@
 /* =====================================
    🧠 OWL-LINGO APP STATE SYSTEM
-   STEP 22B — REAL RESUME ENGINE
+   STEP 22B — REAL RESUME ENGINE (FIXED)
 ===================================== */
 
 const AppState = {
@@ -13,51 +13,58 @@ const AppState = {
   },
 
   /* =========================
-     💾 SAVE FULL SESSION
-  ========================= */
-  save(data){
-
-    let current = this.load() || {};
-
-    let updated = {
-      ...current,
-      ...data,
-      timestamp: Date.now()
-    };
-
-    localStorage.setItem(this._key(), JSON.stringify(updated));
-  },
-
-  /* =========================
-     📥 LOAD SESSION
+     📥 SAFE LOAD (FIXED)
   ========================= */
   load(){
     try{
-      return JSON.parse(localStorage.getItem(this._key()));
+      const raw = localStorage.getItem(this._key());
+      return raw ? JSON.parse(raw) : null;
     }catch(e){
       return null;
     }
   },
 
   /* =========================
-     ▶ GO TO PAGE (SAFE NAV)
+     💾 SAVE FULL SESSION (SAFE MERGE)
+  ========================= */
+  save(data){
+
+    const current = this.load() || {};
+
+    const updated = {
+      ...current,
+      ...data,
+      timestamp: Date.now()
+    };
+
+    localStorage.setItem(
+      this._key(),
+      JSON.stringify(updated)
+    );
+  },
+
+  /* =========================
+     ▶ SAFE NAVIGATION
   ========================= */
   go(url){
 
-    // optional save before navigation
+    if(typeof url !== "string") return;
+
     this.save({ lastUrl: url });
 
     window.location.href = url;
   },
 
   /* =========================
-     📍 LESSON PROGRESS SAVE
+     📍 LESSON PROGRESS SAVE (SAFE)
   ========================= */
   setLessonProgress(data){
 
+    if(!data || typeof data !== "object") return;
+
     this.save({
       lesson: {
-        skill: data.skill ?? null,
+        skill: data.skill ?? 0,
         question: data.question ?? 0,
         score: data.score ?? 0
       }
@@ -65,11 +72,11 @@ const AppState = {
   },
 
   /* =========================
-     📍 GET LESSON RESUME
+     📍 LESSON RESUME (SAFE DEFAULTS)
   ========================= */
   resume(){
 
-    let state = this.load();
+    const state = this.load();
 
     if(!state || !state.lesson){
       return {
@@ -79,45 +86,57 @@ const AppState = {
       };
     }
 
-    return state.lesson;
+    return {
+      skill: state.lesson.skill ?? 0,
+      question: state.lesson.question ?? 0,
+      score: state.lesson.score ?? 0
+    };
   },
 
   /* =========================
-     🧹 CLEAR LESSON ONLY
+     🧹 CLEAR LESSON ONLY (SAFE)
   ========================= */
   clearLessonProgress(){
 
-    let state = this.load();
+    const state = this.load();
     if(!state) return;
 
     delete state.lesson;
 
-    localStorage.setItem(this._key(), JSON.stringify(state));
+    localStorage.setItem(
+      this._key(),
+      JSON.stringify(state)
+    );
   },
 
   /* =========================
-     💾 GENERIC SAVE (SAFE)
+     💾 GENERIC SAFE SET/GET
   ========================= */
   set(key, value){
 
-    let state = this.load() || {};
+    if(!key) return;
+
+    const state = this.load() || {};
     state[key] = value;
 
-    localStorage.setItem(this._key(), JSON.stringify(state));
+    localStorage.setItem(
+      this._key(),
+      JSON.stringify(state)
+    );
   },
 
   get(key){
 
-    let state = this.load();
+    const state = this.load();
     return state ? state[key] : null;
   },
 
   /* =========================
-     🧠 FIRST TIME CHECK
+     🧠 FIRST TIME CHECK (SAFE)
   ========================= */
   firstTimeCheck(){
 
-    let state = this.load();
+    const state = this.load();
 
     if(!state){
       this.save({

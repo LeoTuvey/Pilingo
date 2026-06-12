@@ -1,13 +1,12 @@
 /* =====================================
    🧠 OWL-LINGO ADAPTIVE BRAIN
-   STEP 25 + STEP 26 — FULL INTELLIGENCE CORE
-   (DECISION + MEMORY + FORGETTING)
+   STEP 25 + STEP 26 — FULL INTELLIGENCE CORE (HARDENED)
 ===================================== */
 
 const AdaptiveBrain = {
 
   /* =====================================
-     🧭 STEP 25 — DECISION ENGINE
+     🧭 DECISION ENGINE (STEP 25)
   ===================================== */
   decide(context = {}){
 
@@ -17,7 +16,7 @@ const AdaptiveBrain = {
       streak = 0,
       level = 0,
       xp = 0
-    } = context;
+    } = context || {};
 
     const result = {
       xpMultiplier: 1,
@@ -37,7 +36,7 @@ const AdaptiveBrain = {
       result.intensity = 2;
 
       if(window.AdaptiveEngine && word){
-        const weight = AdaptiveEngine.weight(word);
+        const weight = window.AdaptiveEngine.weight(word);
         if(weight >= 3){
           result.triggerReviewBoost = true;
         }
@@ -73,20 +72,22 @@ const AdaptiveBrain = {
   },
 
   /* =====================================
-     ⚡ STEP 25 — XP CALCULATION
+     ⚡ XP CALCULATOR
   ===================================== */
   calculateXP(baseXP, context = {}){
 
     const decision = this.decide(context);
 
-    return Math.max(
+    const xp = Math.max(
       1,
-      Math.round(baseXP * (decision.xpMultiplier || 1))
+      Math.round(Number(baseXP || 0) * (decision.xpMultiplier || 1))
     );
+
+    return xp;
   },
 
   /* =====================================
-     🔥 STEP 25 — UI FEEDBACK SIGNALS
+     🔥 UI FEEDBACK
   ===================================== */
   getUIEffects(context = {}){
 
@@ -102,7 +103,7 @@ const AdaptiveBrain = {
   },
 
   /* =====================================
-     📚 STEP 25 — REVIEW TRIGGER
+     📚 REVIEW TRIGGER
   ===================================== */
   shouldBoostReview(context = {}){
 
@@ -116,23 +117,35 @@ const AdaptiveBrain = {
   memory: {
 
     /* =========================
+       KEY NORMALIZER (FIX #1)
+    ========================= */
+    key(word){
+      return "brain_" + (
+        word?.en ||
+        word?.word ||
+        word?.id ||
+        "x"
+      );
+    },
+
+    /* =========================
        SAVE WORD RESULT
     ========================= */
     update(word, correct){
 
       if(!word) return;
 
-      const key = "brain_" + (word.en || word.word || word.id || "x");
+      const key = this.key(word);
 
       let data;
 
       try{
-        data = JSON.parse(localStorage.getItem(key) || "null");
+        data = JSON.parse(localStorage.getItem(key));
       }catch(e){
         data = null;
       }
 
-      if(!data){
+      if(!data || typeof data !== "object"){
         data = {
           seen: 0,
           correct: 0,
@@ -142,10 +155,13 @@ const AdaptiveBrain = {
         };
       }
 
-      data.seen++;
+      data.seen = (data.seen || 0) + 1;
 
-      if(correct) data.correct++;
-      else data.wrong++;
+      if(correct){
+        data.correct = (data.correct || 0) + 1;
+      } else {
+        data.wrong = (data.wrong || 0) + 1;
+      }
 
       const accuracy = data.correct / data.seen;
       const errorRate = data.wrong / data.seen;
@@ -165,13 +181,14 @@ const AdaptiveBrain = {
     ========================= */
     decay(word){
 
-      const key = "brain_" + (word.en || word.word || word.id || "x");
+      const key = this.key(word);
 
       const data = JSON.parse(localStorage.getItem(key) || "null");
       if(!data) return 1;
 
       const days =
-        (Date.now() - data.last) / (1000 * 60 * 60 * 24);
+        (Date.now() - (data.last || Date.now())) /
+        (1000 * 60 * 60 * 24);
 
       return Math.exp(-days / 4);
     },
@@ -181,7 +198,7 @@ const AdaptiveBrain = {
     ========================= */
     priority(word){
 
-      const key = "brain_" + (word.en || word.word || word.id || "x");
+      const key = this.key(word);
 
       const data = JSON.parse(localStorage.getItem(key) || "null");
 
@@ -189,7 +206,7 @@ const AdaptiveBrain = {
         return 1.5;
       }
 
-      const strength = data.strength || 0.5;
+      const strength = data.strength ?? 0.5;
       const decay = this.decay(word);
 
       const score = (1 - strength) * 2 + (1 - decay);
@@ -208,7 +225,12 @@ const AdaptiveBrain = {
 
       for(const w of words){
 
-        const weight = Math.round(this.priority(w) * 3);
+        if(!w) continue;
+
+        const weight = Math.max(
+          1,
+          Math.round(this.priority(w) * 3)
+        );
 
         for(let i = 0; i < weight; i++){
           pool.push(w);
@@ -223,7 +245,7 @@ const AdaptiveBrain = {
     ========================= */
     shuffle(arr){
 
-      const a = [...arr];
+      const a = Array.isArray(arr) ? [...arr] : [];
 
       for(let i = a.length - 1; i > 0; i--){
         const j = Math.floor(Math.random() * (i + 1));

@@ -1,6 +1,6 @@
 /* =========================
    🏆 LESSON REWARD ENGINE
-   STEP 24 — FINAL POLISHED VERSION
+   STEP 24 — FINAL STABLE VERSION
 ========================= */
 
 function runFinishLogic(){
@@ -8,10 +8,11 @@ function runFinishLogic(){
   // =========================
   // SAFETY: LEVEL READ
   // =========================
-  const oldLevel = (typeof getSafeLevel === "function")
-    ? getSafeLevel()
-    : 0;
+  const safeLevelFn = (typeof getSafeLevel === "function")
+    ? getSafeLevel
+    : () => 0;
 
+  const oldLevel = safeLevelFn();
   const xpReward = 10;
 
   // =========================
@@ -41,26 +42,7 @@ function runFinishLogic(){
   }
 
   // =========================
-  // POLISH LAYER
-  // =========================
-  let moodSet = false;
-
-  if(window.AppPolish){
-
-    if(typeof AppPolish.xpPopup === "function"){
-      AppPolish.xpPopup(xpReward);
-    } else if(typeof AppPolish.notify === "function"){
-      AppPolish.notify("+" + xpReward + " XP");
-    }
-
-    if(typeof AppPolish.setMood === "function"){
-      AppPolish.setMood("correct");
-      moodSet = true;
-    }
-  }
-
-  // =========================
-  // EFFECTS LAYER (OPTIONAL)
+  // EFFECTS FIRST (FEEL LAYER)
   // =========================
   if(window.AppEffects){
 
@@ -74,12 +56,25 @@ function runFinishLogic(){
   }
 
   // =========================
-  // LEVEL CHECK
+  // POLISH UI LAYER
   // =========================
-  const newLevel = (typeof getSafeLevel === "function")
-    ? getSafeLevel()
-    : 0;
+  if(window.AppPolish){
 
+    if(typeof AppPolish.xpPopup === "function"){
+      AppPolish.xpPopup(xpReward);
+    } else if(typeof AppPolish.notify === "function"){
+      AppPolish.notify("+" + xpReward + " XP");
+    }
+
+    if(typeof AppPolish.setMood === "function"){
+      AppPolish.setMood("correct");
+    }
+  }
+
+  // =========================
+  // LEVEL CHECK (ONLY ONCE)
+  // =========================
+  const newLevel = safeLevelFn();
   const leveledUp = newLevel > oldLevel;
 
   // =========================

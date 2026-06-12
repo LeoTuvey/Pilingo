@@ -1,24 +1,19 @@
 /* =====================================
    🧠 OWL-LINGO ADAPTIVE ENGINE
-   STEP 23 — SMART LEARNING SYSTEM (STEP 25 READY FIXED)
+   STEP 23 — SMART LEARNING SYSTEM (STEP 25 FINAL FIXED)
 ===================================== */
 
 const AdaptiveEngine = {
 
   /* =========================
-     🔧 SAFE WORD KEY (HARDENED)
+     🔧 SINGLE SOURCE WORD KEY (FIXED)
   ========================= */
   getKey(word){
 
     if(!word || typeof word !== "object") return "unknown";
 
-    return (
-      word.en ||
-      word.word ||
-      word.translation ||
-      word.id ||
-      "unknown"
-    );
+    // FORCE CONSISTENCY WITH ENGINE CORE
+    return String(word.en || "unknown");
   },
 
   /* =========================
@@ -26,68 +21,64 @@ const AdaptiveEngine = {
   ========================= */
   mark(word, correct){
 
-    if(!word) return;
-
-    let key = "w_" + this.getKey(word);
+    const key = "w_" + this.getKey(word);
 
     let data;
-
     try{
       data = JSON.parse(localStorage.getItem(key) || '{"c":0,"w":0}');
     }catch(e){
       data = { c:0, w:0 };
     }
 
-    if(correct){
-      data.c = (data.c || 0) + 1;
-    } else {
-      data.w = (data.w || 0) + 1;
-    }
+    data.c = data.c || 0;
+    data.w = data.w || 0;
+
+    if(correct) data.c += 1;
+    else data.w += 1;
 
     localStorage.setItem(key, JSON.stringify(data));
   },
 
   /* =========================
-     ⚖️ CALCULATE WEIGHT (STABLE CURVE)
+     ⚖️ CALCULATE WEIGHT (STABLE CURVE v2)
   ========================= */
   weight(word){
 
-    let key = "w_" + this.getKey(word);
+    const key = "w_" + this.getKey(word);
 
     let data;
-
     try{
       data = JSON.parse(localStorage.getItem(key) || '{"c":0,"w":0}');
     }catch(e){
       data = { c:0, w:0 };
     }
 
-    let mistakes = data.w || 0;
-    let correct = data.c || 0;
+    const mistakes = data.w || 0;
+    const correct = data.c || 0;
 
-    // STEP 25 FIX: prevents runaway inflation
-    let score = (mistakes * 1.5) - (correct * 0.75);
+    // FIXED: smoother learning curve (no oscillation)
+    let score = (mistakes * 1.6) - (correct * 0.4);
 
-    // clamp to prevent over-repetition explosion
     let weight = Math.round(score + 1);
 
-    return Math.max(1, Math.min(weight, 6));
+    // HARD CAP for performance stability
+    return Math.max(1, Math.min(weight, 5));
   },
 
   /* =========================
-     🔁 BUILD ADAPTIVE POOL (SAFE)
+     🔁 BUILD ADAPTIVE POOL
   ========================= */
   buildPool(words){
 
     if(!Array.isArray(words)) return [];
 
-    let pool = [];
+    const pool = [];
 
     for(const w of words){
 
       if(!w) continue;
 
-      let weight = this.weight(w);
+      const weight = this.weight(w);
 
       for(let i = 0; i < weight; i++){
         pool.push(w);
@@ -98,15 +89,15 @@ const AdaptiveEngine = {
   },
 
   /* =========================
-     🔀 SHUFFLE (IMMUTABLE SAFE)
+     🔀 SHUFFLE (SAFE IMMUTABLE)
   ========================= */
   shuffle(arr){
 
-    let a = Array.isArray(arr) ? [...arr] : [];
+    const a = Array.isArray(arr) ? [...arr] : [];
 
     for(let i = a.length - 1; i > 0; i--){
 
-      let j = Math.floor(Math.random() * (i + 1));
+      const j = Math.floor(Math.random() * (i + 1));
 
       [a[i], a[j]] = [a[j], a[i]];
     }
@@ -115,7 +106,7 @@ const AdaptiveEngine = {
   },
 
   /* =========================
-     🎯 GET SMART QUESTION SET
+     🎯 GET SMART QUESTION SET (FIXED LOGIC)
   ========================= */
   getQuestions(baseQuestions){
 
@@ -123,11 +114,11 @@ const AdaptiveEngine = {
       return [];
     }
 
-    // STEP 25 INTEGRATION HOOK SAFETY (future-proof)
-    let pool = this.buildPool(baseQuestions);
+    const pool = this.buildPool(baseQuestions);
 
+    // IMPORTANT: never bypass adaptive system silently
     if(pool.length === 0){
-      return baseQuestions;
+      return [];
     }
 
     return pool;

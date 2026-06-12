@@ -8,19 +8,17 @@
 <style>
 body{
   margin:0;
-  font-family: Arial;
-  background: linear-gradient(135deg,#e3f2fd,#fce4ec);
+  font-family:Arial,sans-serif;
+  background:linear-gradient(135deg,#e3f2fd,#fce4ec);
   text-align:center;
 }
 
-/* HEADER */
 .header{
   background:#58cc02;
   color:white;
   padding:20px;
 }
 
-/* CARD */
 .card{
   background:white;
   margin:15px;
@@ -29,7 +27,6 @@ body{
   box-shadow:0 3px 10px rgba(0,0,0,0.1);
 }
 
-/* BUTTON */
 button{
   padding:12px;
   width:100%;
@@ -42,12 +39,25 @@ button{
   cursor:pointer;
 }
 
-/* STATS */
+button:hover{
+  opacity:0.95;
+}
+
 .stats{
   display:flex;
   justify-content:space-between;
   margin-top:10px;
   font-weight:bold;
+}
+
+.profileStat{
+  margin-top:8px;
+  font-size:18px;
+}
+
+#owlHome{
+  font-size:42px;
+  margin-top:10px;
 }
 </style>
 </head>
@@ -55,11 +65,23 @@ button{
 <body>
 
 <div class="header">
+
   <h1>🦉 Owl-Lingo</h1>
-  <div>Learn daily. Build streaks. Stay consistent.</div>
+
+  <div id="owlHome">🦉</div>
+
+  <div>
+    Learn daily. Build streaks. Stay consistent.
+  </div>
+
 </div>
 
+<!-- =========================
+     PROGRESS CARD
+========================= -->
+
 <div class="card">
+
   <h2>📊 Your Progress</h2>
 
   <div class="stats">
@@ -67,65 +89,154 @@ button{
     <div>🔥 Streak: <span id="streak">0</span></div>
   </div>
 
-  <button onclick="goLearn()">▶ Continue Learning</button>
-</div>
+  <button onclick="goLearn()">
+    ▶ Continue Learning
+  </button>
 
-<div class="card">
-  <h2>🎯 Daily Quest</h2>
-  <p id="questText">Loading...</p>
 </div>
 
 <!-- =========================
-     CORE SCRIPTS
+     DAILY QUEST
 ========================= -->
+
+<div class="card">
+
+  <h2>🎯 Daily Quest</h2>
+
+  <p id="questText">
+    Loading...
+  </p>
+
+</div>
+
+<!-- =========================
+     PROFILE CARD
+========================= -->
+
+<div class="card">
+
+  <h2>🏆 Profile</h2>
+
+  <div class="profileStat">
+    Level:
+    <span id="level">0</span>
+  </div>
+
+  <div class="profileStat">
+    Badges:
+    <span id="badgeCount">0</span>
+  </div>
+
+</div>
+
+<!-- =========================
+     SCRIPTS
+========================= -->
+
 <script src="engine-core.js"></script>
 <script src="app-ui.js"></script>
 <script src="app-state.js"></script>
+<script src="app-polish.js"></script>
 
 <script>
 
 /* =========================
-   SAFE LOAD
+   XP
 ========================= */
 
-let xp = window.Engine ? Engine.getXP() : 0;
+let xp = 0;
+
+if(window.Engine &&
+   typeof Engine.getXP === "function"){
+  xp = Engine.getXP();
+}
+
 document.getElementById("xp").innerText = xp;
 
 /* =========================
-   SAFE STREAK FIX
+   STREAK
 ========================= */
 
 let streak = 0;
-if(window.Engine && typeof Engine.updateStreak === "function"){
+
+if(window.Engine &&
+   typeof Engine.updateStreak === "function"){
   streak = Engine.updateStreak();
 }
+
 document.getElementById("streak").innerText = streak;
 
 /* =========================
-   UI LAYER
+   LEVEL
 ========================= */
 
-// 🦉 OWL UPDATE
-if(window.AppUI){
+let level = 0;
+
+if(xp >= 50) level = 1;
+if(xp >= 120) level = 2;
+if(xp >= 220) level = 3;
+if(xp >= 350) level = 4;
+if(xp >= 500) level = 5;
+
+document.getElementById("level").innerText = level;
+
+/* =========================
+   BADGES
+========================= */
+
+let badges =
+  JSON.parse(
+    localStorage.getItem("badges") || "[]"
+  );
+
+document.getElementById("badgeCount").innerText =
+  badges.length;
+
+/* =========================
+   DAILY QUEST
+========================= */
+
+let quest = {
+  goal:20,
+  progress:0
+};
+
+if(window.AppUI &&
+   typeof AppUI.getDailyQuest === "function"){
+  quest = AppUI.getDailyQuest();
+}
+
+document.getElementById("questText").innerText =
+  "Complete " +
+  quest.goal +
+  " XP (Today: " +
+  quest.progress +
+  ")";
+
+/* =========================
+   OWL UI
+========================= */
+
+if(window.AppUI &&
+   typeof AppUI.updateOwl === "function"){
   AppUI.updateOwl();
 }
 
-// 🎯 DAILY QUEST
-let quest = window.AppUI ? AppUI.getDailyQuest() : {goal:20,progress:0};
-
-document.getElementById("questText").innerText =
-"Complete " + quest.goal + " XP (Today: " + quest.progress + ")";
-
 /* =========================
-   NAVIGATION (STEP 18)
+   NAVIGATION
 ========================= */
 
 function goLearn(){
 
-  if(window.AppState){
+  if(window.AppState &&
+     typeof AppState.go === "function"){
+
     AppState.go("engine.html");
-  } else {
-    window.location.href = "engine.html";
+
+  }else{
+
+    window.location.href =
+      "engine.html";
   }
 }
 

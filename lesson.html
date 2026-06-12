@@ -1,6 +1,6 @@
 /* =========================
  🏆 LESSON REWARD ENGINE
- STEP 30 — FINAL ADAPTIVE ORCHESTRATOR (BRAIN-INTEGRATED FIXED v5)
+ STEP 30 — FINAL ADAPTIVE ORCHESTRATOR (BRAIN-INTEGRATED FIXED v6)
 ========================= */
 
 function runFinishLogic(){
@@ -16,7 +16,7 @@ function runFinishLogic(){
   }, 1500);
 
   // =========================
-  // SAFE LEVEL RESOLVER
+  // SAFE RESOLVER
   // =========================
   const resolveLevel = () => {
     try {
@@ -40,16 +40,13 @@ function runFinishLogic(){
 
   const engineXP = Number(window.Engine?.getXP?.() || 0);
 
-  // =========================
-  // SAFE STREAK (FIXED)
-  // =========================
   const streak =
     typeof window.Engine?.getStreak === "function"
       ? window.Engine.getStreak()
       : 0;
 
   // =========================
-  // 🧠 BRAIN CONTEXT
+  // BRAIN CONTEXT
   // =========================
   const context = {
     oldLevel,
@@ -60,14 +57,14 @@ function runFinishLogic(){
   };
 
   const brainDecision =
-    window.AdaptiveBrain?.decide?.(context) || {
+    window.AdaptiveBrain?.decide?.(context) ?? {
       xpMultiplier: 1,
       mood: "correct",
       showStreakBoost: false
     };
 
   // =========================
-  // FINAL XP CALCULATION
+  // FINAL XP
   // =========================
   const xpReward = Math.max(
     1,
@@ -75,17 +72,17 @@ function runFinishLogic(){
   );
 
   // =========================
-  // ENGINE UPDATE
+  // ENGINE UPDATE (SAFE)
   // =========================
   try {
     const engine = window.Engine;
 
-    if (engine) {
-      engine.addXP?.(xpReward);
-      engine.updateStreak?.();
-      engine.resetHearts?.();
-    }
-  } catch {}
+    if (engine?.addXP) engine.addXP(xpReward);
+    if (engine?.updateStreak) engine.updateStreak();
+    if (engine?.resetHearts) engine.resetHearts();
+  } catch (e) {
+    console.warn("Engine update failed:", e);
+  }
 
   // =========================
   // LEVEL SNAPSHOT
@@ -98,19 +95,15 @@ function runFinishLogic(){
     newLevel > oldLevel;
 
   // =========================
-  // EFFECT LAYER
+  // EFFECTS
   // =========================
   const effects = window.AppEffects;
 
   try {
     effects?.xpBurst?.(xpReward);
+    effects?.flash?.(leveledUp ? "levelup" : (brainDecision?.mood || "correct"));
 
-    const mood = brainDecision?.mood || "correct";
-    effects?.flash?.(leveledUp ? "levelup" : mood);
-
-    if (leveledUp) {
-      effects?.streakFire?.();
-    }
+    if (leveledUp) effects?.streakFire?.();
   } catch {}
 
   // =========================
@@ -138,7 +131,7 @@ function runFinishLogic(){
   } catch {}
 
   // =========================
-  // LEVEL UP HANDLING
+  // LEVEL UP
   // =========================
   if (leveledUp) {
     window.levelUpAnimation?.();

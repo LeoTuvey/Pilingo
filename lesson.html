@@ -41,8 +41,6 @@ function runFinishLogic(){
   // =========================
   // POLISH FEEDBACK LAYER
   // =========================
-
-  // XP popup / fallback
   if(window.AppPolish){
 
     if(typeof AppPolish.xpPopup === "function"){
@@ -57,7 +55,9 @@ function runFinishLogic(){
     }
   }
 
-  // EFFECTS LAYER (optional)
+  // =========================
+  // EFFECTS LAYER (OPTIONAL)
+  // =========================
   if(window.AppEffects){
 
     if(typeof AppEffects.xpBurst === "function"){

@@ -1,49 +1,61 @@
 /* =========================
    🏆 LEVEL CHECK + XP LOGIC
-   (DUOLINGO-SAFE VERSION)
+   (STEP 18 PRODUCTION SAFE VERSION)
 ========================= */
 
 function runFinishLogic(){
 
   // =========================
-  // 1. SAFE LEVEL READ (fallback if not implemented yet)
+  // 1. SAFE LEVEL READ
   // =========================
   let oldLevel = getSafeLevel();
 
   // =========================
-  // 2. APPLY REWARDS
+  // 2. APPLY REWARDS (SAFE ENGINE CALLS)
   // =========================
-  Engine.addXP(10);
-  Engine.resetHearts();
-  Engine.updateStreak();
+  if(window.Engine){
 
-  // optional hook for Step 17 UI layer
-  if(window.AppUI && AppUI.updateQuestProgress){
-    AppUI.updateQuestProgress(10);
+    Engine.addXP(10);
+    Engine.resetHearts();
+    Engine.updateStreak();
   }
 
   // =========================
-  // 3. NEW LEVEL
+  // 3. APP STATE SYNC (STEP 18 MEMORY)
+  // =========================
+  if(window.AppState){
+
+    AppState.clearLessonProgress();
+
+    // optional future analytics hook
+    AppState.save("lastSessionXP", Engine ? Engine.getXP() : 0);
+  }
+
+  // =========================
+  // 4. NEW LEVEL
   // =========================
   let newLevel = getSafeLevel();
 
   // =========================
-  // 4. LEVEL UP CHECK
+  // 5. LEVEL UP CHECK
   // =========================
   let leveledUp = newLevel > oldLevel;
 
   if(leveledUp){
+
+    // animation hook (safe)
     if(typeof levelUpAnimation === "function"){
       levelUpAnimation();
     }
 
-    if(window.AppUI){
+    // UI notification (only if exists)
+    if(window.AppUI && AppUI.notify){
       AppUI.notify("🏆 Level Up!");
     }
   }
 
   // =========================
-  // 5. RETURN RESULT (future AI/analytics ready)
+  // 6. RETURN RESULT (future AI layer ready)
   // =========================
   return {
     oldLevel,
@@ -54,19 +66,21 @@ function runFinishLogic(){
 
 
 /* =========================
-   🧠 SAFE LEVEL SYSTEM (FIX)
-   replaces Engine.getLevel()
+   🧠 SAFE LEVEL SYSTEM
+   (NO DEPENDENCY VERSION)
 ========================= */
 
 function getSafeLevel(){
 
-  if(!window.Engine){
-    return 0;
+  let xp = 0;
+
+  if(window.Engine && typeof Engine.getXP === "function"){
+    xp = Engine.getXP();
+  } else {
+    xp = parseInt(localStorage.getItem("xp") || "0");
   }
 
-  let xp = Engine.getXP();
-
-  // simple Duolingo-style leveling curve
+  // Duolingo-style progression curve
   if(xp < 50) return 0;
   if(xp < 120) return 1;
   if(xp < 220) return 2;

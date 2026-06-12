@@ -1,16 +1,28 @@
 /* =====================================
    🧠 OWL-LINGO ADAPTIVE ENGINE
-   STEP 23 — SMART LEARNING SYSTEM
+   STEP 23 — SMART LEARNING SYSTEM (FIXED)
 ===================================== */
 
 const AdaptiveEngine = {
+
+  /* =========================
+     🔧 SAFE WORD KEY
+  ========================= */
+  getKey(word){
+    return (
+      word.en ||
+      word.word ||
+      word.translation ||
+      "unknown"
+    );
+  },
 
   /* =========================
      📊 TRACK ANSWERS
   ========================= */
   mark(word, correct){
 
-    let key = "w_" + word.en;
+    let key = "w_" + this.getKey(word);
 
     let data = JSON.parse(
       localStorage.getItem(key) || '{"c":0,"w":0}'
@@ -26,24 +38,24 @@ const AdaptiveEngine = {
   },
 
   /* =========================
-     ⚖️ CALCULATE WEIGHT
+     ⚖️ CALCULATE WEIGHT (IMPROVED)
   ========================= */
   weight(word){
 
-    let key = "w_" + word.en;
+    let key = "w_" + this.getKey(word);
 
     let data = JSON.parse(
       localStorage.getItem(key) || '{"c":0,"w":0}'
     );
 
-    // mistakes matter more than correct answers
     let mistakes = data.w;
     let correct = data.c;
 
-    let score = (mistakes * 2) - correct;
+    // smoother Duolingo-like curve
+    let score = (mistakes * 1.5) - (correct * 0.5);
 
-    // minimum weight = 1
-    return Math.max(1, score + 1);
+    // ensure at least 1 appearance
+    return Math.max(1, Math.round(score + 1));
   },
 
   /* =========================
@@ -52,6 +64,8 @@ const AdaptiveEngine = {
   buildPool(words){
 
     let pool = [];
+
+    if(!Array.isArray(words)) return [];
 
     words.forEach(w => {
 
@@ -71,14 +85,16 @@ const AdaptiveEngine = {
   ========================= */
   shuffle(arr){
 
-    for(let i = arr.length - 1; i > 0; i--){
+    let a = [...arr];
+
+    for(let i = a.length - 1; i > 0; i--){
 
       let j = Math.floor(Math.random() * (i + 1));
 
-      [arr[i], arr[j]] = [arr[j], arr[i]];
+      [a[i], a[j]] = [a[j], a[i]];
     }
 
-    return arr;
+    return a;
   },
 
   /* =========================
@@ -86,7 +102,8 @@ const AdaptiveEngine = {
   ========================= */
   getQuestions(baseQuestions){
 
-    // convert normal list → adaptive list
+    if(!baseQuestions) return [];
+
     return this.buildPool(baseQuestions);
   }
 };

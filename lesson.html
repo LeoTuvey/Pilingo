@@ -1,23 +1,10 @@
-/* =========================
-   🏆 LESSON REWARD ENGINE
-   STEP 30 — FINAL ADAPTIVE ORCHESTRATOR (BRAIN-INTEGRATED FIXED v3)
-========================= */
-
 function runFinishLogic(){
 
-  // =========================
-  // GUARD (prevent double XP exploit)
-  // =========================
   if (window.__finishLock) return;
 
   window.__finishLock = true;
-  setTimeout(() => {
-    window.__finishLock = false;
-  }, 1500);
+  setTimeout(() => window.__finishLock = false, 1500);
 
-  // =========================
-  // SAFE LEVEL RESOLVER (STRICT)
-  // =========================
   const resolveLevel = () => {
     try {
       const lvl =
@@ -26,76 +13,42 @@ function runFinishLogic(){
 
       const num = Number(lvl);
       return Number.isFinite(num) ? num : 0;
-
     } catch {
       return 0;
     }
   };
 
   const oldLevel = resolveLevel();
-
-  // =========================
-  // BASE XP
-  // =========================
   const baseXP = 10;
 
-  // =========================
-  // SAFE ENGINE XP (CONTEXT ONLY)
-  // =========================
-  const engineXP = Number(window.Engine?.getXP?.() ?? 0);
-
-  // =========================
-  // 🧠 BRAIN CONTEXT
-  // =========================
   const context = {
     oldLevel,
     level: oldLevel,
-    xp: engineXP
+    xp: window.Engine?.getXP?.() || 0,
+    streak: window.Engine?.getStreak?.() || 0
   };
 
   const brainDecision =
     window.AdaptiveBrain?.decide?.(context) || {
       xpMultiplier: 1,
-      mood: "correct",
-      showStreakBoost: false
+      mood: "correct"
     };
 
-  // =========================
-  // FINAL XP CALCULATION
-  // =========================
   const xpReward = Math.max(
     1,
-    Math.round(baseXP * (Number(brainDecision.xpMultiplier) || 1))
+    Math.round(baseXP * (brainDecision.xpMultiplier || 1))
   );
 
-  // =========================
-  // ENGINE UPDATE (SAFE)
-  // =========================
   try {
-    const engine = window.Engine;
-
-    if (engine) {
-      const xp = Number.isFinite(xpReward) ? xpReward : 0;
-
-      engine.addXP?.(xp);
-      engine.updateStreak?.();
-      engine.resetHearts?.();
-    }
+    window.Engine?.addXP?.(xpReward);
+    window.Engine?.updateStreak?.();
+    window.Engine?.resetHearts?.();
   } catch {}
 
-  // =========================
-  // LEVEL SNAPSHOT (AFTER XP)
-  // =========================
   const newLevel = resolveLevel();
 
-  const leveledUp =
-    Number.isFinite(oldLevel) &&
-    Number.isFinite(newLevel) &&
-    newLevel > oldLevel;
+  const leveledUp = newLevel > oldLevel;
 
-  // =========================
-  // EFFECT LAYER
-  // =========================
   const effects = window.AppEffects;
 
   try {
@@ -108,9 +61,6 @@ function runFinishLogic(){
     }
   } catch {}
 
-  // =========================
-  // UI POLISH LAYER
-  // =========================
   const polish = window.AppPolish;
   let moodControlled = false;
 
@@ -133,21 +83,13 @@ function runFinishLogic(){
     }
   } catch {}
 
-  // =========================
-  // LEVEL UP HANDLING
-  // =========================
   if (leveledUp) {
     window.levelUpAnimation?.();
     window.AppUI?.notify?.("🏆 Level Up!");
 
-    if (polish?.setMood && !moodControlled) {
-      polish.setMood("levelup");
-    }
+    window.AppPolish?.setMood?.("levelup");
   }
 
-  // =========================
-  // RETURN (CLEAN CONTRACT)
-  // =========================
   return {
     oldLevel,
     newLevel,

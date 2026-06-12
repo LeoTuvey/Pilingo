@@ -1,6 +1,6 @@
 /* =========================
    🏆 LESSON REWARD ENGINE
-   STEP 24 — FINAL PRODUCTION STABLE VERSION (FIXED)
+   STEP 24 — FINAL PRODUCTION STABLE VERSION (STEP 25 READY)
 ========================= */
 
 function runFinishLogic(){
@@ -16,7 +16,7 @@ function runFinishLogic(){
   }, 1500);
 
   // =========================
-  // SAFETY: LEVEL READ
+  // SAFETY: LEVEL READ (single source)
   // =========================
   const safeLevelFn =
     (typeof getSafeLevel === "function")
@@ -29,58 +29,67 @@ function runFinishLogic(){
   // =========================
   // ENGINE REWARDS
   // =========================
-  if(window.Engine){
+  const engine = window.Engine;
 
-    if(typeof Engine.addXP === "function"){
-      Engine.addXP(xpReward);
+  if(engine){
+
+    if(typeof engine.addXP === "function"){
+      engine.addXP(xpReward);
     }
 
-    if(typeof Engine.resetHearts === "function"){
-      Engine.resetHearts();
+    if(typeof engine.resetHearts === "function"){
+      engine.resetHearts();
     }
 
-    if(typeof Engine.updateStreak === "function"){
-      Engine.updateStreak();
+    if(typeof engine.updateStreak === "function"){
+      engine.updateStreak();
     }
   }
 
   // =========================
   // RESUME CLEANUP (STEP 18)
   // =========================
-  if(window.AppState &&
-     typeof AppState.clearLessonProgress === "function"){
-    AppState.clearLessonProgress();
+  const state = window.AppState;
+
+  if(state &&
+     typeof state.clearLessonProgress === "function"){
+    state.clearLessonProgress();
   }
 
   // =========================
   // EFFECTS FIRST (FEEL LAYER)
   // =========================
-  if(window.AppEffects){
+  const effects = window.AppEffects;
 
-    if(typeof AppEffects.xpBurst === "function"){
-      AppEffects.xpBurst(xpReward);
+  if(effects){
+
+    if(typeof effects.xpBurst === "function"){
+      effects.xpBurst(xpReward);
     }
 
-    if(typeof AppEffects.flash === "function"){
-      AppEffects.flash("correct");
+    if(typeof effects.flash === "function"){
+      effects.flash("correct");
     }
   }
 
   // =========================
   // POLISH UI LAYER
   // =========================
+  const polish = window.AppPolish;
+
   let moodSet = false;
 
-  if(window.AppPolish){
+  if(polish){
 
-    if(typeof AppPolish.xpPopup === "function"){
-      AppPolish.xpPopup(xpReward);
-    } else if(typeof AppPolish.notify === "function"){
-      AppPolish.notify("+" + xpReward + " XP");
+    if(typeof polish.xpPopup === "function"){
+      polish.xpPopup(xpReward);
+
+    } else if(typeof polish.notify === "function"){
+      polish.notify("+" + xpReward + " XP");
     }
 
-    if(typeof AppPolish.setMood === "function"){
-      AppPolish.setMood("correct");
+    if(typeof polish.setMood === "function"){
+      polish.setMood("correct");
       moodSet = true;
     }
   }
@@ -100,26 +109,26 @@ function runFinishLogic(){
       levelUpAnimation();
     }
 
-    if(window.AppUI &&
-       typeof AppUI.notify === "function"){
-      AppUI.notify("🏆 Level Up!");
+    const ui = window.AppUI;
+
+    if(ui && typeof ui.notify === "function"){
+      ui.notify("🏆 Level Up!");
     }
 
-    // only override mood if not already set
-    if(window.AppPolish &&
-       typeof AppPolish.setMood === "function" &&
+    if(polish &&
+       typeof polish.setMood === "function" &&
        !moodSet){
-      AppPolish.setMood("levelup");
+      polish.setMood("levelup");
     }
 
-    if(window.AppEffects){
+    if(effects){
 
-      if(typeof AppEffects.streakFire === "function"){
-        AppEffects.streakFire();
+      if(typeof effects.streakFire === "function"){
+        effects.streakFire();
       }
 
-      if(typeof AppEffects.flash === "function"){
-        AppEffects.flash("levelup");
+      if(typeof effects.flash === "function"){
+        effects.flash("levelup");
       }
     }
   }

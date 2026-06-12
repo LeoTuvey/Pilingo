@@ -13,16 +13,17 @@ const Engine = {
   },
 
   /* =========================
-     XP SYSTEM (SAFE + CONSISTENT)
+     XP SYSTEM
   ========================= */
   getXP(){
-    let c = this.getCourse();
-    return parseInt(localStorage.getItem(c + "_xp") || "0", 10);
+    const c = this.getCourse();
+    const xp = parseInt(localStorage.getItem(c + "_xp") || "0", 10);
+    return isNaN(xp) ? 0 : xp;
   },
 
   addXP(v){
-    let c = this.getCourse();
-    let key = c + "_xp";
+    const c = this.getCourse();
+    const key = c + "_xp";
 
     let xp = this.getXP();
     xp = isNaN(xp) ? 0 : xp;
@@ -34,10 +35,10 @@ const Engine = {
   },
 
   /* =========================
-     LEVEL SYSTEM (IMPROVED FOR POLISH LAYERS)
+     LEVEL SYSTEM
   ========================= */
   getLevel(){
-    let xp = this.getXP();
+    const xp = this.getXP();
 
     if(xp < 50) return 0;
     if(xp < 120) return 1;
@@ -49,16 +50,15 @@ const Engine = {
   },
 
   /* =========================
-     HEARTS SYSTEM (SAFE)
+     HEARTS SYSTEM
   ========================= */
   getHearts(){
-    return parseInt(localStorage.getItem("hearts") || "5", 10);
+    const h = parseInt(localStorage.getItem("hearts") || "5", 10);
+    return isNaN(h) ? 5 : h;
   },
 
   loseHeart(){
     let h = this.getHearts();
-
-    h = isNaN(h) ? 5 : h;
     h = Math.max(0, h - 1);
 
     localStorage.setItem("hearts", h);
@@ -71,12 +71,12 @@ const Engine = {
   },
 
   /* =========================
-     STREAK SYSTEM (FIXED LOGIC)
+     STREAK SYSTEM
   ========================= */
   updateStreak(){
 
-    let today = new Date().toDateString();
-    let last = localStorage.getItem("lastDay");
+    const today = new Date().toDateString();
+    const last = localStorage.getItem("lastDay");
     let streak = parseInt(localStorage.getItem("streak") || "0", 10);
 
     if(isNaN(streak)) streak = 0;
@@ -84,7 +84,7 @@ const Engine = {
     if(last !== today){
 
       if(last){
-        let diff =
+        const diff =
           (new Date(today).getTime() - new Date(last).getTime())
           / (1000 * 60 * 60 * 24);
 
@@ -97,7 +97,7 @@ const Engine = {
         streak = 1;
       }
 
-      localStorage.setItem("streak", streak);
+      localStorage.setItem("streak", String(streak));
       localStorage.setItem("lastDay", today);
     }
 
@@ -108,44 +108,35 @@ const Engine = {
      WORD MEMORY SYSTEM
   ========================= */
   markCorrect(word){
+    if(!word?.en) return;
 
-    if(!word || !word.en) return;
-
-    let key = "w_" + word.en;
-
-    let data = JSON.parse(localStorage.getItem(key) || '{"c":0,"w":0}');
+    const key = "w_" + word.en;
+    const data = JSON.parse(localStorage.getItem(key) || '{"c":0,"w":0}');
 
     data.c += 1;
-
     localStorage.setItem(key, JSON.stringify(data));
   },
 
   markWrong(word){
+    if(!word?.en) return;
 
-    if(!word || !word.en) return;
-
-    let key = "w_" + word.en;
-
-    let data = JSON.parse(localStorage.getItem(key) || '{"c":0,"w":0}');
+    const key = "w_" + word.en;
+    const data = JSON.parse(localStorage.getItem(key) || '{"c":0,"w":0}');
 
     data.w += 1;
-
     localStorage.setItem(key, JSON.stringify(data));
   },
 
   getWeakScore(word){
+    if(!word?.en) return 1;
 
-    if(!word || !word.en) return 1;
+    const key = "w_" + word.en;
+    const data = JSON.parse(localStorage.getItem(key) || '{"c":0,"w":0}');
 
-    let key = "w_" + word.en;
-    let data = JSON.parse(localStorage.getItem(key) || '{"c":0,"w":0}');
+    const mistakes = data.w || 0;
+    const correct = data.c || 0;
 
-    let mistakes = data.w || 0;
-    let correct = data.c || 0;
-
-    let score = (mistakes * 2) - correct;
-
-    return Math.max(1, score);
+    return Math.max(1, (mistakes * 2) - correct);
   },
 
   /* =========================
@@ -153,21 +144,23 @@ const Engine = {
   ========================= */
   getReviewWords(pool){
 
+    if(!Array.isArray(pool) || pool.length === 0){
+      return [];
+    }
+
     let weighted = [];
 
     pool.forEach(w => {
-
-      let weight = this.getWeakScore(w);
+      const weight = this.getWeakScore(w);
 
       for(let i = 0; i < weight; i++){
         weighted.push(w);
       }
-
     });
 
     // shuffle
     for(let i = weighted.length - 1; i > 0; i--){
-      let j = Math.floor(Math.random() * (i + 1));
+      const j = Math.floor(Math.random() * (i + 1));
       [weighted[i], weighted[j]] = [weighted[j], weighted[i]];
     }
 
@@ -175,15 +168,16 @@ const Engine = {
   },
 
   /* =========================
-     SKILL SYSTEM (SAFE)
+     SKILL SYSTEM
   ========================= */
   getSkillState(i){
-    return parseInt(localStorage.getItem("skill_" + i) || "0", 10);
+    const v = parseInt(localStorage.getItem("skill_" + i) || "0", 10);
+    return isNaN(v) ? 0 : v;
   },
 
   setSkillState(i, v){
     v = Math.max(0, Math.min(4, v));
-    localStorage.setItem("skill_" + i, v);
+    localStorage.setItem("skill_" + i, String(v));
   },
 
   markSkillProgress(i, correct = true){
@@ -194,17 +188,16 @@ const Engine = {
     if(!correct && s > 0) s--;
 
     this.setSkillState(i, s);
-
     return s;
   },
 
   /* =========================
-     DAILY RESET HOOK
+     DAILY RESET
   ========================= */
   dailyReset(){
 
-    let today = new Date().toDateString();
-    let lastReset = localStorage.getItem("dailyReset");
+    const today = new Date().toDateString();
+    const lastReset = localStorage.getItem("dailyReset");
 
     if(lastReset !== today){
       localStorage.setItem("dailyReset", today);

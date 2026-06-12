@@ -1,4 +1,4 @@
-/* =========================
+ /* =========================
    🏆 LESSON REWARD ENGINE
    STEP 19 SAFE + STEP 21 POLISHED VERSION
 ========================= */
@@ -13,7 +13,7 @@ function runFinishLogic(){
   // =========================
   // APPLY REWARDS (SAFE)
   // =========================
-  let xpReward = 10;
+  const xpReward = 10;
 
   if(window.Engine){
 
@@ -53,14 +53,13 @@ function runFinishLogic(){
     }
   }
 
-  // STEP 21 EFFECTS SYSTEM (fully safe)
+  // STEP 21 EFFECTS SYSTEM (fully optional)
   if(window.AppEffects){
 
     if(typeof AppEffects.xpBurst === "function"){
       AppEffects.xpBurst(xpReward);
     }
 
-    // optional micro feedback
     if(typeof AppEffects.flash === "function"){
       AppEffects.flash("correct");
     }
@@ -74,24 +73,20 @@ function runFinishLogic(){
 
   if(leveledUp){
 
-    // animation (safe)
     if(typeof levelUpAnimation === "function"){
       levelUpAnimation();
     }
 
-    // UI notification
     if(window.AppUI &&
        typeof AppUI.notify === "function"){
       AppUI.notify("🏆 Level Up!");
     }
 
-    // polish mood
     if(window.AppPolish &&
        typeof AppPolish.setMood === "function"){
       AppPolish.setMood("levelup");
     }
 
-    // effects layer
     if(window.AppEffects){
 
       if(typeof AppEffects.streakFire === "function"){
@@ -105,7 +100,7 @@ function runFinishLogic(){
   }
 
   // =========================
-  // RETURN DATA (future AI + analytics ready)
+  // RETURN DATA (analytics-ready)
   // =========================
   return {
     oldLevel,
@@ -131,7 +126,6 @@ function getSafeLevel(){
     xp = parseInt(localStorage.getItem("xp") || "0", 10);
   }
 
-  // Duolingo-style progression curve
   if(xp < 50) return 0;
   if(xp < 120) return 1;
   if(xp < 220) return 2;

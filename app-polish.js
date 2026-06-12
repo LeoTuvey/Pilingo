@@ -1,13 +1,5 @@
-/* =====================================
-   🧠 OWL-LINGO POLISH LAYER
-   STEP 19 — DUOLINGO UX SYSTEM (FIXED + STEP 21 READY)
-===================================== */
-
 const AppPolish = {
 
-  /* =========================
-     🦉 OWL EMOTION ENGINE
-  ========================= */
   setMood(state){
 
     const owl =
@@ -16,21 +8,13 @@ const AppPolish = {
 
     if(!owl) return;
 
-    owl.classList.remove(
-      "happy",
-      "sad",
-      "celebrate",
-      "levelup"
-    );
+    owl.classList.remove("happy","sad","celebrate","levelup");
 
     if(state === "correct") owl.classList.add("happy");
     if(state === "wrong") owl.classList.add("sad");
     if(state === "levelup") owl.classList.add("celebrate");
   },
 
-  /* =========================
-     ✨ XP POPUP ANIMATION
-  ========================= */
   xpPopup(amount){
 
     const el = document.createElement("div");
@@ -59,19 +43,13 @@ const AppPolish = {
     }, 900);
   },
 
-  /* =========================
-     🏅 BADGE SYSTEM
-  ========================= */
   unlockBadge(id){
 
-    const badges = JSON.parse(
-      localStorage.getItem("badges") || "[]"
-    );
+    const badges = JSON.parse(localStorage.getItem("badges") || "[]");
 
     if(!badges.includes(id)){
       badges.push(id);
       localStorage.setItem("badges", JSON.stringify(badges));
-
       this.showBadgePopup(id);
     }
   },
@@ -96,17 +74,11 @@ const AppPolish = {
     setTimeout(() => el.remove(), 1500);
   },
 
-  /* =========================
-     🔥 STREAK VISUAL (SAFE)
-  ========================= */
   getStreakLevel(){
 
     let streak = 0;
 
-    if(
-      window.Engine &&
-      typeof Engine.updateStreak === "function"
-    ){
+    if(window.Engine && typeof Engine.updateStreak === "function"){
       streak = Engine.updateStreak();
     }
 
@@ -119,9 +91,6 @@ const AppPolish = {
     return "";
   },
 
-  /* =========================
-     🚀 ONBOARDING FLOW
-  ========================= */
   firstTimeCheck(){
 
     const seen = localStorage.getItem("seenIntro");
@@ -129,18 +98,18 @@ const AppPolish = {
     if(!seen){
       localStorage.setItem("seenIntro", "true");
 
-      if(window.location.pathname !== "/index.html"){
+      const path = window.location.pathname;
+      const isIndex =
+        path.endsWith("index.html") || path === "/";
+
+      if(!isIndex){
         window.location.href = "index.html";
       }
     }
   },
 
-  /* =========================
-     ⚡ STEP 21 EFFECT FLASH
-  ========================= */
   flash(type){
 
-    // prevent stacking flashes
     const existing = document.getElementById("owl-flash");
     if(existing) existing.remove();
 
@@ -162,6 +131,6 @@ const AppPolish = {
 
     document.body.appendChild(el);
 
-    setTimeout(() => el.remove(), 200);
+    setTimeout(() => el.remove(), 250);
   }
 };

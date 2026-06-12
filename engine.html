@@ -6,7 +6,6 @@
 <title>Owl-Lingo Path</title>
 
 <style>
-
 body{
   font-family: Arial;
   margin:0;
@@ -93,7 +92,6 @@ h1{ margin-bottom:10px; }
 .level-2 .bar-fill{ background:#ffb300; }
 .level-3 .bar-fill{ background:#66bb6a; }
 .level-4 .bar-fill{ background:#2e7d32; }
-
 </style>
 </head>
 
@@ -115,6 +113,7 @@ h1{ margin-bottom:10px; }
 <script src="app-ui.js"></script>
 <script src="app-state.js"></script>
 <script src="app-polish.js"></script>
+<script src="app-effects.js"></script>
 
 <script>
 
@@ -122,7 +121,10 @@ h1{ margin-bottom:10px; }
    SAFE LOAD
 ========================= */
 
-let xp = (window.Engine && Engine.getXP) ? Engine.getXP() : 0;
+let xp = (window.Engine && typeof Engine.getXP === "function")
+  ? Engine.getXP()
+  : 0;
+
 document.getElementById("xp").innerText = "XP: " + xp;
 
 /* =========================
@@ -225,43 +227,44 @@ function placeOwl(){
 }
 
 /* =========================
-   NAVIGATION (STEP 20 SAFE + STEP 21 READY)
+   NAVIGATION (STEP 22B READY)
 ========================= */
 
 function openSkill(i){
 
-  let owl = document.getElementById("owlGuide");
   let nodes = document.querySelectorAll(".node");
-
   if(!nodes[i]) return;
 
   let node = nodes[i];
   let container = document.querySelector(".path").getBoundingClientRect();
   let rect = node.getBoundingClientRect();
 
-  owl.style.top = (rect.top - container.top + 10) + "px";
+  document.getElementById("owlGuide").style.top =
+    (rect.top - container.top + 10) + "px";
 
-  // STEP 18 SAFE MEMORY (only if exists)
+  // STEP 18 memory hook
   if(window.AppState && typeof AppState.setLastSkill === "function"){
     AppState.setLastSkill(i);
   }
 
-  // STEP 20 POLISH FEEDBACK
+  // STEP 22B polish (safe optional)
   if(window.AppPolish && typeof AppPolish.setMood === "function"){
     AppPolish.setMood("correct");
   }
 
-  // STEP 21 OPTIONAL EFFECTS
   if(window.AppEffects && typeof AppEffects.flash === "function"){
     AppEffects.flash("correct");
   }
 
+  // NAVIGATION (100% SAFE APPSTATE FIRST)
   setTimeout(()=>{
 
+    const url = "lesson.html?s=" + i;
+
     if(window.AppState && typeof AppState.go === "function"){
-      AppState.go("lesson.html?s=" + i);
+      AppState.go(url);
     } else {
-      window.location.href = "lesson.html?s=" + i;
+      window.location.href = url;
     }
 
   },400);

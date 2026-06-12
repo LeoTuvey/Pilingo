@@ -1,9 +1,19 @@
 /* =========================
    🏆 LESSON REWARD ENGINE
-   STEP 24 — FINAL STABLE VERSION
+   STEP 24 — FINAL PRODUCTION STABLE VERSION
 ========================= */
 
 function runFinishLogic(){
+
+  // =========================
+  // GUARD: prevent double trigger
+  // =========================
+  if(window.__finishLock) return;
+
+  window.__finishLock = true;
+  setTimeout(() => {
+    window.__finishLock = false;
+  }, 1500);
 
   // =========================
   // SAFETY: LEVEL READ
@@ -72,7 +82,7 @@ function runFinishLogic(){
   }
 
   // =========================
-  // LEVEL CHECK (ONLY ONCE)
+  // LEVEL CHECK (AFTER REWARD)
   // =========================
   const newLevel = safeLevelFn();
   const leveledUp = newLevel > oldLevel;

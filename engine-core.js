@@ -1,288 +1,161 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Owl-Lingo Path</title>
+/* =====================================
+   🧠 OWL-LINGO ENGINE CORE (STEP 13 SAFE)
+   BUILDS ON STEP 12 (DO NOT REMOVE OLD FEATURES)
+===================================== */
 
-<style>
+const Engine = {
 
 /* =========================
-   🧠 BASE UI
+   COURSE
 ========================= */
-
-body{
-  font-family: Arial;
-  margin:0;
-  padding:30px;
-  text-align:center;
-  background: linear-gradient(135deg,#e3f2fd,#fce4ec);
-}
-
-/* TITLE */
-h1{
-  margin-bottom:10px;
-}
-
-/* XP */
-#xp{
-  position:fixed;
-  top:15px;
-  right:15px;
-  background:#58cc02;
-  color:white;
-  padding:10px 14px;
-  border-radius:20px;
-  font-weight:bold;
-}
+getCourse(){
+  return localStorage.getItem("course") || "en-ku";
+},
 
 /* =========================
-   PATH LAYOUT
+   XP SYSTEM
 ========================= */
+getXP(){
+  let c = this.getCourse();
+  return parseInt(localStorage.getItem(c+"_xp") || "0");
+},
 
-.path{
-  max-width:420px;
-  margin:auto;
-  position:relative;
-}
+addXP(v){
+  let c = this.getCourse();
+  let key = c+"_xp";
+  let xp = this.getXP();
+  xp += v;
+  localStorage.setItem(key, xp);
+},
 
-/* LINE */
-.line{
-  position:absolute;
-  left:50%;
-  top:0;
-  width:4px;
-  height:100%;
-  background:#cfd8dc;
-  transform:translateX(-50%);
-}
-
-/* OWL GUIDE */
-#owlGuide{
-  position:absolute;
-  left:50%;
-  transform:translate(-50%,0);
-  font-size:34px;
-  transition:0.6s ease;
-  z-index:5;
-}
+getLevel(){
+  return Math.floor(this.getXP() / 50) + 1;
+},
 
 /* =========================
-   SKILL NODES
+   HEARTS
 ========================= */
+getHearts(){
+  return parseInt(localStorage.getItem("hearts") || "5");
+},
 
-.node{
-  width:160px;
-  margin:30px auto;
-  padding:16px;
-  border-radius:50%;
-  background:white;
-  box-shadow:0 4px 10px rgba(0,0,0,0.1);
-  cursor:pointer;
-  transition:0.25s;
-  position:relative;
-  z-index:2;
-}
+loseHeart(){
+  let h = this.getHearts() - 1;
+  localStorage.setItem("hearts", h);
+  return h;
+},
 
-.node:hover{
-  transform:scale(1.07);
-}
-
-/* STATES */
-.locked{
-  opacity:0.25;
-  pointer-events:none;
-}
-
-.unlocked{
-  border:3px solid #58cc02;
-}
-
-.completed{
-  border:3px solid gold;
-}
-
-/* TEXT */
-.icon{
-  font-size:28px;
-}
-
-.small{
-  font-size:12px;
-  opacity:0.7;
-}
+resetHearts(){
+  localStorage.setItem("hearts","5");
+},
 
 /* =========================
-   SKILL BAR
+   STREAK SYSTEM
 ========================= */
+updateStreak(){
 
-.bar{
-  height:6px;
-  background:#eee;
-  border-radius:10px;
-  margin-top:8px;
-  overflow:hidden;
-}
+  let today = new Date().toDateString();
+  let last = localStorage.getItem("lastDay");
+  let streak = parseInt(localStorage.getItem("streak") || "0");
 
-.bar-fill{
-  height:100%;
-  width:0%;
-  background:#58cc02;
-  transition:0.4s ease;
-}
+  if(last !== today){
 
-/* LEVEL COLORS */
-.level-0 .bar-fill{ background:#ddd; }
-.level-1 .bar-fill{ background:#ffca28; }
-.level-2 .bar-fill{ background:#ffb300; }
-.level-3 .bar-fill{ background:#66bb6a; }
-.level-4 .bar-fill{ background:#2e7d32; }
+    if(last){
+      let diff = (new Date(today)-new Date(last))/(1000*60*60*24);
+      streak = (diff === 1) ? streak + 1 : 1;
+    } else {
+      streak = 1;
+    }
 
-</style>
-</head>
+    localStorage.setItem("streak", streak);
+    localStorage.setItem("lastDay", today);
+  }
 
-<body>
-
-<h1>🦉 Your Learning Path</h1>
-
-<div id="xp">XP: 0</div>
-
-<div class="path">
-
-<div class="line"></div>
-<div id="owlGuide">🦉</div>
-
-<div id="map"></div>
-
-</div>
-
-<script src="engine-core.js"></script>
-<script src="vocab_a1.js"></script>
-
-<script>
+  return streak;
+},
 
 /* =========================
-   DATA
+   🟢 SKILL MASTERY SYSTEM (STEP 13 CORE)
+   REQUIRED FOR engine.html UI
 ========================= */
 
-const skills = [
-  { name:"Animals 🐶", id:"animals" },
-  { name:"Actions 🏃", id:"verbs" },
-  { name:"People 👤", id:"people" },
-  { name:"Food 🍎", id:"food" },
-  { name:"Objects 📦", id:"objects" },
-  { name:"Places 🏙️", id:"places" },
-  { name:"Adjectives 🎯", id:"adjectives" }
-];
+getSkillState(index){
+  return parseInt(localStorage.getItem("skill_"+index) || "0");
+},
+
+setSkillState(index, value){
+  localStorage.setItem("skill_"+index, value);
+},
+
+upgradeSkill(index){
+
+  let s = this.getSkillState(index);
+
+  if(s < 4){
+    s++;
+    this.setSkillState(index, s);
+  }
+
+  return s;
+},
 
 /* =========================
-   STATE
+   AUTO SKILL PROGRESSION HOOK
+   (CALL THIS FROM LESSON LATER IF NEEDED)
 ========================= */
 
-let xp = Engine.getXP();
+markSkillProgress(index, correct=true){
 
-document.getElementById("xp").innerText = "XP: " + xp;
+  let current = this.getSkillState(index);
+
+  if(correct){
+    if(current < 4) current++;
+  } else {
+    if(current > 0) current--;
+  }
+
+  this.setSkillState(index, current);
+  return current;
+},
 
 /* =========================
-   SKILL LEVEL BAR
+   WORD MEMORY (STEP 12)
 ========================= */
 
-function getSkillLevel(i){
-  return Engine.getSkillState(i);
-}
+markCorrect(word){
+  let key = word.en+"_c";
+  let v = parseInt(localStorage.getItem(key) || "0");
+  localStorage.setItem(key, v+1);
+},
 
-function getBar(level){
+markWrong(word){
+  let key = word.en+"_w";
+  let v = parseInt(localStorage.getItem(key) || "0");
+  localStorage.setItem(key, v+1);
+},
 
-  if(level === 0) return 0;
-  if(level === 1) return 25;
-  if(level === 2) return 50;
-  if(level === 3) return 75;
-  return 100;
-}
+getWeakScore(word){
+  let c = parseInt(localStorage.getItem(word.en+"_c") || "0");
+  let w = parseInt(localStorage.getItem(word.en+"_w") || "0");
+  return Math.max(1, w - c);
+},
 
 /* =========================
-   RENDER PATH
+   REVIEW SYSTEM (STEP 12 CORE)
 ========================= */
 
-function render(){
+getReviewWords(pool){
 
-  let html = "";
+  let weighted = [];
 
-  skills.forEach((s,i)=>{
-
-    let level = getSkillLevel(i);
-    let progress = getBar(level);
-
-    let stateClass = level > 0 ? "unlocked" : "locked";
-
-    html += `
-      <div class="node ${stateClass} level-${level}" onclick="openSkill(${i})">
-
-        <div class="icon">
-          ${level === 4 ? "👑" : "🦉"}
-        </div>
-
-        <div>${s.name}</div>
-
-        <div class="small">Level ${level}/4</div>
-
-        <div class="bar">
-          <div class="bar-fill" style="width:${progress}%"></div>
-        </div>
-
-      </div>
-    `;
+  pool.forEach(w=>{
+    let weight = this.getWeakScore(w);
+    for(let i=0;i<weight;i++){
+      weighted.push(w);
+    }
   });
 
-  document.getElementById("map").innerHTML = html;
-
-  setTimeout(placeOwl, 300);
+  return weighted.length ? weighted : pool;
 }
 
-/* =========================
-   OWL FOLLOW PATH
-========================= */
-
-function placeOwl(){
-
-  let owl = document.getElementById("owlGuide");
-  let nodes = document.querySelectorAll(".node");
-
-  if(nodes.length > 0){
-    let first = nodes[0].getBoundingClientRect();
-    let container = document.querySelector(".path").getBoundingClientRect();
-
-    owl.style.top = (first.top - container.top + 10) + "px";
-  }
-}
-
-/* =========================
-   MOVE OWL
-========================= */
-
-function openSkill(i){
-
-  let owl = document.getElementById("owlGuide");
-  let nodes = document.querySelectorAll(".node");
-
-  let node = nodes[i];
-  let container = document.querySelector(".path").getBoundingClientRect();
-  let rect = node.getBoundingClientRect();
-
-  owl.style.top = (rect.top - container.top + 10) + "px";
-
-  setTimeout(()=>{
-    window.location.href = "lesson.html?s=" + i;
-  },400);
-}
-
-/* =========================
-   INIT
-========================= */
-
-render();
-
-</script>
-
-</body>
-</html>
+};

@@ -1,6 +1,6 @@
 /* =====================================
    🧠 OWL-LINGO APP STATE SYSTEM
-   STEP 22B — REAL RESUME ENGINE (STEP 25 HARDENED)
+   STEP 22B — REAL RESUME ENGINE (STEP 25 FINAL HARDENED)
 ===================================== */
 
 const AppState = {
@@ -13,37 +13,35 @@ const AppState = {
   },
 
   /* =========================
-     📥 SAFE LOAD (HARDENED)
+     📥 SAFE LOAD (ROBUST)
   ========================= */
   load(){
     try{
       const raw = localStorage.getItem(this._key());
-      return raw ? JSON.parse(raw) : null;
+      return raw ? JSON.parse(raw) : {};
     }catch(e){
-      return null;
+      return {};
     }
   },
 
   /* =========================
-     💾 SAVE FULL SESSION (SAFE MERGE)
+     💾 SAFE ATOMIC SAVE (FIXED RACE SAFETY)
   ========================= */
   save(data){
 
-    const current = this.load() || {};
-
-    const updated = {
-      ...current,
-      ...data,
-      timestamp: Date.now()
-    };
-
     try{
+      const current = this.load() || {};
+
+      const updated = Object.assign({}, current, data, {
+        timestamp: Date.now()
+      });
+
       localStorage.setItem(
         this._key(),
         JSON.stringify(updated)
       );
     }catch(e){
-      // fail silently (prevents lesson breakage)
+      // fail silently to avoid breaking lesson flow
     }
   },
 
@@ -68,42 +66,46 @@ const AppState = {
 
     this.save({
       lesson: {
-        skill: Number.isFinite(data.skill) ? data.skill : 0,
-        question: Number.isFinite(data.question) ? data.question : 0,
-        score: Number.isFinite(data.score) ? data.score : 0
+        skill: Number(data.skill) || 0,
+        question: Number(data.question) || 0,
+        score: Number(data.score) || 0
       }
     });
   },
 
   /* =========================
-     📍 LESSON RESUME (ROBUST)
+     📍 LESSON RESUME (STRICT SAFE DEFAULTS)
   ========================= */
   resume(){
 
     const state = this.load();
-
-    const lesson = state?.lesson;
+    const lesson = state?.lesson || {};
 
     return {
-      skill: Number.isFinite(lesson?.skill) ? lesson.skill : 0,
-      question: Number.isFinite(lesson?.question) ? lesson.question : 0,
-      score: Number.isFinite(lesson?.score) ? lesson.score : 0
+      skill: Number(lesson.skill) || 0,
+      question: Number(lesson.question) || 0,
+      score: Number(lesson.score) || 0
     };
   },
 
   /* =========================
-     🧹 CLEAR LESSON ONLY (ATOMIC SAFE)
+     🧹 CLEAR LESSON ONLY (FULLY SAFE ATOMIC)
   ========================= */
   clearLessonProgress(){
 
-    const state = this.load();
+    try{
+      const state = this.load();
 
-    if(!state || typeof state !== "object") return;
+      if(!state || typeof state !== "object") return;
 
-    // atomic rebuild (prevents race overwrite bugs)
-    const { lesson, ...rest } = state;
+      // rebuild safely (avoid mutation + corruption carryover)
+      const newState = Object.assign({}, state);
+      delete newState.lesson;
 
-    this.save(rest);
+      this.save(newState);
+    }catch(e){
+      // ignore to prevent crash loops
+    }
   },
 
   /* =========================
@@ -132,7 +134,7 @@ const AppState = {
 
     const state = this.load();
 
-    if(!state){
+    if(!state || Object.keys(state).length === 0){
       this.save({
         firstTime: true,
         createdAt: Date.now()

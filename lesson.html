@@ -1,6 +1,6 @@
 /* =========================
    🏆 LESSON REWARD ENGINE
-   STEP 25 — FINAL ADAPTIVE ORCHESTRATOR (HARDENED + STABLE)
+   STEP 25 — FINAL ADAPTIVE ORCHESTRATOR (PRODUCTION HARDENED)
 ========================= */
 
 function runFinishLogic(){
@@ -16,43 +16,37 @@ function runFinishLogic(){
   }, 1500);
 
   // =========================
-  // SAFE LEVEL RESOLVER (ROBUST)
+  // SAFE LEVEL RESOLVER
   // =========================
   const resolveLevel = () => {
-
     try{
       if(typeof getSafeLevel === "function"){
         return Number(getSafeLevel()) || 0;
       }
-
       if(window.Engine?.getLevel){
         return Number(window.Engine.getLevel()) || 0;
       }
-
     }catch(e){}
-
     return 0;
   };
 
   const oldLevel = resolveLevel();
-
-  const xpReward = 10;
+  const xpReward = Number(10);
 
   // =========================
-  // ENGINE UPDATE (TRUTH SOURCE)
+  // ENGINE UPDATE (SOURCE OF TRUTH)
   // =========================
   const engine = window.Engine;
 
   if(engine){
 
-    const xp = Number(xpReward) || 0;
-
-    if(typeof engine.addXP === "function"){
-      engine.addXP(xp);
+    try{
+      engine.addXP?.(xpReward);
+      engine.updateStreak?.();
+      engine.resetHearts?.();
+    }catch(e){
+      // engine failure must never break lesson flow
     }
-
-    engine.updateStreak?.();
-    engine.resetHearts?.();
   }
 
   // =========================
@@ -66,45 +60,53 @@ function runFinishLogic(){
     newLevel > oldLevel;
 
   // =========================
-  // RESUME CLEAR (SAFE ORDER)
+  // CLEAN LESSON STATE
   // =========================
   window.AppState?.clearLessonProgress?.();
 
   // =========================
-  // EFFECTS (FIRST FEEL LAYER)
+  // EFFECT LAYER (PRIMARY FEEDBACK)
   // =========================
   const effects = window.AppEffects;
+  let effectsUsed = false;
 
   if(effects){
 
-    effects.xpBurst?.(xpReward);
-    effects.flash?.("correct");
+    try{
+      effects.xpBurst?.(xpReward);
+      effects.flash?.("correct");
+      effectsUsed = true;
 
-    if(leveledUp){
-      effects.streakFire?.();
-      effects.flash?.("levelup");
-    }
+      if(leveledUp){
+        effects.streakFire?.();
+        effects.flash?.("levelup");
+      }
+    }catch(e){}
   }
 
   // =========================
-  // UI POLISH LAYER
+  // UI POLISH LAYER (SECONDARY FEEDBACK)
   // =========================
   const polish = window.AppPolish;
-
   let moodControlled = false;
 
   if(polish){
 
-    if(typeof polish.xpPopup === "function"){
-      polish.xpPopup(xpReward);
-    } else if(typeof polish.notify === "function"){
-      polish.notify("+" + xpReward + " XP");
-    }
+    try{
 
-    if(typeof polish.setMood === "function"){
-      polish.setMood("correct");
-      moodControlled = true;
-    }
+      if(typeof polish.xpPopup === "function"){
+        polish.xpPopup(xpReward);
+
+      } else if(typeof polish.notify === "function"){
+        polish.notify("+" + xpReward + " XP");
+      }
+
+      if(typeof polish.setMood === "function"){
+        polish.setMood("correct");
+        moodControlled = true;
+      }
+
+    }catch(e){}
   }
 
   // =========================
@@ -113,11 +115,10 @@ function runFinishLogic(){
   if(leveledUp){
 
     window.levelUpAnimation?.();
-
     window.AppUI?.notify?.("🏆 Level Up!");
 
-    // override mood only if not already controlled
-    if(polish?.setMood && !moodControlled){
+    // only override mood if not already controlled
+    if(polish && !moodControlled && typeof polish.setMood === "function"){
       polish.setMood("levelup");
     }
   }

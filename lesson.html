@@ -1,92 +1,115 @@
-/* =====================================
-   🏁 LESSON END SCREEN SYSTEM (STEP 16)
-===================================== */
+/* =========================
+   🏁 LEVEL UP ANIMATION
+========================= */
 
-/**
- * FINAL SUMMARY SCREEN (Duolingo-style)
- */
+function levelUpAnimation(){
+
+  let div = document.createElement("div");
+
+  div.innerHTML = "🏆 LEVEL UP!";
+  div.style.position = "fixed";
+  div.style.top = "40%";
+  div.style.left = "50%";
+  div.style.transform = "translate(-50%,-50%)";
+  div.style.background = "#000";
+  div.style.color = "#fff";
+  div.style.padding = "20px";
+  div.style.borderRadius = "15px";
+  div.style.fontSize = "24px";
+  div.style.zIndex = "9999";
+  div.style.boxShadow = "0 10px 30px rgba(0,0,0,0.3)";
+
+  document.body.appendChild(div);
+
+  setTimeout(()=> div.remove(), 1200);
+}
+
+/* =========================
+   🏁 SUMMARY SCREEN
+========================= */
+
 function showSummary(){
 
   let xp = Engine.getXP();
   let streak = Engine.updateStreak();
   let level = Engine.getLevel();
 
-  let total = questions.length;
+  let correct = questions.length - (hearts < 5 ? (5 - hearts) : 0);
+  let accuracy = Math.max(0, Math.round((correct / questions.length) * 100));
 
-  // simple accuracy estimate
-  let wrong = 5 - hearts;
-  let correct = Math.max(0, total - wrong);
-  let accuracy = Math.round((correct / total) * 100);
+  let screen = document.createElement("div");
 
-  let html = `
-    <div id="summaryScreen">
+  screen.innerHTML = `
+    <div style="
+      position:fixed;
+      top:0;left:0;
+      width:100%;height:100%;
+      background:linear-gradient(135deg,#58cc02,#4caf50);
+      color:white;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      z-index:9999;
+      font-family:Arial;
+    ">
 
-      <div class="summaryBox">
+      <h1>🎉 Lesson Complete</h1>
 
-        <h1>🎉 Lesson Complete!</h1>
+      <div style="font-size:20px;margin:8px;">🏆 Level ${level}</div>
+      <div style="font-size:18px;margin:5px;">🔥 Streak: ${streak}</div>
+      <div style="font-size:18px;margin:5px;">⭐ XP: ${xp}</div>
+      <div style="font-size:18px;margin:5px;">📊 Accuracy: ${accuracy}%</div>
 
-        <div class="stat">🏆 Level: ${level}</div>
-        <div class="stat">🔥 Streak: ${streak}</div>
-        <div class="stat">📊 Accuracy: ${accuracy}%</div>
-        <div class="stat">⭐ XP: ${xp}</div>
-
-        <button onclick="exitSummary()">
-          Continue
-        </button>
-
-      </div>
-
-    </div>
-
-    <style>
-
-      #summaryScreen{
-        position:fixed;
-        top:0;left:0;
-        width:100%;
-        height:100%;
-        background:linear-gradient(135deg,#58cc02,#4caf50);
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        z-index:9999;
-        color:white;
-        font-family:Arial;
-      }
-
-      .summaryBox{
-        text-align:center;
-        animation:popIn 0.5s ease;
-      }
-
-      .stat{
-        font-size:18px;
-        margin:10px 0;
-      }
-
-      button{
+      <button onclick="exitLesson()" style="
         margin-top:20px;
-        padding:12px 20px;
+        padding:12px 18px;
         border:none;
-        border-radius:12px;
+        border-radius:10px;
         font-size:16px;
         cursor:pointer;
-      }
+      ">
+        Continue
+      </button>
 
-      @keyframes popIn{
-        from{ transform:scale(0.8); opacity:0; }
-        to{ transform:scale(1); opacity:1; }
-      }
-
-    </style>
+    </div>
   `;
 
-  document.body.insertAdjacentHTML("beforeend", html);
+  document.body.appendChild(screen);
 }
 
-/**
- * EXIT SUMMARY → back to app
- */
-function exitSummary(){
+/* EXIT */
+function exitLesson(){
   window.location.href = "index.html";
+}
+
+/* =========================
+   🏁 FULL FINISH FUNCTION (STEP 16)
+========================= */
+
+function finish(){
+
+  let oldLevel = Engine.getLevel();
+
+  Engine.addXP(10);
+  Engine.resetHearts();
+  Engine.updateStreak();
+
+  let newLevel = Engine.getLevel();
+
+  // 🦉 owl update (if exists)
+  if(typeof updateOwl === "function"){
+    updateOwl();
+  }
+
+  // 🏆 level up check
+  if(newLevel > oldLevel){
+    levelUpAnimation();
+  }
+
+  // ⏳ delay for UX feel
+  setTimeout(()=>{
+    showSummary();
+  }, 600);
 }

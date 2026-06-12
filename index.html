@@ -75,51 +75,58 @@ button{
   <p id="questText">Loading...</p>
 </div>
 
+<!-- =========================
+     CORE SCRIPTS
+========================= -->
 <script src="engine-core.js"></script>
 <script src="app-ui.js"></script>
+<script src="app-state.js"></script>
 
 <script>
 
 /* =========================
-   SAFE ENGINE LOAD
+   SAFE LOAD
 ========================= */
 
 let xp = window.Engine ? Engine.getXP() : 0;
-
-/* IMPORTANT:
-   Do NOT auto-call updateStreak here on load
-   (prevents accidental streak manipulation)
-*/
-
-/* =========================
-   UPDATE UI
-========================= */
-
 document.getElementById("xp").innerText = xp;
 
-/* get streak ONLY for display */
-document.getElementById("streak").innerText =
-  window.Engine ? Engine.getXP ? Engine.updateStreak() : 0 : 0;
-
 /* =========================
-   STEP 17 HOOKS
+   SAFE STREAK FIX
 ========================= */
 
-// 🦉 OWL UPDATE (safe)
-if(window.AppUI) AppUI.updateOwl();
+let streak = 0;
+if(window.Engine && typeof Engine.updateStreak === "function"){
+  streak = Engine.updateStreak();
+}
+document.getElementById("streak").innerText = streak;
 
-// 🎯 DAILY QUEST INIT
+/* =========================
+   UI LAYER
+========================= */
+
+// 🦉 OWL UPDATE
+if(window.AppUI){
+  AppUI.updateOwl();
+}
+
+// 🎯 DAILY QUEST
 let quest = window.AppUI ? AppUI.getDailyQuest() : {goal:20,progress:0};
 
 document.getElementById("questText").innerText =
 "Complete " + quest.goal + " XP (Today: " + quest.progress + ")";
 
 /* =========================
-   NAVIGATION
+   NAVIGATION (STEP 18)
 ========================= */
 
 function goLearn(){
-  AppUI.navigate("engine.html");
+
+  if(window.AppState){
+    AppState.go("engine.html");
+  } else {
+    window.location.href = "engine.html";
+  }
 }
 
 </script>

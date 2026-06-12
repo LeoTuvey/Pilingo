@@ -10,14 +10,18 @@ const AppPolish = {
   ========================= */
   setMood(state){
 
-    // FIX: support both index owl + path owl
-    let owl =
+    const owl =
       document.getElementById("owl") ||
       document.getElementById("owlGuide");
 
     if(!owl) return;
 
-    owl.classList.remove("happy","sad","celebrate","levelup");
+    owl.classList.remove(
+      "happy",
+      "sad",
+      "celebrate",
+      "levelup"
+    );
 
     if(state === "correct") owl.classList.add("happy");
     if(state === "wrong") owl.classList.add("sad");
@@ -29,7 +33,7 @@ const AppPolish = {
   ========================= */
   xpPopup(amount){
 
-    let el = document.createElement("div");
+    const el = document.createElement("div");
 
     el.innerText = "+" + amount + " XP";
     el.style.position = "fixed";
@@ -47,11 +51,11 @@ const AppPolish = {
 
     document.body.appendChild(el);
 
-    setTimeout(()=> el.style.opacity = "1", 50);
+    setTimeout(() => el.style.opacity = "1", 50);
 
-    setTimeout(()=>{
+    setTimeout(() => {
       el.style.opacity = "0";
-      setTimeout(()=> el.remove(), 400);
+      setTimeout(() => el.remove(), 400);
     }, 900);
   },
 
@@ -60,7 +64,9 @@ const AppPolish = {
   ========================= */
   unlockBadge(id){
 
-    let badges = JSON.parse(localStorage.getItem("badges") || "[]");
+    const badges = JSON.parse(
+      localStorage.getItem("badges") || "[]"
+    );
 
     if(!badges.includes(id)){
       badges.push(id);
@@ -72,7 +78,7 @@ const AppPolish = {
 
   showBadgePopup(id){
 
-    let el = document.createElement("div");
+    const el = document.createElement("div");
 
     el.innerHTML = "🏅 Badge Unlocked: " + id;
     el.style.position = "fixed";
@@ -87,24 +93,29 @@ const AppPolish = {
 
     document.body.appendChild(el);
 
-    setTimeout(()=> el.remove(), 1500);
+    setTimeout(() => el.remove(), 1500);
   },
 
   /* =========================
-     🔥 STREAK VISUAL (FIXED)
+     🔥 STREAK VISUAL (SAFE)
   ========================= */
   getStreakLevel(){
 
     let streak = 0;
 
-    if(window.Engine &&
-       typeof Engine.updateStreak === "function"){
+    if(
+      window.Engine &&
+      typeof Engine.updateStreak === "function"
+    ){
       streak = Engine.updateStreak();
     }
+
+    streak = isNaN(streak) ? 0 : streak;
 
     if(streak >= 10) return "🔥🔥🔥";
     if(streak >= 5) return "🔥🔥";
     if(streak >= 1) return "🔥";
+
     return "";
   },
 
@@ -113,21 +124,28 @@ const AppPolish = {
   ========================= */
   firstTimeCheck(){
 
-    let seen = localStorage.getItem("seenIntro");
+    const seen = localStorage.getItem("seenIntro");
 
     if(!seen){
       localStorage.setItem("seenIntro", "true");
-      window.location.href = "index.html";
+
+      if(window.location.pathname !== "/index.html"){
+        window.location.href = "index.html";
+      }
     }
   },
 
   /* =========================
-     ⚡ STEP 21 HOOK (SAFE EXTENSION)
+     ⚡ STEP 21 EFFECT FLASH
   ========================= */
   flash(type){
 
-    // optional visual hook (used by AppEffects)
-    let el = document.createElement("div");
+    // prevent stacking flashes
+    const existing = document.getElementById("owl-flash");
+    if(existing) existing.remove();
+
+    const el = document.createElement("div");
+    el.id = "owl-flash";
 
     el.style.position = "fixed";
     el.style.top = "0";
@@ -136,7 +154,7 @@ const AppPolish = {
     el.style.height = "100%";
     el.style.pointerEvents = "none";
     el.style.zIndex = "9999";
-    el.style.opacity = "0.15";
+    el.style.opacity = "0.12";
 
     if(type === "correct") el.style.background = "green";
     if(type === "wrong") el.style.background = "red";
@@ -144,6 +162,6 @@ const AppPolish = {
 
     document.body.appendChild(el);
 
-    setTimeout(()=> el.remove(), 200);
+    setTimeout(() => el.remove(), 200);
   }
 };

@@ -1,6 +1,6 @@
 /* =========================
    🏆 LESSON REWARD ENGINE
-   STEP 25 — FINAL ADAPTIVE ORCHESTRATOR
+   STEP 25 — FINAL ADAPTIVE ORCHESTRATOR (HARDENED)
 ========================= */
 
 function runFinishLogic(){
@@ -16,15 +16,19 @@ function runFinishLogic(){
   }, 1500);
 
   // =========================
-  // SAFE LEVEL SNAPSHOT (BEFORE)
+  // LEVEL RESOLVER (STABLE SOURCE)
   // =========================
-  const safeLevelFn =
-    (typeof getSafeLevel === "function")
-      ? getSafeLevel
-      : () => (window.Engine?.getLevel?.() ?? 0);
+  const resolveLevel = () => {
+    if(typeof getSafeLevel === "function"){
+      return getSafeLevel();
+    }
+    if(window.Engine?.getLevel){
+      return window.Engine.getLevel();
+    }
+    return 0;
+  };
 
-  const oldLevel = safeLevelFn();
-
+  const oldLevel = resolveLevel();
   const xpReward = 10;
 
   // =========================
@@ -34,33 +38,21 @@ function runFinishLogic(){
 
   if(engine){
 
-    if(typeof engine.addXP === "function"){
-      engine.addXP(xpReward);
-    }
-
-    if(typeof engine.updateStreak === "function"){
-      engine.updateStreak();
-    }
-
-    if(typeof engine.resetHearts === "function"){
-      engine.resetHearts();
-    }
+    engine.addXP?.(xpReward);
+    engine.updateStreak?.();
+    engine.resetHearts?.();
   }
 
   // =========================
   // LEVEL SNAPSHOT (AFTER XP)
   // =========================
-  const newLevel = safeLevelFn();
+  const newLevel = resolveLevel();
   const leveledUp = newLevel > oldLevel;
 
   // =========================
-  // RESUME SAVE → CLEAR (SAFE ORDER)
+  // RESUME CLEAR (SAFE ORDER)
   // =========================
-  const state = window.AppState;
-
-  if(state?.clearLessonProgress){
-    state.clearLessonProgress();
-  }
+  window.AppState?.clearLessonProgress?.();
 
   // =========================
   // EFFECTS (FIRST FEEL LAYER)
@@ -79,28 +71,28 @@ function runFinishLogic(){
   }
 
   // =========================
-  // UI POLISH LAYER (SECONDARY FEEDBACK)
+  // UI POLISH LAYER
   // =========================
   const polish = window.AppPolish;
 
-  let moodControlled = false;
+  let moodSet = false;
 
   if(polish){
 
-    if(typeof polish.xpPopup === "function"){
+    if(polish.xpPopup){
       polish.xpPopup(xpReward);
-    } else if(typeof polish.notify === "function"){
+    } else if(polish.notify){
       polish.notify("+" + xpReward + " XP");
     }
 
-    if(typeof polish.setMood === "function"){
+    if(polish.setMood){
       polish.setMood("correct");
-      moodControlled = true;
+      moodSet = true;
     }
   }
 
   // =========================
-  // LEVEL UP SYSTEM (HIGHEST PRIORITY FEEDBACK)
+  // LEVEL UP HANDLING (HIGHEST PRIORITY)
   // =========================
   if(leveledUp){
 
@@ -108,13 +100,14 @@ function runFinishLogic(){
 
     window.AppUI?.notify?.("🏆 Level Up!");
 
-    if(polish?.setMood && !moodControlled){
+    // override mood only if not already controlled
+    if(polish?.setMood && !moodSet){
       polish.setMood("levelup");
     }
   }
 
   // =========================
-  // RETURN (ADAPTIVE ANALYTICS CORE)
+  // RETURN (ANALYTICS CORE)
   // =========================
   return {
     oldLevel,

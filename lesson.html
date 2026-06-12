@@ -1,6 +1,6 @@
 /* =========================
    🏆 LESSON REWARD ENGINE
-   STEP 24 — FINAL PRODUCTION STABLE VERSION
+   STEP 24 — FINAL PRODUCTION STABLE VERSION (FIXED)
 ========================= */
 
 function runFinishLogic(){
@@ -18,9 +18,10 @@ function runFinishLogic(){
   // =========================
   // SAFETY: LEVEL READ
   // =========================
-  const safeLevelFn = (typeof getSafeLevel === "function")
-    ? getSafeLevel
-    : () => 0;
+  const safeLevelFn =
+    (typeof getSafeLevel === "function")
+      ? getSafeLevel
+      : () => 0;
 
   const oldLevel = safeLevelFn();
   const xpReward = 10;
@@ -68,6 +69,8 @@ function runFinishLogic(){
   // =========================
   // POLISH UI LAYER
   // =========================
+  let moodSet = false;
+
   if(window.AppPolish){
 
     if(typeof AppPolish.xpPopup === "function"){
@@ -78,6 +81,7 @@ function runFinishLogic(){
 
     if(typeof AppPolish.setMood === "function"){
       AppPolish.setMood("correct");
+      moodSet = true;
     }
   }
 
@@ -101,8 +105,10 @@ function runFinishLogic(){
       AppUI.notify("🏆 Level Up!");
     }
 
+    // only override mood if not already set
     if(window.AppPolish &&
-       typeof AppPolish.setMood === "function"){
+       typeof AppPolish.setMood === "function" &&
+       !moodSet){
       AppPolish.setMood("levelup");
     }
 

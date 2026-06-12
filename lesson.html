@@ -1,6 +1,6 @@
 /* =========================
    🏆 LESSON REWARD ENGINE
-   STEP 24 — FINAL PRODUCTION STABLE VERSION (STEP 25 READY)
+   STEP 24 — FINAL PRODUCTION STABLE VERSION (STEP 25 READY FIXED)
 ========================= */
 
 function runFinishLogic(){
@@ -16,7 +16,7 @@ function runFinishLogic(){
   }, 1500);
 
   // =========================
-  // SAFE LEVEL READ (single source)
+  // SAFE LEVEL FUNCTION
   // =========================
   const safeLevelFn =
     (typeof getSafeLevel === "function")
@@ -27,19 +27,23 @@ function runFinishLogic(){
   const xpReward = 10;
 
   // =========================
-  // ENGINE REWARDS (SAFE ACCESS)
+  // ENGINE REWARDS
   // =========================
   const engine = window.Engine;
 
   if(engine){
 
-    const addXP = engine.addXP;
-    const resetHearts = engine.resetHearts;
-    const updateStreak = engine.updateStreak;
+    if(typeof engine.addXP === "function"){
+      engine.addXP(xpReward);
+    }
 
-    if(typeof addXP === "function") addXP(xpReward);
-    if(typeof resetHearts === "function") resetHearts();
-    if(typeof updateStreak === "function") updateStreak();
+    if(typeof engine.resetHearts === "function"){
+      engine.resetHearts();
+    }
+
+    if(typeof engine.updateStreak === "function"){
+      engine.updateStreak();
+    }
   }
 
   // =========================
@@ -76,18 +80,15 @@ function runFinishLogic(){
 
   if(polish){
 
-    const xpPopup = polish.xpPopup;
-    const notify = polish.notify;
-    const setMood = polish.setMood;
+    if(typeof polish.xpPopup === "function"){
+      polish.xpPopup(xpReward);
 
-    if(typeof xpPopup === "function"){
-      xpPopup(xpReward);
-    } else if(typeof notify === "function"){
-      notify("+" + xpReward + " XP");
+    } else if(typeof polish.notify === "function"){
+      polish.notify("+" + xpReward + " XP");
     }
 
-    if(typeof setMood === "function"){
-      setMood("correct");
+    if(typeof polish.setMood === "function"){
+      polish.setMood("correct");
       moodSet = true;
     }
   }
@@ -114,17 +115,21 @@ function runFinishLogic(){
     }
 
     // override mood ONLY if not already set
-    if(polish && typeof polish.setMood === "function" && !moodSet){
+    if(polish &&
+       typeof polish.setMood === "function" &&
+       !moodSet){
       polish.setMood("levelup");
     }
 
     if(effects){
 
-      const streakFire = effects.streakFire;
-      const flash = effects.flash;
+      if(typeof effects.streakFire === "function"){
+        effects.streakFire();
+      }
 
-      if(typeof streakFire === "function") streakFire();
-      if(typeof flash === "function") flash("levelup");
+      if(typeof effects.flash === "function"){
+        effects.flash("levelup");
+      }
     }
   }
 

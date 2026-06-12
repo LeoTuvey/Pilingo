@@ -1,166 +1,248 @@
-/* =========================
- 🏆 LESSON REWARD ENGINE
- STEP 30 — FINAL ADAPTIVE ORCHESTRATOR (STABLE v8 FIX)
-========================= */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Lesson</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-function runFinishLogic(){
-
-  // =========================
-  // GUARD
-  // =========================
-  if (window.__finishLock) return;
-
-  window.__finishLock = true;
-  setTimeout(() => {
-    window.__finishLock = false;
-  }, 1500);
-
-  // =========================
-  // SAFE RESOLVER
-  // =========================
-  const resolveLevel = () => {
-    try {
-      let raw = 0;
-
-      if (typeof window.getSafeLevel === "function") {
-        try {
-          raw = window.getSafeLevel();
-        } catch {
-          raw = 0;
-        }
-      } else if (window.Engine?.getLevel) {
-        raw = window.Engine.getLevel();
-      }
-
-      const num = Number(raw);
-      return Number.isFinite(num) ? num : 0;
-
-    } catch {
-      return 0;
+  <style>
+    body { font-family: Arial, sans-serif; }
+    #owl, #owlGuide {
+      width: 120px;
+      height: 120px;
+      background: #eee;
+      border-radius: 20px;
+      margin: 20px;
     }
-  };
+    .happy { background: #58cc02; }
+    .sad { background: #ff4b4b; }
+    .celebrate { background: gold; }
+  </style>
+</head>
 
-  const oldLevel = resolveLevel();
+<body>
 
-  // =========================
-  // BASE XP
-  // =========================
-  const baseXP = 10;
+  <!-- UI ROOT -->
+  <div id="owl"></div>
 
-  const engineXP = Number(window.Engine?.getXP?.() ?? 0);
+  <button id="finishBtn">Finish Lesson</button>
 
-  // FIX: use localStorage streak (Engine is source of truth)
-  const streak = Number(localStorage.getItem("streak") || 0);
+  <!-- =========================
+       1. CORE ENGINE (LOAD FIRST)
+  ========================== -->
+  <script>
+    const Engine = {
 
-  // =========================
-  // BRAIN CONTEXT
-  // =========================
-  const context = {
-    oldLevel,
-    level: oldLevel,
-    xp: engineXP,
-    streak,
-    xpReward: baseXP
-  };
+      getCourse(){
+        return localStorage.getItem("course") || "en-ku";
+      },
 
-  const brainDecision =
-    window.AdaptiveBrain?.decide?.(context) ?? {
-      xpMultiplier: 1,
-      mood: "correct",
-      showStreakBoost: false
+      getXP(){
+        const c = this.getCourse();
+        return Number(localStorage.getItem(c + "_xp") || 0);
+      },
+
+      addXP(v){
+        const c = this.getCourse();
+        const key = c + "_xp";
+        const xp = this.getXP() + (Number(v) || 0);
+        localStorage.setItem(key, xp);
+        return xp;
+      },
+
+      getLevel(){
+        const xp = this.getXP();
+        if (xp < 50) return 0;
+        if (xp < 120) return 1;
+        if (xp < 220) return 2;
+        if (xp < 350) return 3;
+        return 4;
+      },
+
+      updateStreak(){
+        const today = new Date().toISOString().split("T")[0];
+        const last = localStorage.getItem("lastDay");
+
+        let streak = Number(localStorage.getItem("streak") || 0);
+
+        if (last !== today) {
+          streak = (last ? streak + 1 : 1);
+          localStorage.setItem("lastDay", today);
+          localStorage.setItem("streak", streak);
+        }
+
+        return streak;
+      },
+
+      resetHearts(){
+        localStorage.setItem("hearts", "5");
+      }
     };
 
-  // =========================
-  // FINAL XP
-  // =========================
-  const xpReward = Math.max(
-    1,
-    Math.round(baseXP * (Number(brainDecision.xpMultiplier) || 1))
-  );
+    window.Engine = Engine;
+  </script>
 
-  // =========================
-  // ENGINE UPDATE
-  // =========================
-  try {
-    const engine = window.Engine;
+  <!-- =========================
+       2. ADAPTIVE BRAIN
+  ========================== -->
+  <script>
+    const AdaptiveBrain = {
 
-    if (engine) {
-      if (typeof engine.addXP === "function") engine.addXP(xpReward);
-      if (typeof engine.updateStreak === "function") engine.updateStreak();
-      if (typeof engine.resetHearts === "function") engine.resetHearts();
-    }
-  } catch (e) {
-    console.error("Engine crash prevented:", e);
-  }
+      decide(context = {}){
 
-  // =========================
-  // LEVEL SNAPSHOT
-  // =========================
-  const newLevel = resolveLevel();
+        const {
+          streak = 0,
+          level = 0,
+          xp = 0
+        } = context;
 
-  const leveledUp =
-    Number.isFinite(oldLevel) &&
-    Number.isFinite(newLevel) &&
-    newLevel > oldLevel;
+        const r = {
+          xpMultiplier: 1,
+          mood: "correct",
+          showStreakBoost: false
+        };
 
-  // =========================
-  // EFFECTS
-  // =========================
-  try {
-    window.AppEffects?.xpBurst?.(xpReward);
-    window.AppEffects?.flash?.(
-      leveledUp ? "levelup" : (brainDecision?.mood || "correct")
-    );
+        if (streak >= 5) {
+          r.xpMultiplier = 1.5;
+          r.showStreakBoost = true;
+        }
 
-    if (leveledUp) {
-      window.AppEffects?.streakFire?.();
-    }
-  } catch {}
+        if (streak >= 10) {
+          r.xpMultiplier = 2;
+        }
 
-  // =========================
-  // UI POLISH
-  // =========================
-  const polish = window.AppPolish;
-  let moodControlled = false;
+        if (level >= 3) r.xpMultiplier += 0.5;
+        if (xp > 300) r.xpMultiplier *= 0.9;
 
-  try {
-    if (polish) {
+        return r;
+      }
+    };
 
-      if (typeof polish.xpPopup === "function") {
-        polish.xpPopup(xpReward);
-      } else if (typeof polish.notify === "function") {
-        polish.notify("+" + xpReward + " XP");
+    window.AdaptiveBrain = AdaptiveBrain;
+  </script>
+
+  <!-- =========================
+       3. UI SYSTEMS
+  ========================== -->
+  <script>
+    const AppEffects = {
+
+      xpBurst(xp){
+        const el = document.createElement("div");
+        el.innerText = "+" + xp + " XP";
+        el.style.position = "fixed";
+        el.style.top = "40%";
+        el.style.left = "50%";
+        el.style.transform = "translate(-50%,-50%)";
+        el.style.fontSize = "28px";
+        el.style.color = "#58cc02";
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 800);
+      },
+
+      flash(type){
+        document.body.style.background =
+          type === "levelup" ? "gold" :
+          type === "wrong" ? "red" : "white";
+
+        setTimeout(() => document.body.style.background = "", 200);
+      },
+
+      streakFire(){
+        console.log("🔥 streak");
+      }
+    };
+
+    const AppPolish = {
+
+      setMood(mood){
+        const owl = document.getElementById("owl");
+        if (!owl) return;
+
+        owl.className = "";
+
+        if (mood === "correct") owl.classList.add("happy");
+        if (mood === "wrong") owl.classList.add("sad");
+        if (mood === "levelup") owl.classList.add("celebrate");
+      },
+
+      xpPopup(xp){
+        console.log("XP:", xp);
+      },
+
+      notify(msg){
+        alert(msg);
+      }
+    };
+
+    window.AppEffects = AppEffects;
+    window.AppPolish = AppPolish;
+  </script>
+
+  <!-- =========================
+       4. FINISH ENGINE
+  ========================== -->
+  <script>
+    function runFinishLogic(){
+
+      const baseXP = 10;
+
+      const oldLevel = window.Engine.getLevel();
+      const streak = window.Engine.updateStreak();
+      const xp = window.Engine.getXP();
+
+      const brain = window.AdaptiveBrain.decide({
+        streak,
+        level: oldLevel,
+        xp
+      });
+
+      const xpReward = Math.max(
+        1,
+        Math.round(baseXP * brain.xpMultiplier)
+      );
+
+      window.Engine.addXP(xpReward);
+
+      const newLevel = window.Engine.getLevel();
+      const leveledUp = newLevel > oldLevel;
+
+      window.AppEffects.xpBurst(xpReward);
+      window.AppEffects.flash(leveledUp ? "levelup" : "correct");
+
+      window.AppPolish.setMood(
+        leveledUp ? "levelup" : "correct"
+      );
+
+      if (leveledUp) {
+        window.AppEffects.streakFire();
+        window.AppPolish.notify("🏆 Level Up!");
       }
 
-      if (typeof polish.setMood === "function") {
-        polish.setMood(
-          leveledUp ? "levelup" : (brainDecision?.mood || "correct")
-        );
-        moodControlled = true;
-      }
+      return { xpReward, oldLevel, newLevel };
     }
-  } catch {}
 
-  // =========================
-  // LEVEL UP
-  // =========================
-  if (leveledUp) {
-    window.levelUpAnimation?.();
-    window.AppUI?.notify?.("🏆 Level Up!");
+    window.runFinishLogic = runFinishLogic;
+  </script>
 
-    if (polish?.setMood && !moodControlled) {
-      polish.setMood("levelup");
-    }
-  }
+  <!-- =========================
+       5. SAFE INIT (CRITICAL FIX)
+  ========================== -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
 
-  // =========================
-  // RETURN
-  // =========================
-  return {
-    oldLevel,
-    newLevel,
-    leveledUp,
-    xpReward,
-    brainDecision
-  };
-}
+      const btn = document.getElementById("finishBtn");
+
+      btn?.addEventListener("click", () => {
+        try {
+          runFinishLogic();
+        } catch (e) {
+          console.error("Finish logic crashed:", e);
+        }
+      });
+
+    });
+  </script>
+
+</body>
+</html>

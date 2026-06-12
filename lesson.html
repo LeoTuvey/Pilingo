@@ -1,6 +1,6 @@
 /* =========================
  🏆 LESSON REWARD ENGINE
- STEP 30 — FINAL ADAPTIVE ORCHESTRATOR (BRAIN-INTEGRATED FIXED v7)
+ STEP 30 — FINAL ADAPTIVE ORCHESTRATOR (STABLE v8 FIX)
 ========================= */
 
 function runFinishLogic(){
@@ -16,17 +16,25 @@ function runFinishLogic(){
   }, 1500);
 
   // =========================
-  // SAFE RESOLVER (HARDENED)
+  // SAFE RESOLVER
   // =========================
   const resolveLevel = () => {
     try {
-      const raw =
-        (typeof window.getSafeLevel === "function" && window.getSafeLevel()) ??
-        window.Engine?.getLevel?.() ??
-        0;
+      let raw = 0;
+
+      if (typeof window.getSafeLevel === "function") {
+        try {
+          raw = window.getSafeLevel();
+        } catch {
+          raw = 0;
+        }
+      } else if (window.Engine?.getLevel) {
+        raw = window.Engine.getLevel();
+      }
 
       const num = Number(raw);
       return Number.isFinite(num) ? num : 0;
+
     } catch {
       return 0;
     }
@@ -41,8 +49,8 @@ function runFinishLogic(){
 
   const engineXP = Number(window.Engine?.getXP?.() ?? 0);
 
-  const streak =
-    Number(window.Engine?.getStreak?.() ?? 0);
+  // FIX: use localStorage streak (Engine is source of truth)
+  const streak = Number(localStorage.getItem("streak") || 0);
 
   // =========================
   // BRAIN CONTEXT
@@ -71,7 +79,7 @@ function runFinishLogic(){
   );
 
   // =========================
-  // ENGINE UPDATE (CRASH-PROOF)
+  // ENGINE UPDATE
   // =========================
   try {
     const engine = window.Engine;
@@ -96,7 +104,7 @@ function runFinishLogic(){
     newLevel > oldLevel;
 
   // =========================
-  // EFFECTS (SAFE)
+  // EFFECTS
   // =========================
   try {
     window.AppEffects?.xpBurst?.(xpReward);
@@ -110,7 +118,7 @@ function runFinishLogic(){
   } catch {}
 
   // =========================
-  // UI POLISH (SAFE)
+  // UI POLISH
   // =========================
   const polish = window.AppPolish;
   let moodControlled = false;

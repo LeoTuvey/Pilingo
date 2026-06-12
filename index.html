@@ -2,168 +2,116 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Owl-Lingo</title>
 
 <style>
 body{
-  font-family: Arial;
   margin:0;
-  padding:0;
-  text-align:center;
+  font-family: Arial;
   background: linear-gradient(135deg,#e3f2fd,#fce4ec);
+  text-align:center;
 }
 
 /* HEADER */
-header{
-  padding:30px 20px;
-}
-
-h1{
-  margin:10px 0;
-}
-
-/* OWL */
-#owl{
-  font-size:60px;
-  margin-top:10px;
-  transition:0.3s;
-}
-
-/* BUTTON */
-.btn{
-  display:block;
-  width:80%;
-  margin:10px auto;
-  padding:14px;
-  border:none;
-  border-radius:12px;
+.header{
   background:#58cc02;
   color:white;
-  font-size:16px;
-  cursor:pointer;
+  padding:20px;
 }
 
 /* CARD */
 .card{
   background:white;
-  width:85%;
-  margin:10px auto;
-  padding:15px;
-  border-radius:12px;
-  box-shadow:0 4px 10px rgba(0,0,0,0.1);
+  margin:15px;
+  padding:20px;
+  border-radius:15px;
+  box-shadow:0 3px 10px rgba(0,0,0,0.1);
 }
 
-/* QUEST */
-.quest{
-  font-size:14px;
-  opacity:0.8;
-  margin-top:5px;
-}
-
-/* NOTIFICATION */
-.notify{
-  position:fixed;
-  top:20px;
-  left:50%;
-  transform:translateX(-50%);
-  background:black;
+/* BUTTON */
+button{
+  padding:12px;
+  width:100%;
+  border:none;
+  border-radius:10px;
+  background:#58cc02;
   color:white;
-  padding:10px 15px;
-  border-radius:20px;
-  font-size:14px;
-  opacity:0;
-  transition:0.3s;
+  font-size:16px;
+  margin-top:10px;
+  cursor:pointer;
+}
+
+/* STATS */
+.stats{
+  display:flex;
+  justify-content:space-between;
+  margin-top:10px;
+  font-weight:bold;
 }
 </style>
 </head>
 
 <body>
 
-<header>
-  <div id="owl">🦉</div>
-  <h1>Owl-Lingo</h1>
-  <div class="quest" id="questBox">Loading quest...</div>
-</header>
-
-<div class="card">
-  <h3>Start Learning</h3>
-
-  <button class="btn" onclick="go('engine.html')">Continue Path</button>
-  <button class="btn" onclick="reset()">Reset Progress</button>
+<div class="header">
+  <h1>🦉 Owl-Lingo</h1>
+  <div>Learn daily. Build streaks. Stay consistent.</div>
 </div>
 
-<div id="notify" class="notify"></div>
+<div class="card">
+  <h2>📊 Your Progress</h2>
 
-<!-- CORE SYSTEMS -->
+  <div class="stats">
+    <div>XP: <span id="xp">0</span></div>
+    <div>🔥 Streak: <span id="streak">0</span></div>
+  </div>
+
+  <button onclick="goLearn()">▶ Continue Learning</button>
+</div>
+
+<div class="card">
+  <h2>🎯 Daily Quest</h2>
+  <p id="questText">Loading...</p>
+</div>
+
 <script src="engine-core.js"></script>
 <script src="app-ui.js"></script>
 
 <script>
 
 /* =========================
-   📱 APP INIT (STEP 17)
+   LOAD ENGINE DATA
 ========================= */
 
-document.addEventListener("DOMContentLoaded", () => {
+let xp = Engine.getXP();
+let streak = Engine.updateStreak();
 
-  // 🧠 ENGINE INIT
-  if(typeof Engine !== "undefined"){
-    let xp = Engine.getXP();
-    let streak = Engine.updateStreak();
-    console.log("XP:", xp, "Streak:", streak);
-  }
+/* =========================
+   UPDATE UI
+========================= */
 
-  // 🦉 OWL INIT
-  if(typeof AppUI !== "undefined"){
-    AppUI.updateOwl();
-    let quest = AppUI.getDailyQuest();
-    document.getElementById("questBox").innerText =
-      "🎯 Daily Quest: " + quest.progress + "/" + quest.goal;
-  }
+document.getElementById("xp").innerText = xp;
+document.getElementById("streak").innerText = streak;
 
-  // 🔔 FIRST TIME USER
-  if(!localStorage.getItem("appOpened")){
-    localStorage.setItem("appOpened", "true");
-    notify("👋 Welcome to Owl-Lingo!");
-  }
+/* =========================
+   STEP 17 REQUIRED HOOKS
+========================= */
 
-});
+// 🦉 OWL UPDATE
+AppUI.updateOwl();
+
+// 🎯 DAILY QUEST INIT
+let quest = AppUI.getDailyQuest();
+document.getElementById("questText").innerText =
+"Complete " + quest.goal + " XP (Today: " + quest.progress + ")";
 
 /* =========================
    NAVIGATION
 ========================= */
 
-function go(url){
-  if(typeof AppUI !== "undefined"){
-    AppUI.navigate(url);
-  } else {
-    window.location.href = url;
-  }
-}
-
-/* =========================
-   RESET
-========================= */
-
-function reset(){
-  localStorage.clear();
-  location.reload();
-}
-
-/* =========================
-   NOTIFICATION
-========================= */
-
-function notify(msg){
-
-  let n = document.getElementById("notify");
-
-  n.innerText = msg;
-  n.style.opacity = "1";
-
-  setTimeout(()=>{
-    n.style.opacity = "0";
-  }, 2000);
+function goLearn(){
+  AppUI.navigate("engine.html");
 }
 
 </script>

@@ -125,11 +125,15 @@ h1{ margin-bottom:10px; }
   <div id="map"></div>
 </div>
 
-<!-- CORE FILES -->
+<!-- =========================
+     CORE SCRIPTS
+========================= -->
+
 <script src="engine-core.js"></script>
 <script src="vocab_a1.js"></script>
 <script src="app-ui.js"></script>
 <script src="app-state.js"></script>
+<script src="app-polish.js"></script>
 
 <script>
 
@@ -137,7 +141,12 @@ h1{ margin-bottom:10px; }
    SAFE LOAD
 ========================= */
 
-let xp = window.Engine ? Engine.getXP() : 0;
+let xp = 0;
+
+if(window.Engine && typeof Engine.getXP === "function"){
+  xp = Engine.getXP();
+}
+
 document.getElementById("xp").innerText = "XP: " + xp;
 
 /* =========================
@@ -240,7 +249,7 @@ function placeOwl(){
 }
 
 /* =========================
-   NAVIGATION (STEP 18 FIX)
+   NAVIGATION (STEP 20 FIXED)
 ========================= */
 
 function openSkill(i){
@@ -254,16 +263,26 @@ function openSkill(i){
 
   owl.style.top = (rect.top - container.top + 10) + "px";
 
-  // save session (STEP 18 memory hook)
+  // STEP 18 MEMORY
   if(window.AppState){
     AppState.setLastSkill(i);
   }
 
+  // STEP 20 POLISH HOOK
+  if(window.AppPolish &&
+     typeof AppPolish.setMood === "function"){
+    AppPolish.setMood("correct");
+  }
+
   setTimeout(()=>{
 
-    if(window.AppState){
+    if(window.AppState &&
+       typeof AppState.go === "function"){
+
       AppState.go("lesson.html?s=" + i);
+
     } else {
+
       window.location.href = "lesson.html?s=" + i;
     }
 

@@ -1,115 +1,71 @@
 /* =========================
-   🏁 LEVEL UP ANIMATION
+   🏆 LEVEL UP CELEBRATION
+   DUOLINGO-STYLE ANIMATION
 ========================= */
 
 function levelUpAnimation(){
 
-  let div = document.createElement("div");
+  // =========================
+  // create overlay container
+  // =========================
+  let overlay = document.createElement("div");
 
-  div.innerHTML = "🏆 LEVEL UP!";
-  div.style.position = "fixed";
-  div.style.top = "40%";
-  div.style.left = "50%";
-  div.style.transform = "translate(-50%,-50%)";
-  div.style.background = "#000";
-  div.style.color = "#fff";
-  div.style.padding = "20px";
-  div.style.borderRadius = "15px";
-  div.style.fontSize = "24px";
-  div.style.zIndex = "9999";
-  div.style.boxShadow = "0 10px 30px rgba(0,0,0,0.3)";
+  overlay.style.position = "fixed";
+  overlay.style.top = "0";
+  overlay.style.left = "0";
+  overlay.style.width = "100%";
+  overlay.style.height = "100%";
+  overlay.style.background = "rgba(0,0,0,0.75)";
+  overlay.style.display = "flex";
+  overlay.style.alignItems = "center";
+  overlay.style.justifyContent = "center";
+  overlay.style.zIndex = "9999";
 
-  document.body.appendChild(div);
+  // =========================
+  // animation box
+  // =========================
+  let box = document.createElement("div");
 
-  setTimeout(()=> div.remove(), 1200);
-}
-
-/* =========================
-   🏁 SUMMARY SCREEN
-========================= */
-
-function showSummary(){
-
-  let xp = Engine.getXP();
-  let streak = Engine.updateStreak();
-  let level = Engine.getLevel();
-
-  let correct = questions.length - (hearts < 5 ? (5 - hearts) : 0);
-  let accuracy = Math.max(0, Math.round((correct / questions.length) * 100));
-
-  let screen = document.createElement("div");
-
-  screen.innerHTML = `
-    <div style="
-      position:fixed;
-      top:0;left:0;
-      width:100%;height:100%;
-      background:linear-gradient(135deg,#58cc02,#4caf50);
-      color:white;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      text-align:center;
-      z-index:9999;
-      font-family:Arial;
-    ">
-
-      <h1>🎉 Lesson Complete</h1>
-
-      <div style="font-size:20px;margin:8px;">🏆 Level ${level}</div>
-      <div style="font-size:18px;margin:5px;">🔥 Streak: ${streak}</div>
-      <div style="font-size:18px;margin:5px;">⭐ XP: ${xp}</div>
-      <div style="font-size:18px;margin:5px;">📊 Accuracy: ${accuracy}%</div>
-
-      <button onclick="exitLesson()" style="
-        margin-top:20px;
-        padding:12px 18px;
-        border:none;
-        border-radius:10px;
-        font-size:16px;
-        cursor:pointer;
-      ">
-        Continue
-      </button>
-
+  box.innerHTML = `
+    <div style="font-size:60px;">🏆</div>
+    <div style="font-size:26px;font-weight:bold;">LEVEL UP!</div>
+    <div style="font-size:16px;margin-top:8px;opacity:0.9;">
+      Keep going — you're improving!
     </div>
   `;
 
-  document.body.appendChild(screen);
-}
+  box.style.background = "white";
+  box.style.color = "#000";
+  box.style.padding = "30px 40px";
+  box.style.borderRadius = "20px";
+  box.style.textAlign = "center";
+  box.style.transform = "scale(0.7)";
+  box.style.animation = "popIn 0.3s ease forwards";
+  box.style.boxShadow = "0 10px 30px rgba(0,0,0,0.3)";
 
-/* EXIT */
-function exitLesson(){
-  window.location.href = "index.html";
+  // =========================
+  // append
+  // =========================
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+
+  // =========================
+  // auto remove
+  // =========================
+  setTimeout(()=>{
+    overlay.remove();
+  }, 1300);
 }
 
 /* =========================
-   🏁 FULL FINISH FUNCTION (STEP 16)
+   optional animation keyframe (safe add)
 ========================= */
 
-function finish(){
-
-  let oldLevel = Engine.getLevel();
-
-  Engine.addXP(10);
-  Engine.resetHearts();
-  Engine.updateStreak();
-
-  let newLevel = Engine.getLevel();
-
-  // 🦉 owl update (if exists)
-  if(typeof updateOwl === "function"){
-    updateOwl();
-  }
-
-  // 🏆 level up check
-  if(newLevel > oldLevel){
-    levelUpAnimation();
-  }
-
-  // ⏳ delay for UX feel
-  setTimeout(()=>{
-    showSummary();
-  }, 600);
+let style = document.createElement("style");
+style.innerHTML = `
+@keyframes popIn {
+  from { transform: scale(0.6); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }
+`;
+document.head.appendChild(style);

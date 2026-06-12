@@ -1,85 +1,129 @@
 /* =====================================
-   🧠 OWL-LINGO APP STATE MANAGER
-   STEP 18 — CORE FLOW SYSTEM
+   🧠 OWL-LINGO APP STATE SYSTEM
+   STEP 22B — REAL RESUME ENGINE
 ===================================== */
 
 const AppState = {
 
   /* =========================
-     SAVE SESSION
+     🔑 INTERNAL KEY SYSTEM
   ========================= */
-  save(key, value){
-    localStorage.setItem("owl_" + key, JSON.stringify(value));
-  },
-
-  get(key){
-    let v = localStorage.getItem("owl_" + key);
-    return v ? JSON.parse(v) : null;
+  _key(){
+    return "owl_state_v1";
   },
 
   /* =========================
-     CURRENT FLOW STATE
+     💾 SAVE FULL SESSION
   ========================= */
-  setLastSkill(skillId){
-    this.save("lastSkill", skillId);
-  },
+  save(data){
 
-  getLastSkill(){
-    return this.get("lastSkill") || 0;
-  },
+    let current = this.load() || {};
 
-  setLessonProgress(data){
-    this.save("lessonProgress", data);
-  },
-
-  getLessonProgress(){
-    return this.get("lessonProgress") || {
-      skill: 0,
-      question: 0,
-      score: 0
+    let updated = {
+      ...current,
+      ...data,
+      timestamp: Date.now()
     };
-  },
 
-  clearLessonProgress(){
-    localStorage.removeItem("owl_lessonProgress");
+    localStorage.setItem(this._key(), JSON.stringify(updated));
   },
 
   /* =========================
-     APP ROUTING LAYER
+     📥 LOAD SESSION
+  ========================= */
+  load(){
+    try{
+      return JSON.parse(localStorage.getItem(this._key()));
+    }catch(e){
+      return null;
+    }
+  },
+
+  /* =========================
+     ▶ GO TO PAGE (SAFE NAV)
   ========================= */
   go(url){
 
-    // smooth app-like transition
-    let fade = document.createElement("div");
+    // optional save before navigation
+    this.save({ lastUrl: url });
 
-    fade.style.position = "fixed";
-    fade.style.top = "0";
-    fade.style.left = "0";
-    fade.style.width = "100%";
-    fade.style.height = "100%";
-    fade.style.background = "#fff";
-    fade.style.zIndex = "99999";
-    fade.style.opacity = "0";
-    fade.style.transition = "0.25s";
-
-    document.body.appendChild(fade);
-
-    setTimeout(()=> fade.style.opacity = "1", 10);
-
-    setTimeout(()=>{
-      window.location.href = url;
-    }, 250);
+    window.location.href = url;
   },
 
   /* =========================
-     RESUME LOGIC
+     📍 LESSON PROGRESS SAVE
+  ========================= */
+  setLessonProgress(data){
+
+    this.save({
+      lesson: {
+        skill: data.skill ?? null,
+        question: data.question ?? 0,
+        score: data.score ?? 0
+      }
+    });
+  },
+
+  /* =========================
+     📍 GET LESSON RESUME
   ========================= */
   resume(){
 
-    let progress = this.getLessonProgress();
+    let state = this.load();
 
-    if(!progress) return false;
+    if(!state || !state.lesson){
+      return {
+        skill: 0,
+        question: 0,
+        score: 0
+      };
+    }
 
-    return progress;
+    return state.lesson;
+  },
+
+  /* =========================
+     🧹 CLEAR LESSON ONLY
+  ========================= */
+  clearLessonProgress(){
+
+    let state = this.load();
+    if(!state) return;
+
+    delete state.lesson;
+
+    localStorage.setItem(this._key(), JSON.stringify(state));
+  },
+
+  /* =========================
+     💾 GENERIC SAVE (SAFE)
+  ========================= */
+  set(key, value){
+
+    let state = this.load() || {};
+    state[key] = value;
+
+    localStorage.setItem(this._key(), JSON.stringify(state));
+  },
+
+  get(key){
+
+    let state = this.load();
+    return state ? state[key] : null;
+  },
+
+  /* =========================
+     🧠 FIRST TIME CHECK
+  ========================= */
+  firstTimeCheck(){
+
+    let state = this.load();
+
+    if(!state){
+      this.save({
+        firstTime: true,
+        createdAt: Date.now()
+      });
+    }
   }
 };

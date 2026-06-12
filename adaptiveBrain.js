@@ -1,6 +1,6 @@
 /* =====================================
    🧠 OWL-LINGO ADAPTIVE BRAIN
-   STEP 25 + STEP 26 — FULL INTELLIGENCE CORE (HARDENED)
+   STEP 25 + STEP 26 — FULL INTELLIGENCE CORE (PRODUCTION STABLE)
 ===================================== */
 
 const AdaptiveBrain = {
@@ -35,7 +35,7 @@ const AdaptiveBrain = {
       result.mood = "wrong";
       result.intensity = 2;
 
-      if(window.AdaptiveEngine && word){
+      if(window.AdaptiveEngine?.weight && word){
         const weight = window.AdaptiveEngine.weight(word);
         if(weight >= 3){
           result.triggerReviewBoost = true;
@@ -78,12 +78,10 @@ const AdaptiveBrain = {
 
     const decision = this.decide(context);
 
-    const xp = Math.max(
+    return Math.max(
       1,
       Math.round(Number(baseXP || 0) * (decision.xpMultiplier || 1))
     );
-
-    return xp;
   },
 
   /* =====================================
@@ -91,14 +89,14 @@ const AdaptiveBrain = {
   ===================================== */
   getUIEffects(context = {}){
 
-    const decision = this.decide(context);
+    const d = this.decide(context);
 
     return {
-      mood: decision.mood,
-      shake: decision.mood === "wrong",
-      flash: decision.mood === "correct" ? "correct" : "wrong",
-      streakFire: decision.showStreakBoost,
-      intensity: decision.intensity
+      mood: d.mood,
+      shake: d.mood === "wrong",
+      flash: d.mood === "correct" ? "correct" : "wrong",
+      streakFire: d.showStreakBoost,
+      intensity: d.intensity
     };
   },
 
@@ -117,7 +115,7 @@ const AdaptiveBrain = {
   memory: {
 
     /* =========================
-       KEY NORMALIZER (FIX #1)
+       KEY NORMALIZER
     ========================= */
     key(word){
       return "brain_" + (
@@ -129,7 +127,7 @@ const AdaptiveBrain = {
     },
 
     /* =========================
-       SAVE WORD RESULT
+       SAVE WORD RESULT (FIXED JSON SAFETY)
     ========================= */
     update(word, correct){
 
@@ -137,10 +135,11 @@ const AdaptiveBrain = {
 
       const key = this.key(word);
 
-      let data;
+      let data = null;
 
       try{
-        data = JSON.parse(localStorage.getItem(key));
+        const raw = localStorage.getItem(key);
+        data = raw ? JSON.parse(raw) : null;
       }catch(e){
         data = null;
       }
@@ -177,13 +176,21 @@ const AdaptiveBrain = {
     },
 
     /* =========================
-       FORGETTING CURVE
+       FORGETTING CURVE (SAFE)
     ========================= */
     decay(word){
 
       const key = this.key(word);
 
-      const data = JSON.parse(localStorage.getItem(key) || "null");
+      let data = null;
+
+      try{
+        const raw = localStorage.getItem(key);
+        data = raw ? JSON.parse(raw) : null;
+      }catch(e){
+        data = null;
+      }
+
       if(!data) return 1;
 
       const days =
@@ -194,13 +201,20 @@ const AdaptiveBrain = {
     },
 
     /* =========================
-       PRIORITY SCORE
+       PRIORITY SCORE (SAFE CLAMP)
     ========================= */
     priority(word){
 
       const key = this.key(word);
 
-      const data = JSON.parse(localStorage.getItem(key) || "null");
+      let data = null;
+
+      try{
+        const raw = localStorage.getItem(key);
+        data = raw ? JSON.parse(raw) : null;
+      }catch(e){
+        data = null;
+      }
 
       if(!data){
         return 1.5;
@@ -214,14 +228,14 @@ const AdaptiveBrain = {
       return Math.max(0.2, Math.min(score, 3));
     },
 
-    /* =========================
-       BUILD NEXT LESSON POOL
-    ========================= */
+    /* =====================================
+       BUILD NEXT LESSON POOL (STEP 31 READY)
+    ===================================== */
     buildNext(words){
 
       if(!Array.isArray(words)) return [];
 
-      let pool = [];
+      const pool = [];
 
       for(const w of words){
 

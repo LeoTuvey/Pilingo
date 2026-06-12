@@ -1,6 +1,6 @@
 /* =========================
    🎬 OWL-LINGO EFFECT SYSTEM
-   STEP 21 — APP FEEL LAYER
+   STEP 21 — APP FEEL LAYER (FIXED + SAFE)
 ========================= */
 
 const AppEffects = {
@@ -10,7 +10,9 @@ const AppEffects = {
   ========================= */
   xpBurst(xp){
 
-    let el = document.createElement("div");
+    xp = Number(xp) || 0;
+
+    const el = document.createElement("div");
 
     el.innerText = "+" + xp + " XP";
     el.style.position = "fixed";
@@ -23,14 +25,15 @@ const AppEffects = {
     el.style.zIndex = "9999";
     el.style.opacity = "0";
     el.style.transition = "0.3s";
+    el.style.pointerEvents = "none";
 
     document.body.appendChild(el);
 
-    setTimeout(()=> el.style.opacity = "1", 50);
+    setTimeout(() => el.style.opacity = "1", 50);
 
-    setTimeout(()=>{
+    setTimeout(() => {
       el.style.opacity = "0";
-      setTimeout(()=> el.remove(), 300);
+      setTimeout(() => el.remove(), 300);
     }, 800);
   },
 
@@ -39,7 +42,11 @@ const AppEffects = {
   ========================= */
   streakFire(){
 
-    let el = document.createElement("div");
+    const existing = document.getElementById("owl-streak-fire");
+    if(existing) existing.remove();
+
+    const el = document.createElement("div");
+    el.id = "owl-streak-fire";
 
     el.innerText = "🔥 Streak!";
     el.style.position = "fixed";
@@ -50,48 +57,63 @@ const AppEffects = {
     el.style.fontWeight = "bold";
     el.style.color = "orange";
     el.style.zIndex = "9999";
+    el.style.pointerEvents = "none";
 
     document.body.appendChild(el);
 
-    setTimeout(()=> el.remove(), 900);
+    setTimeout(() => el.remove(), 900);
   },
 
   /* =========================
-     ❌ WRONG SHAKE EFFECT
+     ❌ WRONG SHAKE EFFECT (FIXED)
   ========================= */
   shake(){
 
-    document.body.style.transform = "translateX(-5px)";
+    // prevent stacking transform bugs
+    document.body.style.transition = "transform 0.1s";
 
-    setTimeout(()=>{
-      document.body.style.transform = "translateX(5px)";
+    document.body.style.transform = "translateX(-6px)";
+
+    setTimeout(() => {
+      document.body.style.transform = "translateX(6px)";
     }, 80);
 
-    setTimeout(()=>{
+    setTimeout(() => {
       document.body.style.transform = "translateX(0)";
     }, 160);
+
+    setTimeout(() => {
+      document.body.style.transition = "";
+    }, 200);
   },
 
   /* =========================
-     🟢 SUCCESS FLASH
+     🟢 SUCCESS / ERROR FLASH
   ========================= */
   flash(type){
 
-    let color = type === "correct" ? "#58cc02" : "#ff4b4b";
+    const existing = document.getElementById("owl-flash");
+    if(existing) existing.remove();
 
-    let el = document.createElement("div");
+    const el = document.createElement("div");
+    el.id = "owl-flash";
 
     el.style.position = "fixed";
     el.style.top = 0;
     el.style.left = 0;
     el.style.width = "100%";
     el.style.height = "100%";
-    el.style.background = color;
-    el.style.opacity = "0.25";
+    el.style.opacity = "0.2";
     el.style.zIndex = "9998";
+    el.style.pointerEvents = "none";
+
+    if(type === "correct") el.style.background = "#58cc02";
+    else if(type === "wrong") el.style.background = "#ff4b4b";
+    else if(type === "levelup") el.style.background = "#ffd700";
+    else el.style.background = "white";
 
     document.body.appendChild(el);
 
-    setTimeout(()=> el.remove(), 200);
+    setTimeout(() => el.remove(), 180);
   }
 };

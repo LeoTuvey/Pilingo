@@ -1,40 +1,75 @@
 /* =========================
    🏆 LEVEL CHECK + XP LOGIC
-   (SAFE DUOLINGO-STYLE FLOW)
+   (DUOLINGO-SAFE VERSION)
 ========================= */
 
 function runFinishLogic(){
 
   // =========================
-  // 1. capture old level first
+  // 1. SAFE LEVEL READ (fallback if not implemented yet)
   // =========================
-  let oldLevel = Engine.getLevel();
+  let oldLevel = getSafeLevel();
 
   // =========================
-  // 2. apply rewards
+  // 2. APPLY REWARDS
   // =========================
   Engine.addXP(10);
   Engine.resetHearts();
   Engine.updateStreak();
 
-  // =========================
-  // 3. compute new level
-  // =========================
-  let newLevel = Engine.getLevel();
-
-  // =========================
-  // 4. level up reaction
-  // =========================
-  if(newLevel > oldLevel){
-    levelUpAnimation();
+  // optional hook for Step 17 UI layer
+  if(window.AppUI && AppUI.updateQuestProgress){
+    AppUI.updateQuestProgress(10);
   }
 
   // =========================
-  // 5. return values (optional future use)
+  // 3. NEW LEVEL
+  // =========================
+  let newLevel = getSafeLevel();
+
+  // =========================
+  // 4. LEVEL UP CHECK
+  // =========================
+  let leveledUp = newLevel > oldLevel;
+
+  if(leveledUp){
+    if(typeof levelUpAnimation === "function"){
+      levelUpAnimation();
+    }
+
+    if(window.AppUI){
+      AppUI.notify("🏆 Level Up!");
+    }
+  }
+
+  // =========================
+  // 5. RETURN RESULT (future AI/analytics ready)
   // =========================
   return {
     oldLevel,
     newLevel,
-    leveledUp: newLevel > oldLevel
+    leveledUp
   };
+}
+
+
+/* =========================
+   🧠 SAFE LEVEL SYSTEM (FIX)
+   replaces Engine.getLevel()
+========================= */
+
+function getSafeLevel(){
+
+  if(!window.Engine){
+    return 0;
+  }
+
+  let xp = Engine.getXP();
+
+  // simple Duolingo-style leveling curve
+  if(xp < 50) return 0;
+  if(xp < 120) return 1;
+  if(xp < 220) return 2;
+  if(xp < 350) return 3;
+  return 4;
 }

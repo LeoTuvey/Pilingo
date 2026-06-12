@@ -1,6 +1,6 @@
 /* =========================
  🏆 LESSON REWARD ENGINE
- STEP 30 — FINAL ADAPTIVE ORCHESTRATOR (BRAIN-INTEGRATED FIXED v6)
+ STEP 30 — FINAL ADAPTIVE ORCHESTRATOR (BRAIN-INTEGRATED FIXED v7)
 ========================= */
 
 function runFinishLogic(){
@@ -16,13 +16,14 @@ function runFinishLogic(){
   }, 1500);
 
   // =========================
-  // SAFE RESOLVER
+  // SAFE RESOLVER (HARDENED)
   // =========================
   const resolveLevel = () => {
     try {
       const raw =
+        (typeof window.getSafeLevel === "function" && window.getSafeLevel()) ??
         window.Engine?.getLevel?.() ??
-        (typeof getSafeLevel === "function" ? getSafeLevel() : 0);
+        0;
 
       const num = Number(raw);
       return Number.isFinite(num) ? num : 0;
@@ -38,12 +39,10 @@ function runFinishLogic(){
   // =========================
   const baseXP = 10;
 
-  const engineXP = Number(window.Engine?.getXP?.() || 0);
+  const engineXP = Number(window.Engine?.getXP?.() ?? 0);
 
   const streak =
-    typeof window.Engine?.getStreak === "function"
-      ? window.Engine.getStreak()
-      : 0;
+    Number(window.Engine?.getStreak?.() ?? 0);
 
   // =========================
   // BRAIN CONTEXT
@@ -72,16 +71,18 @@ function runFinishLogic(){
   );
 
   // =========================
-  // ENGINE UPDATE (SAFE)
+  // ENGINE UPDATE (CRASH-PROOF)
   // =========================
   try {
     const engine = window.Engine;
 
-    if (engine?.addXP) engine.addXP(xpReward);
-    if (engine?.updateStreak) engine.updateStreak();
-    if (engine?.resetHearts) engine.resetHearts();
+    if (engine) {
+      if (typeof engine.addXP === "function") engine.addXP(xpReward);
+      if (typeof engine.updateStreak === "function") engine.updateStreak();
+      if (typeof engine.resetHearts === "function") engine.resetHearts();
+    }
   } catch (e) {
-    console.warn("Engine update failed:", e);
+    console.error("Engine crash prevented:", e);
   }
 
   // =========================
@@ -95,19 +96,21 @@ function runFinishLogic(){
     newLevel > oldLevel;
 
   // =========================
-  // EFFECTS
+  // EFFECTS (SAFE)
   // =========================
-  const effects = window.AppEffects;
-
   try {
-    effects?.xpBurst?.(xpReward);
-    effects?.flash?.(leveledUp ? "levelup" : (brainDecision?.mood || "correct"));
+    window.AppEffects?.xpBurst?.(xpReward);
+    window.AppEffects?.flash?.(
+      leveledUp ? "levelup" : (brainDecision?.mood || "correct")
+    );
 
-    if (leveledUp) effects?.streakFire?.();
+    if (leveledUp) {
+      window.AppEffects?.streakFire?.();
+    }
   } catch {}
 
   // =========================
-  // UI POLISH
+  // UI POLISH (SAFE)
   // =========================
   const polish = window.AppPolish;
   let moodControlled = false;

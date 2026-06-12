@@ -19,12 +19,8 @@ body{
   background: linear-gradient(135deg,#e3f2fd,#fce4ec);
 }
 
-/* TITLE */
-h1{
-  margin-bottom:10px;
-}
+h1{ margin-bottom:10px; }
 
-/* XP */
 #xp{
   position:fixed;
   top:15px;
@@ -37,7 +33,7 @@ h1{
 }
 
 /* =========================
-   PATH LAYOUT
+   PATH
 ========================= */
 
 .path{
@@ -46,7 +42,6 @@ h1{
   position:relative;
 }
 
-/* LINE */
 .line{
   position:absolute;
   left:50%;
@@ -57,7 +52,6 @@ h1{
   transform:translateX(-50%);
 }
 
-/* OWL GUIDE */
 #owlGuide{
   position:absolute;
   left:50%;
@@ -68,7 +62,7 @@ h1{
 }
 
 /* =========================
-   SKILL NODES
+   NODE
 ========================= */
 
 .node{
@@ -80,40 +74,19 @@ h1{
   box-shadow:0 4px 10px rgba(0,0,0,0.1);
   cursor:pointer;
   transition:0.25s;
-  position:relative;
-  z-index:2;
 }
 
-.node:hover{
-  transform:scale(1.07);
-}
+.node:hover{ transform:scale(1.07); }
 
-/* STATES */
-.locked{
-  opacity:0.25;
-  pointer-events:none;
-}
+.locked{ opacity:0.3; pointer-events:none; }
+.unlocked{ border:3px solid #58cc02; }
+.completed{ border:3px solid gold; }
 
-.unlocked{
-  border:3px solid #58cc02;
-}
-
-.completed{
-  border:3px solid gold;
-}
-
-/* TEXT */
-.icon{
-  font-size:28px;
-}
-
-.small{
-  font-size:12px;
-  opacity:0.7;
-}
+.icon{ font-size:28px; }
+.small{ font-size:12px; opacity:0.7; }
 
 /* =========================
-   SKILL BAR
+   PROGRESS BAR
 ========================= */
 
 .bar{
@@ -131,7 +104,6 @@ h1{
   transition:0.4s ease;
 }
 
-/* LEVEL COLORS */
 .level-0 .bar-fill{ background:#ddd; }
 .level-1 .bar-fill{ background:#ffca28; }
 .level-2 .bar-fill{ background:#ffb300; }
@@ -148,21 +120,26 @@ h1{
 <div id="xp">XP: 0</div>
 
 <div class="path">
-
-<div class="line"></div>
-<div id="owlGuide">🦉</div>
-
-<div id="map"></div>
-
+  <div class="line"></div>
+  <div id="owlGuide">🦉</div>
+  <div id="map"></div>
 </div>
 
 <script src="engine-core.js"></script>
 <script src="vocab_a1.js"></script>
+<script src="app-ui.js"></script>
 
 <script>
 
 /* =========================
-   DATA
+   SAFETY LOAD
+========================= */
+
+let xp = window.Engine ? Engine.getXP() : 0;
+document.getElementById("xp").innerText = "XP: " + xp;
+
+/* =========================
+   SKILLS
 ========================= */
 
 const skills = [
@@ -176,23 +153,30 @@ const skills = [
 ];
 
 /* =========================
-   STATE
-========================= */
-
-let xp = Engine.getXP();
-
-document.getElementById("xp").innerText = "XP: " + xp;
-
-/* =========================
-   SKILL LEVEL BAR
+   SAFE SKILL STATE (FIXED)
 ========================= */
 
 function getSkillLevel(i){
-  return Engine.getSkillState(i);
+
+  if(!window.Engine) return 0;
+
+  // fallback system (since Engine.getSkillState doesn't exist yet)
+  let key = "skill_" + i;
+  let val = localStorage.getItem(key);
+
+  if(val === null){
+    localStorage.setItem(key, "0");
+    return 0;
+  }
+
+  return parseInt(val);
 }
 
-function getBar(level){
+/* =========================
+   BAR
+========================= */
 
+function getBar(level){
   if(level === 0) return 0;
   if(level === 1) return 25;
   if(level === 2) return 50;
@@ -201,7 +185,7 @@ function getBar(level){
 }
 
 /* =========================
-   RENDER PATH
+   RENDER MAP
 ========================= */
 
 function render(){
@@ -213,10 +197,10 @@ function render(){
     let level = getSkillLevel(i);
     let progress = getBar(level);
 
-    let stateClass = level > 0 ? "unlocked" : "locked";
+    let state = level > 0 ? "unlocked" : "locked";
 
     html += `
-      <div class="node ${stateClass} level-${level}" onclick="openSkill(${i})">
+      <div class="node ${state} level-${level}" onclick="openSkill(${i})">
 
         <div class="icon">
           ${level === 4 ? "👑" : "🦉"}
@@ -240,7 +224,7 @@ function render(){
 }
 
 /* =========================
-   OWL FOLLOW PATH
+   OWL POSITION
 ========================= */
 
 function placeOwl(){
@@ -248,16 +232,16 @@ function placeOwl(){
   let owl = document.getElementById("owlGuide");
   let nodes = document.querySelectorAll(".node");
 
-  if(nodes.length > 0){
-    let first = nodes[0].getBoundingClientRect();
-    let container = document.querySelector(".path").getBoundingClientRect();
+  if(nodes.length === 0) return;
 
-    owl.style.top = (first.top - container.top + 10) + "px";
-  }
+  let first = nodes[0].getBoundingClientRect();
+  let container = document.querySelector(".path").getBoundingClientRect();
+
+  owl.style.top = (first.top - container.top + 10) + "px";
 }
 
 /* =========================
-   MOVE OWL
+   NAVIGATION FIXED
 ========================= */
 
 function openSkill(i){
@@ -272,7 +256,13 @@ function openSkill(i){
   owl.style.top = (rect.top - container.top + 10) + "px";
 
   setTimeout(()=>{
-    window.location.href = "lesson.html?s=" + i;
+
+    if(window.AppUI){
+      AppUI.navigate("lesson.html?s=" + i);
+    } else {
+      window.location.href = "lesson.html?s=" + i;
+    }
+
   },400);
 }
 

@@ -1,6 +1,6 @@
 /* =========================
    🏆 LESSON REWARD ENGINE
-   STEP 30 — FINAL ADAPTIVE ORCHESTRATOR (BRAIN-INTEGRATED FIXED v2)
+   STEP 30 — FINAL ADAPTIVE ORCHESTRATOR (BRAIN-INTEGRATED FIXED v3)
 ========================= */
 
 function runFinishLogic(){
@@ -27,7 +27,7 @@ function runFinishLogic(){
       const num = Number(lvl);
       return Number.isFinite(num) ? num : 0;
 
-    } catch (e) {
+    } catch {
       return 0;
     }
   };
@@ -40,12 +40,12 @@ function runFinishLogic(){
   const baseXP = 10;
 
   // =========================
-  // SAFE ENGINE XP (FOR CONTEXT ONLY)
+  // SAFE ENGINE XP (CONTEXT ONLY)
   // =========================
   const engineXP = Number(window.Engine?.getXP?.() ?? 0);
 
   // =========================
-  // 🧠 ADAPTIVE BRAIN CONTEXT
+  // 🧠 BRAIN CONTEXT
   // =========================
   const context = {
     oldLevel,
@@ -54,29 +54,34 @@ function runFinishLogic(){
   };
 
   const brainDecision =
-    window.AdaptiveBrain?.decide?.(context) ??
-    {
+    window.AdaptiveBrain?.decide?.(context) || {
       xpMultiplier: 1,
       mood: "correct",
       showStreakBoost: false
     };
 
   // =========================
-  // FINAL XP (SAFE CALCULATION)
+  // FINAL XP CALCULATION
   // =========================
   const xpReward = Math.max(
     1,
-    Math.round(Number(baseXP) * (Number(brainDecision.xpMultiplier) || 1))
+    Math.round(baseXP * (Number(brainDecision.xpMultiplier) || 1))
   );
 
   // =========================
-  // ENGINE UPDATE (TRUTH SOURCE)
+  // ENGINE UPDATE (SAFE)
   // =========================
   try {
-    window.Engine?.addXP?.(xpReward);
-    window.Engine?.updateStreak?.();
-    window.Engine?.resetHearts?.();
-  } catch (e) {}
+    const engine = window.Engine;
+
+    if (engine) {
+      const xp = Number.isFinite(xpReward) ? xpReward : 0;
+
+      engine.addXP?.(xp);
+      engine.updateStreak?.();
+      engine.resetHearts?.();
+    }
+  } catch {}
 
   // =========================
   // LEVEL SNAPSHOT (AFTER XP)
@@ -101,13 +106,12 @@ function runFinishLogic(){
       effects?.streakFire?.();
       effects?.flash?.("levelup");
     }
-  } catch (e) {}
+  } catch {}
 
   // =========================
   // UI POLISH LAYER
   // =========================
   const polish = window.AppPolish;
-
   let moodControlled = false;
 
   try {
@@ -120,16 +124,14 @@ function runFinishLogic(){
       }
 
       if (typeof polish.setMood === "function") {
-
-        const mood =
+        polish.setMood(
           brainDecision?.mood ||
-          (leveledUp ? "levelup" : "correct");
-
-        polish.setMood(mood);
+          (leveledUp ? "levelup" : "correct")
+        );
         moodControlled = true;
       }
     }
-  } catch (e) {}
+  } catch {}
 
   // =========================
   // LEVEL UP HANDLING

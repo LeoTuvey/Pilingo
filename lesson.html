@@ -1,61 +1,81 @@
 /* =========================
-   🏆 LEVEL CHECK + XP LOGIC
-   (STEP 18 PRODUCTION SAFE VERSION)
+   🏆 LESSON REWARD ENGINE
+   STEP 19 SAFE VERSION
 ========================= */
 
 function runFinishLogic(){
 
   // =========================
-  // 1. SAFE LEVEL READ
+  // READ LEVEL BEFORE REWARD
   // =========================
   let oldLevel = getSafeLevel();
 
   // =========================
-  // 2. APPLY REWARDS (SAFE ENGINE CALLS)
+  // APPLY REWARDS
   // =========================
   if(window.Engine){
 
-    Engine.addXP(10);
-    Engine.resetHearts();
-    Engine.updateStreak();
+    if(typeof Engine.addXP === "function"){
+      Engine.addXP(10);
+    }
+
+    if(typeof Engine.resetHearts === "function"){
+      Engine.resetHearts();
+    }
+
+    if(typeof Engine.updateStreak === "function"){
+      Engine.updateStreak();
+    }
   }
 
   // =========================
-  // 3. APP STATE SYNC (STEP 18 MEMORY)
+  // CLEAR RESUME DATA
   // =========================
-  if(window.AppState){
-
+  if(window.AppState &&
+     typeof AppState.clearLessonProgress === "function"){
     AppState.clearLessonProgress();
-
-    // optional future analytics hook
-    AppState.save("lastSessionXP", Engine ? Engine.getXP() : 0);
   }
 
   // =========================
-  // 4. NEW LEVEL
+  // STEP 19 POLISH
+  // =========================
+  if(window.AppPolish){
+
+    if(typeof AppPolish.xpPopup === "function"){
+      AppPolish.xpPopup(10);
+    }
+
+    if(typeof AppPolish.unlockBadge === "function"){
+      AppPolish.unlockBadge("First Lesson");
+    }
+  }
+
+  // =========================
+  // CHECK LEVEL UP
   // =========================
   let newLevel = getSafeLevel();
 
-  // =========================
-  // 5. LEVEL UP CHECK
-  // =========================
   let leveledUp = newLevel > oldLevel;
 
   if(leveledUp){
 
-    // animation hook (safe)
     if(typeof levelUpAnimation === "function"){
       levelUpAnimation();
     }
 
-    // UI notification (only if exists)
-    if(window.AppUI && AppUI.notify){
+    if(window.AppUI &&
+       typeof AppUI.notify === "function"){
       AppUI.notify("🏆 Level Up!");
+    }
+
+    if(window.AppPolish &&
+       typeof AppPolish.setMood === "function"){
+      AppPolish.setMood("levelup");
     }
   }
 
   // =========================
-  // 6. RETURN RESULT (future AI layer ready)
+  // RETURN DATA
   // =========================
   return {
     oldLevel,
@@ -67,23 +87,30 @@ function runFinishLogic(){
 
 /* =========================
    🧠 SAFE LEVEL SYSTEM
-   (NO DEPENDENCY VERSION)
 ========================= */
 
 function getSafeLevel(){
 
   let xp = 0;
 
-  if(window.Engine && typeof Engine.getXP === "function"){
+  if(
+    window.Engine &&
+    typeof Engine.getXP === "function"
+  ){
     xp = Engine.getXP();
-  } else {
-    xp = parseInt(localStorage.getItem("xp") || "0");
+  }
+  else{
+    xp = parseInt(
+      localStorage.getItem("xp") || "0",
+      10
+    );
   }
 
-  // Duolingo-style progression curve
   if(xp < 50) return 0;
   if(xp < 120) return 1;
   if(xp < 220) return 2;
   if(xp < 350) return 3;
-  return 4;
+  if(xp < 500) return 4;
+
+  return 5;
 }

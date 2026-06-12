@@ -1,1 +1,149 @@
-/* ========================= 🏆 LESSON REWARD ENGINE STEP 30 — FINAL ADAPTIVE ORCHESTRATOR (STABLE v8 FIX) ========================= */ function runFinishLogic(){ // ========================= // GUARD // ========================= if (window.__finishLock) return; window.__finishLock = true; setTimeout(() => { window.__finishLock = false; }, 1500); // ========================= // SAFE RESOLVER // ========================= const resolveLevel = () => { try { let raw = 0; if (typeof window.getSafeLevel === "function") { try { raw = window.getSafeLevel(); } catch { raw = 0; } } else if (window.Engine?.getLevel) { raw = window.Engine.getLevel(); } const num = Number(raw); return Number.isFinite(num) ? num : 0; } catch { return 0; } }; const oldLevel = resolveLevel(); // ========================= // BASE XP // ========================= const baseXP = 10; const engineXP = Number(window.Engine?.getXP?.() ?? 0); // FIX: use localStorage streak (Engine is source of truth) const streak = Number(localStorage.getItem("streak") || 0); // ========================= // BRAIN CONTEXT // ========================= const context = { oldLevel, level: oldLevel, xp: engineXP, streak, xpReward: baseXP }; const brainDecision = window.AdaptiveBrain?.decide?.(context) ?? { xpMultiplier: 1, mood: "correct", showStreakBoost: false }; // ========================= // FINAL XP // ========================= const xpReward = Math.max( 1, Math.round(baseXP * (Number(brainDecision.xpMultiplier) || 1)) ); // ========================= // ENGINE UPDATE // ========================= try { const engine = window.Engine; if (engine) { if (typeof engine.addXP === "function") engine.addXP(xpReward); if (typeof engine.updateStreak === "function") engine.updateStreak(); if (typeof engine.resetHearts === "function") engine.resetHearts(); } } catch (e) { console.error("Engine crash prevented:", e); } // ========================= // LEVEL SNAPSHOT // ========================= const newLevel = resolveLevel(); const leveledUp = Number.isFinite(oldLevel) && Number.isFinite(newLevel) && newLevel > oldLevel; // ========================= // EFFECTS // ========================= try { window.AppEffects?.xpBurst?.(xpReward); window.AppEffects?.flash?.( leveledUp ? "levelup" : (brainDecision?.mood || "correct") ); if (leveledUp) { window.AppEffects?.streakFire?.(); } } catch {} // ========================= // UI POLISH // ========================= const polish = window.AppPolish; let moodControlled = false; try { if (polish) { if (typeof polish.xpPopup === "function") { polish.xpPopup(xpReward); } else if (typeof polish.notify === "function") { polish.notify("+" + xpReward + " XP"); } if (typeof polish.setMood === "function") { polish.setMood( leveledUp ? "levelup" : (brainDecision?.mood || "correct") ); moodControlled = true; } } } catch {} // ========================= // LEVEL UP // ========================= if (leveledUp) { window.levelUpAnimation?.(); window.AppUI?.notify?.("🏆 Level Up!"); if (polish?.setMood && !moodControlled) { polish.setMood("levelup"); } } // ========================= // RETURN // ========================= return { oldLevel, newLevel, leveledUp, xpReward, brainDecision }; }
+/* =========================
+   🏆 LESSON REWARD ENGINE
+   STEP 25 — FINAL ADAPTIVE ORCHESTRATOR (STEP 30 READY)
+========================= */
+
+function runFinishLogic(){
+
+  // =========================
+  // GUARD (prevent double XP exploit)
+  // =========================
+  if(window.__finishLock) return;
+
+  window.__finishLock = true;
+  setTimeout(() => {
+    window.__finishLock = false;
+  }, 1500);
+
+  // =========================
+  // SAFE LEVEL RESOLVER (STRICT)
+  // =========================
+  const resolveLevel = () => {
+    try{
+      const raw =
+        typeof getSafeLevel === "function"
+          ? getSafeLevel()
+          : window.Engine?.getLevel?.();
+
+      const lvl = Number(raw);
+      return Number.isFinite(lvl) ? lvl : 0;
+
+    }catch(e){
+      return 0;
+    }
+  };
+
+  const oldLevel = resolveLevel();
+  const xpReward = 10;
+
+  // =========================
+  // ENGINE UPDATE (TRUTH SOURCE)
+  // =========================
+  const engine = window.Engine;
+
+  try{
+    if(engine){
+
+      const xp = Number.isFinite(xpReward) ? xpReward : 0;
+
+      engine.addXP?.(xp);
+      engine.updateStreak?.();
+      engine.resetHearts?.();
+    }
+  }catch(e){}
+
+  // =========================
+  // LEVEL SNAPSHOT (AFTER XP)
+  // =========================
+  const newLevel = resolveLevel();
+
+  const leveledUp =
+    Number.isFinite(oldLevel) &&
+    Number.isFinite(newLevel) &&
+    newLevel > oldLevel;
+
+  // =========================
+  // 🧠 STEP 30 INTEGRATION HOOK (ADAPTIVE BRAIN FEEDBACK)
+  // =========================
+  const context = {
+    oldLevel,
+    newLevel,
+    leveledUp,
+    xpReward,
+    xp: window.Engine?.getXP?.() || 0,
+    level: newLevel
+  };
+
+  const brainDecision =
+    window.AdaptiveBrain?.decide?.(context) || null;
+
+  // =========================
+  // EFFECT LAYER (PRIMARY FEEDBACK)
+  // =========================
+  const effects = window.AppEffects;
+
+  try{
+    if(effects){
+
+      effects.xpBurst?.(xpReward);
+      effects.flash?.("correct");
+
+      if(leveledUp){
+        effects.streakFire?.();
+        effects.flash?.("levelup");
+      }
+    }
+  }catch(e){}
+
+  // =========================
+  // UI POLISH LAYER
+  // =========================
+  const polish = window.AppPolish;
+
+  let moodControlled = false;
+
+  try{
+    if(polish){
+
+      if(typeof polish.xpPopup === "function"){
+        polish.xpPopup(xpReward);
+
+      } else if(typeof polish.notify === "function"){
+        polish.notify("+" + xpReward + " XP");
+      }
+
+      if(typeof polish.setMood === "function"){
+
+        const mood =
+          brainDecision?.mood || "correct";
+
+        polish.setMood(mood);
+        moodControlled = true;
+      }
+    }
+  }catch(e){}
+
+  // =========================
+  // LEVEL UP HANDLING
+  // =========================
+  if(leveledUp){
+
+    window.levelUpAnimation?.();
+    window.AppUI?.notify?.("🏆 Level Up!");
+
+    if(polish?.setMood && !moodControlled){
+      polish.setMood("levelup");
+    }
+  }
+
+  // =========================
+  // 🧠 FEEDBACK RETURN (STEP 30 COMPATIBLE CONTRACT)
+  // =========================
+  return {
+    oldLevel,
+    newLevel,
+    leveledUp,
+    xpReward,
+    brainDecision
+  };
+}

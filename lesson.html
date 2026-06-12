@@ -1,6 +1,6 @@
 /* =========================
  🏆 LESSON REWARD ENGINE
- STEP 30 — FINAL ADAPTIVE ORCHESTRATOR (BRAIN-INTEGRATED FIXED v4)
+ STEP 30 — FINAL ADAPTIVE ORCHESTRATOR (BRAIN-INTEGRATED FIXED v5)
 ========================= */
 
 function runFinishLogic(){
@@ -16,7 +16,7 @@ function runFinishLogic(){
   }, 1500);
 
   // =========================
-  // SAFE LEVEL RESOLVER (STRICT)
+  // SAFE LEVEL RESOLVER
   // =========================
   const resolveLevel = () => {
     try {
@@ -34,28 +34,40 @@ function runFinishLogic(){
   const oldLevel = resolveLevel();
 
   // =========================
-  // BASE VALUES
+  // BASE XP
   // =========================
   const baseXP = 10;
-  const engineXP = Number(window.Engine?.getXP?.() ?? 0);
+
+  const engineXP = Number(window.Engine?.getXP?.() || 0);
 
   // =========================
-  // 🧠 BRAIN CONTEXT (FIXED - FULL SIGNAL)
+  // SAFE STREAK (FIXED)
+  // =========================
+  const streak =
+    typeof window.Engine?.getStreak === "function"
+      ? window.Engine.getStreak()
+      : 0;
+
+  // =========================
+  // 🧠 BRAIN CONTEXT
   // =========================
   const context = {
     oldLevel,
     level: oldLevel,
     xp: engineXP,
-    streak: window.Engine?.getStreak?.?.() ?? 0,
+    streak,
     xpReward: baseXP
   };
 
   const brainDecision =
-    window.AdaptiveBrain?.decide?.(context) ||
-    { xpMultiplier: 1, mood: "correct", showStreakBoost: false };
+    window.AdaptiveBrain?.decide?.(context) || {
+      xpMultiplier: 1,
+      mood: "correct",
+      showStreakBoost: false
+    };
 
   // =========================
-  // FINAL XP
+  // FINAL XP CALCULATION
   // =========================
   const xpReward = Math.max(
     1,
@@ -86,7 +98,7 @@ function runFinishLogic(){
     newLevel > oldLevel;
 
   // =========================
-  // EFFECT LAYER (NO CONFLICTS)
+  // EFFECT LAYER
   // =========================
   const effects = window.AppEffects;
 
@@ -102,7 +114,7 @@ function runFinishLogic(){
   } catch {}
 
   // =========================
-  // UI POLISH LAYER
+  // UI POLISH
   // =========================
   const polish = window.AppPolish;
   let moodControlled = false;

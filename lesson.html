@@ -1,71 +1,40 @@
 /* =========================
-   🏆 LEVEL UP CELEBRATION
-   DUOLINGO-STYLE ANIMATION
+   🏆 LEVEL CHECK + XP LOGIC
+   (SAFE DUOLINGO-STYLE FLOW)
 ========================= */
 
-function levelUpAnimation(){
+function runFinishLogic(){
 
   // =========================
-  // create overlay container
+  // 1. capture old level first
   // =========================
-  let overlay = document.createElement("div");
-
-  overlay.style.position = "fixed";
-  overlay.style.top = "0";
-  overlay.style.left = "0";
-  overlay.style.width = "100%";
-  overlay.style.height = "100%";
-  overlay.style.background = "rgba(0,0,0,0.75)";
-  overlay.style.display = "flex";
-  overlay.style.alignItems = "center";
-  overlay.style.justifyContent = "center";
-  overlay.style.zIndex = "9999";
+  let oldLevel = Engine.getLevel();
 
   // =========================
-  // animation box
+  // 2. apply rewards
   // =========================
-  let box = document.createElement("div");
-
-  box.innerHTML = `
-    <div style="font-size:60px;">🏆</div>
-    <div style="font-size:26px;font-weight:bold;">LEVEL UP!</div>
-    <div style="font-size:16px;margin-top:8px;opacity:0.9;">
-      Keep going — you're improving!
-    </div>
-  `;
-
-  box.style.background = "white";
-  box.style.color = "#000";
-  box.style.padding = "30px 40px";
-  box.style.borderRadius = "20px";
-  box.style.textAlign = "center";
-  box.style.transform = "scale(0.7)";
-  box.style.animation = "popIn 0.3s ease forwards";
-  box.style.boxShadow = "0 10px 30px rgba(0,0,0,0.3)";
+  Engine.addXP(10);
+  Engine.resetHearts();
+  Engine.updateStreak();
 
   // =========================
-  // append
+  // 3. compute new level
   // =========================
-  overlay.appendChild(box);
-  document.body.appendChild(overlay);
+  let newLevel = Engine.getLevel();
 
   // =========================
-  // auto remove
+  // 4. level up reaction
   // =========================
-  setTimeout(()=>{
-    overlay.remove();
-  }, 1300);
+  if(newLevel > oldLevel){
+    levelUpAnimation();
+  }
+
+  // =========================
+  // 5. return values (optional future use)
+  // =========================
+  return {
+    oldLevel,
+    newLevel,
+    leveledUp: newLevel > oldLevel
+  };
 }
-
-/* =========================
-   optional animation keyframe (safe add)
-========================= */
-
-let style = document.createElement("style");
-style.innerHTML = `
-@keyframes popIn {
-  from { transform: scale(0.6); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
-}
-`;
-document.head.appendChild(style);

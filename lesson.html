@@ -6,14 +6,16 @@
 function runFinishLogic(){
 
   // =========================
-  // READ LEVEL BEFORE REWARD
+  // SAFETY: LEVEL READ
   // =========================
-  let oldLevel = getSafeLevel();
+  const oldLevel = (typeof getSafeLevel === "function")
+    ? getSafeLevel()
+    : 0;
 
   const xpReward = 10;
 
   // =========================
-  // APPLY REWARDS (SAFE ENGINE LAYER)
+  // ENGINE REWARDS
   // =========================
   if(window.Engine){
 
@@ -31,7 +33,7 @@ function runFinishLogic(){
   }
 
   // =========================
-  // CLEAR RESUME DATA (STEP 18)
+  // RESUME CLEANUP (STEP 18)
   // =========================
   if(window.AppState &&
      typeof AppState.clearLessonProgress === "function"){
@@ -39,7 +41,7 @@ function runFinishLogic(){
   }
 
   // =========================
-  // POLISH FEEDBACK LAYER (SAFE + SINGLE SOURCE)
+  // POLISH LAYER
   // =========================
   let moodSet = false;
 
@@ -58,7 +60,7 @@ function runFinishLogic(){
   }
 
   // =========================
-  // EFFECTS LAYER (OPTIONAL SAFE)
+  // EFFECTS LAYER (OPTIONAL)
   // =========================
   if(window.AppEffects){
 
@@ -72,10 +74,13 @@ function runFinishLogic(){
   }
 
   // =========================
-  // LEVEL CALCULATION
+  // LEVEL CHECK
   // =========================
-  let newLevel = getSafeLevel();
-  let leveledUp = newLevel > oldLevel;
+  const newLevel = (typeof getSafeLevel === "function")
+    ? getSafeLevel()
+    : 0;
+
+  const leveledUp = newLevel > oldLevel;
 
   // =========================
   // LEVEL UP HANDLING
@@ -91,10 +96,8 @@ function runFinishLogic(){
       AppUI.notify("🏆 Level Up!");
     }
 
-    // override mood ONLY if not already set
     if(window.AppPolish &&
-       typeof AppPolish.setMood === "function" &&
-       !moodSet){
+       typeof AppPolish.setMood === "function"){
       AppPolish.setMood("levelup");
     }
 
@@ -111,7 +114,7 @@ function runFinishLogic(){
   }
 
   // =========================
-  // RETURN DATA (analytics ready)
+  // RESULT (analytics-ready)
   // =========================
   return {
     oldLevel,

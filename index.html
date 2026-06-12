@@ -2,234 +2,168 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Owl-Lingo</title>
 
 <style>
-
-/* =========================
-   🧠 APP BASE
-========================= */
-
 body{
-  margin:0;
   font-family: Arial;
-  background:#f5f9ff;
-}
-
-/* =========================
-   HEADER
-========================= */
-
-.header{
-  padding:20px;
-  text-align:center;
-  background:linear-gradient(135deg,#58cc02,#4caf50);
-  color:white;
-}
-
-.header h1{
   margin:0;
-  font-size:24px;
+  padding:0;
+  text-align:center;
+  background: linear-gradient(135deg,#e3f2fd,#fce4ec);
 }
 
-/* =========================
-   DASHBOARD CARD
-========================= */
-
-.card{
-  background:white;
-  margin:15px;
-  padding:20px;
-  border-radius:15px;
-  box-shadow:0 3px 10px rgba(0,0,0,0.1);
+/* HEADER */
+header{
+  padding:30px 20px;
 }
 
-/* XP + STREAK */
-.stats{
-  display:flex;
-  justify-content:space-between;
+h1{
+  margin:10px 0;
+}
+
+/* OWL */
+#owl{
+  font-size:60px;
   margin-top:10px;
-  font-weight:bold;
+  transition:0.3s;
 }
 
-/* CONTINUE BUTTON */
-.cta{
-  background:#58cc02;
-  color:white;
+/* BUTTON */
+.btn{
+  display:block;
+  width:80%;
+  margin:10px auto;
   padding:14px;
   border:none;
   border-radius:12px;
-  width:100%;
-  font-size:16px;
-  margin-top:10px;
-  cursor:pointer;
-}
-
-/* =========================
-   DAILY GOAL BAR
-========================= */
-
-.goal-bar{
-  height:10px;
-  background:#eee;
-  border-radius:10px;
-  overflow:hidden;
-  margin-top:10px;
-}
-
-.goal-fill{
-  height:100%;
-  width:0%;
   background:#58cc02;
-  transition:0.4s;
-}
-
-/* =========================
-   BOTTOM NAV (DUOLINGO STYLE)
-========================= */
-
-.nav{
-  position:fixed;
-  bottom:0;
-  left:0;
-  width:100%;
-  display:flex;
-  background:white;
-  border-top:1px solid #ddd;
-}
-
-.nav button{
-  flex:1;
-  padding:12px;
-  border:none;
-  background:none;
-  font-size:14px;
+  color:white;
+  font-size:16px;
   cursor:pointer;
 }
 
-/* ACTIVE TAB */
-.nav button.active{
-  color:#58cc02;
-  font-weight:bold;
+/* CARD */
+.card{
+  background:white;
+  width:85%;
+  margin:10px auto;
+  padding:15px;
+  border-radius:12px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.1);
 }
 
+/* QUEST */
+.quest{
+  font-size:14px;
+  opacity:0.8;
+  margin-top:5px;
+}
+
+/* NOTIFICATION */
+.notify{
+  position:fixed;
+  top:20px;
+  left:50%;
+  transform:translateX(-50%);
+  background:black;
+  color:white;
+  padding:10px 15px;
+  border-radius:20px;
+  font-size:14px;
+  opacity:0;
+  transition:0.3s;
+}
 </style>
 </head>
 
 <body>
 
-<!-- HEADER -->
-<div class="header">
-  <h1>🦉 Owl-Lingo</h1>
-  <div id="sub">Learn daily. Build streaks. Stay consistent.</div>
-</div>
+<header>
+  <div id="owl">🦉</div>
+  <h1>Owl-Lingo</h1>
+  <div class="quest" id="questBox">Loading quest...</div>
+</header>
 
-<!-- DASHBOARD -->
 <div class="card">
+  <h3>Start Learning</h3>
 
-  <h2>📊 Your Progress</h2>
-
-  <div class="stats">
-    <div>XP: <span id="xp">0</span></div>
-    <div>🔥 Streak: <span id="streak">0</span></div>
-  </div>
-
-  <div class="goal-bar">
-    <div class="goal-fill" id="goal"></div>
-  </div>
-
-  <button class="cta" onclick="continueLesson()">
-    ▶ Continue Learning
-  </button>
-
+  <button class="btn" onclick="go('engine.html')">Continue Path</button>
+  <button class="btn" onclick="reset()">Reset Progress</button>
 </div>
 
-<!-- REVIEW CARD -->
-<div class="card">
+<div id="notify" class="notify"></div>
 
-  <h2>🔁 Review Weak Words</h2>
-  <p>Practice words you struggled with.</p>
-
-  <button class="cta" style="background:#ff9800" onclick="review()">
-    Start Review
-  </button>
-
-</div>
-
-<!-- NAV -->
-<div class="nav">
-
-  <button class="active" onclick="go('home')">🏠 Home</button>
-  <button onclick="go('learn')">📚 Learn</button>
-  <button onclick="go('review')">🔁 Review</button>
-  <button onclick="go('profile')">👤 Profile</button>
-
-</div>
-
+<!-- CORE SYSTEMS -->
 <script src="engine-core.js"></script>
+<script src="app-ui.js"></script>
 
 <script>
 
 /* =========================
-   LOAD DATA
+   📱 APP INIT (STEP 17)
 ========================= */
 
-let xp = Engine.getXP();
-let streak = Engine.updateStreak();
+document.addEventListener("DOMContentLoaded", () => {
+
+  // 🧠 ENGINE INIT
+  if(typeof Engine !== "undefined"){
+    let xp = Engine.getXP();
+    let streak = Engine.updateStreak();
+    console.log("XP:", xp, "Streak:", streak);
+  }
+
+  // 🦉 OWL INIT
+  if(typeof AppUI !== "undefined"){
+    AppUI.updateOwl();
+    let quest = AppUI.getDailyQuest();
+    document.getElementById("questBox").innerText =
+      "🎯 Daily Quest: " + quest.progress + "/" + quest.goal;
+  }
+
+  // 🔔 FIRST TIME USER
+  if(!localStorage.getItem("appOpened")){
+    localStorage.setItem("appOpened", "true");
+    notify("👋 Welcome to Owl-Lingo!");
+  }
+
+});
 
 /* =========================
-   UPDATE UI
+   NAVIGATION
 ========================= */
 
-document.getElementById("xp").innerText = xp;
-document.getElementById("streak").innerText = streak;
-
-/* =========================
-   DAILY GOAL (FAKE 50 XP GOAL)
-========================= */
-
-let goal = Math.min((xp % 50) / 50 * 100, 100);
-document.getElementById("goal").style.width = goal + "%";
-
-/* =========================
-   CONTINUE LESSON
-========================= */
-
-function continueLesson(){
-  window.location.href = "engine.html";
+function go(url){
+  if(typeof AppUI !== "undefined"){
+    AppUI.navigate(url);
+  } else {
+    window.location.href = url;
+  }
 }
 
 /* =========================
-   REVIEW MODE
+   RESET
 ========================= */
 
-function review(){
-  alert("Review mode coming in Step 15 (we will auto-pull weak words)");
+function reset(){
+  localStorage.clear();
+  location.reload();
 }
 
 /* =========================
-   NAV SYSTEM (SHELL)
+   NOTIFICATION
 ========================= */
 
-function go(tab){
+function notify(msg){
 
-  document.querySelectorAll(".nav button")
-    .forEach(b=>b.classList.remove("active"));
+  let n = document.getElementById("notify");
 
-  event.target.classList.add("active");
+  n.innerText = msg;
+  n.style.opacity = "1";
 
-  if(tab === "learn"){
-    window.location.href = "engine.html";
-  }
-
-  if(tab === "review"){
-    review();
-  }
-
-  if(tab === "profile"){
-    alert("Profile system coming in Step 15");
-  }
+  setTimeout(()=>{
+    n.style.opacity = "0";
+  }, 2000);
 }
 
 </script>

@@ -1,6 +1,6 @@
 /* =====================================
    🧠 OWL-LINGO POLISH LAYER
-   STEP 19 — DUOLINGO UX SYSTEM
+   STEP 19 — DUOLINGO UX SYSTEM (FIXED + STEP 21 READY)
 ===================================== */
 
 const AppPolish = {
@@ -10,10 +10,14 @@ const AppPolish = {
   ========================= */
   setMood(state){
 
-    let owl = document.getElementById("owl");
+    // FIX: support both index owl + path owl
+    let owl =
+      document.getElementById("owl") ||
+      document.getElementById("owlGuide");
+
     if(!owl) return;
 
-    owl.classList.remove("happy","sad","celebrate");
+    owl.classList.remove("happy","sad","celebrate","levelup");
 
     if(state === "correct") owl.classList.add("happy");
     if(state === "wrong") owl.classList.add("sad");
@@ -87,13 +91,14 @@ const AppPolish = {
   },
 
   /* =========================
-     🔥 STREAK VISUAL
+     🔥 STREAK VISUAL (FIXED)
   ========================= */
   getStreakLevel(){
 
     let streak = 0;
 
-    if(window.Engine){
+    if(window.Engine &&
+       typeof Engine.updateStreak === "function"){
       streak = Engine.updateStreak();
     }
 
@@ -114,5 +119,31 @@ const AppPolish = {
       localStorage.setItem("seenIntro", "true");
       window.location.href = "index.html";
     }
+  },
+
+  /* =========================
+     ⚡ STEP 21 HOOK (SAFE EXTENSION)
+  ========================= */
+  flash(type){
+
+    // optional visual hook (used by AppEffects)
+    let el = document.createElement("div");
+
+    el.style.position = "fixed";
+    el.style.top = "0";
+    el.style.left = "0";
+    el.style.width = "100%";
+    el.style.height = "100%";
+    el.style.pointerEvents = "none";
+    el.style.zIndex = "9999";
+    el.style.opacity = "0.15";
+
+    if(type === "correct") el.style.background = "green";
+    if(type === "wrong") el.style.background = "red";
+    if(type === "levelup") el.style.background = "gold";
+
+    document.body.appendChild(el);
+
+    setTimeout(()=> el.remove(), 200);
   }
 };

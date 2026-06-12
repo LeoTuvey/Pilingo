@@ -1,6 +1,6 @@
 /* =========================
    🏆 LESSON REWARD ENGINE
-   STEP 25 — FINAL ADAPTIVE ORCHESTRATOR (PRODUCTION HARDENED v3)
+   STEP 25 — FINAL ADAPTIVE ORCHESTRATOR (PRODUCTION HARDENED v4)
 ========================= */
 
 function runFinishLogic(){
@@ -16,51 +16,50 @@ function runFinishLogic(){
   }, 1500);
 
   // =========================
-  // SAFE LEVEL RESOLVER
+  // SAFE LEVEL RESOLVER (STRICT)
   // =========================
   const resolveLevel = () => {
     try{
-      if(typeof getSafeLevel === "function"){
-        return Number(getSafeLevel()) || 0;
-      }
 
-      const lvl = window.Engine?.getLevel?.();
-      return Number(lvl) || 0;
+      const raw =
+        typeof getSafeLevel === "function"
+          ? getSafeLevel()
+          : window.Engine?.getLevel?.();
+
+      const lvl = Number(raw);
+
+      return Number.isFinite(lvl) ? lvl : 0;
 
     }catch(e){
       return 0;
     }
   };
 
-  const oldLevel = resolveLevel() || 0;
+  const oldLevel = resolveLevel();
   const xpReward = 10;
 
   // =========================
   // ENGINE UPDATE (TRUTH SOURCE)
   // =========================
   const engine = window.Engine;
-  let engineOK = false;
 
   try{
     if(engine){
 
-      if(typeof engine.addXP === "function"){
-        engine.addXP(Number(xpReward) || 0);
-      }
+      const xp = Number.isFinite(xpReward) ? xpReward : 0;
 
+      engine.addXP?.(xp);
       engine.updateStreak?.();
       engine.resetHearts?.();
-
-      engineOK = true;
     }
   }catch(e){
-    engineOK = false;
+    // fail silent — never break lesson flow
   }
 
   // =========================
   // LEVEL SNAPSHOT (AFTER XP)
   // =========================
-  const newLevel = resolveLevel() || 0;
+  const newLevel = resolveLevel();
 
   const leveledUp =
     Number.isFinite(oldLevel) &&
@@ -89,7 +88,8 @@ function runFinishLogic(){
   // UI POLISH LAYER
   // =========================
   const polish = window.AppPolish;
-  let moodControlled = false;
+
+  let moodSet = false;
 
   try{
     if(polish){
@@ -103,7 +103,7 @@ function runFinishLogic(){
 
       if(typeof polish.setMood === "function"){
         polish.setMood("correct");
-        moodControlled = true;
+        moodSet = true;
       }
     }
   }catch(e){}
@@ -116,20 +116,19 @@ function runFinishLogic(){
     window.levelUpAnimation?.();
     window.AppUI?.notify?.("🏆 Level Up!");
 
-    // override mood only if system didn't already control it
-    if(polish?.setMood && !moodControlled){
+    // override mood only if not already controlled
+    if(polish?.setMood && !moodSet){
       polish.setMood("levelup");
     }
   }
 
   // =========================
-  // RETURN (STABLE ANALYTICS CONTRACT)
+  // RETURN (STABLE CONTRACT FOR STEP 29)
   // =========================
   return {
     oldLevel,
     newLevel,
     leveledUp,
-    engineOK,
     xpReward
   };
 }

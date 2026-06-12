@@ -1,384 +1,286 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Owl-Lingo</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Owl-Lingo Path</title>
 
 <style>
+
+/* =========================
+   🧠 BASE UI
+========================= */
+
 body{
-margin:0;
-font-family: system-ui, Arial;
-background:#eef3ff;
+  font-family: Arial;
+  margin:0;
+  padding:30px;
+  text-align:center;
+  background: linear-gradient(135deg,#e3f2fd,#fce4ec);
 }
 
-/* APP HEADER */
-header{
-background:linear-gradient(135deg,#58cc02,#46a302);
-color:white;
-padding:16px;
-display:flex;
-justify-content:space-between;
-align-items:center;
+/* TITLE */
+h1{
+  margin-bottom:10px;
 }
 
-.brand{
-display:flex;
-align-items:center;
-gap:10px;
-font-weight:bold;
+/* XP */
+#xp{
+  position:fixed;
+  top:15px;
+  right:15px;
+  background:#58cc02;
+  color:white;
+  padding:10px 14px;
+  border-radius:20px;
+  font-weight:bold;
 }
 
-.brand span{
-font-size:22px;
+/* =========================
+   PATH LAYOUT
+========================= */
+
+.path{
+  max-width:420px;
+  margin:auto;
+  position:relative;
 }
 
-.topStats{
-font-size:13px;
-opacity:0.95;
+/* LINE */
+.line{
+  position:absolute;
+  left:50%;
+  top:0;
+  width:4px;
+  height:100%;
+  background:#cfd8dc;
+  transform:translateX(-50%);
 }
 
-/* APP WRAPPER */
-.app{
-max-width:480px;
-margin:0 auto;
-padding:15px;
+/* OWL GUIDE */
+#owlGuide{
+  position:absolute;
+  left:50%;
+  transform:translate(-50%,0);
+  font-size:34px;
+  transition:0.6s ease;
+  z-index:5;
 }
 
-/* NAV BAR */
-.nav{
-display:flex;
-justify-content:space-around;
-background:white;
-padding:10px;
-border-radius:14px;
-margin:10px 0;
-box-shadow:0 4px 15px rgba(0,0,0,0.06);
+/* =========================
+   SKILL NODES
+========================= */
+
+.node{
+  width:160px;
+  margin:30px auto;
+  padding:16px;
+  border-radius:50%;
+  background:white;
+  box-shadow:0 4px 10px rgba(0,0,0,0.1);
+  cursor:pointer;
+  transition:0.25s;
+  position:relative;
+  z-index:2;
 }
 
-.nav button{
-border:none;
-background:none;
-font-weight:bold;
-cursor:pointer;
-color:#555;
+.node:hover{
+  transform:scale(1.07);
 }
 
-/* SCREEN */
-.screen{
-display:none;
-animation:fade 0.2s ease;
+/* STATES */
+.locked{
+  opacity:0.25;
+  pointer-events:none;
 }
 
-.active{
-display:block;
+.unlocked{
+  border:3px solid #58cc02;
 }
 
-@keyframes fade{
-from{opacity:0;transform:translateY(5px);}
-to{opacity:1;transform:translateY(0);}
+.completed{
+  border:3px solid gold;
 }
 
-/* CARD */
-.card{
-background:white;
-padding:18px;
-border-radius:18px;
-box-shadow:0 6px 20px rgba(0,0,0,0.07);
-margin-top:10px;
+/* TEXT */
+.icon{
+  font-size:28px;
 }
 
-/* LESSON TILE */
-.lesson{
-padding:14px;
-border-radius:14px;
-background:#fff;
-margin:10px 0;
-box-shadow:0 4px 10px rgba(0,0,0,0.05);
-cursor:pointer;
-display:flex;
-justify-content:space-between;
+.small{
+  font-size:12px;
+  opacity:0.7;
 }
 
-/* GAME UI */
-#visual{
-font-size:64px;
-margin:10px;
+/* =========================
+   SKILL BAR
+========================= */
+
+.bar{
+  height:6px;
+  background:#eee;
+  border-radius:10px;
+  margin-top:8px;
+  overflow:hidden;
 }
 
-button.option{
-width:100%;
-padding:12px;
-margin:8px 0;
-border-radius:12px;
-border:2px solid #eee;
-background:white;
-cursor:pointer;
-transition:0.15s;
+.bar-fill{
+  height:100%;
+  width:0%;
+  background:#58cc02;
+  transition:0.4s ease;
 }
 
-button.option:hover{
-border-color:#58cc02;
-transform:scale(1.02);
-}
+/* LEVEL COLORS */
+.level-0 .bar-fill{ background:#ddd; }
+.level-1 .bar-fill{ background:#ffca28; }
+.level-2 .bar-fill{ background:#ffb300; }
+.level-3 .bar-fill{ background:#66bb6a; }
+.level-4 .bar-fill{ background:#2e7d32; }
 
-/* PROGRESS */
-#progress{
-height:10px;
-background:#ddd;
-border-radius:10px;
-overflow:hidden;
-margin:10px 0;
-}
-
-#bar{
-height:100%;
-width:0%;
-background:#58cc02;
-transition:0.3s;
-}
-
-/* XP POP */
-#xpPopup{
-position:fixed;
-top:20px;
-right:20px;
-background:#58cc02;
-color:white;
-padding:10px 14px;
-border-radius:12px;
-display:none;
-font-weight:bold;
-}
-
-/* STATS BOX */
-.statBox{
-display:flex;
-justify-content:space-between;
-margin:10px 0;
-font-size:14px;
-color:#444;
-}
-
-/* HEARTS */
-#hearts{
-font-size:20px;
-margin:5px 0;
-}
-
-/* BUTTON PRIMARY */
-.primary{
-background:#58cc02;
-color:white;
-padding:12px;
-border:none;
-border-radius:14px;
-width:100%;
-font-weight:bold;
-cursor:pointer;
-}
 </style>
 </head>
 
 <body>
 
-<header>
-<div class="brand">
-<span>🦉</span> Owl-Lingo
-</div>
-<div class="topStats" id="topStats">XP: 0 | 🔥 0</div>
-</header>
+<h1>🦉 Your Learning Path</h1>
 
-<div class="app">
+<div id="xp">XP: 0</div>
 
-<!-- NAV -->
-<div class="nav">
-<button onclick="show('home')">Home</button>
-<button onclick="show('lessons')">Lessons</button>
-<button onclick="show('profile')">Profile</button>
-</div>
+<div class="path">
 
-<div id="xpPopup">+10 XP</div>
+<div class="line"></div>
+<div id="owlGuide">🦉</div>
 
-<!-- HOME -->
-<div id="home" class="screen active">
-<div class="card">
-<h2>Welcome 👋</h2>
-<p>Continue your learning streak!</p>
-<button class="primary" onclick="startLesson()">Start Learning</button>
-</div>
-</div>
-
-<!-- LESSONS -->
-<div id="lessons" class="screen">
-
-<div class="lesson" onclick="startLesson(0)">
-Animals 🐶
-<span>▶</span>
-</div>
-
-<div class="lesson" onclick="startLesson(1)">
-Actions 🏃
-<span>▶</span>
-</div>
-
-<div class="lesson" onclick="startLesson(2)">
-This / That 👉
-<span>▶</span>
-</div>
+<div id="map"></div>
 
 </div>
 
-<!-- GAME -->
-<div id="game" class="screen">
-
-<div class="card">
-
-<div class="statBox">
-<div id="hearts"></div>
-<div id="xpMini"></div>
-</div>
-
-<div id="progress"><div id="bar"></div></div>
-
-<div id="visual"></div>
-<h2 id="question"></h2>
-
-<div id="options"></div>
-</div>
-
-</div>
-
-<!-- PROFILE -->
-<div id="profile" class="screen">
-<div class="card">
-<h2>Profile</h2>
-<div id="stats"></div>
-</div>
-</div>
-
-</div>
+<script src="engine-core.js"></script>
+<script src="vocab_a1.js"></script>
 
 <script>
 
-let course = localStorage.getItem("course") || "en-ku";
+/* =========================
+   DATA
+========================= */
 
-let xpKey = course+"_xp";
-let streakKey = course+"_streak";
-
-let xp = parseInt(localStorage.getItem(xpKey) || 0);
-let streak = parseInt(localStorage.getItem(streakKey) || 0);
-
-let lessonIndex = 0;
-let qIndex = 0;
-let hearts = 5;
-
-const lessons = [
-{
-name:"Animals",
-questions:[
-{q:"What is this?",visual:"🐶",options:["Dog","Cat","Bird"],answer:0},
-{q:"What is this?",visual:"🐱",options:["Cat","Dog","Fish"],answer:0}
-]
-},
-{
-name:"Actions",
-questions:[
-{q:"What is he doing?",visual:"🏃",options:["Running","Eating","Sleeping"],answer:0}
-]
-},
-{
-name:"This / That",
-questions:[
-{q:"What is this?",visual:"👈",options:["This","That","He"],answer:0}
-]
-}
+const skills = [
+  { name:"Animals 🐶", id:"animals" },
+  { name:"Actions 🏃", id:"verbs" },
+  { name:"People 👤", id:"people" },
+  { name:"Food 🍎", id:"food" },
+  { name:"Objects 📦", id:"objects" },
+  { name:"Places 🏙️", id:"places" },
+  { name:"Adjectives 🎯", id:"adjectives" }
 ];
 
-function show(id){
-document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
-document.getElementById(id).classList.add("active");
+/* =========================
+   STATE
+========================= */
+
+let xp = Engine.getXP();
+
+document.getElementById("xp").innerText = "XP: " + xp;
+
+/* =========================
+   SKILL LEVEL BAR
+========================= */
+
+function getSkillLevel(i){
+  return Engine.getSkillState(i);
 }
 
-function updateTop(){
-document.getElementById("topStats").innerText =
-"XP: "+xp+" | 🔥 "+streak;
+function getBar(level){
+
+  if(level === 0) return 0;
+  if(level === 1) return 25;
+  if(level === 2) return 50;
+  if(level === 3) return 75;
+  return 100;
 }
 
-function popup(){
-let p=document.getElementById("xpPopup");
-p.style.display="block";
-setTimeout(()=>p.style.display="none",700);
+/* =========================
+   RENDER PATH
+========================= */
+
+function render(){
+
+  let html = "";
+
+  skills.forEach((s,i)=>{
+
+    let level = getSkillLevel(i);
+    let progress = getBar(level);
+
+    let stateClass = level > 0 ? "unlocked" : "locked";
+
+    html += `
+      <div class="node ${stateClass} level-${level}" onclick="openSkill(${i})">
+
+        <div class="icon">
+          ${level === 4 ? "👑" : "🦉"}
+        </div>
+
+        <div>${s.name}</div>
+
+        <div class="small">Level ${level}/4</div>
+
+        <div class="bar">
+          <div class="bar-fill" style="width:${progress}%"></div>
+        </div>
+
+      </div>
+    `;
+  });
+
+  document.getElementById("map").innerHTML = html;
+
+  setTimeout(placeOwl, 300);
 }
 
-function renderHearts(){
-document.getElementById("hearts").innerHTML =
-"❤️".repeat(hearts)+"🖤".repeat(5-hearts);
+/* =========================
+   OWL FOLLOW PATH
+========================= */
+
+function placeOwl(){
+
+  let owl = document.getElementById("owlGuide");
+  let nodes = document.querySelectorAll(".node");
+
+  if(nodes.length > 0){
+    let first = nodes[0].getBoundingClientRect();
+    let container = document.querySelector(".path").getBoundingClientRect();
+
+    owl.style.top = (first.top - container.top + 10) + "px";
+  }
 }
 
-function startLesson(i=0){
-lessonIndex=i;
-qIndex=0;
-hearts=5;
-show("game");
-load();
+/* =========================
+   MOVE OWL
+========================= */
+
+function openSkill(i){
+
+  let owl = document.getElementById("owlGuide");
+  let nodes = document.querySelectorAll(".node");
+
+  let node = nodes[i];
+  let container = document.querySelector(".path").getBoundingClientRect();
+  let rect = node.getBoundingClientRect();
+
+  owl.style.top = (rect.top - container.top + 10) + "px";
+
+  setTimeout(()=>{
+    window.location.href = "lesson.html?s=" + i;
+  },400);
 }
 
-function load(){
-renderHearts();
+/* =========================
+   INIT
+========================= */
 
-let q = lessons[lessonIndex].questions[qIndex];
-
-document.getElementById("visual").innerText=q.visual;
-document.getElementById("question").innerText=q.q;
-
-let html="";
-q.options.forEach((o,i)=>{
-html+=`<button class="option" onclick="check(${i})">${o}</button>`;
-});
-
-document.getElementById("options").innerHTML=html;
-
-let percent=(qIndex/q.options.length)*100;
-document.getElementById("bar").style.width=percent+"%";
-}
-
-function check(i){
-let q = lessons[lessonIndex].questions[qIndex];
-
-if(i===q.answer){
-
-xp+=10;
-localStorage.setItem(xpKey,xp);
-popup();
-
-qIndex++;
-
-if(qIndex<lessons[lessonIndex].questions.length){
-load();
-}else{
-finish();
-}
-
-}else{
-hearts--;
-renderHearts();
-if(hearts<=0){
-alert("Game Over");
-show("home");
-}
-}
-
-updateTop();
-}
-
-function finish(){
-streak++;
-localStorage.setItem(streakKey,streak);
-show("home");
-updateTop();
-}
-
-updateTop();
+render();
 
 </script>
 

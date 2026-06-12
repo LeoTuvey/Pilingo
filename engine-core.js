@@ -1,6 +1,6 @@
 /* =========================
    🧠 ENGINE CORE
-   STEP 25 FINAL — ADAPTIVE READY + PRODUCTION SAFE
+   STEP 25 FINAL — ADAPTIVE READY + PRODUCTION SAFE (FIXED)
 ========================= */
 
 const Engine = {
@@ -13,7 +13,7 @@ const Engine = {
   },
 
   /* =========================
-     XP SYSTEM (HARD SAFE)
+     XP SYSTEM (SAFE)
   ========================= */
   getXP(){
     const c = this.getCourse();
@@ -26,10 +26,9 @@ const Engine = {
     const key = c + "_xp";
 
     let xp = this.getXP();
-    xp = isNaN(xp) ? 0 : xp;
+    const safeValue = Number(v) || 0;
 
-    const safeValue = parseInt(v, 10);
-    xp += isNaN(safeValue) ? 0 : safeValue;
+    xp += safeValue;
 
     localStorage.setItem(key, String(xp));
     return xp;
@@ -59,8 +58,7 @@ const Engine = {
   },
 
   loseHeart(){
-    let h = this.getHearts();
-    h = Math.max(0, h - 1);
+    const h = Math.max(0, this.getHearts() - 1);
     localStorage.setItem("hearts", String(h));
     return h;
   },
@@ -71,7 +69,7 @@ const Engine = {
   },
 
   /* =========================
-     STREAK SYSTEM (HARD SAFE)
+     STREAK SYSTEM (SAFE)
   ========================= */
   updateStreak(){
 
@@ -87,13 +85,10 @@ const Engine = {
 
         const diff =
           (new Date(today).getTime() - new Date(last).getTime())
-          / (1000 * 60 * 60 * 24);
+          / 86400000;
 
-        if(diff === 1){
-          streak += 1;
-        } else if(diff > 1){
-          streak = 1;
-        }
+        if(diff === 1) streak += 1;
+        else if(diff > 1) streak = 1;
 
       } else {
         streak = 1;
@@ -107,44 +102,60 @@ const Engine = {
   },
 
   /* =========================
-     WORD MEMORY SYSTEM
+     WORD MEMORY SYSTEM (FIXED KEY SAFETY)
   ========================= */
-  markCorrect(word){
-    if(!word?.en) return;
 
-    const key = "w_" + word.en;
-    const data = JSON.parse(localStorage.getItem(key) || '{"c":0,"w":0}');
+  _wordKey(word){
+    return (
+      word?.en ||
+      word?.word ||
+      word?.translation ||
+      "unknown"
+    );
+  },
+
+  _safeParse(key){
+    try{
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : {c:0,w:0};
+    }catch(e){
+      return {c:0,w:0};
+    }
+  },
+
+  markCorrect(word){
+
+    const key = "w_" + this._wordKey(word);
+    const data = this._safeParse(key);
 
     data.c += 1;
     localStorage.setItem(key, JSON.stringify(data));
   },
 
   markWrong(word){
-    if(!word?.en) return;
 
-    const key = "w_" + word.en;
-    const data = JSON.parse(localStorage.getItem(key) || '{"c":0,"w":0}');
+    const key = "w_" + this._wordKey(word);
+    const data = this._safeParse(key);
 
     data.w += 1;
     localStorage.setItem(key, JSON.stringify(data));
   },
 
   getWeakScore(word){
-    if(!word?.en) return 1;
 
-    const key = "w_" + word.en;
-    const data = JSON.parse(localStorage.getItem(key) || '{"c":0,"w":0}');
+    const key = "w_" + this._wordKey(word);
+    const data = this._safeParse(key);
 
     const mistakes = data.w || 0;
     const correct = data.c || 0;
 
     const score = (mistakes * 2) - correct;
 
-    return Math.max(1, Math.floor(score));
+    return Math.max(1, Math.round(score));
   },
 
   /* =========================
-     REVIEW SYSTEM (ADAPTIVE SAFE)
+     REVIEW SYSTEM (CAPPED SAFE)
   ========================= */
   getReviewWords(pool){
 
@@ -156,9 +167,9 @@ const Engine = {
 
     for(const w of pool){
 
-      if(!w || typeof w !== "object") continue;
+      if(!w) continue;
 
-      const weight = this.getWeakScore(w);
+      const weight = Math.min(8, this.getWeakScore(w)); // CAP prevents explosion
 
       for(let i = 0; i < weight; i++){
         weighted.push(w);

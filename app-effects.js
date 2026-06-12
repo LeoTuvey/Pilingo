@@ -1,18 +1,16 @@
-/* =========================
-   🎬 OWL-LINGO EFFECT SYSTEM
-   STEP 21 — APP FEEL LAYER (FIXED + SAFE)
-========================= */
-
 const AppEffects = {
 
-  /* =========================
-     ✨ XP BURST EFFECT
-  ========================= */
   xpBurst(xp){
+
+    if (!document.body) return;
 
     xp = Number(xp) || 0;
 
+    const existing = document.getElementById("owl-xp-burst");
+    if (existing) existing.remove();
+
     const el = document.createElement("div");
+    el.id = "owl-xp-burst";
 
     el.innerText = "+" + xp + " XP";
     el.style.position = "fixed";
@@ -37,13 +35,12 @@ const AppEffects = {
     }, 800);
   },
 
-  /* =========================
-     🔥 STREAK FIRE EFFECT
-  ========================= */
   streakFire(){
 
+    if (!document.body) return;
+
     const existing = document.getElementById("owl-streak-fire");
-    if(existing) existing.remove();
+    if (existing) existing.remove();
 
     const el = document.createElement("div");
     el.id = "owl-streak-fire";
@@ -64,36 +61,25 @@ const AppEffects = {
     setTimeout(() => el.remove(), 900);
   },
 
-  /* =========================
-     ❌ WRONG SHAKE EFFECT (FIXED)
-  ========================= */
   shake(){
 
-    // prevent stacking transform bugs
-    document.body.style.transition = "transform 0.1s";
+    const target = document.body;
+    if (!target) return;
 
-    document.body.style.transform = "translateX(-6px)";
+    target.style.transition = "transform 0.1s";
+    target.style.transform = "translateX(-6px)";
 
-    setTimeout(() => {
-      document.body.style.transform = "translateX(6px)";
-    }, 80);
-
-    setTimeout(() => {
-      document.body.style.transform = "translateX(0)";
-    }, 160);
-
-    setTimeout(() => {
-      document.body.style.transition = "";
-    }, 200);
+    setTimeout(() => target.style.transform = "translateX(6px)", 80);
+    setTimeout(() => target.style.transform = "translateX(0)", 160);
+    setTimeout(() => target.style.transition = "", 200);
   },
 
-  /* =========================
-     🟢 SUCCESS / ERROR FLASH
-  ========================= */
   flash(type){
 
+    if (!document.body) return;
+
     const existing = document.getElementById("owl-flash");
-    if(existing) existing.remove();
+    if (existing) existing.remove();
 
     const el = document.createElement("div");
     el.id = "owl-flash";
@@ -114,6 +100,6 @@ const AppEffects = {
 
     document.body.appendChild(el);
 
-    setTimeout(() => el.remove(), 180);
+    setTimeout(() => el.remove(), 240);
   }
 };

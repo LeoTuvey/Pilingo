@@ -3,130 +3,167 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Owl-Lingo Path</title>
+<title>Owl-Lingo</title>
 
 <style>
+
+/* =========================
+   🧠 APP BASE
+========================= */
+
 body{
-  font-family: Arial;
   margin:0;
-  padding:30px;
+  font-family: Arial;
+  background:#f5f9ff;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.header{
+  padding:20px;
   text-align:center;
-  background: linear-gradient(135deg,#e3f2fd,#fce4ec);
-}
-
-/* HEADER */
-h1{
-  margin-bottom:20px;
-}
-
-/* XP */
-#xp{
-  position:fixed;
-  top:15px;
-  right:15px;
-  background:#58cc02;
+  background:linear-gradient(135deg,#58cc02,#4caf50);
   color:white;
-  padding:8px 12px;
-  border-radius:20px;
+}
+
+.header h1{
+  margin:0;
+  font-size:24px;
+}
+
+/* =========================
+   DASHBOARD CARD
+========================= */
+
+.card{
+  background:white;
+  margin:15px;
+  padding:20px;
+  border-radius:15px;
+  box-shadow:0 3px 10px rgba(0,0,0,0.1);
+}
+
+/* XP + STREAK */
+.stats{
+  display:flex;
+  justify-content:space-between;
+  margin-top:10px;
   font-weight:bold;
 }
 
-/* PATH */
-.path{
-  max-width:420px;
-  margin:auto;
-  position:relative;
-}
-
-/* LINE */
-.line{
-  position:absolute;
-  left:50%;
-  top:0;
-  width:4px;
-  height:100%;
-  background:#cfd8dc;
-  transform:translateX(-50%);
-}
-
-/* OWL */
-#owlGuide{
-  position:absolute;
-  left:50%;
-  transform:translate(-50%,0);
-  font-size:34px;
-  transition:0.5s ease;
-  z-index:5;
-}
-
-/* NODE */
-.node{
-  width:160px;
-  margin:30px auto;
-  padding:18px;
-  border-radius:50%;
-  background:white;
-  box-shadow:0 4px 10px rgba(0,0,0,0.1);
+/* CONTINUE BUTTON */
+.cta{
+  background:#58cc02;
+  color:white;
+  padding:14px;
+  border:none;
+  border-radius:12px;
+  width:100%;
+  font-size:16px;
+  margin-top:10px;
   cursor:pointer;
-  transition:0.2s;
-  position:relative;
-  z-index:2;
-
-  opacity:0;
-  transform: translateY(20px);
-  animation: popIn 0.4s forwards;
 }
 
-.node:hover{
-  transform: scale(1.06);
+/* =========================
+   DAILY GOAL BAR
+========================= */
+
+.goal-bar{
+  height:10px;
+  background:#eee;
+  border-radius:10px;
+  overflow:hidden;
+  margin-top:10px;
 }
 
-/* POP ANIMATION */
-@keyframes popIn{
-  to{
-    opacity:1;
-    transform: translateY(0);
-  }
+.goal-fill{
+  height:100%;
+  width:0%;
+  background:#58cc02;
+  transition:0.4s;
 }
 
-/* STATES */
-.locked{
-  opacity:0.25;
-  pointer-events:none;
+/* =========================
+   BOTTOM NAV (DUOLINGO STYLE)
+========================= */
+
+.nav{
+  position:fixed;
+  bottom:0;
+  left:0;
+  width:100%;
+  display:flex;
+  background:white;
+  border-top:1px solid #ddd;
 }
 
-.unlocked{
-  border:3px solid #58cc02;
+.nav button{
+  flex:1;
+  padding:12px;
+  border:none;
+  background:none;
+  font-size:14px;
+  cursor:pointer;
 }
 
-.completed{
-  border:3px solid gold;
+/* ACTIVE TAB */
+.nav button.active{
+  color:#58cc02;
+  font-weight:bold;
 }
 
-/* TEXT */
-.icon{
-  font-size:28px;
-}
-
-.small{
-  font-size:12px;
-  opacity:0.7;
-}
 </style>
 </head>
 
 <body>
 
-<h1>🦉 Your Learning Path</h1>
+<!-- HEADER -->
+<div class="header">
+  <h1>🦉 Owl-Lingo</h1>
+  <div id="sub">Learn daily. Build streaks. Stay consistent.</div>
+</div>
 
-<div id="xp">XP: 0</div>
+<!-- DASHBOARD -->
+<div class="card">
 
-<div class="path">
+  <h2>📊 Your Progress</h2>
 
-<div class="line"></div>
-<div id="owlGuide">🦉</div>
+  <div class="stats">
+    <div>XP: <span id="xp">0</span></div>
+    <div>🔥 Streak: <span id="streak">0</span></div>
+  </div>
 
-<div id="map"></div>
+  <div class="goal-bar">
+    <div class="goal-fill" id="goal"></div>
+  </div>
+
+  <button class="cta" onclick="continueLesson()">
+    ▶ Continue Learning
+  </button>
+
+</div>
+
+<!-- REVIEW CARD -->
+<div class="card">
+
+  <h2>🔁 Review Weak Words</h2>
+  <p>Practice words you struggled with.</p>
+
+  <button class="cta" style="background:#ff9800" onclick="review()">
+    Start Review
+  </button>
+
+</div>
+
+<!-- NAV -->
+<div class="nav">
+
+  <button class="active" onclick="go('home')">🏠 Home</button>
+  <button onclick="go('learn')">📚 Learn</button>
+  <button onclick="go('review')">🔁 Review</button>
+  <button onclick="go('profile')">👤 Profile</button>
 
 </div>
 
@@ -134,94 +171,66 @@ h1{
 
 <script>
 
-const skills = [
-  { name:"Animals 🐶", id:"animals" },
-  { name:"Actions 🏃", id:"verbs" },
-  { name:"People 👤", id:"people" },
-  { name:"Food 🍎", id:"food" },
-  { name:"Objects 📦", id:"objects" },
-  { name:"Places 🏙️", id:"places" },
-  { name:"Adjectives 🎯", id:"adjectives" }
-];
+/* =========================
+   LOAD DATA
+========================= */
 
-/* ---------------- SESSION MEMORY ---------------- */
-let lastSkill = localStorage.getItem("lastSkill");
-
-/* ---------------- ENGINE DATA ---------------- */
-let unlocked = Engine.getUnlocked();
 let xp = Engine.getXP();
+let streak = Engine.updateStreak();
 
-document.getElementById("xp").innerText = "XP: " + xp;
+/* =========================
+   UPDATE UI
+========================= */
 
-/* ---------------- RENDER MAP ---------------- */
-function render(){
+document.getElementById("xp").innerText = xp;
+document.getElementById("streak").innerText = streak;
 
-  let html = "";
+/* =========================
+   DAILY GOAL (FAKE 50 XP GOAL)
+========================= */
 
-  skills.forEach((s,i)=>{
+let goal = Math.min((xp % 50) / 50 * 100, 100);
+document.getElementById("goal").style.width = goal + "%";
 
-    let state = "";
+/* =========================
+   CONTINUE LESSON
+========================= */
 
-    if(unlocked[i]) state = "unlocked";
-    else state = "locked";
-
-    html += `
-      <div class="node ${state}" onclick="openSkill(${i}, this)">
-        <div class="icon">🦉</div>
-        <div>${s.name}</div>
-        <div class="small">Tap to learn</div>
-      </div>
-    `;
-  });
-
-  document.getElementById("map").innerHTML = html;
-
-  setTimeout(placeOwl, 300);
+function continueLesson(){
+  window.location.href = "engine.html";
 }
 
-/* ---------------- OWL POSITION ---------------- */
-function placeOwl(){
+/* =========================
+   REVIEW MODE
+========================= */
 
-  let owl = document.getElementById("owlGuide");
-  let nodes = document.querySelectorAll(".node");
+function review(){
+  alert("Review mode coming in Step 15 (we will auto-pull weak words)");
+}
 
-  if(lastSkill !== null){
-    moveOwl(parseInt(lastSkill));
-  } else if(nodes.length > 0){
-    let first = nodes[0].getBoundingClientRect();
-    let container = document.querySelector(".path").getBoundingClientRect();
+/* =========================
+   NAV SYSTEM (SHELL)
+========================= */
 
-    owl.style.top = (first.top - container.top + 10) + "px";
+function go(tab){
+
+  document.querySelectorAll(".nav button")
+    .forEach(b=>b.classList.remove("active"));
+
+  event.target.classList.add("active");
+
+  if(tab === "learn"){
+    window.location.href = "engine.html";
+  }
+
+  if(tab === "review"){
+    review();
+  }
+
+  if(tab === "profile"){
+    alert("Profile system coming in Step 15");
   }
 }
-
-/* ---------------- MOVE OWL ---------------- */
-function moveOwl(index){
-
-  let owl = document.getElementById("owlGuide");
-  let nodes = document.querySelectorAll(".node");
-
-  let node = nodes[index];
-  let container = document.querySelector(".path").getBoundingClientRect();
-  let rect = node.getBoundingClientRect();
-
-  owl.style.top = (rect.top - container.top + 10) + "px";
-}
-
-/* ---------------- OPEN SKILL ---------------- */
-function openSkill(i){
-
-  localStorage.setItem("lastSkill", i);
-
-  moveOwl(i);
-
-  setTimeout(()=>{
-    window.location.href = "lesson.html?s=" + i;
-  },400);
-}
-
-/* ---------------- INIT ---------------- */
-render();
 
 </script>
 

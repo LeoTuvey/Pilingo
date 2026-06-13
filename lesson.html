@@ -2,13 +2,34 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lesson</title>
+
+<style>
+body{
+  font-family: Arial;
+  text-align: center;
+  padding: 40px;
+  background: linear-gradient(135deg,#e3f2fd,#fce4ec);
+}
+
+button{
+  padding: 15px;
+  font-size: 18px;
+  background: #58cc02;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+</style>
 </head>
 
 <body>
 
-<h1>Lesson</h1>
+<h1>🦉 Lesson Page</h1>
 
+<!-- 🔴 THIS IS THE BUTTON YOU WERE MISSING -->
 <button onclick="runFinishLogic()">
   Finish Lesson (+10 XP)
 </button>
@@ -20,8 +41,8 @@ function runFinishLogic(){
 
   console.log("🏆 runFinishLogic triggered");
 
-  if (!window.Engine) {
-    console.error("Engine not loaded");
+  if(!window.Engine){
+    alert("Engine not loaded!");
     return;
   }
 
@@ -33,16 +54,11 @@ function runFinishLogic(){
   Engine.resetHearts();
 
   const newLevel = Engine.getLevel();
-  const leveledUp = newLevel > oldLevel;
 
-  console.log({
-    oldLevel,
-    newLevel,
-    leveledUp,
-    totalXP: Engine.getXP()
-  });
+  console.log("OLD:", oldLevel);
+  console.log("NEW:", newLevel);
 
-  if (leveledUp) {
+  if(newLevel > oldLevel){
     alert("🏆 LEVEL UP!");
   } else {
     alert("+10 XP!");

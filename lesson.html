@@ -1,15 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Owl-Lingo Lesson</title>
+
+<style>
+body{
+  font-family: Arial;
+  margin: 0;
+  padding: 30px;
+  text-align: center;
+  background: linear-gradient(135deg,#e3f2fd,#fce4ec);
+}
+
+.card{
+  background: white;
+  padding: 20px;
+  margin: 20px auto;
+  max-width: 400px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+button{
+  padding: 12px;
+  width: 100%;
+  border: none;
+  border-radius: 10px;
+  background: #58cc02;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🦉 Lesson</h1>
+
+<div class="card">
+  <p>Complete this lesson to earn XP</p>
+
+  <button onclick="runFinishLogic()">
+    Finish Lesson (+10 XP)
+  </button>
+</div>
+
+<!-- =========================
+     CORE SCRIPTS (IMPORTANT ORDER)
+========================= -->
+<script src="engine-core.js"></script>
+
+<script>
 /* =========================
    🏆 LESSON REWARD ENGINE
-   BULLETPROOF FINAL VERSION (WITH DEBUG)
 ========================= */
 
 function runFinishLogic(){
 
   console.log("🏆 runFinishLogic triggered");
 
-  // =========================
-  // DOUBLE CALL GUARD
-  // =========================
   if (window.__finishLock) return;
   window.__finishLock = true;
 
@@ -17,115 +69,40 @@ function runFinishLogic(){
     window.__finishLock = false;
   }, 1200);
 
-  // =========================
-  // ENGINE CHECK (CRITICAL DEBUG)
-  // =========================
   const engine = window.Engine;
 
   if (!engine) {
-    console.error("❌ ENGINE MISSING");
-    console.log("👉 engine-core.js is NOT loaded or failed to execute");
+    console.error("❌ Engine not loaded (check engine-core.js path)");
     return;
-  } else {
-    console.log("✔ Engine loaded");
   }
 
-  // =========================
-  // LEVEL FUNCTION
-  // =========================
-  const getLevel = () => {
-    const lvl = engine.getLevel?.();
-    const n = Number(lvl);
-    return Number.isFinite(n) ? n : 0;
-  };
-
-  const oldLevel = getLevel();
+  const oldLevel = engine.getLevel();
   const xpReward = 10;
 
-  // =========================
-  // APPLY REWARD
-  // =========================
-  try {
-    engine.addXP(xpReward);
-    engine.updateStreak?.();
-    engine.resetHearts?.();
-    console.log("✔ XP applied:", xpReward);
-  } catch (e) {
-    console.error("Engine update error:", e);
-  }
+  engine.addXP(xpReward);
+  engine.updateStreak();
+  engine.resetHearts();
 
-  const newLevel = getLevel();
+  const newLevel = engine.getLevel();
   const leveledUp = newLevel > oldLevel;
 
-  // =========================
-  // CONTEXT
-  // =========================
-  const context = {
+  console.log("🏁 RESULT:", {
     oldLevel,
     newLevel,
     leveledUp,
     xpReward,
-    xp: engine.getXP?.() || 0
-  };
+    totalXP: engine.getXP()
+  });
 
-  const brainDecision =
-    window.AdaptiveBrain?.decide?.(context) || null;
-
-  // =========================
-  // EFFECTS
-  // =========================
-  try {
-    window.AppEffects?.xpBurst?.(xpReward);
-    window.AppEffects?.flash?.("correct");
-
-    if (leveledUp) {
-      window.AppEffects?.streakFire?.();
-      window.AppEffects?.flash?.("levelup");
-    }
-  } catch (e) {
-    console.warn("Effects error:", e);
-  }
-
-  // =========================
-  // UI POLISH
-  // =========================
-  try {
-    const polish = window.AppPolish;
-
-    const mood =
-      brainDecision?.mood ||
-      (leveledUp ? "levelup" : "correct");
-
-    polish?.xpPopup?.(xpReward)
-      || polish?.notify?.("+" + xpReward + " XP");
-
-    polish?.setMood?.(mood);
-
-  } catch (e) {
-    console.warn("Polish error:", e);
-  }
-
-  // =========================
-  // LEVEL UP
-  // =========================
   if (leveledUp) {
-    console.log("🏆 LEVEL UP!");
-    window.levelUpAnimation?.();
-    window.AppUI?.notify?.("🏆 Level Up!");
+    alert("🏆 LEVEL UP!");
+  } else {
+    alert("+10 XP earned!");
   }
 
-  // =========================
-  // FINAL DEBUG OUTPUT
-  // =========================
-  const result = {
-    oldLevel,
-    newLevel,
-    leveledUp,
-    xpReward,
-    brainDecision
-  };
-
-  console.log("🏁 FINAL RESULT:", result);
-
-  return result;
+  return { oldLevel, newLevel, leveledUp };
 }
+</script>
+
+</body>
+</html>

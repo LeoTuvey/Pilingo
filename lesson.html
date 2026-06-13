@@ -29,41 +29,57 @@ button{
 
 <h1>🦉 Lesson Page</h1>
 
-<!-- 🔴 THIS IS THE BUTTON YOU WERE MISSING -->
-<button onclick="runFinishLogic()">
+<button id="finishBtn">
   Finish Lesson (+10 XP)
 </button>
 
 <script src="engine-core.js"></script>
 
 <script>
-function runFinishLogic(){
+/* =========================
+   SAFE GLOBAL FUNCTION
+========================= */
+
+window.runFinishLogic = function(){
 
   console.log("🏆 runFinishLogic triggered");
 
-  if(!window.Engine){
-    alert("Engine not loaded!");
+  const engine = window.Engine;
+
+  if(!engine){
+    console.error("❌ Engine not loaded");
+    alert("Engine not loaded (check engine-core.js)");
     return;
   }
 
-  const oldLevel = Engine.getLevel();
+  const oldLevel = engine.getLevel();
   const xpReward = 10;
 
-  Engine.addXP(xpReward);
-  Engine.updateStreak();
-  Engine.resetHearts();
+  engine.addXP(xpReward);
+  engine.updateStreak();
+  engine.resetHearts();
 
-  const newLevel = Engine.getLevel();
+  const newLevel = engine.getLevel();
 
-  console.log("OLD:", oldLevel);
-  console.log("NEW:", newLevel);
+  console.log("OLD LEVEL:", oldLevel);
+  console.log("NEW LEVEL:", newLevel);
+  console.log("TOTAL XP:", engine.getXP());
 
   if(newLevel > oldLevel){
     alert("🏆 LEVEL UP!");
   } else {
     alert("+10 XP!");
   }
-}
+};
+
+/* =========================
+   EXTRA SAFETY BINDING
+========================= */
+
+document.getElementById("finishBtn").addEventListener("click", function(){
+  console.log("button clicked");
+  window.runFinishLogic();
+});
 </script>
 
 </body>

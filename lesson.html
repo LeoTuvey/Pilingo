@@ -29,27 +29,29 @@ button{
 
 <h1>🦉 Lesson Page</h1>
 
-<!-- OPTION 2 BUTTON (SIMPLE CLICK) -->
 <button id="finishBtn">
   Finish Lesson (+10 XP)
 </button>
 
+<!-- ENGINE -->
 <script src="engine-core.js"></script>
 
 <script>
+console.log("🧪 Lesson page loaded");
+
 /* =========================
-   CORE FUNCTION (SAFE)
+   MAIN FUNCTION
 ========================= */
 
-window.runFinishLogic = function(){
+window.runFinishLogic = function () {
 
-  console.log("🏆 runFinishLogic triggered");
+  console.log("🔥 runFinishLogic triggered");
 
   const engine = window.Engine;
 
-  if(!engine){
-    alert("Engine not loaded");
-    console.error("Engine missing - check engine-core.js");
+  if (!engine) {
+    console.error("❌ Engine NOT loaded");
+    alert("Engine not loaded - check engine-core.js path");
     return;
   }
 
@@ -62,11 +64,11 @@ window.runFinishLogic = function(){
 
   const newLevel = engine.getLevel();
 
-  console.log("OLD:", oldLevel);
-  console.log("NEW:", newLevel);
-  console.log("XP:", engine.getXP());
+  console.log("XP before:", engine.getXP());
+  console.log("Old level:", oldLevel);
+  console.log("New level:", newLevel);
 
-  if(newLevel > oldLevel){
+  if (newLevel > oldLevel) {
     alert("🏆 LEVEL UP!");
   } else {
     alert("+10 XP!");
@@ -74,7 +76,7 @@ window.runFinishLogic = function(){
 };
 
 /* =========================
-   OPTION 2: BUTTON CLICK
+   BUTTON CLICK
 ========================= */
 
 document.getElementById("finishBtn").addEventListener("click", () => {
@@ -83,12 +85,11 @@ document.getElementById("finishBtn").addEventListener("click", () => {
 });
 
 /* =========================
-   OPTION 3: AUTO RUN TEST (IMPORTANT)
-   - this proves system works even if clicks fail
+   AUTO TEST (IMPORTANT)
 ========================= */
 
 setTimeout(() => {
-  console.log("AUTO RUN TEST TRIGGERED");
+  console.log("⏱ AUTO TEST RUNNING...");
   window.runFinishLogic();
 }, 1000);
 

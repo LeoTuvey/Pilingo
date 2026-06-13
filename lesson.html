@@ -2,25 +2,103 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Lesson Test</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson</title>
+
+<style>
+body{
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 40px;
+  background: linear-gradient(135deg,#e3f2fd,#fce4ec);
+}
+
+button{
+  padding: 15px 20px;
+  font-size: 18px;
+  background: #58cc02;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+</style>
 </head>
 
 <body>
 
-<h1>Lesson Test Page</h1>
+<h1>🦉 Lesson Page</h1>
 
-<button onclick="runFinishLogic()">
+<p>Click below to finish lesson</p>
+
+<button id="finishBtn">
   Finish Lesson (+10 XP)
 </button>
 
+<!-- ENGINE -->
+<script src="engine-core.js"></script>
+
 <script>
-console.log("🧪 SCRIPT IS RUNNING");
+console.log("🧪 Lesson loaded");
 
+// =========================
+// SAFETY CHECK
+// =========================
+if (!window.Engine) {
+  console.error("❌ Engine not loaded");
+  alert("Engine failed to load. Check engine-core.js path");
+}
+
+// =========================
+// MAIN FUNCTION
+// =========================
 window.runFinishLogic = function () {
-  console.log("🔥 BUTTON OR FUNCTION WORKS");
 
-  alert("It works!");
+  console.log("🔥 runFinishLogic triggered");
+
+  const engine = window.Engine;
+
+  if (!engine) {
+    alert("Engine missing");
+    return;
+  }
+
+  const oldLevel = engine.getLevel();
+  const xpReward = 10;
+
+  engine.addXP(xpReward);
+  engine.updateStreak();
+  engine.resetHearts();
+
+  const newLevel = engine.getLevel();
+
+  console.log("XP:", engine.getXP());
+  console.log("Old Level:", oldLevel);
+  console.log("New Level:", newLevel);
+
+  if (newLevel > oldLevel) {
+    alert("🏆 LEVEL UP!");
+  } else {
+    alert("+10 XP!");
+  }
 };
+
+// =========================
+// BUTTON CLICK
+// =========================
+document.getElementById("finishBtn").addEventListener("click", function () {
+  console.log("button clicked");
+  window.runFinishLogic();
+});
+
+// =========================
+// AUTO TEST (IMPORTANT)
+// =========================
+setTimeout(() => {
+  console.log("⏱ AUTO RUN TEST");
+  window.runFinishLogic();
+}, 1200);
+
 </script>
 
 </body>

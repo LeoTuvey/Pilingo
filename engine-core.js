@@ -1,7 +1,3 @@
-/* =========================
-   🧠 ENGINE CORE (CLEAN + WORKING)
-========================= */
-
 const Engine = {
 
   init(){
@@ -24,7 +20,6 @@ const Engine = {
 
     const xp = this.getXP() + (Number(v) || 0);
     localStorage.setItem(key, String(xp));
-
     return xp;
   },
 
@@ -37,10 +32,6 @@ const Engine = {
     if (xp < 350) return 3;
     if (xp < 500) return 4;
     return 5;
-  },
-
-  getHearts(){
-    return parseInt(localStorage.getItem("hearts") || "5", 10) || 5;
   },
 
   updateStreak(){

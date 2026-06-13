@@ -1,6 +1,6 @@
 /* =========================
    🏆 LESSON REWARD ENGINE
-   FIXED + STABLE + SAFE VERSION
+   FIXED + STABLE + SAFE VERSION (FINAL)
 ========================= */
 
 function runFinishLogic(){
@@ -18,32 +18,36 @@ function runFinishLogic(){
   }, 1200);
 
   // =========================
-  // ENGINE CHECK
+  // ENGINE CHECK (HARD FIX)
   // =========================
   const engine = window.Engine;
 
   if (!engine) {
-    console.error("❌ Engine not found!");
+    console.error("❌ Engine not found - engine-core.js not loaded");
     return;
   }
 
   // =========================
-  // SAFE LEVEL FUNCTION
+  // SAFE LEVEL RESOLVER (FIXED)
   // =========================
   const getLevel = () => {
-    const lvl = engine.getLevel?.();
-    const n = Number(lvl);
-    return Number.isFinite(n) ? n : 0;
+    try {
+      const lvl = engine.getLevel?.();
+      const n = Number(lvl);
+      return Number.isFinite(n) ? n : 0;
+    } catch {
+      return 0;
+    }
   };
 
   const oldLevel = getLevel();
   const xpReward = 10;
 
   // =========================
-  // APPLY XP + PROGRESS
+  // APPLY XP + STATS
   // =========================
   try {
-    engine.addXP(xpReward);
+    engine.addXP?.(xpReward);
     engine.updateStreak?.();
     engine.resetHearts?.();
   } catch (e) {
@@ -54,7 +58,7 @@ function runFinishLogic(){
   const leveledUp = newLevel > oldLevel;
 
   // =========================
-  // CONTEXT FOR AI (OPTIONAL)
+  // CONTEXT (SAFE ADAPTIVE HOOK)
   // =========================
   const context = {
     oldLevel,
@@ -68,7 +72,7 @@ function runFinishLogic(){
     window.AdaptiveBrain?.decide?.(context) || null;
 
   // =========================
-  // EFFECTS
+  // EFFECTS (SAFE CALLS ONLY)
   // =========================
   try {
     window.AppEffects?.xpBurst?.(xpReward);
@@ -78,13 +82,17 @@ function runFinishLogic(){
       window.AppEffects?.streakFire?.();
       window.AppEffects?.flash?.("levelup");
     }
-  } catch (e) {}
+  } catch {}
 
   // =========================
-  // UI POLISH
+  // UI POLISH (SAFE FALLBACKS FIXED)
   // =========================
   try {
     const polish = window.AppPolish;
+
+    const mood =
+      brainDecision?.mood ||
+      (leveledUp ? "levelup" : "correct");
 
     if (polish?.xpPopup) {
       polish.xpPopup(xpReward);
@@ -92,13 +100,9 @@ function runFinishLogic(){
       polish.notify("+" + xpReward + " XP");
     }
 
-    const mood =
-      brainDecision?.mood ||
-      (leveledUp ? "levelup" : "correct");
-
     polish?.setMood?.(mood);
 
-  } catch (e) {}
+  } catch {}
 
   // =========================
   // LEVEL UP HANDLING
@@ -109,7 +113,7 @@ function runFinishLogic(){
   }
 
   // =========================
-  // RESULT OUTPUT
+  // DEBUG OUTPUT
   // =========================
   const result = {
     oldLevel,

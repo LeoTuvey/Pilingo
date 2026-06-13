@@ -1,9 +1,21 @@
 /* =========================
    🧠 ENGINE CORE
-   STEP 25 FINAL — ADAPTIVE READY + PRODUCTION SAFE (FIXED v2)
+   STEP 25 FINAL — STABLE + SAFE + PRODUCTION READY
 ========================= */
 
 const Engine = {
+
+  /* =========================
+     INIT (NEW - IMPORTANT)
+  ========================= */
+  init(){
+    try {
+      this.dailyReset();
+      this.updateStreak();
+    } catch (e) {
+      console.warn("Engine init failed:", e);
+    }
+  },
 
   /* =========================
      COURSE
@@ -17,12 +29,12 @@ const Engine = {
   },
 
   /* =========================
-     XP SYSTEM (SAFE)
+     XP SYSTEM
   ========================= */
   getXP(){
     try {
-      const c = this.getCourse();
-      const xp = parseInt(localStorage.getItem(c + "_xp") || "0", 10);
+      const course = Engine.getCourse();
+      const xp = parseInt(localStorage.getItem(course + "_xp") || "0", 10);
       return Number.isFinite(xp) ? xp : 0;
     } catch {
       return 0;
@@ -31,11 +43,10 @@ const Engine = {
 
   addXP(v){
     try {
-      const c = this.getCourse();
-      const key = c + "_xp";
+      const course = Engine.getCourse();
+      const key = course + "_xp";
 
-      const safeValue = Number(v) || 0;
-      const xp = this.getXP() + safeValue;
+      const xp = Engine.getXP() + (Number(v) || 0);
 
       localStorage.setItem(key, String(xp));
       return xp;
@@ -48,19 +59,18 @@ const Engine = {
      LEVEL SYSTEM
   ========================= */
   getLevel(){
-    const xp = this.getXP();
+    const xp = Engine.getXP();
 
     if(xp < 50) return 0;
     if(xp < 120) return 1;
     if(xp < 220) return 2;
     if(xp < 350) return 3;
     if(xp < 500) return 4;
-
     return 5;
   },
 
   /* =========================
-     HEARTS SYSTEM
+     HEARTS
   ========================= */
   getHearts(){
     try {
@@ -72,7 +82,7 @@ const Engine = {
   },
 
   loseHeart(){
-    const h = Math.max(0, this.getHearts() - 1);
+    const h = Math.max(0, Engine.getHearts() - 1);
     localStorage.setItem("hearts", String(h));
     return h;
   },
@@ -83,27 +93,25 @@ const Engine = {
   },
 
   /* =========================
-     STREAK SYSTEM (SAFE)
+     STREAK SYSTEM (SAFE FIXED)
   ========================= */
   updateStreak(){
-
     try {
       const today = new Date().toISOString().split("T")[0];
       const last = localStorage.getItem("lastDay");
 
       let streak = parseInt(localStorage.getItem("streak") || "0", 10);
-      streak = Number.isFinite(streak) ? streak : 0;
+      if (!Number.isFinite(streak)) streak = 0;
 
-      if(last !== today){
+      if (last !== today) {
 
-        if(last){
-          const diff =
+        if (last) {
+          const diffDays =
             (new Date(today).getTime() - new Date(last).getTime())
-            / 86400000;
+            / (1000 * 60 * 60 * 24);
 
-          if(diff === 1) streak += 1;
-          else if(diff > 1) streak = 1;
-
+          if (diffDays === 1) streak += 1;
+          else if (diffDays > 1) streak = 1;
         } else {
           streak = 1;
         }
@@ -120,7 +128,7 @@ const Engine = {
   },
 
   /* =========================
-     WORD MEMORY SYSTEM
+     WORD SYSTEM
   ========================= */
   _wordKey(word){
     return (
@@ -132,33 +140,33 @@ const Engine = {
   },
 
   _safeParse(key){
-    try{
+    try {
       const raw = localStorage.getItem(key);
-      return raw ? JSON.parse(raw) : {c:0,w:0};
-    }catch{
-      return {c:0,w:0};
+      return raw ? JSON.parse(raw) : { c:0, w:0 };
+    } catch {
+      return { c:0, w:0 };
     }
   },
 
   markCorrect(word){
-    const key = "w_" + this._wordKey(word);
-    const data = this._safeParse(key);
+    const key = "w_" + Engine._wordKey(word);
+    const data = Engine._safeParse(key);
 
-    data.c = (data.c || 0) + 1;
+    data.c++;
     localStorage.setItem(key, JSON.stringify(data));
   },
 
   markWrong(word){
-    const key = "w_" + this._wordKey(word);
-    const data = this._safeParse(key);
+    const key = "w_" + Engine._wordKey(word);
+    const data = Engine._safeParse(key);
 
-    data.w = (data.w || 0) + 1;
+    data.w++;
     localStorage.setItem(key, JSON.stringify(data));
   },
 
   getWeakScore(word){
-    const key = "w_" + this._wordKey(word);
-    const data = this._safeParse(key);
+    const key = "w_" + Engine._wordKey(word);
+    const data = Engine._safeParse(key);
 
     const mistakes = data.w || 0;
     const correct = data.c || 0;
@@ -169,26 +177,24 @@ const Engine = {
   },
 
   /* =========================
-     REVIEW SYSTEM
+     REVIEW
   ========================= */
   getReviewWords(pool){
-
-    if(!Array.isArray(pool)) return [];
+    if (!Array.isArray(pool)) return [];
 
     let weighted = [];
 
-    for(const w of pool){
+    for (const w of pool) {
+      if (!w) continue;
 
-      if(!w) continue;
+      const weight = Math.min(8, Engine.getWeakScore(w));
 
-      const weight = Math.min(8, this.getWeakScore(w));
-
-      for(let i = 0; i < weight; i++){
+      for (let i = 0; i < weight; i++) {
         weighted.push(w);
       }
     }
 
-    for(let i = weighted.length - 1; i > 0; i--){
+    for (let i = weighted.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [weighted[i], weighted[j]] = [weighted[j], weighted[i]];
     }
@@ -197,7 +203,7 @@ const Engine = {
   },
 
   /* =========================
-     SKILL SYSTEM
+     SKILLS
   ========================= */
   getSkillState(i){
     const v = parseInt(localStorage.getItem("skill_" + i) || "0", 10);
@@ -210,13 +216,12 @@ const Engine = {
   },
 
   markSkillProgress(i, correct = true){
+    let s = Engine.getSkillState(i);
 
-    let s = this.getSkillState(i);
+    if (correct && s < 4) s++;
+    else if (!correct && s > 0) s--;
 
-    if(correct && s < 4) s++;
-    if(!correct && s > 0) s--;
-
-    this.setSkillState(i, s);
+    Engine.setSkillState(i, s);
     return s;
   },
 
@@ -228,10 +233,17 @@ const Engine = {
       const today = new Date().toISOString().split("T")[0];
       const lastReset = localStorage.getItem("dailyReset");
 
-      if(lastReset !== today){
+      if (lastReset !== today) {
         localStorage.setItem("dailyReset", today);
         localStorage.setItem("dailyXP", "0");
       }
     } catch {}
   }
 };
+
+/* =========================
+   AUTO BOOT (IMPORTANT FIX)
+========================= */
+document.addEventListener("DOMContentLoaded", () => {
+  Engine.init();
+});

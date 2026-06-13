@@ -116,165 +116,153 @@ h1{ margin-bottom:10px; }
 <script src="app-effects.js"></script>
 
 <script>
-
 /* =========================
-   SAFE LOAD
+   DEBUG BOOT LOG
 ========================= */
 
-let xp = (window.Engine && typeof Engine.getXP === "function")
-  ? Engine.getXP()
-  : 0;
-
-document.getElementById("xp").innerText = "XP: " + xp;
+console.log("🦉 Owl-Lingo engine loading...");
 
 /* =========================
-   SKILLS
+   WAIT FOR DOM
 ========================= */
 
-const skills = [
-  { name:"Animals 🐶", id:"animals" },
-  { name:"Actions 🏃", id:"verbs" },
-  { name:"People 👤", id:"people" },
-  { name:"Food 🍎", id:"food" },
-  { name:"Objects 📦", id:"objects" },
-  { name:"Places 🏙️", id:"places" },
-  { name:"Adjectives 🎯", id:"adjectives" }
-];
+document.addEventListener("DOMContentLoaded", () => {
 
-/* =========================
-   SKILL STATE
-========================= */
+  console.log("DOM ready");
 
-function getSkillLevel(i){
+  /* =========================
+     SAFE ENGINE CHECK
+  ========================= */
 
-  let key = "skill_" + i;
-  let val = localStorage.getItem(key);
+  let xp = 0;
 
-  if(val === null){
-    localStorage.setItem(key, "0");
-    return 0;
+  if (window.Engine && typeof Engine.getXP === "function") {
+    xp = Engine.getXP();
+    console.log("Engine loaded ✔ XP:", xp);
+  } else {
+    console.warn("Engine missing → fallback XP = 0");
   }
 
-  return parseInt(val, 10);
-}
+  document.getElementById("xp").innerText = "XP: " + xp;
 
-/* =========================
-   BAR
-========================= */
+  /* =========================
+     SKILLS
+  ========================= */
 
-function getBar(level){
-  if(level === 0) return 0;
-  if(level === 1) return 25;
-  if(level === 2) return 50;
-  if(level === 3) return 75;
-  return 100;
-}
+  const skills = [
+    { name:"Animals 🐶", id:"animals" },
+    { name:"Actions 🏃", id:"verbs" },
+    { name:"People 👤", id:"people" },
+    { name:"Food 🍎", id:"food" },
+    { name:"Objects 📦", id:"objects" },
+    { name:"Places 🏙️", id:"places" },
+    { name:"Adjectives 🎯", id:"adjectives" }
+  ];
 
-/* =========================
-   RENDER
-========================= */
+  function getSkillLevel(i){
 
-function render(){
+    let key = "skill_" + i;
+    let val = localStorage.getItem(key);
 
-  let html = "";
-
-  skills.forEach((s,i)=>{
-
-    let level = getSkillLevel(i);
-    let progress = getBar(level);
-
-    let state = level > 0 ? "unlocked" : "locked";
-
-    html += `
-      <div class="node ${state} level-${level}" onclick="openSkill(${i})">
-
-        <div class="icon">
-          ${level === 4 ? "👑" : "🦉"}
-        </div>
-
-        <div>${s.name}</div>
-
-        <div class="small">Level ${level}/4</div>
-
-        <div class="bar">
-          <div class="bar-fill" style="width:${progress}%"></div>
-        </div>
-
-      </div>
-    `;
-  });
-
-  document.getElementById("map").innerHTML = html;
-
-  setTimeout(placeOwl, 300);
-}
-
-/* =========================
-   OWL POSITION
-========================= */
-
-function placeOwl(){
-
-  let owl = document.getElementById("owlGuide");
-  let nodes = document.querySelectorAll(".node");
-
-  if(!nodes.length) return;
-
-  let first = nodes[0].getBoundingClientRect();
-  let container = document.querySelector(".path").getBoundingClientRect();
-
-  owl.style.top = (first.top - container.top + 10) + "px";
-}
-
-/* =========================
-   NAVIGATION (STEP 22B READY)
-========================= */
-
-function openSkill(i){
-
-  let nodes = document.querySelectorAll(".node");
-  if(!nodes[i]) return;
-
-  let node = nodes[i];
-  let container = document.querySelector(".path").getBoundingClientRect();
-  let rect = node.getBoundingClientRect();
-
-  document.getElementById("owlGuide").style.top =
-    (rect.top - container.top + 10) + "px";
-
-  // STEP 18 memory hook
-  if(window.AppState && typeof AppState.setLastSkill === "function"){
-    AppState.setLastSkill(i);
-  }
-
-  // STEP 22B polish (safe optional)
-  if(window.AppPolish && typeof AppPolish.setMood === "function"){
-    AppPolish.setMood("correct");
-  }
-
-  if(window.AppEffects && typeof AppEffects.flash === "function"){
-    AppEffects.flash("correct");
-  }
-
-  // NAVIGATION (100% SAFE APPSTATE FIRST)
-  setTimeout(()=>{
-
-    const url = "lesson.html?s=" + i;
-
-    if(window.AppState && typeof AppState.go === "function"){
-      AppState.go(url);
-    } else {
-      window.location.href = url;
+    if(val === null){
+      localStorage.setItem(key, "0");
+      return 0;
     }
 
-  },400);
-}
+    return parseInt(val, 10);
+  }
 
-/* =========================
-   INIT
-========================= */
+  function getBar(level){
+    if(level === 0) return 0;
+    if(level === 1) return 25;
+    if(level === 2) return 50;
+    if(level === 3) return 75;
+    return 100;
+  }
 
-render();
+  function render(){
+
+    let html = "";
+
+    skills.forEach((s,i)=>{
+
+      let level = getSkillLevel(i);
+      let progress = getBar(level);
+
+      let state = level > 0 ? "unlocked" : "locked";
+
+      html += `
+        <div class="node ${state} level-${level}" onclick="openSkill(${i})">
+
+          <div class="icon">
+            ${level === 4 ? "👑" : "🦉"}
+          </div>
+
+          <div>${s.name}</div>
+
+          <div class="small">Level ${level}/4</div>
+
+          <div class="bar">
+            <div class="bar-fill" style="width:${progress}%"></div>
+          </div>
+
+        </div>
+      `;
+    });
+
+    document.getElementById("map").innerHTML = html;
+
+    setTimeout(placeOwl, 200);
+  }
+
+  function placeOwl(){
+
+    let owl = document.getElementById("owlGuide");
+    let nodes = document.querySelectorAll(".node");
+
+    if(!nodes.length) return;
+
+    let first = nodes[0].getBoundingClientRect();
+    let container = document.querySelector(".path").getBoundingClientRect();
+
+    owl.style.top = (first.top - container.top + 10) + "px";
+  }
+
+  window.openSkill = function(i){
+
+    let nodes = document.querySelectorAll(".node");
+    if(!nodes[i]) return;
+
+    let rect = nodes[i].getBoundingClientRect();
+    let container = document.querySelector(".path").getBoundingClientRect();
+
+    document.getElementById("owlGuide").style.top =
+      (rect.top - container.top + 10) + "px";
+
+    if(window.AppState?.setLastSkill){
+      AppState.setLastSkill(i);
+    }
+
+    if(window.AppEffects?.flash){
+      AppEffects.flash("correct");
+    }
+
+    setTimeout(()=>{
+
+      let url = "lesson.html?s=" + i;
+
+      if(window.AppState?.go){
+        AppState.go(url);
+      } else {
+        window.location.href = url;
+      }
+
+    }, 400);
+  };
+
+  render();
+
+});
 
 </script>
 

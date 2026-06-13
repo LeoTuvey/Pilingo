@@ -29,6 +29,7 @@ button{
 
 <h1>🦉 Lesson Page</h1>
 
+<!-- OPTION 2 BUTTON (SIMPLE CLICK) -->
 <button id="finishBtn">
   Finish Lesson (+10 XP)
 </button>
@@ -37,7 +38,7 @@ button{
 
 <script>
 /* =========================
-   SAFE GLOBAL FUNCTION
+   CORE FUNCTION (SAFE)
 ========================= */
 
 window.runFinishLogic = function(){
@@ -47,8 +48,8 @@ window.runFinishLogic = function(){
   const engine = window.Engine;
 
   if(!engine){
-    console.error("❌ Engine not loaded");
-    alert("Engine not loaded (check engine-core.js)");
+    alert("Engine not loaded");
+    console.error("Engine missing - check engine-core.js");
     return;
   }
 
@@ -61,9 +62,9 @@ window.runFinishLogic = function(){
 
   const newLevel = engine.getLevel();
 
-  console.log("OLD LEVEL:", oldLevel);
-  console.log("NEW LEVEL:", newLevel);
-  console.log("TOTAL XP:", engine.getXP());
+  console.log("OLD:", oldLevel);
+  console.log("NEW:", newLevel);
+  console.log("XP:", engine.getXP());
 
   if(newLevel > oldLevel){
     alert("🏆 LEVEL UP!");
@@ -73,13 +74,24 @@ window.runFinishLogic = function(){
 };
 
 /* =========================
-   EXTRA SAFETY BINDING
+   OPTION 2: BUTTON CLICK
 ========================= */
 
-document.getElementById("finishBtn").addEventListener("click", function(){
+document.getElementById("finishBtn").addEventListener("click", () => {
   console.log("button clicked");
   window.runFinishLogic();
 });
+
+/* =========================
+   OPTION 3: AUTO RUN TEST (IMPORTANT)
+   - this proves system works even if clicks fail
+========================= */
+
+setTimeout(() => {
+  console.log("AUTO RUN TEST TRIGGERED");
+  window.runFinishLogic();
+}, 1000);
+
 </script>
 
 </body>

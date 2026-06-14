@@ -74,9 +74,7 @@ const Engine = {
   },
 
   ensureFirstSkill(){
-    if (localStorage.getItem("skill_0") === null) {
-      localStorage.setItem("skill_0", "1");
-    }
+    localStorage.setItem("skill_0", "1");
   },
 
   applyMapClickFix(){

@@ -84,6 +84,15 @@ const Engine = {
     style.id = "engine-map-click-fix";
     style.textContent = ".line,#owlGuide{pointer-events:none!important;}";
     document.head.appendChild(style);
+
+    setTimeout(() => {
+      const firstNode = document.querySelector(".node");
+      if (!firstNode) return;
+
+      firstNode.classList.remove("locked");
+      firstNode.classList.add("unlocked");
+      firstNode.style.pointerEvents = "auto";
+    }, 300);
   },
 
   updateStreak(){

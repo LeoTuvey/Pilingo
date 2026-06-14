@@ -34,6 +34,43 @@ const Engine = {
     return 5;
   },
 
+  getHearts(){
+    const hearts = parseInt(localStorage.getItem("hearts") || "5", 10);
+    return Math.max(0, Math.min(5, hearts || 0));
+  },
+
+  loseHeart(){
+    const hearts = Math.max(0, this.getHearts() - 1);
+    localStorage.setItem("hearts", String(hearts));
+    return hearts;
+  },
+
+  unlockLevel(level){
+    const course = this.getCourse();
+    const key = course + "_unlocked";
+    let unlocked;
+
+    try {
+      unlocked = JSON.parse(
+        localStorage.getItem(key) ||
+        "[true,false,false,false,false,false,false]"
+      );
+    } catch {
+      unlocked = [true,false,false,false,false,false,false];
+    }
+
+    if (!Array.isArray(unlocked)) {
+      unlocked = [true,false,false,false,false,false,false];
+    }
+
+    const index = Number(level) || 0;
+    unlocked[index] = true;
+    localStorage.setItem(key, JSON.stringify(unlocked));
+    localStorage.setItem("skill_" + index, "1");
+
+    return unlocked;
+  },
+
   updateStreak(){
     const today = new Date().toISOString().split("T")[0];
     const last = localStorage.getItem("lastDay");
@@ -69,6 +106,8 @@ const Engine = {
     }
   }
 };
+
+window.Engine = Engine;
 
 document.addEventListener("DOMContentLoaded", () => {
   Engine.init();

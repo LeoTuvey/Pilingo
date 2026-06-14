@@ -3,6 +3,8 @@ const Engine = {
   init(){
     this.dailyReset();
     this.updateStreak();
+    this.ensureFirstSkill();
+    this.applyMapClickFix();
   },
 
   getCourse(){
@@ -69,6 +71,21 @@ const Engine = {
     localStorage.setItem("skill_" + index, "1");
 
     return unlocked;
+  },
+
+  ensureFirstSkill(){
+    if (localStorage.getItem("skill_0") === null) {
+      localStorage.setItem("skill_0", "1");
+    }
+  },
+
+  applyMapClickFix(){
+    if (document.getElementById("engine-map-click-fix")) return;
+
+    const style = document.createElement("style");
+    style.id = "engine-map-click-fix";
+    style.textContent = ".line,#owlGuide{pointer-events:none!important;}";
+    document.head.appendChild(style);
   },
 
   updateStreak(){

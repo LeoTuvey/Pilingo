@@ -113,8 +113,7 @@ button.selected{
 }
 
 .word-bank,
-.answer-bank,
-.match-grid{
+.answer-bank{
     display:flex;
     flex-wrap:wrap;
     gap:10px;
@@ -124,11 +123,40 @@ button.selected{
 }
 
 .word-bank button,
-.answer-bank button,
-.match-grid button{
+.answer-bank button{
     display:inline-flex;
     width:auto;
     min-width:88px;
+    margin:0;
+    align-items:center;
+    justify-content:center;
+}
+
+.match-grid{
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    gap:14px;
+    width:92%;
+    margin:14px auto;
+}
+
+.match-column{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.match-heading{
+    margin:0 0 2px;
+    color:#52616f;
+    font-size:13px;
+    font-weight:bold;
+}
+
+.match-grid button{
+    display:flex;
+    width:100%;
+    min-height:52px;
     margin:0;
     align-items:center;
     justify-content:center;
@@ -161,6 +189,7 @@ button.selected{
     body{padding:12px;}
     .card{padding:16px;}
     .image-options{grid-template-columns:1fr;}
+    .match-grid{gap:10px;}
 }
 </style>
 </head>
@@ -257,11 +286,11 @@ const gameParts = [
             ], "Tea"),
             buildStep("Translate this sentence", "Bi xêr hatî!", ["Coffee", "please", "Welcome"], ["Welcome"]),
             matchStep([
-                ["Milk", "Bi xêr hatî!"],
-                ["Welcome", "Qehwe"],
-                ["Coffee", "Av"],
-                ["And", "Şîr"],
-                ["Water", "û"]
+                ["And", "û"],
+                ["Coffee", "Qehwe"],
+                ["Milk", "Şîr"],
+                ["Water", "Av"],
+                ["Welcome", "Bi xêr hatî!"]
             ]),
             buildStep("Translate this sentence", "Qehwe?", ["?", "Welcome", "coffee", "Milk", "Tea"], ["coffee", "?"]),
             choiceStep("Select the correct translation", "Bi xêr hatî!", ["Coffee", "Milk", "Hi", "Welcome"], "Welcome"),
@@ -269,11 +298,11 @@ const gameParts = [
             choiceStep("Select the correct translation", "Çay", ["Coffee", "Watter", "Tea", "Welcome"], "Tea"),
             hearStep("Tea", ["Welcome", "Tea", "Or", "And"], "Tea"),
             matchStep([
-                ["And", "Bi xêr hatî!"],
-                ["Welcome", "Silav!"],
-                ["Hello", "û"],
-                ["Milk", "Nan"],
-                ["Bread", "Şîr"]
+                ["And", "û"],
+                ["Welcome", "Bi xêr hatî!"],
+                ["Hello", "Silav!"],
+                ["Milk", "Şîr"],
+                ["Bread", "Nan"]
             ]),
             buildStep("Translate this sentence", "Nan û qehwe, ji kerema xwe!", ["and", "please!", "bread", "welcome", "coffee"], ["bread", "and", "coffee", "please!"]),
             imageStep("Şîr", [
@@ -285,11 +314,11 @@ const gameParts = [
             choiceStep("Translate this sentence", "Bi xatirê te!", ["Water", "Hi", "Bye"], "Bye"),
             buildStep("Translate this sentence", "Erê an na?", ["Coffee", "yes", "tea", "no?", "Or"], ["yes", "Or", "no?"]),
             matchStep([
-                ["Coffee", "Şîr"],
-                ["Water", "Çay"],
-                ["Welcome", "Qehwe"],
-                ["Tea", "Av"],
-                ["Milk", "Bi xêr hatî!"]
+                ["Milk", "Şîr"],
+                ["Water", "Av"],
+                ["Welcome", "Bi xêr hatî!"],
+                ["Coffee", "Qehwe"],
+                ["Tea", "Çay"]
             ]),
             hearBuildStep("Coffee, please!", ["Tea", "or", "water", "please!", "Coffee"], ["Coffee", "please!"]),
             buildStep("Translate this sentence", "Qehwe an çay?", ["Welcome", "tea", "please", "coffee", "or", "?"], ["coffee", "or", "tea", "?"]),
@@ -585,23 +614,53 @@ function renderBuildStep(step){
 }
 
 function renderMatchStep(step){
-    const cards = [];
+    const kurmanjiCards = [];
+    const englishCards = [];
+
     step.pairs.forEach((pair, index) => {
-        cards.push({ text:pair[0], key:index });
-        cards.push({ text:pair[1], key:index });
+        englishCards.push({ text:pair[0], key:index, id:"en-" + index });
+        kurmanjiCards.push({ text:pair[1], key:index, id:"ku-" + index });
     });
 
-    cards.sort((a, b) => a.text.localeCompare(b.text));
+    mixMatchCards(kurmanjiCards, 7);
+    mixMatchCards(englishCards, 19);
 
     document.getElementById("activity").innerHTML = `
         <div class="match-grid">
-            ${cards.map((card, index) => `
-                <button class="secondary" id="match-${index}" onclick="selectMatch(${index}, ${card.key})">
-                    ${escapeHtml(card.text)}
-                </button>
-            `).join("")}
+            <div class="match-column">
+                <div class="match-heading">Kurmanji</div>
+                ${kurmanjiCards.map((card) => `
+                    <button class="secondary" id="match-${card.id}" onclick="selectMatch('${card.id}', ${card.key})">
+                        ${escapeHtml(card.text)}
+                    </button>
+                `).join("")}
+            </div>
+            <div class="match-column">
+                <div class="match-heading">English</div>
+                ${englishCards.map((card) => `
+                    <button class="secondary" id="match-${card.id}" onclick="selectMatch('${card.id}', ${card.key})">
+                        ${escapeHtml(card.text)}
+                    </button>
+                `).join("")}
+            </div>
         </div>
     `;
+}
+
+function mixMatchCards(cards, seed){
+    cards.sort((a, b) => {
+        const aScore = matchMixScore(a.text, seed);
+        const bScore = matchMixScore(b.text, seed);
+
+        if(aScore === bScore) return a.text.localeCompare(b.text);
+        return aScore - bScore;
+    });
+}
+
+function matchMixScore(text, seed){
+    return Array.from(String(text)).reduce((score, char, index) => {
+        return score + (char.charCodeAt(0) * (index + seed));
+    }, seed * 97) % 997;
 }
 
 function renderNextStep(step){

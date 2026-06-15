@@ -41,6 +41,12 @@ button{
 <script>
 console.log("🧪 Lesson loaded");
 
+const lessonParams = new URLSearchParams(window.location.search);
+
+if (lessonParams.get("s") === "0") {
+  window.location.replace("game1.html");
+}
+
 // =========================
 // SAFETY CHECK
 // =========================
@@ -65,8 +71,7 @@ window.runFinishLogic = function () {
 
   const oldLevel = engine.getLevel();
   const xpReward = 10;
-  const params = new URLSearchParams(window.location.search);
-  const skillIndex = Number(params.get("s")) || 0;
+  const skillIndex = Number(lessonParams.get("s")) || 0;
 
   if (typeof engine.completeSkill === "function") {
     engine.completeSkill(skillIndex, xpReward);

@@ -65,10 +65,17 @@ window.runFinishLogic = function () {
 
   const oldLevel = engine.getLevel();
   const xpReward = 10;
+  const params = new URLSearchParams(window.location.search);
+  const skillIndex = Number(params.get("s")) || 0;
 
-  engine.addXP(xpReward);
-  engine.updateStreak();
-  engine.resetHearts();
+  if (typeof engine.completeSkill === "function") {
+    engine.completeSkill(skillIndex, xpReward);
+  } else {
+    engine.addXP(xpReward);
+    engine.updateStreak();
+    engine.resetHearts();
+    engine.unlockLevel(skillIndex + 1);
+  }
 
   const newLevel = engine.getLevel();
 
@@ -81,6 +88,8 @@ window.runFinishLogic = function () {
   } else {
     alert("+10 XP!");
   }
+
+  window.location.href = "engine.html";
 };
 
 // =========================
@@ -90,14 +99,6 @@ document.getElementById("finishBtn").addEventListener("click", function () {
   console.log("button clicked");
   window.runFinishLogic();
 });
-
-// =========================
-// AUTO TEST (IMPORTANT)
-// =========================
-setTimeout(() => {
-  console.log("⏱ AUTO RUN TEST");
-  window.runFinishLogic();
-}, 1200);
 
 </script>
 

@@ -127,3 +127,5 @@ const AppEffects = {
     setTimeout(() => el.remove(), 240);
   }
 };
+
+window.AppEffects = AppEffects;

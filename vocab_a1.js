@@ -6,9 +6,20 @@ const VOCAB_A1 = {
   meta: {
     level: "A1",
     name: "Beginner Core",
-    version: "1.0",
-    description: "Full beginner vocabulary system for English → Kurdish → Swedish"
+    version: "1.1",
+    description: "Original beginner vocabulary system for English, Kurdish, and Swedish"
   },
+
+  greetings: [
+    { en:"hello", ku:"slav", sv:"hej", emoji:"👋" },
+    { en:"good morning", ku:"beyanî baş", sv:"god morgon", emoji:"🌅" },
+    { en:"good night", ku:"şev baş", sv:"god natt", emoji:"🌙" },
+    { en:"goodbye", ku:"xatirê te", sv:"hej då", emoji:"👋" },
+    { en:"please", ku:"ji kerema xwe", sv:"snälla", emoji:"🙏" },
+    { en:"thank you", ku:"spas", sv:"tack", emoji:"🙌" },
+    { en:"yes", ku:"erê", sv:"ja", emoji:"✅" },
+    { en:"no", ku:"na", sv:"nej", emoji:"❌" }
+  ],
 
   people: [
     { en:"I", ku:"ez", sv:"jag", emoji:"👤" },
@@ -38,6 +49,19 @@ const VOCAB_A1 = {
     { en:"horse", ku:"hesp", sv:"häst", emoji:"🐴" },
     { en:"chicken", ku:"mirîşk", sv:"kyckling", emoji:"🐔" },
     { en:"rabbit", ku:"kûsî", sv:"kanin", emoji:"🐰" }
+  ],
+
+  numbers: [
+    { en:"one", ku:"yek", sv:"ett", emoji:"1️⃣" },
+    { en:"two", ku:"du", sv:"två", emoji:"2️⃣" },
+    { en:"three", ku:"sê", sv:"tre", emoji:"3️⃣" },
+    { en:"four", ku:"çar", sv:"fyra", emoji:"4️⃣" },
+    { en:"five", ku:"pênc", sv:"fem", emoji:"5️⃣" },
+    { en:"six", ku:"şeş", sv:"sex", emoji:"6️⃣" },
+    { en:"seven", ku:"heft", sv:"sju", emoji:"7️⃣" },
+    { en:"eight", ku:"heşt", sv:"åtta", emoji:"8️⃣" },
+    { en:"nine", ku:"neh", sv:"nio", emoji:"9️⃣" },
+    { en:"ten", ku:"deh", sv:"tio", emoji:"🔟" }
   ],
 
   food: [
@@ -110,11 +134,58 @@ const VOCAB_A1 = {
     { en:"white", ku:"spî", sv:"vit", emoji:"⚪" }
   ],
 
+  classroom: [
+    { en:"teacher", ku:"mamoste", sv:"lärare", emoji:"🧑‍🏫" },
+    { en:"student", ku:"xwendekar", sv:"elev", emoji:"🧑‍🎓" },
+    { en:"lesson", ku:"ders", sv:"lektion", emoji:"📚" },
+    { en:"word", ku:"peyv", sv:"ord", emoji:"🔤" },
+    { en:"question", ku:"pirs", sv:"fråga", emoji:"❓" },
+    { en:"answer", ku:"bersiv", sv:"svar", emoji:"💬" },
+    { en:"paper", ku:"kaxez", sv:"papper", emoji:"📄" },
+    { en:"desk", ku:"mase", sv:"skrivbord", emoji:"🪑" }
+  ],
+
+  body: [
+    { en:"head", ku:"ser", sv:"huvud", emoji:"🙂" },
+    { en:"eye", ku:"çav", sv:"öga", emoji:"👁️" },
+    { en:"ear", ku:"guh", sv:"öra", emoji:"👂" },
+    { en:"hand", ku:"dest", sv:"hand", emoji:"✋" },
+    { en:"foot", ku:"ling", sv:"fot", emoji:"🦶" },
+    { en:"heart", ku:"dil", sv:"hjärta", emoji:"❤️" }
+  ],
+
+  clothes: [
+    { en:"shirt", ku:"kiras", sv:"skjorta", emoji:"👕" },
+    { en:"dress", ku:"kinc", sv:"klänning", emoji:"👗" },
+    { en:"shoes", ku:"sol", sv:"skor", emoji:"👟" },
+    { en:"hat", ku:"kulav", sv:"hatt", emoji:"🧢" },
+    { en:"coat", ku:"palto", sv:"rock", emoji:"🧥" }
+  ],
+
+  weather: [
+    { en:"sun", ku:"roj", sv:"sol", emoji:"☀️" },
+    { en:"rain", ku:"baran", sv:"regn", emoji:"🌧️" },
+    { en:"snow", ku:"berf", sv:"snö", emoji:"❄️" },
+    { en:"wind", ku:"ba", sv:"vind", emoji:"💨" },
+    { en:"cloud", ku:"ewr", sv:"moln", emoji:"☁️" }
+  ],
+
   time: [
     { en:"today", ku:"îro", sv:"idag", emoji:"📅" },
     { en:"tomorrow", ku:"sibê", sv:"imorgon", emoji:"📅" },
     { en:"yesterday", ku:"duh", sv:"igår", emoji:"📅" },
     { en:"morning", ku:"sibeh", sv:"morgon", emoji:"🌅" },
     { en:"night", ku:"şev", sv:"natt", emoji:"🌙" }
+  ],
+
+  phrases: [
+    { en:"I am a student", ku:"Ez xwendekar im", sv:"Jag är elev", emoji:"🧑‍🎓" },
+    { en:"I like apples", ku:"Ez ji sêvan hez dikim", sv:"Jag gillar äpplen", emoji:"🍎" },
+    { en:"The cat is small", ku:"Pisîk biçûk e", sv:"Katten är liten", emoji:"🐱" },
+    { en:"The dog runs", ku:"Kûçik direve", sv:"Hunden springer", emoji:"🐶" },
+    { en:"I drink water", ku:"Ez avê vedixwim", sv:"Jag dricker vatten", emoji:"💧" },
+    { en:"Where is school?", ku:"Dibistan li ku ye?", sv:"Var är skolan?", emoji:"🏫" }
   ]
 };
+
+window.VOCAB_A1 = VOCAB_A1;

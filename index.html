@@ -57,6 +57,15 @@ button:hover{ opacity:0.95; }
   font-size:42px;
   margin-top:10px;
 }
+
+select{
+  width:100%;
+  padding:12px;
+  border:2px solid #58cc02;
+  border-radius:10px;
+  background:white;
+  font-size:16px;
+}
 </style>
 </head>
 
@@ -83,6 +92,20 @@ button:hover{ opacity:0.95; }
   </div>
 
   <button onclick="goLearn()">▶ Continue Learning</button>
+
+</div>
+
+<!-- COURSE -->
+<div class="card">
+
+  <h2>🌍 Course</h2>
+
+  <select id="courseSelect" onchange="changeCourse(this.value)">
+    <option value="en-ku">English to Kurdish</option>
+    <option value="en-sv">English to Swedish</option>
+    <option value="ku-en">Kurdish to English</option>
+    <option value="sv-en">Swedish to English</option>
+  </select>
 
 </div>
 
@@ -129,6 +152,14 @@ if(window.Engine && typeof Engine.getXP === "function"){
 }
 
 document.getElementById("xp").innerText = xp;
+
+const courseSelect = document.getElementById("courseSelect");
+
+if(courseSelect){
+  courseSelect.value = window.Engine?.getCourse
+    ? Engine.getCourse()
+    : (localStorage.getItem("course") || "en-ku");
+}
 
 /* =========================
    STREAK (SAFE - NO SIDE EFFECT BUG)
@@ -201,6 +232,16 @@ function goLearn(){
   } else {
     window.location.href = "engine.html";
   }
+}
+
+function changeCourse(course){
+  if(window.Engine?.setCourse){
+    Engine.setCourse(course);
+  } else {
+    localStorage.setItem("course", course);
+  }
+
+  window.location.reload();
 }
 
 </script>

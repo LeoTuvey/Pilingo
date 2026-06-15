@@ -142,3 +142,5 @@ const AppState = {
     }
   }
 };
+
+window.AppState = AppState;

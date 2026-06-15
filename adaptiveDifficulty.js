@@ -114,3 +114,5 @@ const AdaptiveDifficulty = {
     return Math.max(1, Math.min(base, 6));
   }
 };
+
+window.AdaptiveDifficulty = AdaptiveDifficulty;

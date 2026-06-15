@@ -3,31 +3,170 @@
 <head>
 <meta charset="UTF-8">
 <title>Final Test</title>
+<style>
+body{
+font-family:Arial,sans-serif;
+background:#f5f9ff;
+text-align:center;
+margin:0;
+padding:20px;
+}
+
+.card{
+background:white;
+max-width:550px;
+margin:auto;
+padding:24px;
+border-radius:15px;
+box-shadow:0 3px 10px rgba(0,0,0,0.1);
+}
+
+#visual{
+font-size:82px;
+line-height:1;
+margin:12px 0 16px;
+}
+
+#hearts{
+font-size:28px;
+margin-bottom:10px;
+}
+
+#progress{
+height:10px;
+background:#ddd;
+border-radius:10px;
+overflow:hidden;
+margin-bottom:16px;
+}
+
+#bar{
+height:100%;
+width:0%;
+background:#4caf50;
+}
+
+#feedback{
+min-height:24px;
+font-weight:bold;
+}
+
+button{
+display:block;
+width:90%;
+margin:10px auto;
+padding:15px;
+font-size:18px;
+border:none;
+border-radius:10px;
+background:#1976d2;
+color:white;
+cursor:pointer;
+}
+</style>
 </head>
 <body>
 
+<div class="card">
+<h2>Final Test</h2>
+<div id="hearts"></div>
+<div id="progress"><div id="bar"></div></div>
+<div id="visual" aria-hidden="true"></div>
+<h3 id="q"></h3>
+<div id="options"></div>
+<div id="feedback"></div>
+</div>
+
+<script src="engine-core.js"></script>
 <script>
 
-let course=localStorage.getItem("course")||"en-ku";
+let course=window.Engine?.getCourse ? Engine.getCourse() : (localStorage.getItem("course")||"en-ku");
+let hearts=window.Engine?.getHearts ? Engine.getHearts() : parseInt(localStorage.getItem("hearts")||"5",10);
 
 let q=[
 {
 q:"Cat",
+visual:"🐱",
 options:["Cat","Dog","Bird"],
 answer:0
+},
+{
+q:"Running",
+visual:"🏃",
+options:["Sleeping","Running","Eating"],
+answer:1
+},
+{
+q:"Two apples",
+visual:"🍎 🍎",
+options:["One apple","Two apples","Three apples"],
+answer:1
+},
+{
+q:"An apple",
+visual:"🍎",
+options:["a apple","an apple","the apple"],
+answer:1
+},
+{
+q:"This",
+visual:"👇",
+options:["That","This","He"],
+answer:1
 }
 ];
 
+let current=0;
+
+function renderHearts(){
+let html="";
+for(let i=0;i<hearts;i++) html+="❤️ ";
+for(let i=hearts;i<5;i++) html+="🖤 ";
+document.getElementById("hearts").innerHTML=html;
+}
+
+function update(){
+document.getElementById("bar").style.width=(current/q.length)*100+"%";
+}
+
 function load(){
-let x=q[0];
-document.body.innerHTML="<h2>Final Test</h2>"+
+renderHearts();
+update();
+let x=q[current];
+document.getElementById("visual").innerText=x.visual;
+document.getElementById("q").innerText=x.q;
+document.getElementById("options").innerHTML=
 x.options.map((o,i)=>`<button onclick='check(${i})'>${o}</button>`).join("");
+document.getElementById("feedback").innerText="";
 }
 
 function check(i){
-if(i===q[0].answer){
+if(i===q[current].answer){
+document.getElementById("feedback").innerText="✅ Correct";
+current++;
+setTimeout(()=>{
+if(current<q.length){
+load();
+}else{
 finish();
 }
+},650);
+}else{
+hearts=window.Engine?.loseHeart ? Engine.loseHeart() : Math.max(0,hearts-1);
+localStorage.setItem("hearts",hearts);
+renderHearts();
+document.getElementById("feedback").innerText="❌ Try again";
+if(hearts<=0) gameOver();
+}
+}
+
+function gameOver(){
+document.body.innerHTML=`
+<div class="card">
+<h1>💔</h1>
+<h2>Out of hearts</h2>
+<button onclick="location.reload()">Try again</button>
+</div>`;
 }
 
 function finish(){
@@ -36,8 +175,11 @@ let unlockKey=course+"_unlocked";
 
 let xp=parseInt(localStorage.getItem(xpKey)||"0");
 localStorage.setItem(xpKey,xp+20);
+localStorage.setItem("skill_6","4");
+if(window.Engine?.resetHearts) Engine.resetHearts();
+document.getElementById("bar").style.width="100%";
 
-window.location.href="engine.html";
+setTimeout(()=>window.location.href="engine.html",900);
 }
 
 load();

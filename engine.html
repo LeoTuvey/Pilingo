@@ -27,6 +27,20 @@ h1{ margin-bottom:10px; }
   font-weight:bold;
 }
 
+.course-panel{
+  max-width:420px;
+  margin:0 auto 18px;
+}
+
+#courseSelect{
+  width:100%;
+  padding:12px;
+  border:2px solid #58cc02;
+  border-radius:10px;
+  background:white;
+  font-size:16px;
+}
+
 .path{
   max-width:420px;
   margin:auto;
@@ -41,6 +55,7 @@ h1{ margin-bottom:10px; }
   height:100%;
   background:#cfd8dc;
   transform:translateX(-50%);
+  pointer-events:none;
 }
 
 #owlGuide{
@@ -50,6 +65,7 @@ h1{ margin-bottom:10px; }
   font-size:34px;
   transition:0.6s ease;
   z-index:5;
+  pointer-events:none;
 }
 
 .node{
@@ -101,6 +117,15 @@ h1{ margin-bottom:10px; }
 
 <div id="xp">XP: 0</div>
 
+<div class="course-panel">
+  <select id="courseSelect" onchange="changeCourse(this.value)">
+    <option value="en-ku">English to Kurdish</option>
+    <option value="en-sv">English to Swedish</option>
+    <option value="ku-en">Kurdish to English</option>
+    <option value="sv-en">Swedish to English</option>
+  </select>
+</div>
+
 <div class="path">
   <div class="line"></div>
   <div id="owlGuide">🦉</div>
@@ -145,6 +170,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("xp").innerText = "XP: " + xp;
 
+  const courseSelect = document.getElementById("courseSelect");
+
+  if(courseSelect){
+    courseSelect.value = window.Engine?.getCourse
+      ? Engine.getCourse()
+      : (localStorage.getItem("course") || "en-ku");
+  }
+
+  window.changeCourse = function(course){
+    if(window.Engine?.setCourse){
+      Engine.setCourse(course);
+    } else {
+      localStorage.setItem("course", course);
+    }
+
+    window.location.reload();
+  };
+
   /* =========================
      SKILLS
   ========================= */
@@ -152,11 +195,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const skills = [
     { name:"Animals 🐶", id:"animals" },
     { name:"Actions 🏃", id:"verbs" },
-    { name:"People 👤", id:"people" },
-    { name:"Food 🍎", id:"food" },
-    { name:"Objects 📦", id:"objects" },
-    { name:"Places 🏙️", id:"places" },
-    { name:"Adjectives 🎯", id:"adjectives" }
+    { name:"This / That 👇", id:"this-that" },
+    { name:"Articles 🍎", id:"articles" },
+    { name:"Numbers 🔢", id:"numbers" },
+    { name:"Listening 🔊", id:"listening" },
+    { name:"Final Review 🏆", id:"review" }
   ];
 
   function getSkillLevel(i){
@@ -164,12 +207,28 @@ document.addEventListener("DOMContentLoaded", () => {
     let key = "skill_" + i;
     let val = localStorage.getItem(key);
 
-    if(val === null){
-      localStorage.setItem(key, "0");
-      return 0;
+    if(val !== null){
+      return parseInt(val, 10) || 0;
     }
 
-    return parseInt(val, 10);
+    return 0;
+  }
+
+  function isSkillUnlocked(i){
+    if(i === 0) return true;
+    if(getSkillLevel(i) > 0) return true;
+
+    try {
+      let course = window.Engine?.getCourse ? Engine.getCourse() : "en-ku";
+      let unlocked = JSON.parse(
+        localStorage.getItem(course + "_unlocked") ||
+        "[true,false,false,false,false,false,false]"
+      );
+
+      return Array.isArray(unlocked) && unlocked[i] === true;
+    } catch(e) {
+      return false;
+    }
   }
 
   function getBar(level){
@@ -189,7 +248,7 @@ document.addEventListener("DOMContentLoaded", () => {
       let level = getSkillLevel(i);
       let progress = getBar(level);
 
-      let state = level > 0 ? "unlocked" : "locked";
+      let state = isSkillUnlocked(i) ? "unlocked" : "locked";
 
       html += `
         <div class="node ${state} level-${level}" onclick="openSkill(${i})">
@@ -232,6 +291,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let nodes = document.querySelectorAll(".node");
     if(!nodes[i]) return;
+    if(!isSkillUnlocked(i)) return;
 
     let rect = nodes[i].getBoundingClientRect();
     let container = document.querySelector(".path").getBoundingClientRect();
@@ -249,7 +309,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     setTimeout(()=>{
 
-      let url = "lesson.html?s=" + i;
+      let url = "game" + (i + 1) + ".html";
 
       if(window.AppState?.go){
         AppState.go(url);

@@ -58,3 +58,5 @@ const UX = {
   }
 
 };
+
+window.UX = UX;

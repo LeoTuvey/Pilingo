@@ -124,3 +124,5 @@ const AdaptiveEngine = {
     return pool;
   }
 };
+
+window.AdaptiveEngine = AdaptiveEngine;

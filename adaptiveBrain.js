@@ -265,3 +265,5 @@ const AdaptiveBrain = {
     }
   }
 };
+
+window.AdaptiveBrain = AdaptiveBrain;

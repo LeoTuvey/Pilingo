@@ -2,11 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Lesson 1: Animals</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kurmanji to English: Game One</title>
 
 <style>
 body{
-    font-family: Arial, sans-serif;
+    font-family:Arial,sans-serif;
     background:#f5f9ff;
     text-align:center;
     margin:0;
@@ -15,7 +16,7 @@ body{
 
 .card{
     background:white;
-    max-width:550px;
+    max-width:620px;
     margin:auto;
     padding:20px;
     border-radius:15px;
@@ -39,14 +40,34 @@ body{
 #bar{
     height:100%;
     width:0%;
-    background:#4caf50;
+    background:#58cc02;
+    transition:width 0.25s ease;
 }
 
-img{
+#partLabel{
+    color:#52616f;
+    font-size:14px;
+    font-weight:bold;
+    margin-bottom:8px;
+}
+
+#instruction{
+    color:#52616f;
+    font-size:16px;
+    min-height:24px;
+    margin:0 0 8px;
+}
+
+#question{
+    margin:12px 0;
+}
+
+#image{
+    display:none;
     width:120px;
     height:120px;
     object-fit:contain;
-    margin:15px 0;
+    margin:12px auto;
 }
 
 button{
@@ -62,11 +83,84 @@ button{
     cursor:pointer;
 }
 
+button:hover{
+    background:#125aa0;
+}
+
+button.secondary{
+    background:#eef5ff;
+    color:#1976d2;
+    border:2px solid #cfe2ff;
+}
+
+button.selected{
+    background:#58cc02;
+    color:white;
+}
+
+.image-options{
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    gap:10px;
+    width:92%;
+    margin:8px auto;
+}
+
+.image-options button{
+    width:100%;
+    min-height:92px;
+    font-size:20px;
+}
+
+.word-bank,
+.answer-bank,
+.match-grid{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    justify-content:center;
+    margin:14px auto;
+    width:92%;
+}
+
+.word-bank button,
+.answer-bank button,
+.match-grid button{
+    display:inline-flex;
+    width:auto;
+    min-width:88px;
+    margin:0;
+    align-items:center;
+    justify-content:center;
+}
+
+.answer-bank{
+    min-height:58px;
+    padding:10px;
+    border:2px dashed #cfe2ff;
+    border-radius:12px;
+    background:#f8fbff;
+}
+
+.speaker{
+    width:86px;
+    height:86px;
+    border-radius:50%;
+    font-size:36px;
+    background:#58cc02;
+}
+
 #feedback{
     min-height:25px;
     margin-top:10px;
     font-size:18px;
     font-weight:bold;
+}
+
+@media (max-width:520px){
+    body{padding:12px;}
+    .card{padding:16px;}
+    .image-options{grid-template-columns:1fr;}
 }
 </style>
 </head>
@@ -74,154 +168,601 @@ button{
 <body>
 
 <div class="card">
-
-<div id="hearts"></div>
-
-<div id="progress"><div id="bar"></div></div>
-
-<h2 id="question">Loading...</h2>
-
-<img id="image">
-
-<div id="options"></div>
-
-<div id="feedback"></div>
-
+    <div id="hearts"></div>
+    <div id="progress"><div id="bar"></div></div>
+    <div id="partLabel"></div>
+    <p id="instruction"></p>
+    <h2 id="question">Loading...</h2>
+    <img id="image" alt="">
+    <div id="activity"></div>
+    <div id="feedback"></div>
 </div>
 
 <script src="engine-core.js"></script>
 
 <script>
+let hearts = Engine.getHearts();
+let partIndex = 0;
+let stepIndex = 0;
+let selectedWords = [];
+let matchedKeys = [];
+let selectedMatch = null;
 
-let course = Engine.getCourse();
+const emoji = {
+    coffee:"☕",
+    water:"💧",
+    tea:"🍵",
+    milk:"🥛",
+    bread:"🍞",
+    juice:"🧃"
+};
 
-function t(en, ku, sv){
-    if(course === "en-ku") return ku;
-    if(course === "en-sv") return sv;
-    return en;
+const gameParts = [
+    {
+        title:"Game One; A",
+        steps:[
+            imageStep("şîr", [
+                imgOpt("Coffee", "coffee"),
+                imgOpt("Water", "water"),
+                imgOpt("Tea", "tea"),
+                imgOpt("Milk", "milk")
+            ], "Milk"),
+            choiceStep("Translate this sentence", "Silav", ["Hello", "Hi", "Or", "bye"], "Hello"),
+            buildStep("Translate this sentence", "qehwe, ji kerema xwe!", ["Coffee", "or", "welcome", "please", "!"], ["Coffee", "please", "!"]),
+            buildStep("Translate this sentence", "Şîr û Qehwe", ["And", "coffee", "or", "milk", "welcome"], ["milk", "And", "coffee"]),
+            matchStep([
+                ["Coffee", "Qehwe"],
+                ["Hello", "Silav"],
+                ["Milk", "Şîr"],
+                ["And", "û"]
+            ]),
+            hearStep("Milk", ["Milk", "Silav", "Qehwe", "Şîr"], "Milk", "Tap what you hear | Li ser tiştê ku dibihîze bitikîne!"),
+            choiceStep("Select the correct word", "Silav", ["Tea", "Coffee", "Hi"], "Hi"),
+            hearStep("Coffee", ["Coffee", "Silav", "Qehwe", "Şîr"], "Coffee"),
+            matchStep([
+                ["Milk", "Şîr"],
+                ["Coffee", "Qehwe"],
+                ["Hello", "Silav"],
+                ["And", "û"]
+            ]),
+            nextStep()
+        ]
+    },
+    {
+        title:"Game One; B",
+        steps:[
+            imageStep("AV", [
+                imgOpt("Bread", "bread"),
+                imgOpt("Milk", "milk"),
+                imgOpt("Water", "water"),
+                imgOpt("Tea", "tea")
+            ], "Water"),
+            imageStep("Şîr", [
+                imgOpt("Water", "water"),
+                imgOpt("Tea", "tea"),
+                imgOpt("Milk", "milk"),
+                imgOpt("Bread", "bread")
+            ], "Milk"),
+            imageStep("Nan", [
+                imgOpt("Water", "water"),
+                imgOpt("Coffee", "coffee"),
+                imgOpt("Tea", "tea"),
+                imgOpt("Bread", "bread")
+            ], "Bread"),
+            imageStep("Çay", [
+                imgOpt("Water", "water"),
+                imgOpt("Milk", "milk"),
+                imgOpt("Tea", "tea"),
+                imgOpt("Bread", "bread")
+            ], "Tea"),
+            buildStep("Translate this sentence", "Bi xêr hatî!", ["Coffee", "please", "Welcome"], ["Welcome"]),
+            matchStep([
+                ["Milk", "Bi xêr hatî!"],
+                ["Welcome", "Qehwe"],
+                ["Coffee", "Av"],
+                ["And", "Şîr"],
+                ["Water", "û"]
+            ]),
+            buildStep("Translate this sentence", "Qehwe?", ["?", "Welcome", "coffee", "Milk", "Tea"], ["coffee", "?"]),
+            choiceStep("Select the correct translation", "Bi xêr hatî!", ["Coffee", "Milk", "Hi", "Welcome"], "Welcome"),
+            hearStep("Bread", ["Milk", "Welcome", "Milk", "Bread"], "Bread"),
+            choiceStep("Select the correct translation", "Çay", ["Coffee", "Watter", "Tea", "Welcome"], "Tea"),
+            hearStep("Tea", ["Welcome", "Tea", "Or", "And"], "Tea"),
+            matchStep([
+                ["And", "Bi xêr hatî!"],
+                ["Welcome", "Silav!"],
+                ["Hello", "û"],
+                ["Milk", "Nan"],
+                ["Bread", "Şîr"]
+            ]),
+            buildStep("Translate this sentence", "Nan û qehwe, ji kerema xwe!", ["and", "please!", "bread", "welcome", "coffee"], ["bread", "and", "coffee", "please!"]),
+            imageStep("Şîr", [
+                imgOpt("Bread", "bread"),
+                imgOpt("juice", "juice"),
+                imgOpt("Milk", "milk"),
+                imgOpt("Tea", "tea")
+            ], "Milk"),
+            choiceStep("Translate this sentence", "Bi xatirê te!", ["Water", "Hi", "Bye"], "Bye"),
+            buildStep("Translate this sentence", "Erê an na?", ["Coffee", "yes", "tea", "no?", "Or"], ["yes", "Or", "no?"]),
+            matchStep([
+                ["Coffee", "Şîr"],
+                ["Water", "Çay"],
+                ["Welcome", "Qehwe"],
+                ["Tea", "Av"],
+                ["Milk", "Bi xêr hatî!"]
+            ]),
+            hearBuildStep("Coffee, please!", ["Tea", "or", "water", "please!", "Coffee"], ["Coffee", "please!"]),
+            buildStep("Translate this sentence", "Qehwe an çay?", ["Welcome", "tea", "please", "coffee", "or", "?"], ["coffee", "or", "tea", "?"]),
+            matchStep([
+                ["Bread", "Bi xatirê te!"],
+                ["And", "şîr"],
+                ["Welcome", "û"],
+                ["Milk", "av"],
+                ["Water", "nan"],
+                ["Bye", "bi xêr hatî"]
+            ]),
+            buildStep("Translate this sentence", "nan û qehwe", ["Coffee", "please", "Bread", "and"], ["Bread", "and", "Coffee"]),
+            buildStep("Translate this sentence", "Nan û qehwe, ji kerema xwe!", ["Bread", "welcome", "please!", "Coffee", "and"], ["Bread", "and", "Coffee", "please!"]),
+            imageStep("Çay", [
+                imgOpt("milk", "milk"),
+                imgOpt("coffee", "coffee"),
+                imgOpt("Tea", "tea"),
+                imgOpt("Bread", "bread")
+            ], "Tea"),
+            choiceStep("Translate this sentence", "Erê!", ["Yes", "Bye", "coffee"], "Yes"),
+            choiceStep("Translate this sentence", "Na!", ["now", "coffee", "no"], "no"),
+            choiceStep("Translate this sentence", "Bi xatirê te!", ["Bye", "milk", "tea"], "Bye"),
+            buildStep("Translate this sentence", "Erê yan na?", ["Or", "Yes", "bread", "Bye", "no?"], ["Yes", "Or", "no?"]),
+            matchStep([
+                ["Tea", "bi xêr hatî"],
+                ["Milk", "na"],
+                ["No", "şîr"],
+                ["Water", "çay"],
+                ["Welcome", "av"]
+            ]),
+            choiceStep("Select the correct translation", "qehwe", ["yes", "och", "ja", "coffee"], "coffee"),
+            hearStep("coffee", ["nan", "av", "qehwe"], "qehwe"),
+            choiceStep("Select the correct translation", "na", ["no", "hi", "yes"], "no"),
+            matchStep([
+                ["Milk", "an"],
+                ["Yes", "û"],
+                ["Or", "Na"],
+                ["And", "Qehwe"],
+                ["No", "Çay"],
+                ["Coffee", "erê"],
+                ["Tea", "Nan"],
+                ["Bread", "şîr"]
+            ]),
+            buildStep("Translate this sentence", "Yes or no?", ["kûçik", "an", "na", "pisîk", "Erê"], ["Erê", "an", "na"]),
+            buildStep("Translate this sentence", "Milk or water?", ["An", "av", "pisîk", "Na", "Şîr"], ["Şîr", "An", "av"]),
+            buildStep("Translate this sentence", "Water or coffee?", ["Av", "çay", "an", "qehwe", "kûçik"], ["Av", "an", "qehwe"]),
+            choiceStep("Select the correct translation", "Şîr", ["Hello", "milk", "and"], "milk"),
+            choiceStep("Select the correct translation", "Av", ["Tea", "Milk", "Water", "coffee"], "Water"),
+            buildStep("Translate this sentence", "Çay an qehwe?", ["tea", "and", "coffee", "milk", "water"], ["tea", "coffee"]),
+            hearBuildStep("Tea and coffee", ["Û", "Nan", "Av", "Çay", "qehwe"], ["Çay", "Û", "qehwe"]),
+            buildStep("Translate this sentence", "Qehwe û av, ji kerema xwe!", ["Water", "and", "tea", "please", "coffee", "no"], ["coffee", "and", "Water", "please"]),
+            hearStep("Bread", ["Av", "kûçik", "Nan", "pisîk"], "Nan"),
+            buildStep("Translate this sentence", "Şîr û qehwe?", ["Milk", "or", "coffee", "And", "bread"], ["Milk", "And", "coffee"]),
+            choiceStep("Select the correct translation", "Silav", ["Welcome", "Hello", "Bye"], "Hello"),
+            hearStep("an", ["And", "No", "Or", "cat"], "Or"),
+            buildStep("Complete the sentence", "Şîr û qehwe?", ["Tea", "Milk", "Or", "and", "coffee"], ["Milk", "and", "coffee"]),
+            hearStep("Tea", ["Av", "kûçik", "Nan", "Pisîk", "çay"], "çay")
+        ]
+    }
+];
+
+function imgOpt(label, key){
+    return { label:label, emoji:emoji[key] || "", value:label };
 }
 
-// HEARTS
-let hearts = Engine.getHearts();
+function imageStep(word, options, answer){
+    return {
+        type:"image",
+        instruction:"Select the correct image | Wêneya rast hilbijêre",
+        prompt:word,
+        options:options,
+        answer:answer
+    };
+}
+
+function choiceStep(instruction, prompt, options, answer){
+    let helper = "";
+    if(instruction === "Translate this sentence") helper = " | vê hevokê wergerîne";
+    if(instruction === "Select the correct translation") helper = " | Wergera rast hilbijêre!";
+    if(instruction === "Select the correct word") helper = " | Peyva rast hilbijêre!";
+
+    return {
+        type:"choice",
+        instruction:instruction + helper,
+        prompt:prompt,
+        options:options,
+        answer:answer
+    };
+}
+
+function hearStep(spoken, options, answer, instruction){
+    return {
+        type:"hear",
+        instruction:instruction || "Tap what you hear | Ya ku dibihîzî bitikîne!",
+        prompt:"🔊",
+        spoken:spoken,
+        options:options,
+        answer:answer
+    };
+}
+
+function hearBuildStep(spoken, options, answer){
+    return {
+        type:"build",
+        instruction:"Tap what you hear | Ya ku dibihîzî bitikîne!",
+        prompt:"🔊",
+        spoken:spoken,
+        options:options,
+        answer:answer
+    };
+}
+
+function buildStep(instruction, prompt, options, answer){
+    const helper = instruction === "Complete the sentence"
+        ? " | Risteyê temam bike!"
+        : " | vê hevokê wergerîne";
+
+    return {
+        type:"build",
+        instruction:instruction + helper,
+        prompt:prompt,
+        options:options,
+        answer:answer
+    };
+}
+
+function matchStep(pairs){
+    return {
+        type:"match",
+        instruction:"Tap the match pairs! | Li ser cotên wekhev bitikîne!",
+        prompt:"",
+        pairs:pairs
+    };
+}
+
+function nextStep(){
+    return {
+        type:"next",
+        instruction:"",
+        prompt:"Game One A complete",
+        button:"Next"
+    };
+}
 
 function renderHearts(){
     let html = "";
-    for(let i=0;i<hearts;i++) html += "❤️ ";
-    for(let i=hearts;i<5;i++) html += "🖤 ";
+    for(let i = 0; i < hearts; i++) html += "❤️ ";
+    for(let i = hearts; i < 5; i++) html += "🖤 ";
     document.getElementById("hearts").innerHTML = html;
 }
 
-// SOUND
 function playSound(type){
     let audio = new Audio();
     audio.src = type === "correct"
         ? "https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"
         : "https://actions.google.com/sounds/v1/cartoon/boing.ogg";
-    audio.play();
+    audio.play().catch(()=>{});
 }
 
-// QUESTIONS
-let questions = [
-{
-q:t("What is this?","Ev çi ye?","Vad är detta?"),
-img:"https://cdn-icons-png.flaticon.com/512/616/616430.png",
-options:[
-t("Dog","Kûçik","Hund"),
-t("Cat","Pisîk","Katt"),
-t("Bird","Teyr","Fågel")
-],
-answer:1
-},
-{
-q:t("What is this?","Ev çi ye?","Vad är detta?"),
-img:"https://cdn-icons-png.flaticon.com/512/616/616408.png",
-options:[
-t("Cat","Pisîk","Katt"),
-t("Dog","Kûçik","Hund"),
-t("Apple","Sêv","Äpple")
-],
-answer:1
-},
-{
-q:t("What is this?","Ev çi ye?","Vad är detta?"),
-img:"https://cdn-icons-png.flaticon.com/512/415/415733.png",
-options:[
-t("Apple","Sêv","Äpple"),
-t("Bird","Teyr","Fågel"),
-t("Cat","Pisîk","Katt")
-],
-answer:0
+function speak(text){
+    if(!window.speechSynthesis || !text) return;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 0.85;
+    utterance.lang = "ku";
+    utterance.voice = getFemaleVoice();
+    window.speechSynthesis.speak(utterance);
 }
-];
 
-let current = 0;
+function getFemaleVoice(){
+    const voices = window.speechSynthesis.getVoices();
+    const femaleNames = [
+        "female",
+        "samantha",
+        "victoria",
+        "karen",
+        "moira",
+        "tessa",
+        "serena",
+        "zira",
+        "susan",
+        "anna",
+        "alice",
+        "monica"
+    ];
+
+    return voices.find((voice) => {
+        const name = voice.name.toLowerCase();
+        return femaleNames.some((femaleName) => name.includes(femaleName));
+    }) || voices.find((voice) => voice.lang && voice.lang.startsWith("en")) || voices[0] || null;
+}
+
+if(window.speechSynthesis) {
+    window.speechSynthesis.onvoiceschanged = getFemaleVoice;
+}
+
+function escapeHtml(value){
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+}
+
+function currentStep(){
+    return gameParts[partIndex].steps[stepIndex];
+}
+
+function totalSteps(){
+    return gameParts.reduce((sum, part) => sum + part.steps.length, 0);
+}
+
+function completedSteps(){
+    let done = 0;
+    for(let i = 0; i < partIndex; i++) done += gameParts[i].steps.length;
+    return done + stepIndex;
+}
 
 function updateProgress(){
     document.getElementById("bar").style.width =
-    (current / questions.length) * 100 + "%";
+        (completedSteps() / totalSteps()) * 100 + "%";
 }
 
 function load(){
+    const part = gameParts[partIndex];
+    const step = currentStep();
+
+    selectedWords = [];
+    matchedKeys = [];
+    selectedMatch = null;
+
     renderHearts();
     updateProgress();
+    document.getElementById("partLabel").innerText = "Kurmanji to English\n" + part.title;
+    document.getElementById("instruction").innerText = step.instruction || "";
+    document.getElementById("question").innerText = step.prompt || "";
+    document.getElementById("image").style.display = "none";
+    document.getElementById("image").removeAttribute("src");
+    document.getElementById("feedback").innerText = "";
 
-    let q = questions[current];
-
-    document.getElementById("question").innerText = q.q;
-    document.getElementById("image").src = q.img;
-
-    let html = "";
-    q.options.forEach((opt,i)=>{
-        html += `<button onclick="check(${i})">${opt}</button>`;
-    });
-
-    document.getElementById("options").innerHTML = html;
-    document.getElementById("feedback").innerHTML = "";
+    if(step.type === "image") renderImageStep(step);
+    if(step.type === "choice") renderChoiceStep(step);
+    if(step.type === "hear") renderHearStep(step);
+    if(step.type === "build") renderBuildStep(step);
+    if(step.type === "match") renderMatchStep(step);
+    if(step.type === "next") renderNextStep(step);
 }
 
-function check(i){
-    let q = questions[current];
+function renderImageStep(step){
+    document.getElementById("activity").innerHTML = `
+        <div class="image-options">
+            ${step.options.map((option) => `
+                <button onclick="checkChoice('${escapeHtml(option.value)}')">
+                    <span aria-hidden="true">${escapeHtml(option.emoji)}</span><br>
+                    ${escapeHtml(option.label)}
+                </button>
+            `).join("")}
+        </div>
+    `;
+}
 
-    if(i === q.answer){
+function renderChoiceStep(step){
+    document.getElementById("activity").innerHTML =
+        step.options.map(option => `
+            <button onclick="checkChoice('${escapeHtml(option)}')">${escapeHtml(option)}</button>
+        `).join("");
+}
 
-        playSound("correct");
-        document.getElementById("feedback").innerText = "✅ Correct";
+function renderHearStep(step){
+    document.getElementById("activity").innerHTML = `
+        <button class="speaker" onclick="speak('${escapeHtml(step.spoken)}')" aria-label="Play sound">🔊</button>
+        ${step.options.map(option => `
+            <button onclick="checkChoice('${escapeHtml(option)}')">${escapeHtml(option)}</button>
+        `).join("")}
+    `;
+    setTimeout(() => speak(step.spoken), 250);
+}
 
-        current++;
+function renderBuildStep(step){
+    document.getElementById("activity").innerHTML = `
+        ${step.spoken ? `<button class="speaker" onclick="speak('${escapeHtml(step.spoken)}')" aria-label="Play sound">🔊</button>` : ""}
+        <div class="answer-bank" id="answerBank"></div>
+        <div class="word-bank" id="wordBank">
+            ${step.options.map((word, index) => `
+                <button class="secondary" id="word-${index}" onclick="selectWord(${index})">${escapeHtml(word)}</button>
+            `).join("")}
+        </div>
+        <button onclick="checkBuild()">Check</button>
+    `;
 
-        setTimeout(()=>{
-            if(current < questions.length){
-                load();
-            } else {
-                finish();
-            }
-        },700);
+    if(step.spoken) setTimeout(() => speak(step.spoken), 250);
+    renderSelectedWords();
+}
 
-    } else {
+function renderMatchStep(step){
+    const cards = [];
+    step.pairs.forEach((pair, index) => {
+        cards.push({ text:pair[0], key:index });
+        cards.push({ text:pair[1], key:index });
+    });
 
-        hearts = Engine.loseHeart();
-        renderHearts();
-        playSound("wrong");
+    cards.sort((a, b) => a.text.localeCompare(b.text));
 
-        document.getElementById("feedback").innerText = "❌ Try again";
+    document.getElementById("activity").innerHTML = `
+        <div class="match-grid">
+            ${cards.map((card, index) => `
+                <button class="secondary" id="match-${index}" onclick="selectMatch(${index}, ${card.key})">
+                    ${escapeHtml(card.text)}
+                </button>
+            `).join("")}
+        </div>
+    `;
+}
 
-        if(hearts <= 0){
-            gameOver();
-        }
+function renderNextStep(step){
+    document.getElementById("activity").innerHTML =
+        `<button onclick="completeStep()">${escapeHtml(step.button || "Next")}</button>`;
+}
+
+function checkChoice(value){
+    const step = currentStep();
+    if(normalize(value) === normalize(step.answer)){
+        markCorrect();
+        return;
     }
+
+    markWrong();
+}
+
+function selectWord(index){
+    const step = currentStep();
+    const button = document.getElementById("word-" + index);
+    if(!button || button.disabled) return;
+
+    button.disabled = true;
+    button.classList.add("selected");
+    selectedWords.push({ index:index, text:step.options[index] });
+    renderSelectedWords();
+}
+
+function renderSelectedWords(){
+    const bank = document.getElementById("answerBank");
+    if(!bank) return;
+
+    if(selectedWords.length === 0) {
+        bank.innerHTML = "";
+        return;
+    }
+
+    bank.innerHTML = selectedWords.map((word, index) => `
+        <button onclick="removeWord(${index})">${escapeHtml(word.text)}</button>
+    `).join("");
+}
+
+function removeWord(index){
+    const word = selectedWords[index];
+    if(!word) return;
+
+    selectedWords.splice(index, 1);
+    const button = document.getElementById("word-" + word.index);
+    if(button) {
+        button.disabled = false;
+        button.classList.remove("selected");
+    }
+
+    renderSelectedWords();
+}
+
+function checkBuild(){
+    const step = currentStep();
+    const answer = selectedWords.map(word => normalize(word.text));
+    const expected = step.answer.map(word => normalize(word));
+
+    if(answer.join(" ") === expected.join(" ")){
+        markCorrect();
+        return;
+    }
+
+    markWrong();
+}
+
+function selectMatch(buttonIndex, key){
+    if(matchedKeys.includes(key)) return;
+
+    const button = document.getElementById("match-" + buttonIndex);
+    if(!button) return;
+
+    button.classList.add("selected");
+
+    if(!selectedMatch) {
+        selectedMatch = { buttonIndex:buttonIndex, key:key };
+        return;
+    }
+
+    if(selectedMatch.buttonIndex === buttonIndex) return;
+
+    const firstButton = document.getElementById("match-" + selectedMatch.buttonIndex);
+
+    if(selectedMatch.key === key) {
+        matchedKeys.push(key);
+        button.disabled = true;
+        if(firstButton) firstButton.disabled = true;
+        selectedMatch = null;
+
+        if(matchedKeys.length === currentStep().pairs.length) {
+            markCorrect();
+        }
+        return;
+    }
+
+    setTimeout(() => {
+        button.classList.remove("selected");
+        if(firstButton) firstButton.classList.remove("selected");
+        selectedMatch = null;
+        markWrong();
+    }, 350);
+}
+
+function normalize(value){
+    return String(value)
+        .toLowerCase()
+        .replace(/[!?.،,]/g, "")
+        .trim();
+}
+
+function markCorrect(){
+    playSound("correct");
+    document.getElementById("feedback").innerText = "✅ Correct";
+    setTimeout(completeStep, 650);
+}
+
+function markWrong(){
+    hearts = Engine.loseHeart();
+    renderHearts();
+    playSound("wrong");
+    document.getElementById("feedback").innerText = "❌ Try again";
+
+    if(hearts <= 0) gameOver();
+}
+
+function completeStep(){
+    stepIndex++;
+
+    if(stepIndex < gameParts[partIndex].steps.length) {
+        load();
+        return;
+    }
+
+    partIndex++;
+    stepIndex = 0;
+
+    if(partIndex < gameParts.length) {
+        load();
+        return;
+    }
+
+    finish();
 }
 
 function finish(){
-
-    Engine.addXP(10);
-    Engine.unlockLevel(1);
-    Engine.resetHearts();
+    if (typeof Engine.completeSkill === "function") {
+        Engine.completeSkill(0, 10);
+    } else {
+        Engine.addXP(10);
+        Engine.unlockLevel(1);
+        Engine.resetHearts();
+    }
 
     document.getElementById("bar").style.width = "100%";
 
-    setTimeout(()=>{
+    setTimeout(() => {
         window.location.href = "engine.html";
-    },1000);
+    }, 1000);
 }
 
 function gameOver(){
@@ -234,8 +775,6 @@ function gameOver(){
 }
 
 load();
-
 </script>
-
 </body>
 </html>

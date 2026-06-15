@@ -72,3 +72,5 @@ const LearningProfile = {
     };
   }
 };
+
+window.LearningProfile = LearningProfile;

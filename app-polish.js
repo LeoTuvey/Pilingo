@@ -169,3 +169,5 @@ const AppPolish = {
     setTimeout(() => el.remove(), 250);
   }
 };
+
+window.AppPolish = AppPolish;

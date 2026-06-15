@@ -33,6 +33,12 @@ body{
 
 #bar{height:100%;width:0%;background:#4caf50;}
 
+#visual{
+    font-size:82px;
+    line-height:1;
+    margin:18px 0 10px;
+}
+
 button{
     display:block;
     width:90%;
@@ -53,6 +59,8 @@ button{
 
 <div id="hearts"></div>
 <div id="progress"><div id="bar"></div></div>
+
+<div id="visual" aria-hidden="true"></div>
 
 <h2 id="question"></h2>
 <div id="options"></div>
@@ -79,7 +87,7 @@ function playSound(type){
     a.src = type==="correct"
         ? "https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"
         : "https://actions.google.com/sounds/v1/cartoon/boing.ogg";
-    a.play();
+    a.play().catch(()=>{});
 }
 
 function t(en,ku,sv){
@@ -91,6 +99,7 @@ function t(en,ku,sv){
 let questions = [
 {
 q:t("What is he doing?","Ew çi dike?","Vad gör han?"),
+visual:"🍽️",
 options:[
 t("Eating","Xwarin","Äter"),
 t("Sleeping","Razane","Sover"),
@@ -100,12 +109,43 @@ answer:0
 },
 {
 q:t("What is she doing?","Ew çi dike?","Vad gör hon?"),
+visual:"📖",
 options:[
 t("Reading","Xwendin","Läser"),
 t("Eating","Xwarin","Äter"),
 t("Swimming","Avjîn","Simmar")
 ],
 answer:0
+},
+{
+q:t("Choose running","Revîn hilbijêre","Välj springer"),
+visual:"🏃",
+options:[
+t("Sleeping","Razane","Sover"),
+t("Running","Revîn","Springer"),
+t("Reading","Xwendin","Läser")
+],
+answer:1
+},
+{
+q:t("Choose sleeping","Razane hilbijêre","Välj sover"),
+visual:"😴",
+options:[
+t("Sleeping","Razane","Sover"),
+t("Eating","Xwarin","Äter"),
+t("Swimming","Avjîn","Simmar")
+],
+answer:0
+},
+{
+q:t("Choose swimming","Avjîn hilbijêre","Välj simmar"),
+visual:"🏊",
+options:[
+t("Running","Revîn","Springer"),
+t("Reading","Xwendin","Läser"),
+t("Swimming","Avjîn","Simmar")
+],
+answer:2
 }
 ];
 
@@ -122,6 +162,7 @@ update();
 
 let q=questions[current];
 
+document.getElementById("visual").innerText=q.visual;
 document.getElementById("question").innerText=q.q;
 
 let html="";
@@ -138,6 +179,7 @@ let q=questions[current];
 if(i===q.answer){
 
 playSound("correct");
+document.getElementById("feedback").innerText="✅ Correct";
 current++;
 
 setTimeout(()=>{
@@ -153,15 +195,20 @@ finish();
 hearts=Engine.loseHeart();
 renderHearts();
 playSound("wrong");
+document.getElementById("feedback").innerText="❌ Try again";
 
 if(hearts<=0) gameOver();
 }
 }
 
 function finish(){
+if (typeof Engine.completeSkill === "function") {
+Engine.completeSkill(1, 10);
+} else {
 Engine.addXP(10);
 Engine.unlockLevel(2);
 Engine.resetHearts();
+}
 
 setTimeout(()=>location.href="engine.html",1000);
 }

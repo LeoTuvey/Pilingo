@@ -1,14 +1,86 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Lesson 5</title>
+<title>Lesson 5: Numbers</title>
+<style>
+body{
+font-family:Arial,sans-serif;
+background:#f5f9ff;
+text-align:center;
+margin:0;
+padding:20px;
+}
+
+.card{
+background:white;
+max-width:550px;
+margin:auto;
+padding:24px;
+border-radius:15px;
+box-shadow:0 3px 10px rgba(0,0,0,0.1);
+}
+
+#hearts{
+font-size:28px;
+margin-bottom:10px;
+}
+
+#progress{
+height:10px;
+background:#ddd;
+border-radius:10px;
+overflow:hidden;
+margin-bottom:16px;
+}
+
+#bar{
+height:100%;
+width:0%;
+background:#4caf50;
+}
+
+#visual{
+font-size:78px;
+line-height:1.15;
+margin:12px 0 16px;
+}
+
+button{
+display:block;
+width:90%;
+margin:10px auto;
+padding:15px;
+font-size:18px;
+border:none;
+border-radius:10px;
+background:#1976d2;
+color:white;
+cursor:pointer;
+}
+
+#feedback{
+min-height:24px;
+font-weight:bold;
+}
+</style>
 </head>
 <body>
 
+<div class="card">
+<div id="hearts"></div>
+<div id="progress"><div id="bar"></div></div>
+<div id="visual" aria-hidden="true"></div>
+<h2 id="q"></h2>
+<div id="options"></div>
+<div id="feedback"></div>
+</div>
+
+<script src="engine-core.js"></script>
 <script>
 
-let course = localStorage.getItem("course") || "en-ku";
+let course = Engine.getCourse();
+let hearts = Engine.getHearts();
 
 function t(en,ku,sv){
 if(course==="en-ku") return ku;
@@ -19,45 +91,117 @@ return en;
 let questions=[
 {
 q:t("One apple","Yek sêv","Ett äpple"),
+visual:"🍎",
 options:[
 t("One apple","Yek sêv","Ett äpple"),
-t("Two apples","Du sêv","Två äpplen")
+t("Two apples","Du sêv","Två äpplen"),
+t("Three apples","Sê sêv","Tre äpplen")
 ],
 answer:0
+},
+{
+q:t("Two cats","Du pisîk","Två katter"),
+visual:"🐱 🐱",
+options:[
+t("One cat","Yek pisîk","En katt"),
+t("Two cats","Du pisîk","Två katter"),
+t("Three cats","Sê pisîk","Tre katter")
+],
+answer:1
+},
+{
+q:t("Three birds","Sê teyr","Tre fåglar"),
+visual:"🐦 🐦 🐦",
+options:[
+t("Three birds","Sê teyr","Tre fåglar"),
+t("Two birds","Du teyr","Två fåglar"),
+t("One bird","Yek teyr","En fågel")
+],
+answer:0
+},
+{
+q:t("Choose two","Du hilbijêre","Välj två"),
+visual:"🍎 🍎",
+options:[
+t("One","Yek","Ett"),
+t("Two","Du","Två"),
+t("Three","Sê","Tre")
+],
+answer:1
 }
 ];
 
 let current=0;
 
+function renderHearts(){
+let html="";
+for(let i=0;i<hearts;i++) html+="❤️ ";
+for(let i=hearts;i<5;i++) html+="🖤 ";
+document.getElementById("hearts").innerHTML=html;
+}
+
+function update(){
+document.getElementById("bar").style.width=(current/questions.length)*100+"%";
+}
+
 function load(){
+renderHearts();
+update();
 let q=questions[current];
-document.body.innerHTML="<h2>"+q.q+"</h2>"+q.options.map((o,i)=>
-`<button onclick='check(${i})'>${o}</button>`).join("");
+document.getElementById("visual").innerText=q.visual;
+document.getElementById("q").innerText=q.q;
+document.getElementById("options").innerHTML=
+q.options.map((o,i)=>`<button onclick="check(${i})">${o}</button>`).join("");
+document.getElementById("feedback").innerText="";
 }
 
 function check(i){
 if(i===questions[current].answer){
+document.getElementById("feedback").innerText="✅ Correct";
+current++;
+setTimeout(()=>{
+if(current<questions.length){
+load();
+}else{
 finish();
 }
+},650);
+}else{
+hearts=Engine.loseHeart();
+renderHearts();
+document.getElementById("feedback").innerText="❌ Try again";
+if(hearts<=0) gameOver();
+}
+}
+
+function gameOver(){
+document.body.innerHTML=`
+<div class="card">
+<h1>💔</h1>
+<h2>Out of hearts</h2>
+<button onclick="location.reload()">Try again</button>
+</div>`;
 }
 
 function finish(){
-let xpKey=course+"_xp";
+if(typeof Engine.completeSkill==="function"){
+Engine.completeSkill(4,10);
+}else{
 let unlockKey=course+"_unlocked";
-
-let xp=parseInt(localStorage.getItem(xpKey)||"0");
-localStorage.setItem(xpKey,xp+10);
-
+Engine.addXP(10);
 let unlocked=JSON.parse(localStorage.getItem(unlockKey)||"[true,false,false,false,false,false,false]");
 unlocked[5]=true;
 localStorage.setItem(unlockKey,JSON.stringify(unlocked));
-
-window.location.href="engine.html";
+localStorage.setItem("skill_4","4");
+localStorage.setItem("skill_5","1");
+Engine.resetHearts();
+}
+document.getElementById("bar").style.width="100%";
+setTimeout(()=>window.location.href="engine.html",900);
 }
 
 load();
 
 </script>
-
 </body>
 </html>

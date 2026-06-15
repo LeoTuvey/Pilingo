@@ -42,6 +42,12 @@ body{
     background:#4caf50;
 }
 
+#visual{
+    font-size:82px;
+    line-height:1;
+    margin:18px 0 10px;
+}
+
 button{
     display:block;
     width:90%;
@@ -77,6 +83,8 @@ button:hover{
 <div id="progress">
     <div id="bar"></div>
 </div>
+
+<div id="visual" aria-hidden="true"></div>
 
 <h2 id="question">Loading...</h2>
 
@@ -118,13 +126,14 @@ function playSound(type){
         audio.src = "https://actions.google.com/sounds/v1/cartoon/boing.ogg";
     }
 
-    audio.play();
+    audio.play().catch(()=>{});
 }
 
 let questions = [
 
 {
 q:t("What is this?","Ev çi ye?","Vad är detta?"),
+visual:"👇",
 options:[
 t("This","Ev","Det här"),
 t("That","Ew","Det där"),
@@ -135,6 +144,7 @@ answer:0
 
 {
 q:t("What is that?","Ew çi ye?","Vad är det där?"),
+visual:"👉",
 options:[
 t("This","Ev","Det här"),
 t("That","Ew","Det där"),
@@ -145,12 +155,35 @@ answer:1
 
 {
 q:t("Choose 'This'","'Ev' hilbijêre","Välj 'Det här'"),
+visual:"👇",
 options:[
 t("That","Ew","Det där"),
 t("This","Ev","Det här"),
 t("It","Ew e","Den")
 ],
 answer:1
+},
+
+{
+q:t("Choose 'That'","'Ew' hilbijêre","Välj 'Det där'"),
+visual:"👉",
+options:[
+t("This","Ev","Det här"),
+t("He","Ew","Han"),
+t("That","Ew","Det där")
+],
+answer:2
+},
+
+{
+q:t("This or that?","Ev an ew?","Det här eller det där?"),
+visual:"👇",
+options:[
+t("This","Ev","Det här"),
+t("That","Ew","Det där"),
+t("She","Ew","Hon")
+],
+answer:0
 }
 
 ];
@@ -169,6 +202,7 @@ function load(){
 
     let q = questions[current];
 
+    document.getElementById("visual").innerText = q.visual;
     document.getElementById("question").innerText = q.q;
 
     let html = "";
@@ -269,6 +303,9 @@ function finish(){
     unlockKey,
     JSON.stringify(unlocked)
     );
+
+    localStorage.setItem("skill_2", "4");
+    localStorage.setItem("skill_3", "1");
 
     document.getElementById("bar").style.width = "100%";
 

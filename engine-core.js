@@ -11,6 +11,25 @@ const Engine = {
     return localStorage.getItem("course") || "en-ku";
   },
 
+  setCourse(course){
+    const allowed = ["en-ku", "en-sv", "ku-en", "sv-en"];
+    const next = allowed.includes(course) ? course : "en-ku";
+    localStorage.setItem("course", next);
+    this.ensureFirstSkill();
+    return next;
+  },
+
+  getCourseLabel(){
+    const labels = {
+      "en-ku": "English to Kurdish",
+      "en-sv": "English to Swedish",
+      "ku-en": "Kurdish to English",
+      "sv-en": "Swedish to English"
+    };
+
+    return labels[this.getCourse()] || labels["en-ku"];
+  },
+
   getXP(){
     const c = this.getCourse();
     return parseInt(localStorage.getItem(c + "_xp") || "0", 10) || 0;
@@ -19,9 +38,22 @@ const Engine = {
   addXP(v){
     const c = this.getCourse();
     const key = c + "_xp";
+    const amount = Number(v) || 0;
 
-    const xp = this.getXP() + (Number(v) || 0);
+    const xp = this.getXP() + amount;
     localStorage.setItem(key, String(xp));
+
+    const dailyXP = parseInt(localStorage.getItem("dailyXP") || "0", 10) || 0;
+    localStorage.setItem("dailyXP", String(dailyXP + amount));
+
+    try {
+      const quest = JSON.parse(localStorage.getItem("dailyQuest") || "null");
+      if (quest && quest.day === new Date().toDateString()) {
+        quest.progress = (Number(quest.progress) || 0) + amount;
+        localStorage.setItem("dailyQuest", JSON.stringify(quest));
+      }
+    } catch {}
+
     return xp;
   },
 
@@ -68,13 +100,42 @@ const Engine = {
     const index = Number(level) || 0;
     unlocked[index] = true;
     localStorage.setItem(key, JSON.stringify(unlocked));
-    localStorage.setItem("skill_" + index, "1");
+
+    if (index > 0) {
+      localStorage.setItem("skill_" + (index - 1), "4");
+    }
+
+    const currentSkillLevel =
+      parseInt(localStorage.getItem("skill_" + index) || "0", 10) || 0;
+
+    if (index < 7 && currentSkillLevel < 1) {
+      localStorage.setItem("skill_" + index, "1");
+    }
 
     return unlocked;
   },
 
+  completeSkill(skillIndex, xpReward = 10){
+    const index = Math.max(0, Math.min(6, Number(skillIndex) || 0));
+
+    this.addXP(xpReward);
+    this.updateStreak();
+    this.resetHearts();
+
+    localStorage.setItem("skill_" + index, "4");
+
+    if (index < 6) {
+      this.unlockLevel(index + 1);
+    }
+
+    return this.getXP();
+  },
+
   ensureFirstSkill(){
-    localStorage.setItem("skill_0", "1");
+    const current = parseInt(localStorage.getItem("skill_0") || "0", 10) || 0;
+    if (current < 1) {
+      localStorage.setItem("skill_0", "1");
+    }
   },
 
   applyMapClickFix(){

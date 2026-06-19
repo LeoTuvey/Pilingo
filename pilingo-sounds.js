@@ -80,18 +80,28 @@ const PilingoAudio = (() => {
     }, 420);
   }
 
-  function getYoungFemaleVoice(){
+  function getYoungEnglishFemaleVoice(){
     if(!window.speechSynthesis) return null;
 
     const voices = window.speechSynthesis.getVoices();
+    const englishVoices = voices.filter((voice) => {
+      const lang = (voice.lang || "").toLowerCase();
+      const name = (voice.name || "").toLowerCase();
+
+      if(!lang.startsWith("en")) return false;
+      if(lang.startsWith("sv")) return false;
+      if(name.includes("swedish") || name.includes("svenska")) return false;
+      return true;
+    });
+
     const preferredNames = [
-      "nicky",
       "ava",
       "samantha",
       "allison",
+      "nicky",
       "victoria",
-      "zira",
       "serena",
+      "zira",
       "tessa",
       "moira",
       "karen",
@@ -102,19 +112,27 @@ const PilingoAudio = (() => {
       "female"
     ];
 
-    return voices.find((voice) => {
-      const name = voice.name.toLowerCase();
+    const preferredEnglish = englishVoices.find((voice) => {
+      const name = (voice.name || "").toLowerCase();
       return preferredNames.some((preferred) => name.includes(preferred));
-    }) || voices.find((voice) => voice.lang && voice.lang.startsWith("en")) || voices[0] || null;
+    });
+
+    return preferredEnglish ||
+      englishVoices.find((voice) => (voice.lang || "").toLowerCase() === "en-us") ||
+      englishVoices.find((voice) => (voice.lang || "").toLowerCase().startsWith("en-gb")) ||
+      englishVoices.find((voice) => (voice.lang || "").toLowerCase().startsWith("en-au")) ||
+      englishVoices.find((voice) => (voice.lang || "").toLowerCase().startsWith("en-ca")) ||
+      englishVoices[0] ||
+      null;
   }
 
   function speak(text){
     if(!window.speechSynthesis || !text) return;
 
     const utterance = new SpeechSynthesisUtterance(text);
-    const voice = getYoungFemaleVoice();
-    utterance.rate = 0.86;
-    utterance.pitch = 1.35;
+    const voice = getYoungEnglishFemaleVoice();
+    utterance.rate = 0.94;
+    utterance.pitch = 1.12;
     utterance.volume = 1;
     utterance.lang = voice?.lang || "en-US";
     if(voice) utterance.voice = voice;
@@ -124,7 +142,7 @@ const PilingoAudio = (() => {
   }
 
   if(window.speechSynthesis) {
-    window.speechSynthesis.onvoiceschanged = getYoungFemaleVoice;
+    window.speechSynthesis.onvoiceschanged = getYoungEnglishFemaleVoice;
   }
 
   return {
@@ -132,7 +150,7 @@ const PilingoAudio = (() => {
     playWrong,
     playLessonComplete,
     speak,
-    getYoungFemaleVoice
+    getYoungEnglishFemaleVoice
   };
 })();
 

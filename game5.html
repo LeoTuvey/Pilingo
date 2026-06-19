@@ -184,6 +184,17 @@ if(hearts<=0) gameOver();
 }
 }
 
+function showLessonComplete(){
+  const card = document.querySelector(".card");
+  if(!card) return;
+  card.innerHTML = `
+<h1>🐯</h1>
+<h2>Great job!</h2>
+<p>You finished this lesson.</p>
+<p>Tu pir baş bûyî!</p>
+`;
+}
+
 function gameOver(){
 document.body.innerHTML=`
 <div class="card">
@@ -195,6 +206,7 @@ document.body.innerHTML=`
 
 function finish(){
 PilingoAudio.playLessonComplete();
+  showLessonComplete();
 
 if(typeof Engine.completeSkill==="function"){
 Engine.completeSkill(4,10);

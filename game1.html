@@ -778,6 +778,7 @@ function completeStep(){
 
 function finish(){
     PilingoAudio.playLessonComplete();
+  showLessonComplete();
 
     if (typeof Engine.completeSkill === "function") {
         Engine.completeSkill(0, 10);
@@ -792,6 +793,17 @@ function finish(){
     setTimeout(() => {
         window.location.href = "engine.html";
     }, 2200);
+}
+
+function showLessonComplete(){
+  const card = document.querySelector(".card");
+  if(!card) return;
+  card.innerHTML = `
+<h1>🐯</h1>
+<h2>Great job!</h2>
+<p>You finished this lesson.</p>
+<p>Tu pir baş bûyî!</p>
+`;
 }
 
 function gameOver(){

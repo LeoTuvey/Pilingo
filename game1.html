@@ -245,9 +245,9 @@ const gameParts = [
                 imgOpt("Tea", "tea"),
                 imgOpt("Milk", "milk")
             ], "Milk"),
-            choiceStep("Translate this sentence", "Silav", ["Hello", "Or", "bye"], "Hello"),
-            buildStep("Translate this sentence", "qehwe, ji kerema xwe!", ["Coffee", "or", "welcome", "please", "!"], ["Coffee", "please", "!"]),
-            buildStep("Translate this sentence", "Şîr û Qehwe", ["And", "coffee", "or", "milk", "welcome"], ["milk", "And", "coffee"]),
+            choiceStep("Translate this sentence", "Silav", ["Hello", "Or", "Bye"], "Hello"),
+            buildStep("Translate this sentence", "qehwe, ji kerema xwe!", ["coffee", "or", "welcome", "please", "!"], ["coffee", "please", "!"]),
+            buildStep("Translate this sentence", "Şîr û Qehwe", ["and", "coffee", "or", "milk", "welcome"], ["milk", "and", "coffee"]),
             matchStep([
                 ["Milk", "Şîr"],
                 ["Coffee", "Qehwe"],
@@ -293,7 +293,7 @@ const gameParts = [
                 imgOpt("Tea", "tea"),
                 imgOpt("Bread", "bread")
             ], "Tea"),
-            buildStep("Translate this sentence", "Bi xêr hatî!", ["Coffee", "please", "Welcome"], ["Welcome"]),
+            buildStep("Translate this sentence", "Bi xêr hatî!", ["coffee", "please", "welcome"], ["welcome"]),
             matchStep([
                 ["And", "û"],
                 ["Coffee", "Qehwe"],
@@ -301,10 +301,10 @@ const gameParts = [
                 ["Water", "Av"],
                 ["Welcome", "Bi xêr hatî!"]
             ]),
-            buildStep("Translate this sentence", "Qehwe?", ["?", "Welcome", "coffee", "Milk", "Tea"], ["coffee", "?"]),
+            buildStep("Translate this sentence", "Qehwe?", ["?", "welcome", "coffee", "milk", "tea"], ["coffee", "?"]),
             choiceStep("Select the correct translation", "Bi xêr hatî!", ["Coffee", "Milk", "Hi", "Welcome"], "Welcome"),
             hearStep("Bread", ["Milk", "Welcome", "Milk", "Bread"], "Bread"),
-            choiceStep("Select the correct translation", "Çay", ["Coffee", "Watter", "Tea", "Welcome"], "Tea"),
+            choiceStep("Select the correct translation", "Çay", ["Coffee", "Water", "Tea", "Welcome"], "Tea"),
             hearStep("Tea", ["Welcome", "Tea", "Or", "And"], "Tea"),
             matchStep([
                 ["And", "û"],
@@ -316,12 +316,12 @@ const gameParts = [
             buildStep("Translate this sentence", "Nan û qehwe, ji kerema xwe!", ["and", "please!", "bread", "welcome", "coffee"], ["bread", "and", "coffee", "please!"]),
             imageStep("Şîr", [
                 imgOpt("Bread", "bread"),
-                imgOpt("juice", "juice"),
+                imgOpt("Juice", "juice"),
                 imgOpt("Milk", "milk"),
                 imgOpt("Tea", "tea")
             ], "Milk"),
             choiceStep("Translate this sentence", "Bi xatirê te!", ["Water", "Hi", "Bye"], "Bye"),
-            buildStep("Translate this sentence", "Erê an na?", ["Coffee", "yes", "tea", "no?", "Or"], ["yes", "Or", "no?"]),
+            buildStep("Translate this sentence", "Erê an na?", ["coffee", "yes", "tea", "no?", "or"], ["yes", "or", "no?"]),
             matchStep([
                 ["Milk", "Şîr"],
                 ["Water", "Av"],
@@ -329,7 +329,7 @@ const gameParts = [
                 ["Coffee", "Qehwe"],
                 ["Tea", "Çay"]
             ]),
-            hearBuildStep("Coffee, please!", ["Tea", "or", "water", "please!", "Coffee"], ["Coffee", "please!"]),
+            hearBuildStep("Coffee, please!", ["tea", "or", "water", "please!", "coffee"], ["coffee", "please!"]),
             buildStep("Translate this sentence", "Qehwe an çay?", ["Welcome", "tea", "please", "coffee", "or", "?"], ["coffee", "or", "tea", "?"]),
             matchStep([
                 ["Bye", "Bi xatirê te!"],
@@ -339,18 +339,18 @@ const gameParts = [
                 ["Water", "av"],
                 ["Bread", "nan"]
             ]),
-            buildStep("Translate this sentence", "nan û qehwe", ["Coffee", "please", "Bread", "and"], ["Bread", "and", "Coffee"]),
-            buildStep("Translate this sentence", "Nan û qehwe, ji kerema xwe!", ["Bread", "welcome", "please!", "Coffee", "and"], ["Bread", "and", "Coffee", "please!"]),
+            buildStep("Translate this sentence", "nan û qehwe", ["coffee", "please", "bread", "and"], ["bread", "and", "coffee"]),
+            buildStep("Translate this sentence", "Nan û qehwe, ji kerema xwe!", ["bread", "welcome", "please!", "coffee", "and"], ["bread", "and", "coffee", "please!"]),
             imageStep("Çay", [
-                imgOpt("milk", "milk"),
-                imgOpt("coffee", "coffee"),
+                imgOpt("Milk", "milk"),
+                imgOpt("Coffee", "coffee"),
                 imgOpt("Tea", "tea"),
                 imgOpt("Bread", "bread")
             ], "Tea"),
-            choiceStep("Translate this sentence", "Erê!", ["Yes", "Bye", "coffee"], "Yes"),
-            choiceStep("Translate this sentence", "Na!", ["now", "coffee", "no"], "no"),
-            choiceStep("Translate this sentence", "Bi xatirê te!", ["Bye", "milk", "tea"], "Bye"),
-            buildStep("Translate this sentence", "Erê yan na?", ["Or", "Yes", "bread", "Bye", "no?"], ["Yes", "Or", "no?"]),
+            choiceStep("Translate this sentence", "Erê!", ["Yes", "Bye", "Coffee"], "Yes"),
+            choiceStep("Translate this sentence", "Na!", ["Now", "Coffee", "No"], "No"),
+            choiceStep("Translate this sentence", "Bi xatirê te!", ["Bye", "Milk", "Tea"], "Bye"),
+            buildStep("Translate this sentence", "Erê yan na?", ["or", "yes", "bread", "bye", "no?"], ["yes", "or", "no?"]),
             matchStep([
                 ["Tea", "çay"],
                 ["Milk", "şîr"],
@@ -358,9 +358,9 @@ const gameParts = [
                 ["Water", "av"],
                 ["Welcome", "bi xêr hatî"]
             ]),
-            choiceStep("Select the correct translation", "qehwe", ["yes", "och", "ja", "coffee"], "coffee"),
+            choiceStep("Select the correct translation", "qehwe", ["Yes", "Or", "No", "Coffee"], "Coffee"),
             hearStep("coffee", ["nan", "av", "qehwe"], "qehwe"),
-            choiceStep("Select the correct translation", "na", ["no", "hi", "yes"], "no"),
+            choiceStep("Select the correct translation", "na", ["No", "Hello", "Yes"], "No"),
             matchStep([
                 ["Milk", "şîr"],
                 ["Yes", "erê"],
@@ -374,16 +374,16 @@ const gameParts = [
             buildStep("Translate this sentence", "Yes or no?", ["kûçik", "an", "na", "pisîk", "Erê"], ["Erê", "an", "na"]),
             buildStep("Translate this sentence", "Milk or water?", ["An", "av", "pisîk", "Na", "Şîr"], ["Şîr", "An", "av"]),
             buildStep("Translate this sentence", "Water or coffee?", ["Av", "çay", "an", "qehwe", "kûçik"], ["Av", "an", "qehwe"]),
-            choiceStep("Select the correct translation", "Şîr", ["Hello", "milk", "and"], "milk"),
-            choiceStep("Select the correct translation", "Av", ["Tea", "Milk", "Water", "coffee"], "Water"),
+            choiceStep("Select the correct translation", "Şîr", ["Hello", "Milk", "And"], "Milk"),
+            choiceStep("Select the correct translation", "Av", ["Tea", "Milk", "Water", "Coffee"], "Water"),
             buildStep("Translate this sentence", "Çay an qehwe?", ["tea", "or", "coffee", "milk", "water"], ["tea", "or", "coffee"]),
             hearBuildStep("Tea and coffee", ["Û", "Nan", "Av", "Çay", "qehwe"], ["Çay", "Û", "qehwe"]),
-            buildStep("Translate this sentence", "Qehwe û av, ji kerema xwe!", ["Water", "and", "tea", "please", "coffee", "no"], ["coffee", "and", "Water", "please"]),
+            buildStep("Translate this sentence", "Qehwe û av, ji kerema xwe!", ["water", "and", "tea", "please", "coffee", "no"], ["coffee", "and", "water", "please"]),
             hearStep("Bread", ["Av", "kûçik", "Nan", "pisîk"], "Nan"),
-            buildStep("Translate this sentence", "Şîr û qehwe?", ["Milk", "or", "coffee", "And", "bread"], ["Milk", "And", "coffee"]),
+            buildStep("Translate this sentence", "Şîr û qehwe?", ["milk", "or", "coffee", "and", "bread"], ["milk", "and", "coffee"]),
             choiceStep("Select the correct translation", "Silav", ["Welcome", "Hello", "Bye"], "Hello"),
             hearStep("Or", ["û", "an", "av"], "an", undefined, ""),
-            buildStep("Complete the sentence", "Şîr û qehwe?", ["Tea", "Milk", "Or", "and", "coffee"], ["Milk", "and", "coffee"]),
+            buildStep("Complete the sentence", "Şîr û qehwe?", ["tea", "milk", "or", "and", "coffee"], ["milk", "and", "coffee"]),
             hearStep("Tea", ["Av", "kûçik", "Nan", "Pisîk", "çay"], "çay")
         ]
     }

@@ -599,6 +599,8 @@ function renderMatchStep(step){
         kurmanjiCards.push({ text:pair[1], key:index, id:"ku-" + index });
     });
 
+    mixEnglishCards(englishCards);
+
     document.getElementById("activity").innerHTML = `
         <div class="match-grid">
             <div class="match-column">
@@ -619,6 +621,13 @@ function renderMatchStep(step){
             </div>
         </div>
     `;
+}
+
+function mixEnglishCards(cards){
+    if(cards.length < 2) return;
+
+    const shift = ((partIndex + stepIndex) % (cards.length - 1)) + 1;
+    cards.push(...cards.splice(0, shift));
 }
 
 function renderNextStep(step){

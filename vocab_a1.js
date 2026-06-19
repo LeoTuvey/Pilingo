@@ -1,5 +1,5 @@
 // =====================================
-// 🐆 PILINGO A1 FULL DATABASE
+// 🐯 PILINGO A1 FULL DATABASE
 // =====================================
 
 const VOCAB_A1 = {

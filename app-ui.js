@@ -13,7 +13,7 @@ getXP(){
 },
 
 /* =========================
-   🐆 PILINGO MOOD SYSTEM
+   🐯 PILINGO MOOD SYSTEM
 ========================= */
 getMood(){
 
@@ -26,7 +26,7 @@ getMood(){
 },
 
 /* =========================
-   🐆 PILINGO UPDATE (SAFE)
+   🐯 PILINGO UPDATE (SAFE)
 ========================= */
 updateOwl(){
 
@@ -38,10 +38,10 @@ updateOwl(){
 
   owl.classList.remove("owl-new","owl-learning","owl-confident","owl-master");
 
-  if(mood === "new") owl.innerText = "🐆";
-  if(mood === "learning") owl.innerText = "🐆✨";
-  if(mood === "confident") owl.innerText = "🐆🔥";
-  if(mood === "master") owl.innerText = "🐆🏆";
+  if(mood === "new") owl.innerText = "🐯";
+  if(mood === "learning") owl.innerText = "🐯✨";
+  if(mood === "confident") owl.innerText = "🐯🔥";
+  if(mood === "master") owl.innerText = "🐯🏆";
 },
 
 /* =========================

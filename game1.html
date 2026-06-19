@@ -382,7 +382,7 @@ const gameParts = [
             hearStep("Bread", ["Av", "kûçik", "Nan", "pisîk"], "Nan"),
             buildStep("Translate this sentence", "Şîr û qehwe?", ["Milk", "or", "coffee", "And", "bread"], ["Milk", "And", "coffee"]),
             choiceStep("Select the correct translation", "Silav", ["Welcome", "Hello", "Bye"], "Hello"),
-            hearStep("an", ["Û", "an", "na"], "an"),
+            hearStep("Or", ["û", "an", "av"], "an", undefined, ""),
             buildStep("Complete the sentence", "Şîr û qehwe?", ["Tea", "Milk", "Or", "and", "coffee"], ["Milk", "and", "coffee"]),
             hearStep("Tea", ["Av", "kûçik", "Nan", "Pisîk", "çay"], "çay")
         ]
@@ -418,11 +418,11 @@ function choiceStep(instruction, prompt, options, answer){
     };
 }
 
-function hearStep(spoken, options, answer, instruction){
+function hearStep(spoken, options, answer, instruction, prompt){
     return {
         type:"hear",
         instruction:instruction || "Tap what you hear | Ya ku dibihîzî bitikîne!",
-        prompt:"🔊",
+        prompt:prompt === undefined ? "🔊" : prompt,
         spoken:spoken,
         options:options,
         answer:answer

@@ -2,6 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#58cc02">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Owl-Lingo">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="owl-icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="owl-icon-192.png">
 <title>Lesson 5: Numbers</title>
 <style>
 body{
@@ -77,15 +85,15 @@ font-weight:bold;
 </div>
 
 <script src="engine-core.js"></script>
+<script src="owl-sounds.js"></script>
+<script src="pwa.js"></script>
 <script>
 
 let course = Engine.getCourse();
 let hearts = Engine.getHearts();
 
-function t(en,ku,sv){
-if(course==="en-ku") return ku;
-if(course==="en-sv") return sv;
-return en;
+function t(en,ku){
+return ku;
 }
 
 let questions=[
@@ -157,6 +165,7 @@ document.getElementById("feedback").innerText="";
 
 function check(i){
 if(i===questions[current].answer){
+OwlAudio.playCorrect();
 document.getElementById("feedback").innerText="✅ Correct";
 current++;
 setTimeout(()=>{
@@ -167,6 +176,7 @@ finish();
 }
 },650);
 }else{
+OwlAudio.playWrong();
 hearts=Engine.loseHeart();
 renderHearts();
 document.getElementById("feedback").innerText="❌ Try again";
@@ -184,6 +194,8 @@ document.body.innerHTML=`
 }
 
 function finish(){
+OwlAudio.playLessonComplete();
+
 if(typeof Engine.completeSkill==="function"){
 Engine.completeSkill(4,10);
 }else{
@@ -197,7 +209,7 @@ localStorage.setItem("skill_5","1");
 Engine.resetHearts();
 }
 document.getElementById("bar").style.width="100%";
-setTimeout(()=>window.location.href="engine.html",900);
+setTimeout(()=>window.location.href="engine.html",2200);
 }
 
 load();

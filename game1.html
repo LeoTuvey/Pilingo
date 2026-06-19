@@ -3,6 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#58cc02">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Owl-Lingo">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="owl-icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="owl-icon-192.png">
 <title>Kurmanji to English: Game One</title>
 
 <style>
@@ -208,6 +215,8 @@ button.selected{
 </div>
 
 <script src="engine-core.js"></script>
+<script src="owl-sounds.js"></script>
+<script src="pwa.js"></script>
 
 <script>
 let hearts = Engine.getHearts();
@@ -240,9 +249,9 @@ const gameParts = [
             buildStep("Translate this sentence", "qehwe, ji kerema xwe!", ["Coffee", "or", "welcome", "please", "!"], ["Coffee", "please", "!"]),
             buildStep("Translate this sentence", "Şîr û Qehwe", ["And", "coffee", "or", "milk", "welcome"], ["milk", "And", "coffee"]),
             matchStep([
+                ["Milk", "Şîr"],
                 ["Coffee", "Qehwe"],
                 ["Hello", "Silav"],
-                ["Milk", "Şîr"],
                 ["And", "û"]
             ]),
             hearStep("Milk", ["Milk", "Silav", "Qehwe", "Şîr"], "Milk", "Tap what you hear | Li ser tiştê ku dibihîze bitikîne!"),
@@ -323,12 +332,12 @@ const gameParts = [
             hearBuildStep("Coffee, please!", ["Tea", "or", "water", "please!", "Coffee"], ["Coffee", "please!"]),
             buildStep("Translate this sentence", "Qehwe an çay?", ["Welcome", "tea", "please", "coffee", "or", "?"], ["coffee", "or", "tea", "?"]),
             matchStep([
-                ["Bread", "Bi xatirê te!"],
-                ["And", "şîr"],
-                ["Welcome", "û"],
-                ["Milk", "av"],
-                ["Water", "nan"],
-                ["Bye", "bi xêr hatî"]
+                ["Bye", "Bi xatirê te!"],
+                ["And", "û"],
+                ["Welcome", "Bi xêr hatî!"],
+                ["Milk", "şîr"],
+                ["Water", "av"],
+                ["Bread", "nan"]
             ]),
             buildStep("Translate this sentence", "nan û qehwe", ["Coffee", "please", "Bread", "and"], ["Bread", "and", "Coffee"]),
             buildStep("Translate this sentence", "Nan û qehwe, ji kerema xwe!", ["Bread", "welcome", "please!", "Coffee", "and"], ["Bread", "and", "Coffee", "please!"]),
@@ -343,24 +352,24 @@ const gameParts = [
             choiceStep("Translate this sentence", "Bi xatirê te!", ["Bye", "milk", "tea"], "Bye"),
             buildStep("Translate this sentence", "Erê yan na?", ["Or", "Yes", "bread", "Bye", "no?"], ["Yes", "Or", "no?"]),
             matchStep([
-                ["Tea", "bi xêr hatî"],
-                ["Milk", "na"],
-                ["No", "şîr"],
-                ["Water", "çay"],
-                ["Welcome", "av"]
+                ["Tea", "çay"],
+                ["Milk", "şîr"],
+                ["No", "na"],
+                ["Water", "av"],
+                ["Welcome", "bi xêr hatî"]
             ]),
             choiceStep("Select the correct translation", "qehwe", ["yes", "och", "ja", "coffee"], "coffee"),
             hearStep("coffee", ["nan", "av", "qehwe"], "qehwe"),
             choiceStep("Select the correct translation", "na", ["no", "hi", "yes"], "no"),
             matchStep([
-                ["Milk", "an"],
-                ["Yes", "û"],
-                ["Or", "Na"],
-                ["And", "Qehwe"],
-                ["No", "Çay"],
-                ["Coffee", "erê"],
-                ["Tea", "Nan"],
-                ["Bread", "şîr"]
+                ["Milk", "şîr"],
+                ["Yes", "erê"],
+                ["Or", "an"],
+                ["And", "û"],
+                ["No", "Na"],
+                ["Coffee", "Qehwe"],
+                ["Tea", "Çay"],
+                ["Bread", "Nan"]
             ]),
             buildStep("Translate this sentence", "Yes or no?", ["kûçik", "an", "na", "pisîk", "Erê"], ["Erê", "an", "na"]),
             buildStep("Translate this sentence", "Milk or water?", ["An", "av", "pisîk", "Na", "Şîr"], ["Şîr", "An", "av"]),
@@ -471,48 +480,16 @@ function renderHearts(){
 }
 
 function playSound(type){
-    let audio = new Audio();
-    audio.src = type === "correct"
-        ? "https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"
-        : "https://actions.google.com/sounds/v1/cartoon/boing.ogg";
-    audio.play().catch(()=>{});
+    if(type === "correct"){
+        OwlAudio.playCorrect();
+        return;
+    }
+
+    OwlAudio.playWrong();
 }
 
 function speak(text){
-    if(!window.speechSynthesis || !text) return;
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 0.85;
-    utterance.lang = "ku";
-    utterance.voice = getFemaleVoice();
-    window.speechSynthesis.speak(utterance);
-}
-
-function getFemaleVoice(){
-    const voices = window.speechSynthesis.getVoices();
-    const femaleNames = [
-        "female",
-        "samantha",
-        "victoria",
-        "karen",
-        "moira",
-        "tessa",
-        "serena",
-        "zira",
-        "susan",
-        "anna",
-        "alice",
-        "monica"
-    ];
-
-    return voices.find((voice) => {
-        const name = voice.name.toLowerCase();
-        return femaleNames.some((femaleName) => name.includes(femaleName));
-    }) || voices.find((voice) => voice.lang && voice.lang.startsWith("en")) || voices[0] || null;
-}
-
-if(window.speechSynthesis) {
-    window.speechSynthesis.onvoiceschanged = getFemaleVoice;
+    OwlAudio.speak(text);
 }
 
 function escapeHtml(value){
@@ -622,9 +599,6 @@ function renderMatchStep(step){
         kurmanjiCards.push({ text:pair[1], key:index, id:"ku-" + index });
     });
 
-    mixMatchCards(kurmanjiCards, 7);
-    mixMatchCards(englishCards, 19);
-
     document.getElementById("activity").innerHTML = `
         <div class="match-grid">
             <div class="match-column">
@@ -647,23 +621,8 @@ function renderMatchStep(step){
     `;
 }
 
-function mixMatchCards(cards, seed){
-    cards.sort((a, b) => {
-        const aScore = matchMixScore(a.text, seed);
-        const bScore = matchMixScore(b.text, seed);
-
-        if(aScore === bScore) return a.text.localeCompare(b.text);
-        return aScore - bScore;
-    });
-}
-
-function matchMixScore(text, seed){
-    return Array.from(String(text)).reduce((score, char, index) => {
-        return score + (char.charCodeAt(0) * (index + seed));
-    }, seed * 97) % 997;
-}
-
 function renderNextStep(step){
+    OwlAudio.playLessonComplete();
     document.getElementById("activity").innerHTML =
         `<button onclick="completeStep()">${escapeHtml(step.button || "Next")}</button>`;
 }
@@ -809,6 +768,8 @@ function completeStep(){
 }
 
 function finish(){
+    OwlAudio.playLessonComplete();
+
     if (typeof Engine.completeSkill === "function") {
         Engine.completeSkill(0, 10);
     } else {
@@ -821,7 +782,7 @@ function finish(){
 
     setTimeout(() => {
         window.location.href = "engine.html";
-    }, 1000);
+    }, 2200);
 }
 
 function gameOver(){

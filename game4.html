@@ -195,6 +195,7 @@ document.body.innerHTML=`
 function finish(){
 PilingoAudio.playLessonComplete();
   showLessonComplete();
+  PilingoAudio.speak("Great job! You finished this lesson.");
 
 let c=localStorage.getItem("course")||"en-ku";
 

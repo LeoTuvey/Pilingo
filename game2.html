@@ -213,6 +213,7 @@ if(hearts<=0) gameOver();
 function finish(){
 PilingoAudio.playLessonComplete();
   showLessonComplete();
+  PilingoAudio.speak("Great job! You finished this lesson.");
 
 if (typeof Engine.completeSkill === "function") {
 Engine.completeSkill(1, 10);

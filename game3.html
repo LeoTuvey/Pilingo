@@ -293,6 +293,7 @@ function restart(){
 function finish(){
     PilingoAudio.playLessonComplete();
   showLessonComplete();
+  PilingoAudio.speak("Great job! You finished this lesson.");
 
     localStorage.setItem("hearts","5");
 

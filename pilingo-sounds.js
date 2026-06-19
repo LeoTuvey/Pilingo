@@ -95,10 +95,19 @@ const PilingoAudio = (() => {
     });
 
     const preferredNames = [
+      "child",
+      "kid",
+      "girl",
+      "junior",
+      "joelle",
+      "salli",
+      "ivy",
+      "kimberly",
+      "aria",
       "ava",
+      "nicky",
       "samantha",
       "allison",
-      "nicky",
       "victoria",
       "serena",
       "zira",
@@ -131,8 +140,8 @@ const PilingoAudio = (() => {
 
     const utterance = new SpeechSynthesisUtterance(text);
     const voice = getYoungEnglishFemaleVoice();
-    utterance.rate = 0.94;
-    utterance.pitch = 1.12;
+    utterance.rate = 0.82;
+    utterance.pitch = 1.22;
     utterance.volume = 1;
     utterance.lang = voice?.lang || "en-US";
     if(voice) utterance.voice = voice;

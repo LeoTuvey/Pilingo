@@ -3,7 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Owl-Lingo Path</title>
+<meta name="theme-color" content="#58cc02">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Pilingo">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="pilingo-icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="pilingo-icon-192.png">
+<title>Pilingo Path</title>
 
 <style>
 body{
@@ -32,13 +39,13 @@ h1{ margin-bottom:10px; }
   margin:0 auto 18px;
 }
 
-#courseSelect{
-  width:100%;
+.course-label{
   padding:12px;
   border:2px solid #58cc02;
   border-radius:10px;
   background:white;
   font-size:16px;
+  font-weight:bold;
 }
 
 .path{
@@ -113,22 +120,17 @@ h1{ margin-bottom:10px; }
 
 <body>
 
-<h1>🦉 Your Learning Path</h1>
+<h1>🐆 Your Learning Path</h1>
 
 <div id="xp">XP: 0</div>
 
 <div class="course-panel">
-  <select id="courseSelect" onchange="changeCourse(this.value)">
-    <option value="en-ku">English to Kurdish</option>
-    <option value="en-sv">English to Swedish</option>
-    <option value="ku-en">Kurdish to English</option>
-    <option value="sv-en">Swedish to English</option>
-  </select>
+  <div class="course-label">Kurmanji to English</div>
 </div>
 
 <div class="path">
   <div class="line"></div>
-  <div id="owlGuide">🦉</div>
+  <div id="owlGuide">🐆</div>
   <div id="map"></div>
 </div>
 
@@ -139,13 +141,14 @@ h1{ margin-bottom:10px; }
 <script src="app-state.js"></script>
 <script src="app-polish.js"></script>
 <script src="app-effects.js"></script>
+<script src="pwa.js"></script>
 
 <script>
 /* =========================
    DEBUG BOOT LOG
 ========================= */
 
-console.log("🦉 Owl-Lingo engine loading...");
+console.log("🐆 Pilingo engine loading...");
 
 /* =========================
    WAIT FOR DOM
@@ -170,23 +173,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("xp").innerText = "XP: " + xp;
 
-  const courseSelect = document.getElementById("courseSelect");
-
-  if(courseSelect){
-    courseSelect.value = window.Engine?.getCourse
-      ? Engine.getCourse()
-      : (localStorage.getItem("course") || "en-ku");
+  if(window.Engine?.setCourse){
+    Engine.setCourse("en-ku");
+  } else {
+    localStorage.setItem("course", "en-ku");
   }
-
-  window.changeCourse = function(course){
-    if(window.Engine?.setCourse){
-      Engine.setCourse(course);
-    } else {
-      localStorage.setItem("course", course);
-    }
-
-    window.location.reload();
-  };
 
   /* =========================
      SKILLS
@@ -254,7 +245,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="node ${state} level-${level}" onclick="openSkill(${i})">
 
           <div class="icon">
-            ${level === 4 ? "👑" : "🦉"}
+            ${level === 4 ? "👑" : "🐆"}
           </div>
 
           <div>${s.name}</div>

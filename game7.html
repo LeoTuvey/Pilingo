@@ -2,6 +2,14 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#58cc02">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Pilingo">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="pilingo-icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="pilingo-icon-192.png">
 <title>Final Test</title>
 <style>
 body{
@@ -78,6 +86,8 @@ cursor:pointer;
 </div>
 
 <script src="engine-core.js"></script>
+<script src="pilingo-sounds.js"></script>
+<script src="pwa.js"></script>
 <script>
 
 let course=window.Engine?.getCourse ? Engine.getCourse() : (localStorage.getItem("course")||"en-ku");
@@ -142,6 +152,7 @@ document.getElementById("feedback").innerText="";
 
 function check(i){
 if(i===q[current].answer){
+PilingoAudio.playCorrect();
 document.getElementById("feedback").innerText="✅ Correct";
 current++;
 setTimeout(()=>{
@@ -152,6 +163,7 @@ finish();
 }
 },650);
 }else{
+PilingoAudio.playWrong();
 hearts=window.Engine?.loseHeart ? Engine.loseHeart() : Math.max(0,hearts-1);
 localStorage.setItem("hearts",hearts);
 renderHearts();
@@ -170,6 +182,8 @@ document.body.innerHTML=`
 }
 
 function finish(){
+PilingoAudio.playLessonComplete();
+
 let xpKey=course+"_xp";
 let unlockKey=course+"_unlocked";
 
@@ -179,7 +193,7 @@ localStorage.setItem("skill_6","4");
 if(window.Engine?.resetHearts) Engine.resetHearts();
 document.getElementById("bar").style.width="100%";
 
-setTimeout(()=>window.location.href="engine.html",900);
+setTimeout(()=>window.location.href="engine.html",2200);
 }
 
 load();

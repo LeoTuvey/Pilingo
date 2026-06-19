@@ -2,6 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#58cc02">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Pilingo">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="pilingo-icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="pilingo-icon-192.png">
 <title>Lesson 2: Actions</title>
 
 <style>
@@ -69,6 +77,8 @@ button{
 </div>
 
 <script src="engine-core.js"></script>
+<script src="pilingo-sounds.js"></script>
+<script src="pwa.js"></script>
 
 <script>
 
@@ -83,17 +93,16 @@ function renderHearts(){
 }
 
 function playSound(type){
-    let a = new Audio();
-    a.src = type==="correct"
-        ? "https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"
-        : "https://actions.google.com/sounds/v1/cartoon/boing.ogg";
-    a.play().catch(()=>{});
+    if(type === "correct"){
+        PilingoAudio.playCorrect();
+        return;
+    }
+
+    PilingoAudio.playWrong();
 }
 
-function t(en,ku,sv){
-    if(course==="en-ku") return ku;
-    if(course==="en-sv") return sv;
-    return en;
+function t(en,ku){
+return ku;
 }
 
 let questions = [
@@ -202,6 +211,8 @@ if(hearts<=0) gameOver();
 }
 
 function finish(){
+PilingoAudio.playLessonComplete();
+
 if (typeof Engine.completeSkill === "function") {
 Engine.completeSkill(1, 10);
 } else {
@@ -210,7 +221,7 @@ Engine.unlockLevel(2);
 Engine.resetHearts();
 }
 
-setTimeout(()=>location.href="engine.html",1000);
+setTimeout(()=>location.href="engine.html",2200);
 }
 
 function gameOver(){

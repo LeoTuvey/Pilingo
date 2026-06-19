@@ -3,7 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Owl-Lingo</title>
+<meta name="theme-color" content="#58cc02">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Pilingo">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="pilingo-icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="pilingo-icon-192.png">
+<title>Pilingo</title>
 
 <style>
 body{
@@ -66,6 +73,15 @@ select{
   background:white;
   font-size:16px;
 }
+
+.course-label{
+  padding:12px;
+  border:2px solid #58cc02;
+  border-radius:10px;
+  background:white;
+  font-size:16px;
+  font-weight:bold;
+}
 </style>
 </head>
 
@@ -73,9 +89,9 @@ select{
 
 <div class="header">
 
-  <h1>🦉 Owl-Lingo</h1>
+  <h1>🐆 Pilingo</h1>
 
-  <div id="owlHome">🦉</div>
+  <div id="owlHome">🐆</div>
 
   <div>Learn daily. Build streaks. Stay consistent.</div>
 
@@ -92,6 +108,7 @@ select{
   </div>
 
   <button onclick="goLearn()">▶ Continue Learning</button>
+  <button id="installApp" onclick="installPilingo()" hidden>Install app</button>
 
 </div>
 
@@ -100,12 +117,7 @@ select{
 
   <h2>🌍 Course</h2>
 
-  <select id="courseSelect" onchange="changeCourse(this.value)">
-    <option value="en-ku">English to Kurdish</option>
-    <option value="en-sv">English to Swedish</option>
-    <option value="ku-en">Kurdish to English</option>
-    <option value="sv-en">Swedish to English</option>
-  </select>
+  <div class="course-label">Kurmanji to English</div>
 
 </div>
 
@@ -138,6 +150,7 @@ select{
 <script src="app-ui.js"></script>
 <script src="app-state.js"></script>
 <script src="app-polish.js"></script>
+<script src="pwa.js"></script>
 
 <script>
 
@@ -153,12 +166,10 @@ if(window.Engine && typeof Engine.getXP === "function"){
 
 document.getElementById("xp").innerText = xp;
 
-const courseSelect = document.getElementById("courseSelect");
-
-if(courseSelect){
-  courseSelect.value = window.Engine?.getCourse
-    ? Engine.getCourse()
-    : (localStorage.getItem("course") || "en-ku");
+if(window.Engine?.setCourse){
+  Engine.setCourse("en-ku");
+} else {
+  localStorage.setItem("course", "en-ku");
 }
 
 /* =========================
@@ -232,16 +243,6 @@ function goLearn(){
   } else {
     window.location.href = "engine.html";
   }
-}
-
-function changeCourse(course){
-  if(window.Engine?.setCourse){
-    Engine.setCourse(course);
-  } else {
-    localStorage.setItem("course", course);
-  }
-
-  window.location.reload();
 }
 
 </script>

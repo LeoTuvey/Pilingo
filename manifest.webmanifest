@@ -1,0 +1,31 @@
+{
+  "name": "Pilingo",
+  "short_name": "Pilingo",
+  "description": "Kurmanji to English lessons with Pilingo.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f5f9ff",
+  "theme_color": "#58cc02",
+  "icons": [
+    {
+      "src": "./pilingo-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./pilingo-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./pilingo-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

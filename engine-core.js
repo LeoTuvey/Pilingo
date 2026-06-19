@@ -8,26 +8,19 @@ const Engine = {
   },
 
   getCourse(){
-    return localStorage.getItem("course") || "en-ku";
+    localStorage.setItem("course", "en-ku");
+    return "en-ku";
   },
 
   setCourse(course){
-    const allowed = ["en-ku", "en-sv", "ku-en", "sv-en"];
-    const next = allowed.includes(course) ? course : "en-ku";
+    const next = "en-ku";
     localStorage.setItem("course", next);
     this.ensureFirstSkill();
     return next;
   },
 
   getCourseLabel(){
-    const labels = {
-      "en-ku": "English to Kurdish",
-      "en-sv": "English to Swedish",
-      "ku-en": "Kurdish to English",
-      "sv-en": "Swedish to English"
-    };
-
-    return labels[this.getCourse()] || labels["en-ku"];
+    return "Kurmanji to English";
   },
 
   getXP(){

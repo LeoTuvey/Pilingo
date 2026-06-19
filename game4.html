@@ -2,6 +2,14 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#58cc02">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Pilingo">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="pilingo-icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="pilingo-icon-192.png">
 <title>Game 4</title>
 <style>
 body{
@@ -77,21 +85,23 @@ cursor:pointer;
 </div>
 
 <script src="engine-core.js"></script>
+<script src="pilingo-sounds.js"></script>
+<script src="pwa.js"></script>
 <script>
 
 let course=window.Engine?.getCourse ? Engine.getCourse() : (localStorage.getItem("course")||"en-ku");
 let hearts=window.Engine?.getHearts ? Engine.getHearts() : parseInt(localStorage.getItem("hearts")||"5",10);
 
-function t(e,k,s){
-if(course==="en-ku") return k;
-if(course==="en-sv") return s;
-return e;
+function t(e,k){
+return k;
 }
 
 function playSound(type){
-new Audio(type==="correct"
-?"https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"
-:"https://actions.google.com/sounds/v1/cartoon/boing.ogg").play().catch(()=>{});
+if(type==="correct"){
+PilingoAudio.playCorrect();
+return;
+}
+PilingoAudio.playWrong();
 }
 
 let q=[{
@@ -172,6 +182,8 @@ document.body.innerHTML=`
 }
 
 function finish(){
+PilingoAudio.playLessonComplete();
+
 let c=localStorage.getItem("course")||"en-ku";
 
 let xp=parseInt(localStorage.getItem(c+"_xp")||"0");
@@ -185,7 +197,7 @@ localStorage.setItem("skill_4","1");
 if(window.Engine?.resetHearts) Engine.resetHearts();
 document.getElementById("bar").style.width="100%";
 
-setTimeout(()=>window.location.href="engine.html",700);
+setTimeout(()=>window.location.href="engine.html",2200);
 }
 
 load();

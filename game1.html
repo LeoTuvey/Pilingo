@@ -52,10 +52,15 @@ body{
 }
 
 #partLabel{
+    display:inline-block;
+    padding:7px 12px;
+    border-radius:999px;
+    background:#eef5ff;
     color:#52616f;
     font-size:14px;
     font-weight:bold;
     margin-bottom:8px;
+    white-space:pre-line;
 }
 
 #instruction{
@@ -183,6 +188,16 @@ button.selected{
     border-radius:50%;
     font-size:36px;
     background:#58cc02;
+}
+
+.type-answer{
+    display:block;
+    width:86%;
+    margin:14px auto;
+    padding:15px;
+    border:2px solid #cfe2ff;
+    border-radius:10px;
+    font-size:18px;
 }
 
 #feedback{
@@ -384,7 +399,52 @@ const gameParts = [
             choiceStep("Select the correct translation", "Silav", ["Welcome", "Hello", "Bye"], "Hello"),
             hearStep("Or", ["û", "an", "av"], "an", undefined, ""),
             buildStep("Complete the sentence", "Şîr û qehwe?", ["tea", "milk", "or", "and", "coffee"], ["milk", "and", "coffee"]),
-            hearStep("Tea", ["Av", "kûçik", "Nan", "Pisîk", "çay"], "çay")
+            hearStep("Tea", ["Av", "kûçik", "Nan", "Pisîk", "çay"], "çay"),
+            nextStep("Game One B complete")
+        ]
+    },
+    {
+        title:"Game One; C",
+        steps:[
+            buildStep("Translate this sentence", "Silav, Susan!", ["hello", "or", "susan", "juice"], ["hello", "susan"]),
+            hearBuildStep("Hello, Susan!", ["susan", "juice", "silav", "bi xêr hatî"], ["silav", "susan"], ""),
+            buildStep("Translate this sentence", "Şîr û av, ji kerema xwe!", ["water", "coffee", "and", "milk", "please", "or", "!"], ["milk", "and", "water", "please", "!"]),
+            buildStep("Translate this sentence", "Silav, Leo!", ["hi", "rabbit", "yes", "leo", "cat"], ["hi", "leo"]),
+            hearStep("Bye", ["Erê", "Bi xatirê te!", "Silav", "Na"], "Bi xatirê te!", undefined, ""),
+            audioMatchStep([
+                ["Hi", "Silav"],
+                ["And", "Û"],
+                ["Milk", "Şîr"],
+                ["Coffee", "Qehwe"],
+                ["Tea", "Çay"],
+                ["Water", "Av"],
+                ["Bye", "Bi xatirê te"],
+                ["Welcome", "Bi xêr hatî"],
+                ["No", "Na"],
+                ["Yes", "Erê"],
+                ["Or", "An"]
+            ]),
+            matchStep([
+                ["Coffee", "Qehwe"],
+                ["Milk", "Şîr"],
+                ["Water", "Av"],
+                ["Tea", "Çay"],
+                ["And", "Û"],
+                ["Or", "An"],
+                ["Please", "Ji kerema xwe"],
+                ["Welcome", "Bi xêr hatî"],
+                ["Hello", "Silav"],
+                ["Bye", "Bi xatirê te"],
+                ["Bread", "Nan"]
+            ], "Translate the Kurmanji words into English! | Peyvên Kurmancî wergerînin ser Îngilîzî!"),
+            hearBuildStep("Milk and tea", ["tea", "coffee", "and", "milk"], ["milk", "and", "tea"], ""),
+            buildStep("Translate this sentence", "Silav, Susan!", ["hello", "please", "welcome", "susan"], ["hello", "susan"]),
+            hearBuildStep("Hello, Susan", ["susan", "av", "silav", "na", "an"], ["silav", "susan"], ""),
+            hearStep("Welcome", ["Bi xatirê te!", "Qehwe", "Bi xêr hatî!", "Silav"], "Bi xêr hatî!", undefined, ""),
+            buildStep("Translate this sentence", "Silav, Bi xêr hatî!", ["welcome", "and", "bread", "hello"], ["hello", "welcome"]),
+            typeStep("Translate and type this sentence", "Qehwe, ji kerema xwe!", "coffee please"),
+            hearBuildStep("Bread and water", ["Û", "Av", "Nan"], ["Nan", "Û", "Av"], ""),
+            buildStep("Translate this sentence", "Nan û av, ji kerema xwe!", ["water", "bread", "please", "coffee", "and"], ["bread", "and", "water", "please"])
         ]
     }
 ];
@@ -429,11 +489,11 @@ function hearStep(spoken, options, answer, instruction, prompt){
     };
 }
 
-function hearBuildStep(spoken, options, answer){
+function hearBuildStep(spoken, options, answer, prompt){
     return {
         type:"build",
         instruction:"Tap what you hear | Ya ku dibihîzî bitikîne!",
-        prompt:"🔊",
+        prompt:prompt === undefined ? "🔊" : prompt,
         spoken:spoken,
         options:options,
         answer:answer
@@ -454,20 +514,38 @@ function buildStep(instruction, prompt, options, answer){
     };
 }
 
-function matchStep(pairs){
+function matchStep(pairs, instruction){
     return {
         type:"match",
-        instruction:"Tap the match pairs! | Li ser cotên wekhev bitikîne!",
+        instruction:instruction || "Tap the match pairs! | Li ser cotên wekhev bitikîne!",
         prompt:"",
         pairs:pairs
     };
 }
 
-function nextStep(){
+function audioMatchStep(pairs){
+    return {
+        type:"audioMatch",
+        instruction:"Tap the matching pairs with the same meaning",
+        prompt:"",
+        pairs:pairs
+    };
+}
+
+function typeStep(instruction, prompt, answer){
+    return {
+        type:"type",
+        instruction:instruction + " | vê hevokê binivîse",
+        prompt:prompt,
+        answer:answer
+    };
+}
+
+function nextStep(prompt){
     return {
         type:"next",
         instruction:"",
-        prompt:"Game One A complete",
+        prompt:prompt || "Game One A complete",
         button:"Next"
     };
 }
@@ -529,7 +607,8 @@ function load(){
 
     renderHearts();
     updateProgress();
-    document.getElementById("partLabel").innerText = "Kurmanji to English\n" + part.title;
+    document.getElementById("partLabel").innerText =
+        "Kurmanji to English\nPart " + (partIndex + 1) + " of " + gameParts.length + " • " + part.title;
     document.getElementById("instruction").innerText = step.instruction || "";
     document.getElementById("question").innerText = step.prompt || "";
     document.getElementById("image").style.display = "none";
@@ -541,6 +620,8 @@ function load(){
     if(step.type === "hear") renderHearStep(step);
     if(step.type === "build") renderBuildStep(step);
     if(step.type === "match") renderMatchStep(step);
+    if(step.type === "audioMatch") renderAudioMatchStep(step);
+    if(step.type === "type") renderTypeStep(step);
     if(step.type === "next") renderNextStep(step);
 }
 
@@ -623,11 +704,56 @@ function renderMatchStep(step){
     `;
 }
 
+function renderAudioMatchStep(step){
+    const soundCards = [];
+    const kurmanjiCards = [];
+
+    step.pairs.forEach((pair, index) => {
+        soundCards.push({ spoken:pair[0], key:index, id:"sound-" + index });
+        kurmanjiCards.push({ text:pair[1], key:index, id:"ku-audio-" + index });
+    });
+
+    mixEnglishCards(kurmanjiCards);
+
+    document.getElementById("activity").innerHTML = `
+        <div class="match-grid">
+            <div class="match-column">
+                <div class="match-heading">Hear</div>
+                ${soundCards.map((card) => `
+                    <button class="secondary" id="match-${card.id}" onclick="selectAudioMatch('${card.id}', ${card.key}, '${escapeHtml(card.spoken)}')" aria-label="Hear word">
+                        🔊
+                    </button>
+                `).join("")}
+            </div>
+            <div class="match-column">
+                <div class="match-heading">Kurmanji</div>
+                ${kurmanjiCards.map((card) => `
+                    <button class="secondary" id="match-${card.id}" onclick="selectMatch('${card.id}', ${card.key})">
+                        ${escapeHtml(card.text)}
+                    </button>
+                `).join("")}
+            </div>
+        </div>
+    `;
+}
+
+function renderTypeStep(step){
+    document.getElementById("activity").innerHTML = `
+        <input class="type-answer" id="typedAnswer" type="text" autocomplete="off" autocapitalize="none" placeholder="Type in English">
+        <button onclick="checkTyped()">Check</button>
+    `;
+}
+
 function mixEnglishCards(cards){
     if(cards.length < 2) return;
 
     const shift = ((partIndex + stepIndex) % (cards.length - 1)) + 1;
     cards.push(...cards.splice(0, shift));
+}
+
+function selectAudioMatch(buttonIndex, key, spoken){
+    speak(spoken);
+    selectMatch(buttonIndex, key);
 }
 
 function renderNextStep(step){
@@ -691,6 +817,19 @@ function checkBuild(){
     const expected = step.answer.map(word => normalize(word));
 
     if(answer.join(" ") === expected.join(" ")){
+        markCorrect();
+        return;
+    }
+
+    markWrong();
+}
+
+function checkTyped(){
+    const step = currentStep();
+    const input = document.getElementById("typedAnswer");
+    const value = input ? input.value : "";
+
+    if(normalize(value) === normalize(step.answer)){
         markCorrect();
         return;
     }

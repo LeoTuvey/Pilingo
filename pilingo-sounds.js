@@ -84,6 +84,13 @@ const PilingoAudio = (() => {
     if(!window.speechSynthesis) return null;
 
     const voices = window.speechSynthesis.getVoices();
+    const savedVoiceName = localStorage.getItem("pilingo_voice_name");
+    const savedVoice = savedVoiceName
+      ? voices.find((voice) => voice.name === savedVoiceName)
+      : null;
+
+    if(savedVoice) return savedVoice;
+
     const englishVoices = voices.filter((voice) => {
       const lang = (voice.lang || "").toLowerCase();
       const name = (voice.name || "").toLowerCase();

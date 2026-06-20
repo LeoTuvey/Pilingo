@@ -13,65 +13,95 @@
 <title>Kurmanji to English: Game One</title>
 
 <style>
+*{
+    box-sizing:border-box;
+}
+
 body{
-    font-family:Arial,sans-serif;
-    background:#f5f9ff;
+    font-family:Inter,Arial,sans-serif;
+    background:
+        radial-gradient(circle at top left, rgba(255,218,69,0.26), transparent 34%),
+        linear-gradient(180deg, #e9f7ff 0%, #f7fbf2 48%, #fff7df 100%);
     text-align:center;
     margin:0;
-    padding:20px;
+    padding:22px;
+    color:#253044;
+    min-height:100vh;
 }
 
 .card{
     background:white;
     max-width:620px;
     margin:auto;
-    padding:20px;
-    border-radius:15px;
-    box-shadow:0 3px 10px rgba(0,0,0,0.1);
+    padding:22px;
+    border:2px solid #e5edf5;
+    border-radius:8px;
+    box-shadow:0 16px 34px rgba(37,48,68,0.14);
+    position:relative;
+    overflow:hidden;
+}
+
+.card::before{
+    content:"";
+    position:absolute;
+    inset:0 0 auto;
+    height:6px;
+    background:linear-gradient(90deg, #58cc02, #1cb0f6, #ffb020);
 }
 
 #hearts{
-    font-size:28px;
-    margin-bottom:10px;
+    display:flex;
+    justify-content:center;
+    gap:3px;
+    font-size:24px;
+    margin:6px 0 12px;
 }
 
 #progress{
     width:100%;
-    height:10px;
-    background:#ddd;
-    border-radius:10px;
+    height:14px;
+    background:#e7eef7;
+    border-radius:999px;
     overflow:hidden;
-    margin-bottom:15px;
+    margin-bottom:16px;
+    box-shadow:inset 0 1px 3px rgba(37,48,68,0.12);
 }
 
 #bar{
     height:100%;
     width:0%;
-    background:#58cc02;
+    background:linear-gradient(90deg, #58cc02, #89e219);
     transition:width 0.25s ease;
 }
 
 #partLabel{
     display:inline-block;
-    padding:7px 12px;
+    padding:8px 14px;
     border-radius:999px;
-    background:#eef5ff;
-    color:#52616f;
+    background:#f0f8ff;
+    color:#31556f;
+    border:1px solid #d6ebfb;
     font-size:14px;
-    font-weight:bold;
+    font-weight:800;
     margin-bottom:8px;
     white-space:pre-line;
 }
 
 #instruction{
-    color:#52616f;
+    color:#65748b;
     font-size:16px;
     min-height:24px;
-    margin:0 0 8px;
+    margin:4px 0 8px;
+    font-weight:700;
 }
 
 #question{
-    margin:12px 0;
+    margin:14px auto 18px;
+    max-width:92%;
+    font-size:30px;
+    line-height:1.2;
+    letter-spacing:0;
+    color:#1f2937;
 }
 
 #image{
@@ -82,32 +112,68 @@ body{
     margin:12px auto;
 }
 
+#activity{
+    width:100%;
+}
+
 button{
     display:block;
     width:90%;
     margin:10px auto;
-    padding:15px;
+    padding:15px 16px;
     font-size:16px;
-    border:none;
-    border-radius:10px;
-    background:#1976d2;
-    color:white;
+    border:2px solid #d6e3ef;
+    border-radius:8px;
+    background:white;
+    color:#253044;
     cursor:pointer;
+    font-weight:800;
+    box-shadow:0 4px 0 #d6e3ef;
+    transition:transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease, border-color 0.12s ease;
 }
 
 button:hover{
-    background:#125aa0;
+    background:#f7fbff;
+    border-color:#1cb0f6;
+    transform:translateY(-1px);
+}
+
+button:active{
+    transform:translateY(2px);
+    box-shadow:0 2px 0 #d6e3ef;
+}
+
+button:disabled{
+    opacity:0.7;
+    cursor:default;
 }
 
 button.secondary{
-    background:#eef5ff;
-    color:#1976d2;
-    border:2px solid #cfe2ff;
+    background:#fff;
+    color:#253044;
+    border-color:#d6e3ef;
 }
 
 button.selected{
     background:#58cc02;
     color:white;
+    border-color:#46a302;
+    box-shadow:0 4px 0 #46a302;
+}
+
+#activity > button:first-child:last-child,
+.answer-bank + .word-bank + button,
+.type-answer + button{
+    background:#58cc02;
+    border-color:#46a302;
+    color:white;
+    box-shadow:0 4px 0 #46a302;
+}
+
+#activity > button:first-child:last-child:hover,
+.answer-bank + .word-bank + button:hover,
+.type-answer + button:hover{
+    background:#61d80a;
 }
 
 .image-options{
@@ -147,7 +213,7 @@ button.selected{
 .match-grid{
     display:grid;
     grid-template-columns:repeat(2, minmax(0, 1fr));
-    gap:14px;
+    gap:12px;
     width:92%;
     margin:14px auto;
 }
@@ -159,10 +225,11 @@ button.selected{
 }
 
 .match-heading{
-    margin:0 0 2px;
-    color:#52616f;
+    margin:0 0 4px;
+    color:#65748b;
     font-size:13px;
-    font-weight:bold;
+    font-weight:800;
+    text-transform:uppercase;
 }
 
 .match-grid button{
@@ -177,8 +244,8 @@ button.selected{
 .answer-bank{
     min-height:58px;
     padding:10px;
-    border:2px dashed #cfe2ff;
-    border-radius:12px;
+    border:2px dashed #b9d9f2;
+    border-radius:8px;
     background:#f8fbff;
 }
 
@@ -188,6 +255,9 @@ button.selected{
     border-radius:50%;
     font-size:36px;
     background:#58cc02;
+    color:white;
+    border-color:#46a302;
+    box-shadow:0 5px 0 #46a302;
 }
 
 .type-answer{
@@ -195,21 +265,24 @@ button.selected{
     width:86%;
     margin:14px auto;
     padding:15px;
-    border:2px solid #cfe2ff;
-    border-radius:10px;
+    border:2px solid #d6e3ef;
+    border-radius:8px;
     font-size:18px;
+    color:#253044;
 }
 
 #feedback{
-    min-height:25px;
+    min-height:30px;
     margin-top:10px;
     font-size:18px;
-    font-weight:bold;
+    font-weight:900;
 }
 
 @media (max-width:520px){
     body{padding:12px;}
-    .card{padding:16px;}
+    .card{padding:18px 14px;}
+    #question{font-size:25px; max-width:100%;}
+    button{width:96%;}
     .image-options{grid-template-columns:1fr;}
     .match-grid{gap:10px;}
 }
@@ -407,6 +480,14 @@ const gameParts = [
         title:"Game One; C",
         steps:[
             buildStep("Translate this sentence", "Silav, Susan!", ["hello", "or", "susan", "juice"], ["hello", "susan"]),
+            choiceStep("🎯 Match the Meaning", "Pênûs", ["pen", "a pen", "one pen", "the pen", "this pen", "that pen"], "pen"),
+            choiceStep("🎯 Match the Meaning", "Pênûsek", ["pen", "a pen", "one pen", "the pen", "this pen", "that pen"], "a pen"),
+            choiceStep("🎯 Match the Meaning", "Yek pênûs", ["pen", "a pen", "one pen", "the pen", "this pen", "that pen"], "one pen"),
+            choiceStep("🎯 Match the Meaning", "Pênûsê", ["pen", "a pen", "one pen", "the pen", "this pen", "that pen"], "the pen"),
+            choiceStep("🎯 Match the Meaning", "Ev pênûsê", ["pen", "a pen", "one pen", "the pen", "this pen", "that pen"], "this pen"),
+            choiceStep("🎯 Match the Meaning", "Ew pênûsê", ["pen", "a pen", "one pen", "the pen", "this pen", "that pen"], "that pen"),
+            choiceStep("🎯 Match the Meaning", "Ev pênûsên", ["these pens", "those pens", "the pens", "pens"], "these pens"),
+            choiceStep("🎯 Match the Meaning", "Ew pênûsên", ["these pens", "those pens", "the pens", "pens"], "those pens"),
             hearBuildStep("Hello, Susan!", ["susan", "juice", "silav", "bi xêr hatî"], ["silav", "susan"], ""),
             buildStep("Translate this sentence", "Şîr û av, ji kerema xwe!", ["water", "coffee", "and", "milk", "please", "or", "!"], ["milk", "and", "water", "please", "!"]),
             buildStep("Translate this sentence", "Silav, Leo!", ["hi", "rabbit", "yes", "leo", "cat"], ["hi", "leo"]),
@@ -468,6 +549,7 @@ function choiceStep(instruction, prompt, options, answer){
     if(instruction === "Translate this sentence") helper = " | vê hevokê wergerîne";
     if(instruction === "Select the correct translation") helper = " | Wergera rast hilbijêre!";
     if(instruction === "Select the correct word") helper = " | Peyva rast hilbijêre!";
+    if(instruction === "🎯 Match the Meaning") helper = " | Wateya rast hilbijêre!";
 
     return {
         type:"choice",

@@ -62,30 +62,36 @@ const PilingoAudio = (() => {
   }
 
   function meow(offset){
-    tone(520, offset, 0.18, { type:"sine", slideTo:760, volume:0.045, filter:2800 });
-    tone(760, offset + 0.16, 0.24, { type:"sine", slideTo:430, volume:0.04, filter:2600 });
+    tone(640, offset, 0.08, { type:"triangle", slideTo:920, volume:0.022, filter:2600 });
+    tone(560, offset + 0.04, 0.26, { type:"sine", slideTo:840, volume:0.034, filter:3000 });
+    tone(820, offset + 0.16, 0.32, { type:"sine", slideTo:430, volume:0.038, filter:2500 });
+    tone(410, offset + 0.18, 0.2, { type:"triangle", slideTo:360, volume:0.016, filter:1800 });
   }
 
   function bark(offset){
-    tone(210, offset, 0.08, { type:"square", slideTo:180, volume:0.035, filter:1200 });
-    tone(170, offset + 0.1, 0.09, { type:"square", slideTo:150, volume:0.03, filter:1100 });
-    tone(240, offset + 0.24, 0.06, { type:"triangle", slideTo:190, volume:0.022, filter:1000 });
+    tone(180, offset, 0.06, { type:"square", slideTo:150, volume:0.03, filter:1100 });
+    tone(240, offset + 0.03, 0.08, { type:"sawtooth", slideTo:180, volume:0.022, filter:1400 });
+    tone(160, offset + 0.13, 0.07, { type:"square", slideTo:130, volume:0.026, filter:1000 });
+    tone(220, offset + 0.17, 0.08, { type:"triangle", slideTo:170, volume:0.018, filter:1200 });
   }
 
   function squeak(offset){
-    tone(880, offset, 0.07, { type:"triangle", slideTo:1140, volume:0.025, filter:3200 });
-    tone(980, offset + 0.1, 0.06, { type:"triangle", slideTo:820, volume:0.022, filter:3000 });
+    tone(920, offset, 0.06, { type:"triangle", slideTo:1240, volume:0.022, filter:3400 });
+    tone(1120, offset + 0.06, 0.05, { type:"sine", slideTo:980, volume:0.016, filter:3600 });
+    tone(980, offset + 0.12, 0.07, { type:"triangle", slideTo:800, volume:0.02, filter:3000 });
   }
 
   function squawk(offset){
-    tone(640, offset, 0.09, { type:"sawtooth", slideTo:420, volume:0.03, filter:1800 });
-    tone(470, offset + 0.11, 0.08, { type:"square", slideTo:620, volume:0.026, filter:1900 });
-    tone(610, offset + 0.22, 0.07, { type:"triangle", slideTo:500, volume:0.02, filter:2000 });
+    tone(720, offset, 0.08, { type:"sawtooth", slideTo:460, volume:0.024, filter:2000 });
+    tone(540, offset + 0.08, 0.09, { type:"square", slideTo:700, volume:0.022, filter:1900 });
+    tone(660, offset + 0.16, 0.06, { type:"triangle", slideTo:560, volume:0.018, filter:2200 });
+    tone(500, offset + 0.22, 0.08, { type:"square", slideTo:650, volume:0.017, filter:1800 });
   }
 
   function quack(offset){
-    tone(330, offset, 0.11, { type:"square", slideTo:230, volume:0.035, filter:900 });
-    tone(290, offset + 0.14, 0.11, { type:"square", slideTo:210, volume:0.03, filter:900 });
+    tone(360, offset, 0.09, { type:"square", slideTo:250, volume:0.03, filter:1000 });
+    tone(300, offset + 0.08, 0.1, { type:"square", slideTo:220, volume:0.026, filter:950 });
+    tone(340, offset + 0.18, 0.07, { type:"triangle", slideTo:260, volume:0.014, filter:1200 });
   }
 
   function hoot(offset){

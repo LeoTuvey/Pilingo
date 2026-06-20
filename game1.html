@@ -952,7 +952,7 @@ function renderMatchStep(step){
         kurmanjiCards.push({ text:pair[1], key:index, id:"ku-" + index });
     });
 
-    mixEnglishCards(englishCards);
+    shuffleCards(englishCards, "match-english");
 
     document.getElementById("activity").innerHTML = `
         <div class="match-grid">
@@ -985,7 +985,8 @@ function renderAudioMatchStep(step){
         kurmanjiCards.push({ text:pair[1], key:index, id:"ku-audio-" + index });
     });
 
-    mixEnglishCards(kurmanjiCards);
+    shuffleCards(soundCards, "audio-sound");
+    shuffleCards(kurmanjiCards, "audio-kurmanji");
 
     document.getElementById("activity").innerHTML = `
         <div class="match-grid">
@@ -1016,11 +1017,22 @@ function renderTypeStep(step){
     `;
 }
 
-function mixEnglishCards(cards){
+function shuffleCards(cards, salt){
     if(cards.length < 2) return;
 
-    const shift = ((partIndex + stepIndex) % (cards.length - 1)) + 1;
-    cards.push(...cards.splice(0, shift));
+    let seed = 2166136261;
+    const text = salt + "-" + partIndex + "-" + stepIndex + "-" + cards.length;
+
+    for(let i = 0; i < text.length; i++) {
+        seed ^= text.charCodeAt(i);
+        seed = Math.imul(seed, 16777619);
+    }
+
+    for(let i = cards.length - 1; i > 0; i--) {
+        seed = Math.imul(seed ^ (seed >>> 13), 1274126177);
+        const swapIndex = Math.abs(seed) % (i + 1);
+        [cards[i], cards[swapIndex]] = [cards[swapIndex], cards[i]];
+    }
 }
 
 function selectAudioMatch(buttonIndex, key, spoken){

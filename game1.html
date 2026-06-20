@@ -74,6 +74,29 @@ body{
     transition:width 0.25s ease;
 }
 
+.lesson-top{
+    display:flex;
+    justify-content:flex-start;
+    min-height:42px;
+    margin-bottom:6px;
+}
+
+.menu-button{
+    display:none;
+    width:auto;
+    margin:0;
+    padding:9px 12px;
+    background:#fff;
+    color:#253044;
+    border-color:#d6e3ef;
+    box-shadow:0 3px 0 #d6e3ef;
+    font-size:14px;
+}
+
+.menu-button:hover{
+    background:#f7fbff;
+}
+
 #partLabel{
     display:inline-block;
     padding:8px 14px;
@@ -387,6 +410,9 @@ button.selected{
 <div class="card">
     <div id="hearts"></div>
     <div id="progress"><div id="bar"></div></div>
+    <div class="lesson-top">
+        <button id="menuButton" class="menu-button" onclick="showPartSelect()">← Parts</button>
+    </div>
     <div id="partLabel"></div>
     <p id="instruction"></p>
     <h2 id="question">Loading...</h2>
@@ -574,14 +600,6 @@ const gameParts = [
         title:"Game One; C",
         steps:[
             buildStep("Translate this sentence", "Silav, Susan!", ["hello", "or", "susan", "juice"], ["hello", "susan"]),
-            choiceStep("🎯 Match the Meaning", "Pênûs", ["pen", "a pen", "one pen", "the pen", "this pen", "that pen"], "pen"),
-            choiceStep("🎯 Match the Meaning", "Pênûsek", ["pen", "a pen", "one pen", "the pen", "this pen", "that pen"], "a pen"),
-            choiceStep("🎯 Match the Meaning", "Yek pênûs", ["pen", "a pen", "one pen", "the pen", "this pen", "that pen"], "one pen"),
-            choiceStep("🎯 Match the Meaning", "Pênûsê", ["pen", "a pen", "one pen", "the pen", "this pen", "that pen"], "the pen"),
-            choiceStep("🎯 Match the Meaning", "Ev pênûsê", ["pen", "a pen", "one pen", "the pen", "this pen", "that pen"], "this pen"),
-            choiceStep("🎯 Match the Meaning", "Ew pênûsê", ["pen", "a pen", "one pen", "the pen", "this pen", "that pen"], "that pen"),
-            choiceStep("🎯 Match the Meaning", "Ev pênûsên", ["these pens", "those pens", "the pens", "pens"], "these pens"),
-            choiceStep("🎯 Match the Meaning", "Ew pênûsên", ["these pens", "those pens", "the pens", "pens"], "those pens"),
             hearBuildStep("Hello, Susan!", ["susan", "juice", "silav", "bi xêr hatî"], ["silav", "susan"], ""),
             buildStep("Translate this sentence", "Şîr û av, ji kerema xwe!", ["water", "coffee", "and", "milk", "please", "or", "!"], ["milk", "and", "water", "please", "!"]),
             buildStep("Translate this sentence", "Silav, Leo!", ["hi", "rabbit", "yes", "leo", "cat"], ["hi", "leo"]),
@@ -619,7 +637,15 @@ const gameParts = [
             buildStep("Translate this sentence", "Silav, Bi xêr hatî!", ["welcome", "and", "bread", "hello"], ["hello", "welcome"]),
             typeStep("Translate and type this sentence", "Qehwe, ji kerema xwe!", "coffee please"),
             hearBuildStep("Bread and water", ["Û", "Av", "Nan"], ["Nan", "Û", "Av"], ""),
-            buildStep("Translate this sentence", "Nan û av, ji kerema xwe!", ["water", "bread", "please", "coffee", "and"], ["bread", "and", "water", "please"])
+            buildStep("Translate this sentence", "Nan û av, ji kerema xwe!", ["water", "bread", "please", "coffee", "and"], ["bread", "and", "water", "please"]),
+            choiceStep("🎯 Match the Meaning", "Pênûs", ["pen", "a pen", "one pen", "the pen", "this pen", "that pen"], "pen"),
+            choiceStep("🎯 Match the Meaning", "Pênûsek", ["pen", "a pen", "one pen", "the pen", "this pen", "that pen"], "a pen"),
+            choiceStep("🎯 Match the Meaning", "Yek pênûs", ["pen", "a pen", "one pen", "the pen", "this pen", "that pen"], "one pen"),
+            choiceStep("🎯 Match the Meaning", "Pênûsê", ["pen", "a pen", "one pen", "the pen", "this pen", "that pen"], "the pen"),
+            choiceStep("🎯 Match the Meaning", "Ev pênûsê", ["pen", "a pen", "one pen", "the pen", "this pen", "that pen"], "this pen"),
+            choiceStep("🎯 Match the Meaning", "Ew pênûsê", ["pen", "a pen", "one pen", "the pen", "this pen", "that pen"], "that pen"),
+            choiceStep("🎯 Match the Meaning", "Ev pênûsên", ["these pens", "those pens", "the pens", "pens"], "these pens"),
+            choiceStep("🎯 Match the Meaning", "Ew pênûsên", ["these pens", "those pens", "the pens", "pens"], "those pens")
         ]
     }
 ];
@@ -818,6 +844,7 @@ function showPartSelect(){
     selectedMatch = null;
 
     renderHearts();
+    document.getElementById("menuButton").style.display = "none";
     document.getElementById("bar").style.width = "0%";
     document.getElementById("partLabel").innerText = "Kurmanji to English";
     document.getElementById("instruction").innerText = "Choose a part to study";
@@ -851,6 +878,7 @@ function load(){
 
     renderHearts();
     updateProgress();
+    document.getElementById("menuButton").style.display = "block";
     document.getElementById("partLabel").innerText =
         "Kurmanji to English\nPart " + (partIndex + 1) + " of " + gameParts.length + " • " + part.title;
     document.getElementById("instruction").innerText = step.instruction || "";
@@ -1159,6 +1187,7 @@ function showPartComplete(completedIndex){
     const isAllDone = allPartsComplete();
 
     renderHearts();
+    document.getElementById("menuButton").style.display = "none";
     document.getElementById("bar").style.width = "100%";
     document.getElementById("partLabel").innerText = "Kurmanji to English";
     document.getElementById("instruction").innerText = "Part complete";

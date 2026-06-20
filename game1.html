@@ -983,7 +983,7 @@ function renderChoiceStep(step){
 
     document.getElementById("activity").innerHTML =
         options.map(option => `
-            <button onclick="checkChoice('${escapeHtml(option)}', this)">${escapeHtml(choiceButtonLabel(step, option))}</button>
+            <button onclick="checkChoice('${escapeHtml(option)}', this)">${escapeHtml(option)}</button>
         `).join("");
 }
 
@@ -992,11 +992,11 @@ function shouldShuffleChoiceStep(step){
         step.instruction.includes("🎯 Fill in the Missing Word");
 }
 
-function choiceButtonLabel(step, option){
+function emojiForCorrectChoice(step, option){
     const emoji = emojiForChoice(step);
-    if(!emoji || !isCorrectChoice(step, option)) return option;
+    if(!emoji || !isCorrectChoice(step, option)) return "";
 
-    return (isPluralChoice(step, option) ? emoji.plural : emoji.singular) + " " + option;
+    return isPluralChoice(step, option) ? emoji.plural : emoji.singular;
 }
 
 function emojiForChoice(step){
@@ -1157,6 +1157,16 @@ function showButtonResult(button, result){
     button.classList.add(result);
 }
 
+function revealCorrectEmoji(button, step, value){
+    if(!button || button.dataset.emojiRevealed === "true") return;
+
+    const emoji = emojiForCorrectChoice(step, value);
+    if(!emoji) return;
+
+    button.textContent = emoji + " " + button.textContent.trim();
+    button.dataset.emojiRevealed = "true";
+}
+
 function answersForStep(step){
     return Array.isArray(step.answer) ? step.answer : [step.answer];
 }
@@ -1168,6 +1178,7 @@ function isCorrectChoice(step, value){
 function checkChoice(value, button){
     const step = currentStep();
     if(isCorrectChoice(step, value)){
+        revealCorrectEmoji(button, step, value);
         showButtonResult(button, "correct");
         markCorrect();
         return;

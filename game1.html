@@ -233,6 +233,7 @@ button.wrong{
     color:white;
     box-shadow:0 8px 0 #46a302, 0 14px 24px rgba(70,163,2,0.22);
     padding:16px 18px;
+    overflow:visible;
 }
 
 .part-choice:hover{
@@ -243,6 +244,7 @@ button.wrong{
 
 .part-badge{
     display:inline-flex;
+    position:relative;
     width:88px;
     height:88px;
     align-items:center;
@@ -260,6 +262,59 @@ button.wrong{
         0 12px 18px rgba(122,83,0,0.18);
     border:3px solid rgba(255,255,255,0.8);
     text-shadow:0 2px 0 rgba(255,255,255,0.35);
+    overflow:hidden;
+}
+
+.part-badge::before{
+    content:"";
+    position:absolute;
+    inset:5px;
+    border-radius:50%;
+    background:radial-gradient(circle at 30% 25%, rgba(255,255,255,0.7), transparent 40%);
+    pointer-events:none;
+}
+
+.part-animal{
+    position:relative;
+    z-index:1;
+    display:inline-block;
+    filter:drop-shadow(0 5px 5px rgba(122,83,0,0.18));
+    transform-origin:center bottom;
+    animation:animalBob 2.8s ease-in-out infinite;
+}
+
+.part-choice:hover .part-animal{
+    animation-duration:1.4s;
+}
+
+.part-choice:nth-child(2n) .part-animal{
+    animation-name:animalWiggle;
+}
+
+.part-choice:nth-child(3n) .part-animal{
+    animation-name:animalHop;
+}
+
+@keyframes animalBob{
+    0%, 100%{ transform:translateY(0) rotate(0deg) scale(1); }
+    25%{ transform:translateY(-3px) rotate(-4deg) scale(1.03); }
+    55%{ transform:translateY(-7px) rotate(4deg) scale(1.06); }
+    78%{ transform:translateY(-2px) rotate(-2deg) scale(1.02); }
+}
+
+@keyframes animalWiggle{
+    0%, 100%{ transform:translateY(0) rotate(0deg) scale(1); }
+    20%{ transform:translateY(-2px) rotate(-6deg) scale(1.02); }
+    45%{ transform:translateY(-6px) rotate(6deg) scale(1.06); }
+    70%{ transform:translateY(-1px) rotate(-3deg) scale(1.03); }
+}
+
+@keyframes animalHop{
+    0%, 100%{ transform:translateY(0) scale(1); }
+    18%{ transform:translateY(-1px) scale(1.02); }
+    45%{ transform:translateY(-8px) scale(1.08); }
+    60%{ transform:translateY(-3px) scale(1.03); }
+    78%{ transform:translateY(0) scale(0.99); }
 }
 
 .part-copy{
@@ -1044,7 +1099,9 @@ function showPartSelect(){
         <div class="part-menu">
             ${gameParts.map((part, index) => `
                 <button class="part-choice" onclick="startPart(${index})">
-                    <span class="part-badge" aria-hidden="true">${partEmojis[index] || "🦉"}</span>
+                    <span class="part-badge" aria-hidden="true">
+                        <span class="part-animal" style="animation-delay:${(index * 0.18).toFixed(2)}s">${partEmojis[index] || "🦉"}</span>
+                    </span>
                     <span class="part-copy">
                         <span class="part-name">${escapeHtml(part.title)}</span>
                         <span class="part-detail">${escapeHtml(partDescriptions[index] || "Practice section")}</span>

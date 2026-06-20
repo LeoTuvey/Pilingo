@@ -176,6 +176,97 @@ button.selected{
     background:#61d80a;
 }
 
+.part-menu{
+    display:grid;
+    gap:12px;
+    width:94%;
+    margin:14px auto 4px;
+}
+
+.part-choice{
+    display:grid;
+    grid-template-columns:auto 1fr auto;
+    gap:12px;
+    align-items:center;
+    width:100%;
+    margin:0;
+    text-align:left;
+    background:#58cc02;
+    border-color:#46a302;
+    color:white;
+    box-shadow:0 4px 0 #46a302;
+}
+
+.part-choice:hover{
+    background:#61d80a;
+    border-color:#46a302;
+}
+
+.part-badge{
+    display:inline-flex;
+    width:44px;
+    height:44px;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    background:#fff4ca;
+    color:#7a5300;
+    font-weight:900;
+}
+
+.part-copy{
+    display:flex;
+    flex-direction:column;
+    gap:3px;
+}
+
+.part-name{
+    color:white;
+    font-size:17px;
+    font-weight:900;
+}
+
+.part-detail{
+    color:#eefbdd;
+    font-size:14px;
+    font-weight:700;
+}
+
+.part-status{
+    color:white;
+    font-size:22px;
+    font-weight:900;
+}
+
+.part-complete-actions{
+    display:grid;
+    gap:10px;
+    width:94%;
+    margin:14px auto 0;
+}
+
+.part-complete-actions button{
+    width:100%;
+}
+
+.part-complete-actions .primary-action{
+    background:#58cc02;
+    border-color:#46a302;
+    color:white;
+    box-shadow:0 4px 0 #46a302;
+}
+
+.part-complete-actions .primary-action:hover{
+    background:#61d80a;
+}
+
+.part-complete-actions .secondary-action{
+    background:#fff;
+    border-color:#d6e3ef;
+    color:#253044;
+    box-shadow:0 4px 0 #d6e3ef;
+}
+
 .image-options{
     display:grid;
     grid-template-columns:repeat(2, minmax(0, 1fr));
@@ -283,6 +374,8 @@ button.selected{
     .card{padding:18px 14px;}
     #question{font-size:25px; max-width:100%;}
     button{width:96%;}
+    .part-choice{grid-template-columns:auto 1fr; text-align:left;}
+    .part-status{grid-column:1 / -1; font-size:16px;}
     .image-options{grid-template-columns:1fr;}
     .match-grid{gap:10px;}
 }
@@ -313,6 +406,7 @@ let stepIndex = 0;
 let selectedWords = [];
 let matchedKeys = [];
 let selectedMatch = null;
+let completedParts = loadCompletedParts();
 
 const emoji = {
     coffee:"☕",
@@ -530,6 +624,12 @@ const gameParts = [
     }
 ];
 
+const partDescriptions = [
+    "Basics: hello, milk, coffee, and",
+    "Food, drinks, yes/no, and listening",
+    "Sentences, audio matches, and pen meanings"
+];
+
 function imgOpt(label, key){
     return { label:label, emoji:emoji[key] || "", value:label };
 }
@@ -665,18 +765,80 @@ function currentStep(){
 }
 
 function totalSteps(){
-    return gameParts.reduce((sum, part) => sum + part.steps.length, 0);
+    return gameParts[partIndex].steps.length;
 }
 
 function completedSteps(){
-    let done = 0;
-    for(let i = 0; i < partIndex; i++) done += gameParts[i].steps.length;
-    return done + stepIndex;
+    return stepIndex;
 }
 
 function updateProgress(){
     document.getElementById("bar").style.width =
         (completedSteps() / totalSteps()) * 100 + "%";
+}
+
+function loadCompletedParts(){
+    try {
+        const saved = JSON.parse(localStorage.getItem("pilingo_game1_completed_parts") || "[]");
+        return Array.isArray(saved) ? saved : [];
+    } catch(error) {
+        return [];
+    }
+}
+
+function saveCompletedParts(){
+    localStorage.setItem("pilingo_game1_completed_parts", JSON.stringify(completedParts));
+}
+
+function markPartComplete(index){
+    if(!completedParts.includes(index)) {
+        completedParts.push(index);
+        saveCompletedParts();
+    }
+}
+
+function nextOpenPart(){
+    return gameParts.findIndex((part, index) => !completedParts.includes(index));
+}
+
+function allPartsComplete(){
+    return completedParts.length >= gameParts.length;
+}
+
+function startPart(index){
+    partIndex = index;
+    stepIndex = 0;
+    hearts = Engine.getHearts();
+    load();
+}
+
+function showPartSelect(){
+    selectedWords = [];
+    matchedKeys = [];
+    selectedMatch = null;
+
+    renderHearts();
+    document.getElementById("bar").style.width = "0%";
+    document.getElementById("partLabel").innerText = "Kurmanji to English";
+    document.getElementById("instruction").innerText = "Choose a part to study";
+    document.getElementById("question").innerText = "Game One";
+    document.getElementById("image").style.display = "none";
+    document.getElementById("image").removeAttribute("src");
+    document.getElementById("feedback").innerText = "";
+    document.getElementById("activity").innerHTML = `
+        <div class="part-menu">
+            ${gameParts.map((part, index) => `
+                <button class="part-choice" onclick="startPart(${index})">
+                    <span class="part-badge">${index + 1}</span>
+                    <span class="part-copy">
+                        <span class="part-name">${escapeHtml(part.title)}</span>
+                        <span class="part-detail">${escapeHtml(partDescriptions[index] || "Practice section")}</span>
+                    </span>
+                    <span class="part-status">${completedParts.includes(index) ? "✓ Done" : "Start"}</span>
+                </button>
+            `).join("")}
+        </div>
+    `;
 }
 
 function load(){
@@ -986,15 +1148,33 @@ function completeStep(){
         return;
     }
 
-    partIndex++;
-    stepIndex = 0;
+    markPartComplete(partIndex);
+    showPartComplete(partIndex);
+}
 
-    if(partIndex < gameParts.length) {
-        load();
-        return;
-    }
+function showPartComplete(completedIndex){
+    PilingoAudio.playLessonComplete();
 
-    finish();
+    const openPart = nextOpenPart();
+    const isAllDone = allPartsComplete();
+
+    renderHearts();
+    document.getElementById("bar").style.width = "100%";
+    document.getElementById("partLabel").innerText = "Kurmanji to English";
+    document.getElementById("instruction").innerText = "Part complete";
+    document.getElementById("question").innerText = gameParts[completedIndex].title;
+    document.getElementById("image").style.display = "none";
+    document.getElementById("image").removeAttribute("src");
+    document.getElementById("feedback").innerText = "✅ Great job!";
+    document.getElementById("activity").innerHTML = `
+        <div class="part-complete-actions">
+            ${openPart >= 0 ? `<button class="primary-action" onclick="startPart(${openPart})">Start next part</button>` : ""}
+            <button class="secondary-action" onclick="showPartSelect()">Choose another part</button>
+            ${isAllDone ? `<button class="primary-action" onclick="finish()">Finish Game One</button>` : ""}
+        </div>
+    `;
+
+    PilingoAudio.speak("Great job! You finished this part.");
 }
 
 function finish(){
@@ -1036,7 +1216,7 @@ function gameOver(){
     </div>`;
 }
 
-load();
+showPartSelect();
 </script>
 </body>
 </html>

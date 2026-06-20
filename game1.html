@@ -936,10 +936,20 @@ function renderImageStep(step){
 }
 
 function renderChoiceStep(step){
+    const options = [...step.options];
+    if(shouldShuffleChoiceStep(step)) {
+        shuffleCards(options, "choice-" + step.instruction + "-" + step.prompt);
+    }
+
     document.getElementById("activity").innerHTML =
-        step.options.map(option => `
+        options.map(option => `
             <button onclick="checkChoice('${escapeHtml(option)}')">${escapeHtml(option)}</button>
         `).join("");
+}
+
+function shouldShuffleChoiceStep(step){
+    return step.instruction.includes("🎯 Match the Meaning") ||
+        step.instruction.includes("🎯 Fill in the Missing Word");
 }
 
 function renderHearStep(step){

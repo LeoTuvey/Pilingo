@@ -656,18 +656,19 @@ const gameParts = [
     {
         title:"Game One; D",
         steps:[
-            choiceStep("🎯 Match the Meaning", "Kitêb", ["book", "a book", "one book", "the book", "this book", "that book"], "book"),
-            choiceStep("🎯 Match the Meaning", "Kitêbek", ["book", "a book", "one book", "the book", "this book", "that book"], "a book"),
-            choiceStep("🎯 Match the Meaning", "Yek kitêb", ["book", "a book", "one book", "the book", "this book", "that book"], "one book"),
-            choiceStep("🎯 Match the Meaning", "Kitêbê", ["book", "a book", "one book", "the book", "this book", "that book"], "the book"),
-            choiceStep("🎯 Match the Meaning", "Ev kitêbê", ["book", "a book", "one book", "the book", "this book", "that book"], "this book"),
-            choiceStep("🎯 Match the Meaning", "Ew kitêbê", ["book", "a book", "one book", "the book", "this book", "that book"], "that book"),
-            choiceStep("🎯 Fill in the Missing Word", "_____ = book", ["kitêb", "kitêbek", "yek kitêb", "kitêbê"], "kitêb"),
-            choiceStep("🎯 Fill in the Missing Word", "_____ = a book", ["kitêb", "kitêbek", "yek kitêb", "kitêbê"], "kitêbek"),
-            choiceStep("🎯 Fill in the Missing Word", "_____ = one book", ["kitêb", "kitêbek", "yek kitêb", "kitêbê"], "yek kitêb"),
-            choiceStep("🎯 Fill in the Missing Word", "_____ = the book", ["kitêb", "kitêbek", "yek kitêb", "kitêbê"], "kitêbê"),
-            choiceStep("🎯 Fill in the Missing Word", "_____ = this book", ["kitêbê", "ev kitêbê", "ew kitêbê", "kitêbek"], "ev kitêbê"),
-            choiceStep("🎯 Fill in the Missing Word", "_____ = that book", ["kitêbê", "ev kitêbê", "ew kitêbê", "yek kitêb"], "ew kitêbê")
+            choiceStep("🎯 Match the Meaning", "Kitêb", ["book", "a book", "one book", "this book", "that book", "these books", "those books"], "book"),
+            choiceStep("🎯 Match the Meaning", "Kitêbek", ["book", "a book", "one book", "this book", "that book", "these books", "those books"], "a book"),
+            choiceStep("🎯 Match the Meaning", "Yek kitêb", ["book", "a book", "one book", "this book", "that book", "these books", "those books"], "one book"),
+            choiceStep("🎯 Match the Meaning", "Ev kitêbe", ["book", "a book", "one book", "this book", "that book", "these books", "those books"], "this book"),
+            choiceStep("🎯 Match the Meaning", "Ew kitêb", ["book", "a book", "one book", "this book", "that book", "these books", "those books"], "that book"),
+            choiceStep("🎯 Match the Meaning", "Ew kitêbêthe", ["this book", "that book", "these books", "those books", "books"], "those books"),
+            choiceStep("🎯 Fill in the Missing Word", "_____ = book", ["kitêb", "kitêbek", "yek kitêb", "ev kitêbe"], "kitêb"),
+            choiceStep("🎯 Fill in the Missing Word", "_____ = a book", ["kitêb", "kitêbek", "yek kitêb", "ev kitêbe"], "kitêbek"),
+            choiceStep("🎯 Fill in the Missing Word", "_____ = one book", ["kitêb", "kitêbek", "yek kitêb", "ev kitêbe"], "yek kitêb"),
+            choiceStep("🎯 Fill in the Missing Word", "_____ = this book", ["kitêb", "ev kitêbe", "ew kitêb", "kitêbek"], "ev kitêbe"),
+            choiceStep("🎯 Fill in the Missing Word", "_____ = that book", ["ev kitêbe", "ew kitêb", "kitêbek", "yek kitêb"], "ew kitêb"),
+            choiceStep("🎯 Fill in the Missing Word", "_____ = these books", ["ew kitêbêthe", "ev kitêbe", "kitêban", "yek kitêb"], "ev kitêbe"),
+            choiceStep("🎯 Fill in the Missing Word", "_____ = those books", ["ev kitêbe", "ew kitêbêthe", "kitêban", "kitêbek"], "ew kitêbêthe")
         ]
     }
 ];

@@ -223,7 +223,7 @@ button.wrong{
 .part-choice{
     display:grid;
     grid-template-columns:auto 1fr auto;
-    gap:12px;
+    gap:14px;
     align-items:center;
     width:100%;
     margin:0;
@@ -231,24 +231,28 @@ button.wrong{
     background:#58cc02;
     border-color:#46a302;
     color:white;
-    box-shadow:0 4px 0 #46a302;
+    box-shadow:0 6px 0 #46a302;
+    padding:16px 18px;
 }
 
 .part-choice:hover{
     background:#61d80a;
     border-color:#46a302;
+    transform:translateY(-2px);
 }
 
 .part-badge{
     display:inline-flex;
-    width:44px;
-    height:44px;
+    width:68px;
+    height:68px;
     align-items:center;
     justify-content:center;
-    border-radius:50%;
+    border-radius:22px;
     background:#fff4ca;
     color:#7a5300;
     font-weight:900;
+    font-size:38px;
+    box-shadow:inset 0 -4px 0 rgba(122,83,0,0.1);
 }
 
 .part-copy{
@@ -259,7 +263,7 @@ button.wrong{
 
 .part-name{
     color:white;
-    font-size:17px;
+    font-size:18px;
     font-weight:900;
 }
 
@@ -271,7 +275,7 @@ button.wrong{
 
 .part-status{
     color:white;
-    font-size:22px;
+    font-size:20px;
     font-weight:900;
 }
 
@@ -830,6 +834,8 @@ const partDescriptions = [
     "👤 Person Lesson"
 ];
 
+const partEmojis = ["🐱", "🐶", "🐰", "🦜", "🦆"];
+
 function imgOpt(label, key){
     return { label:label, emoji:emoji[key] || "", value:label };
 }
@@ -1031,7 +1037,7 @@ function showPartSelect(){
         <div class="part-menu">
             ${gameParts.map((part, index) => `
                 <button class="part-choice" onclick="startPart(${index})">
-                    <span class="part-badge">${index + 1}</span>
+                    <span class="part-badge" aria-hidden="true">${partEmojis[index] || "🦉"}</span>
                     <span class="part-copy">
                         <span class="part-name">${escapeHtml(part.title)}</span>
                         <span class="part-detail">${escapeHtml(partDescriptions[index] || "Practice section")}</span>

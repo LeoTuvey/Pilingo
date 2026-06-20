@@ -645,7 +645,15 @@ const gameParts = [
             choiceStep("🎯 Match the Meaning", "Ev pênûsê", ["pen", "a pen", "one pen", "the pen", "this pen", "that pen"], "this pen"),
             choiceStep("🎯 Match the Meaning", "Ew pênûsê", ["pen", "a pen", "one pen", "the pen", "this pen", "that pen"], "that pen"),
             choiceStep("🎯 Match the Meaning", "Ev pênûsên", ["these pens", "those pens", "the pens", "pens"], "these pens"),
-            choiceStep("🎯 Match the Meaning", "Ew pênûsên", ["these pens", "those pens", "the pens", "pens"], "those pens")
+            choiceStep("🎯 Match the Meaning", "Ew pênûsên", ["these pens", "those pens", "the pens", "pens"], "those pens"),
+            choiceStep("🎯 Fill in the Missing Word", "_____ = pen", ["pênûs", "pênûsek", "yek pênûs", "pênûsê"], "pênûs"),
+            choiceStep("🎯 Fill in the Missing Word", "_____ = a pen", ["pênûs", "pênûsek", "yek pênûs", "pênûsê"], "pênûsek"),
+            choiceStep("🎯 Fill in the Missing Word", "_____ = one pen", ["pênûs", "pênûsek", "yek pênûs", "pênûsê"], "yek pênûs"),
+            choiceStep("🎯 Fill in the Missing Word", "_____ = the pen", ["pênûs", "pênûsek", "yek pênûs", "pênûsê"], "pênûsê"),
+            choiceStep("🎯 Fill in the Missing Word", "_____ = this pen", ["pênûsê", "ev pênûsê", "ew pênûsê", "pênûsek"], "ev pênûsê"),
+            choiceStep("🎯 Fill in the Missing Word", "_____ = that pen", ["pênûsê", "ev pênûsê", "ew pênûsê", "yek pênûs"], "ew pênûsê"),
+            choiceStep("🎯 Fill in the Missing Word", "_____ = these pens", ["ew pênûsên", "ev pênûsên", "pênûsên", "yek pênûs"], "ev pênûsên"),
+            choiceStep("🎯 Fill in the Missing Word", "_____ = those pens", ["ev pênûsên", "ew pênûsên", "pênûsên", "pênûsek"], "ew pênûsên")
         ]
     }
 ];
@@ -676,6 +684,7 @@ function choiceStep(instruction, prompt, options, answer){
     if(instruction === "Select the correct translation") helper = " | Wergera rast hilbijêre!";
     if(instruction === "Select the correct word") helper = " | Peyva rast hilbijêre!";
     if(instruction === "🎯 Match the Meaning") helper = " | Wateya rast hilbijêre!";
+    if(instruction === "🎯 Fill in the Missing Word") helper = " | Peyva winda temam bike!";
 
     return {
         type:"choice",

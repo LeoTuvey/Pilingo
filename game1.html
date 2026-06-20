@@ -710,6 +710,24 @@ const gameParts = [
             choiceStep("🎯 Fill in the Missing Word", "_____ = these houses", ["ew malêthe", "ev male", "malan", "yek mal"], "ev male"),
             choiceStep("🎯 Fill in the Missing Word", "_____ = those houses", ["ev male", "ew malêthe", "malan", "malek"], "ew malêthe")
         ]
+    },
+    {
+        title:"Game One; E",
+        steps:[
+            choiceStep("🎯 Match the Meaning", "Mirov", ["person", "man", "a person", "a man", "one person", "this person", "that person"], ["person", "man"]),
+            choiceStep("🎯 Match the Meaning", "Mirovek", ["person", "man", "a person", "a man", "one person", "this person", "that person"], ["a person", "a man"]),
+            choiceStep("🎯 Match the Meaning", "Yek mirov", ["person", "man", "a person", "a man", "one person", "this person", "that person"], "one person"),
+            choiceStep("🎯 Match the Meaning", "Ev mirove", ["person", "man", "one person", "this person", "that person", "these people", "those people"], ["this person", "these people"]),
+            choiceStep("🎯 Match the Meaning", "Ew mirov", ["person", "man", "one person", "this person", "that person", "these people", "those people"], "that person"),
+            choiceStep("🎯 Match the Meaning", "Ew mirovêthe", ["this person", "that person", "these people", "those people", "people"], "those people"),
+            choiceStep("🎯 Fill in the Missing Word", "_____ = person", ["mirov", "mirovek", "yek mirov", "ev mirove"], "mirov"),
+            choiceStep("🎯 Fill in the Missing Word", "_____ = a person", ["mirov", "mirovek", "yek mirov", "ev mirove"], "mirovek"),
+            choiceStep("🎯 Fill in the Missing Word", "_____ = one person", ["mirov", "mirovek", "yek mirov", "ev mirove"], "yek mirov"),
+            choiceStep("🎯 Fill in the Missing Word", "_____ = this person", ["mirov", "ev mirove", "ew mirov", "mirovek"], "ev mirove"),
+            choiceStep("🎯 Fill in the Missing Word", "_____ = that person", ["ev mirove", "ew mirov", "mirovek", "yek mirov"], "ew mirov"),
+            choiceStep("🎯 Fill in the Missing Word", "_____ = these people", ["ew mirovêthe", "ev mirove", "mirovan", "yek mirov"], "ev mirove"),
+            choiceStep("🎯 Fill in the Missing Word", "_____ = those people", ["ev mirove", "ew mirovêthe", "mirovan", "mirovek"], "ew mirovêthe")
+        ]
     }
 ];
 
@@ -717,7 +735,8 @@ const partDescriptions = [
     "Basics: hello, milk, coffee, and",
     "Food, drinks, yes/no, and listening",
     "Sentences, audio matches, and apple meanings",
-    "Book, ball, and house meanings"
+    "Book, ball, and house meanings",
+    "Person and people meanings"
 ];
 
 function imgOpt(label, key){
@@ -1002,6 +1021,10 @@ function emojiForCorrectChoice(step, option){
 function emojiForChoice(step){
     const text = [step.prompt, ...step.options, ...answersForStep(step)].join(" ").toLowerCase();
 
+    if(text.includes("person") || text.includes("people") || text.includes("man") || text.includes("mirov")) {
+        return { singular:"👨", plural:"👨👨" };
+    }
+
     if(text.includes("apple") || text.includes("sêv")) {
         return { singular:"🍎", plural:"🍎🍎" };
     }
@@ -1019,7 +1042,7 @@ function emojiForChoice(step){
 
 function isPluralChoice(step, option){
     const text = normalize(option + " " + step.prompt);
-    return /\b(these|those|apples|books|balls)\b/.test(text);
+    return /\b(these|those|apples|books|balls|people)\b/.test(text);
 }
 
 function renderHearStep(step){

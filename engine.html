@@ -395,6 +395,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setTimeout(()=>{
 
       let url = "game" + (i + 1) + ".html";
+      if(i === 0) url += "?v=6";
 
       if(window.AppState?.go){
         AppState.go(url);

@@ -43,11 +43,16 @@ const PilingoAudio = (() => {
   }
 
   function playCorrect(){
-    [523.25, 659.25, 783.99, 1046.5].forEach((frequency, index) => {
-      tone(frequency, index * 0.07, 0.22, {
-        type:"sine",
-        volume: index === 3 ? 0.055 : 0.045,
-        filter: 4200
+    [
+      { frequency:587.33, start:0.00, duration:0.18, type:"sine", volume:0.032, filter:3600 },
+      { frequency:739.99, start:0.09, duration:0.2, type:"triangle", volume:0.028, filter:3200 },
+      { frequency:880.0, start:0.18, duration:0.24, type:"sine", volume:0.03, filter:3900 },
+      { frequency:1174.66, start:0.26, duration:0.32, type:"sine", volume:0.024, filter:4300 }
+    ].forEach((note) => {
+      tone(note.frequency, note.start, note.duration, {
+        type:note.type,
+        volume:note.volume,
+        filter:note.filter
       });
     });
   }
@@ -102,30 +107,31 @@ const PilingoAudio = (() => {
     });
 
     const preferredNames = [
-      "child",
-      "kid",
-      "girl",
-      "junior",
-      "joelle",
-      "salli",
       "ivy",
-      "kimberly",
       "aria",
       "ava",
-      "nicky",
-      "samantha",
       "allison",
-      "victoria",
+      "samantha",
       "serena",
+      "salli",
+      "kimberly",
       "zira",
       "tessa",
+      "victoria",
       "moira",
-      "karen",
-      "susan",
       "anna",
       "alice",
       "monica",
-      "female"
+      "susan",
+      "karen",
+      "female",
+      "girl",
+      "young",
+      "child",
+      "kid",
+      "junior",
+      "joelle",
+      "nicky"
     ];
 
     const preferredEnglish = englishVoices.find((voice) => {
@@ -147,8 +153,8 @@ const PilingoAudio = (() => {
 
     const utterance = new SpeechSynthesisUtterance(text);
     const voice = getYoungEnglishFemaleVoice();
-    utterance.rate = 0.82;
-    utterance.pitch = 1.22;
+    utterance.rate = 0.92;
+    utterance.pitch = 1.32;
     utterance.volume = 1;
     utterance.lang = voice?.lang || "en-US";
     if(voice) utterance.voice = voice;

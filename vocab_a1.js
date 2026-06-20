@@ -96,7 +96,7 @@ const VOCAB_A1 = {
     { en:"car", ku:"otombêl", sv:"bil", emoji:"🚗" },
     { en:"door", ku:"derî", sv:"dörr", emoji:"🚪" },
     { en:"window", ku:"pace", sv:"fönster", emoji:"🪟" },
-    { en:"book", ku:"kitêb", sv:"bok", emoji:"📘" },
+    { en:"book", ku:"pirtûk", sv:"bok", emoji:"📘" },
     { en:"pen", ku:"qelem", sv:"penna", emoji:"🖊️" },
     { en:"table", ku:"mêz", sv:"bord", emoji:"🪑" },
     { en:"chair", ku:"kursî", sv:"stol", emoji:"🪑" },

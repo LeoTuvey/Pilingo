@@ -670,19 +670,19 @@ const gameParts = [
     {
         title:"Game One; D",
         steps:[
-            choiceStep("🎯 Match the Meaning", "Kitêb", ["book", "a book", "one book", "this book", "that book", "these books", "those books"], "book"),
-            choiceStep("🎯 Match the Meaning", "Kitêbek", ["book", "a book", "one book", "this book", "that book", "these books", "those books"], "a book"),
-            choiceStep("🎯 Match the Meaning", "Yek kitêb", ["book", "a book", "one book", "this book", "that book", "these books", "those books"], "one book"),
-            choiceStep("🎯 Match the Meaning", "Ev kitêbe", ["book", "a book", "one book", "this book", "that book", "these books", "those books"], ["this book", "these books"]),
-            choiceStep("🎯 Match the Meaning", "Ew kitêb", ["book", "a book", "one book", "this book", "that book", "these books", "those books"], "that book"),
-            choiceStep("🎯 Match the Meaning", "Ew kitêbêthe", ["this book", "that book", "these books", "those books", "books"], "those books"),
-            choiceStep("🎯 Fill in the Missing Word", "_____ = book", ["kitêb", "kitêbek", "yek kitêb", "ev kitêbe"], "kitêb"),
-            choiceStep("🎯 Fill in the Missing Word", "_____ = a book", ["kitêb", "kitêbek", "yek kitêb", "ev kitêbe"], "kitêbek"),
-            choiceStep("🎯 Fill in the Missing Word", "_____ = one book", ["kitêb", "kitêbek", "yek kitêb", "ev kitêbe"], "yek kitêb"),
-            choiceStep("🎯 Fill in the Missing Word", "_____ = this book", ["kitêb", "ev kitêbe", "ew kitêb", "kitêbek"], "ev kitêbe"),
-            choiceStep("🎯 Fill in the Missing Word", "_____ = that book", ["ev kitêbe", "ew kitêb", "kitêbek", "yek kitêb"], "ew kitêb"),
-            choiceStep("🎯 Fill in the Missing Word", "_____ = these books", ["ew kitêbêthe", "ev kitêbe", "kitêban", "yek kitêb"], "ev kitêbe"),
-            choiceStep("🎯 Fill in the Missing Word", "_____ = those books", ["ev kitêbe", "ew kitêbêthe", "kitêban", "kitêbek"], "ew kitêbêthe"),
+            choiceStep("🎯 Match the Meaning", "Pirtûk", ["book", "a book", "one book", "this book", "that book", "these books", "those books"], "book"),
+            choiceStep("🎯 Match the Meaning", "Pirtûkek", ["book", "a book", "one book", "this book", "that book", "these books", "those books"], "a book"),
+            choiceStep("🎯 Match the Meaning", "Yek pirtûk", ["book", "a book", "one book", "this book", "that book", "these books", "those books"], "one book"),
+            choiceStep("🎯 Match the Meaning", "Ev pirtûke", ["book", "a book", "one book", "this book", "that book", "these books", "those books"], ["this book", "these books"]),
+            choiceStep("🎯 Match the Meaning", "Ew pirtûk", ["book", "a book", "one book", "this book", "that book", "these books", "those books"], "that book"),
+            choiceStep("🎯 Match the Meaning", "Ew pirtûkêthe", ["this book", "that book", "these books", "those books", "books"], "those books"),
+            choiceStep("🎯 Fill in the Missing Word", "_____ = book", ["pirtûk", "pirtûkek", "yek pirtûk", "ev pirtûke"], "pirtûk"),
+            choiceStep("🎯 Fill in the Missing Word", "_____ = a book", ["pirtûk", "pirtûkek", "yek pirtûk", "ev pirtûke"], "pirtûkek"),
+            choiceStep("🎯 Fill in the Missing Word", "_____ = one book", ["pirtûk", "pirtûkek", "yek pirtûk", "ev pirtûke"], "yek pirtûk"),
+            choiceStep("🎯 Fill in the Missing Word", "_____ = this book", ["pirtûk", "ev pirtûke", "ew pirtûk", "pirtûkek"], "ev pirtûke"),
+            choiceStep("🎯 Fill in the Missing Word", "_____ = that book", ["ev pirtûke", "ew pirtûk", "pirtûkek", "yek pirtûk"], "ew pirtûk"),
+            choiceStep("🎯 Fill in the Missing Word", "_____ = these books", ["ew pirtûkêthe", "ev pirtûke", "pirtûkan", "yek pirtûk"], "ev pirtûke"),
+            choiceStep("🎯 Fill in the Missing Word", "_____ = those books", ["ev pirtûke", "ew pirtûkêthe", "pirtûkan", "pirtûkek"], "ew pirtûkêthe"),
             choiceStep("🎯 Match the Meaning", "Top", ["ball", "a ball", "one ball", "this ball", "that ball", "these balls", "those balls"], "ball"),
             choiceStep("🎯 Match the Meaning", "Topek", ["ball", "a ball", "one ball", "this ball", "that ball", "these balls", "those balls"], "a ball"),
             choiceStep("🎯 Match the Meaning", "Yek top", ["ball", "a ball", "one ball", "this ball", "that ball", "these balls", "those balls"], "one ball"),
@@ -1006,7 +1006,7 @@ function emojiForChoice(step){
         return { singular:"🍎", plural:"🍎🍎" };
     }
 
-    if(text.includes("book") || text.includes("kitêb")) {
+    if(text.includes("book") || text.includes("pirtûk")) {
         return { singular:"📘", plural:"📚" };
     }
 

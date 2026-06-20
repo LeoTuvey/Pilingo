@@ -13,34 +13,81 @@
 <title>Lesson</title>
 
 <style>
+*{
+  box-sizing:border-box;
+}
+
 body{
-  font-family: Arial, sans-serif;
+  font-family:Inter,Arial,sans-serif;
   text-align: center;
-  padding: 40px;
-  background: linear-gradient(135deg,#e3f2fd,#fce4ec);
+  padding: 28px 16px;
+  margin:0;
+  background:#f7fbff;
+  color:#253044;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.lesson-card{
+  width:min(520px, 100%);
+  background:white;
+  border:2px solid #e5edf5;
+  border-radius:8px;
+  box-shadow:0 8px 0 #e5edf5;
+  padding:26px 20px;
+}
+
+h1{
+  margin:0 0 10px;
+  font-size:30px;
+  letter-spacing:0;
+}
+
+p{
+  margin:0 0 18px;
+  color:#65748b;
+  font-weight:800;
 }
 
 button{
+  width:100%;
   padding: 15px 20px;
   font-size: 18px;
   background: #58cc02;
   color: white;
-  border: none;
-  border-radius: 10px;
+  border: 2px solid #46a302;
+  border-radius: 8px;
   cursor: pointer;
+  font-weight:900;
+  box-shadow:0 4px 0 #46a302;
+  transition:transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+}
+
+button:hover{
+  background:#61d80a;
+  transform:translateY(-1px);
+}
+
+button:active{
+  transform:translateY(2px);
+  box-shadow:0 2px 0 #46a302;
 }
 </style>
 </head>
 
 <body>
 
-<h1>🐯 Lesson Page</h1>
+<div class="lesson-card">
+  <h1>🐯 Lesson Page</h1>
 
-<p>Click below to finish lesson</p>
+  <p>Click below to finish lesson</p>
 
-<button id="finishBtn">
-  Finish Lesson (+10 XP)
-</button>
+  <button id="finishBtn">
+    Finish Lesson (+10 XP)
+  </button>
+</div>
 
 <!-- ENGINE -->
 <script src="engine-core.js"></script>

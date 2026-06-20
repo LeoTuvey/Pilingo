@@ -66,6 +66,23 @@ const PilingoAudio = (() => {
     tone(760, offset + 0.16, 0.24, { type:"sine", slideTo:430, volume:0.04, filter:2600 });
   }
 
+  function bark(offset){
+    tone(210, offset, 0.08, { type:"square", slideTo:180, volume:0.035, filter:1200 });
+    tone(170, offset + 0.1, 0.09, { type:"square", slideTo:150, volume:0.03, filter:1100 });
+    tone(240, offset + 0.24, 0.06, { type:"triangle", slideTo:190, volume:0.022, filter:1000 });
+  }
+
+  function squeak(offset){
+    tone(880, offset, 0.07, { type:"triangle", slideTo:1140, volume:0.025, filter:3200 });
+    tone(980, offset + 0.1, 0.06, { type:"triangle", slideTo:820, volume:0.022, filter:3000 });
+  }
+
+  function squawk(offset){
+    tone(640, offset, 0.09, { type:"sawtooth", slideTo:420, volume:0.03, filter:1800 });
+    tone(470, offset + 0.11, 0.08, { type:"square", slideTo:620, volume:0.026, filter:1900 });
+    tone(610, offset + 0.22, 0.07, { type:"triangle", slideTo:500, volume:0.02, filter:2000 });
+  }
+
   function quack(offset){
     tone(330, offset, 0.11, { type:"square", slideTo:230, volume:0.035, filter:900 });
     tone(290, offset + 0.14, 0.11, { type:"square", slideTo:210, volume:0.03, filter:900 });
@@ -83,6 +100,29 @@ const PilingoAudio = (() => {
       quack(0.5);
       hoot(1.0);
     }, 420);
+  }
+
+  function playPartAnimal(partIndex){
+    switch(Number(partIndex)) {
+      case 0:
+        meow(0);
+        break;
+      case 1:
+        bark(0);
+        break;
+      case 2:
+        squeak(0);
+        break;
+      case 3:
+        squawk(0);
+        break;
+      case 4:
+        quack(0);
+        break;
+      default:
+        hoot(0);
+        break;
+    }
   }
 
   function getYoungEnglishFemaleVoice(){
@@ -171,6 +211,7 @@ const PilingoAudio = (() => {
     playCorrect,
     playWrong,
     playLessonComplete,
+    playPartAnimal,
     speak,
     getYoungEnglishFemaleVoice
   };

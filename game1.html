@@ -184,6 +184,20 @@ button.selected{
     box-shadow:0 4px 0 #46a302;
 }
 
+button.correct{
+    background:#58cc02 !important;
+    color:white !important;
+    border-color:#46a302 !important;
+    box-shadow:0 4px 0 #46a302 !important;
+}
+
+button.wrong{
+    background:#ff4b4b !important;
+    color:white !important;
+    border-color:#d63636 !important;
+    box-shadow:0 4px 0 #d63636 !important;
+}
+
 #activity > button:first-child:last-child,
 .answer-bank + .word-bank + button,
 .type-answer + button{
@@ -952,7 +966,7 @@ function renderImageStep(step){
     document.getElementById("activity").innerHTML = `
         <div class="image-options">
             ${step.options.map((option) => `
-                <button onclick="checkChoice('${escapeHtml(option.value)}')">
+                <button onclick="checkChoice('${escapeHtml(option.value)}', this)">
                     <span aria-hidden="true">${escapeHtml(option.emoji)}</span><br>
                     ${escapeHtml(option.label)}
                 </button>
@@ -969,7 +983,7 @@ function renderChoiceStep(step){
 
     document.getElementById("activity").innerHTML =
         options.map(option => `
-            <button onclick="checkChoice('${escapeHtml(option)}')">${escapeHtml(option)}</button>
+            <button onclick="checkChoice('${escapeHtml(option)}', this)">${escapeHtml(option)}</button>
         `).join("");
 }
 
@@ -982,7 +996,7 @@ function renderHearStep(step){
     document.getElementById("activity").innerHTML = `
         <button class="speaker" onclick="speak('${escapeHtml(step.spoken)}')" aria-label="Play sound">🔊</button>
         ${step.options.map(option => `
-            <button onclick="checkChoice('${escapeHtml(option)}')">${escapeHtml(option)}</button>
+            <button onclick="checkChoice('${escapeHtml(option)}', this)">${escapeHtml(option)}</button>
         `).join("")}
     `;
     setTimeout(() => speak(step.spoken), 250);
@@ -997,7 +1011,7 @@ function renderBuildStep(step){
                 <button class="secondary" id="word-${index}" onclick="selectWord(${index})">${escapeHtml(word)}</button>
             `).join("")}
         </div>
-        <button onclick="checkBuild()">Check</button>
+        <button onclick="checkBuild(this)">Check</button>
     `;
 
     if(step.spoken) setTimeout(() => speak(step.spoken), 250);
@@ -1074,7 +1088,7 @@ function renderAudioMatchStep(step){
 function renderTypeStep(step){
     document.getElementById("activity").innerHTML = `
         <input class="type-answer" id="typedAnswer" type="text" autocomplete="off" autocapitalize="none" placeholder="Type in English">
-        <button onclick="checkTyped()">Check</button>
+        <button onclick="checkTyped(this)">Check</button>
     `;
 }
 
@@ -1107,13 +1121,21 @@ function renderNextStep(step){
         `<button onclick="completeStep()">${escapeHtml(step.button || "Next")}</button>`;
 }
 
-function checkChoice(value){
+function showButtonResult(button, result){
+    if(!button) return;
+    button.classList.remove("correct", "wrong");
+    button.classList.add(result);
+}
+
+function checkChoice(value, button){
     const step = currentStep();
     if(normalize(value) === normalize(step.answer)){
+        showButtonResult(button, "correct");
         markCorrect();
         return;
     }
 
+    showButtonResult(button, "wrong");
     markWrong();
 }
 
@@ -1156,29 +1178,33 @@ function removeWord(index){
     renderSelectedWords();
 }
 
-function checkBuild(){
+function checkBuild(button){
     const step = currentStep();
     const answer = selectedWords.map(word => normalize(word.text));
     const expected = step.answer.map(word => normalize(word));
 
     if(answer.join(" ") === expected.join(" ")){
+        showButtonResult(button, "correct");
         markCorrect();
         return;
     }
 
+    showButtonResult(button, "wrong");
     markWrong();
 }
 
-function checkTyped(){
+function checkTyped(button){
     const step = currentStep();
     const input = document.getElementById("typedAnswer");
     const value = input ? input.value : "";
 
     if(normalize(value) === normalize(step.answer)){
+        showButtonResult(button, "correct");
         markCorrect();
         return;
     }
 
+    showButtonResult(button, "wrong");
     markWrong();
 }
 
@@ -1201,6 +1227,8 @@ function selectMatch(buttonIndex, key){
 
     if(selectedMatch.key === key) {
         matchedKeys.push(key);
+        button.classList.add("correct");
+        if(firstButton) firstButton.classList.add("correct");
         button.disabled = true;
         if(firstButton) firstButton.disabled = true;
         selectedMatch = null;
@@ -1212,11 +1240,17 @@ function selectMatch(buttonIndex, key){
     }
 
     setTimeout(() => {
+        button.classList.add("wrong");
+        if(firstButton) firstButton.classList.add("wrong");
+    }, 50);
+
+    setTimeout(() => {
         button.classList.remove("selected");
-        if(firstButton) firstButton.classList.remove("selected");
+        button.classList.remove("wrong");
+        if(firstButton) firstButton.classList.remove("selected", "wrong");
         selectedMatch = null;
         markWrong();
-    }, 350);
+    }, 650);
 }
 
 function normalize(value){

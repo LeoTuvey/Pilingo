@@ -413,8 +413,12 @@ document.addEventListener("DOMContentLoaded", () => {
       AppEffects.flash("correct");
     }
 
+    if(window.PilingoAudio?.playCorrect){
+      PilingoAudio.playCorrect();
+    }
+
     if(window.PilingoAudio?.playGameOpen){
-      PilingoAudio.playGameOpen(i + 1);
+      setTimeout(() => PilingoAudio.playGameOpen(i + 1), 120);
     }
 
     setTimeout(()=>{
@@ -428,7 +432,7 @@ document.addEventListener("DOMContentLoaded", () => {
         window.location.href = url;
       }
 
-    }, 400);
+    }, 700);
   };
 
   render();

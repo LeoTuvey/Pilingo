@@ -25,6 +25,10 @@
   --leaf-deep:#46a302;
   --leaf-light:#86f03a;
   --leaf-shadow:#2e7e0a;
+  --cta-orange:#ff9f2f;
+  --cta-orange-deep:#e47a15;
+  --cta-orange-light:#ffd06e;
+  --cta-orange-shadow:#c86412;
   --sky:#dff3ff;
   --ink:#233048;
   --muted:#6b7280;
@@ -271,11 +275,11 @@ button:active{
   border:6px solid #ffffff;
   background:
     radial-gradient(circle at 30% 28%, rgba(255,255,255,0.95), rgba(255,255,255,0.15) 26%, transparent 28%),
-    linear-gradient(180deg, var(--leaf-light) 0%, var(--leaf) 58%, var(--leaf-deep) 100%);
+    linear-gradient(180deg, var(--cta-orange-light) 0%, var(--cta-orange) 58%, var(--cta-orange-deep) 100%);
   color:#ffffff;
   box-shadow:
-    0 18px 0 var(--leaf-shadow),
-    0 32px 48px rgba(47,121,8,0.28);
+    0 18px 0 var(--cta-orange-shadow),
+    0 32px 48px rgba(200,100,18,0.28);
   display:flex;
   align-items:center;
   justify-content:center;
@@ -290,8 +294,8 @@ button:active{
   text-shadow:
     0 0 8px rgba(255,255,255,0.9),
     0 0 20px rgba(255,255,255,0.8),
-    0 0 36px rgba(230,255,210,0.55),
-    0 2px 0 rgba(53,120,11,0.28);
+    0 0 36px rgba(255,240,206,0.62),
+    0 2px 0 rgba(138,77,12,0.28);
 }
 
 .continue-button::before{
@@ -306,14 +310,14 @@ button:active{
   transform:translateY(-3px) scale(1.02);
   background:
     radial-gradient(circle at 30% 28%, rgba(255,255,255,0.95), rgba(255,255,255,0.15) 26%, transparent 28%),
-    linear-gradient(180deg, #95f64f 0%, #63d70b 58%, #4fad08 100%);
+    linear-gradient(180deg, #ffe09a 0%, #ffb042 58%, #f1861d 100%);
 }
 
 .continue-button:active{
   transform:translateY(8px) scale(0.99);
   box-shadow:
-    0 8px 0 var(--leaf-shadow),
-    0 16px 26px rgba(47,121,8,0.24);
+    0 8px 0 var(--cta-orange-shadow),
+    0 16px 26px rgba(200,100,18,0.24);
 }
 
 .continue-button span{

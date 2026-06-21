@@ -29,6 +29,30 @@ body{
   min-height:100vh;
 }
 
+.top-actions{
+  max-width:460px;
+  margin:0 auto 12px;
+  display:flex;
+  justify-content:flex-start;
+}
+
+.back-button{
+  width:auto;
+  padding:12px 16px;
+  border:none;
+  border-radius:16px;
+  background:linear-gradient(180deg, #fffaf0 0%, #ffe7b0 100%);
+  color:#9b6b10;
+  font-size:15px;
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:0 4px 0 #dcb25b;
+}
+
+.back-button:hover{
+  transform:translateY(-1px);
+}
+
 h1{
   margin:4px 0 14px;
   font-size:30px;
@@ -231,6 +255,10 @@ h1{
 
 <body>
 
+<div class="top-actions">
+  <button class="back-button" onclick="goBackHome()">← Back to home</button>
+</div>
+
 <h1>🐯 Your Learning Path</h1>
 
 <div id="xp">XP: 0</div>
@@ -261,6 +289,10 @@ h1{
 ========================= */
 
 console.log("🐯 Pilingo engine loading...");
+
+function goBackHome(){
+  window.location.href = "index.html";
+}
 
 /* =========================
    WAIT FOR DOM

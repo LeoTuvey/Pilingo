@@ -1,4 +1,4 @@
-const CACHE_NAME = "pilingo-v6";
+const CACHE_NAME = "pilingo-v7";
 
 const APP_FILES = [
   "./",

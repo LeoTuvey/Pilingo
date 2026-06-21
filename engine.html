@@ -247,6 +247,7 @@ h1{
 
 <!-- CORE -->
 <script src="engine-core.js"></script>
+<script src="pilingo-sounds.js"></script>
 <script src="vocab_a1.js"></script>
 <script src="app-ui.js"></script>
 <script src="app-state.js"></script>
@@ -410,6 +411,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if(window.AppEffects?.flash){
       AppEffects.flash("correct");
+    }
+
+    if(window.PilingoAudio?.playGameOpen){
+      PilingoAudio.playGameOpen(i + 1);
     }
 
     setTimeout(()=>{

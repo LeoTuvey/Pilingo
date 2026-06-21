@@ -112,24 +112,8 @@ body{
   text-align:left;
 }
 
-.hero-kicker{
-  display:inline-flex;
-  align-items:center;
-  gap:10px;
-  padding:10px 14px;
-  border-radius:999px;
-  background:rgba(255,255,255,0.14);
-  border:1px solid rgba(255,255,255,0.2);
-  box-shadow:0 10px 24px rgba(24,86,2,0.12);
-  font-size:12px;
-  font-weight:900;
-  letter-spacing:0.1em;
-  text-transform:uppercase;
-  color:rgba(255,255,255,0.92);
-}
-
 .hero-title{
-  margin:16px 0 0;
+  margin:0;
   max-width:540px;
   font-size:56px;
   line-height:0.92;
@@ -150,23 +134,17 @@ body{
   color:#fff7c7;
 }
 
-.hero-copy p{
-  margin:0;
+.hero-motto{
+  margin:12px 0 0;
+  max-width:520px;
+  font-size:18px;
+  line-height:1.4;
+  font-weight:900;
+  color:rgba(255,255,255,0.9);
 }
 
-.hero-note{
-  margin-top:18px;
-  display:inline-flex;
-  align-items:center;
-  gap:10px;
-  padding:12px 16px;
-  border-radius:999px;
-  background:rgba(255,255,255,0.16);
-  border:1px solid rgba(255,255,255,0.2);
-  font-size:14px;
-  font-weight:900;
-  box-shadow:0 12px 24px rgba(24,86,2,0.14);
-  color:rgba(255,255,255,0.95);
+.hero-copy p{
+  margin:0;
 }
 
 .hero-panel{
@@ -189,45 +167,11 @@ body{
 }
 
 .hero-actions{
-  margin-top:18px;
+  margin-top:22px;
   display:flex;
   align-items:center;
   gap:18px;
   flex-wrap:wrap;
-}
-
-.hero-side-note{
-  max-width:250px;
-  padding:18px 18px 18px 20px;
-  border-radius:24px;
-  background:linear-gradient(180deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.12) 100%);
-  border:1px solid rgba(255,255,255,0.2);
-  box-shadow:0 16px 28px rgba(24,86,2,0.14);
-  font-size:15px;
-  line-height:1.45;
-  font-weight:900;
-  color:rgba(255,255,255,0.98);
-  position:relative;
-}
-
-.hero-side-note::before{
-  content:"NEXT STEP";
-  display:block;
-  margin-bottom:8px;
-  font-size:11px;
-  letter-spacing:0.12em;
-  text-transform:uppercase;
-  color:#fff4ba;
-}
-
-.hero-side-note::after{
-  content:"";
-  position:absolute;
-  left:18px;
-  right:18px;
-  bottom:12px;
-  height:1px;
-  background:linear-gradient(90deg, rgba(255,255,255,0.32), transparent);
 }
 
 .hero-chip{
@@ -634,14 +578,12 @@ button:active{
   .header h1{font-size:38px;}
   .hero-title{font-size:42px;}
   .hero-subtitle{font-size:19px;}
+  .hero-motto{font-size:16px;}
   .card{padding:18px 14px;}
   .stats{grid-template-columns:1fr;}
   .progress-layout{grid-template-columns:1fr;}
   .button-row{justify-content:center;}
   .hero-panel-grid{grid-template-columns:1fr 1fr;}
-  .hero-side-note{
-    max-width:100%;
-  }
   .hero-rings{
     width:192px;
     height:192px;
@@ -661,13 +603,11 @@ button:active{
   <div id="xp">XP: 0</div>
   <div class="hero-wrap">
     <div class="hero-copy">
-      <div class="hero-kicker">Daily Language Path</div>
       <h1 class="hero-title">🐯 Pilingo</h1>
-      <p class="hero-subtitle">Learn daily. <strong>Build streaks.</strong> Stay consistent.</p>
-      <div class="hero-note">Kurmanji to English path with games, quests, and progress in one place</div>
+      <p class="hero-subtitle">Learn Kurmanji and English step by step</p>
+      <p class="hero-motto">Learn daily. Build streaks. Stay consistent.</p>
       <div class="hero-actions">
         <button class="continue-button" onclick="goLearn()"><span>Continue<br>Learning</span></button>
-        <div class="hero-side-note">Jump straight back into your learning path with one big tap.</div>
       </div>
     </div>
     <div class="hero-panel">

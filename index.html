@@ -23,6 +23,7 @@
   --gold-deep:#d79a18;
   --leaf:#58cc02;
   --leaf-deep:#46a302;
+  --leaf-light:#86f03a;
   --sky:#dff3ff;
   --ink:#253044;
   --muted:#6b7280;
@@ -32,10 +33,11 @@
 
 body{
   margin:0;
-  font-family:Inter,Arial,sans-serif;
+  font-family:"Trebuchet MS","Avenir Next",Arial,sans-serif;
   background:
     radial-gradient(circle at top left, rgba(255,214,102,0.45), transparent 26%),
     radial-gradient(circle at top right, rgba(126,210,255,0.24), transparent 24%),
+    radial-gradient(circle at 50% 100%, rgba(255,233,169,0.55), transparent 30%),
     linear-gradient(180deg, #fffdf7 0%, #f7fbff 38%, #f7efd9 100%);
   color:var(--ink);
   min-height:100vh;
@@ -73,18 +75,18 @@ body{
 }
 
 .hero-copy p{
-  margin:10px 0 0;
-  font-size:18px;
+  margin:12px 0 0;
+  font-size:20px;
   font-weight:800;
   color:rgba(255,255,255,0.92);
 }
 
 .hero-note{
-  margin-top:16px;
+  margin-top:18px;
   display:inline-flex;
   align-items:center;
   gap:10px;
-  padding:10px 14px;
+  padding:12px 16px;
   border-radius:999px;
   background:rgba(255,255,255,0.16);
   border:1px solid rgba(255,255,255,0.2);
@@ -105,6 +107,22 @@ body{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:12px;
+}
+
+.hero-actions{
+  margin-top:18px;
+  display:flex;
+  align-items:center;
+  gap:18px;
+  flex-wrap:wrap;
+}
+
+.hero-side-note{
+  max-width:220px;
+  font-size:14px;
+  line-height:1.4;
+  font-weight:900;
+  color:rgba(255,255,255,0.92);
 }
 
 .hero-chip{
@@ -210,10 +228,52 @@ button:active{
   box-shadow:0 2px 0 var(--leaf-deep);
 }
 
+.continue-button{
+  width:190px;
+  height:190px;
+  border-radius:50%;
+  border:6px solid #ffffff;
+  background:
+    radial-gradient(circle at 30% 28%, rgba(255,255,255,0.95), rgba(255,255,255,0.15) 26%, transparent 28%),
+    linear-gradient(180deg, var(--leaf-light) 0%, var(--leaf) 58%, var(--leaf-deep) 100%);
+  color:white;
+  box-shadow:
+    0 16px 0 #3f9714,
+    0 30px 45px rgba(47,121,8,0.28);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:22px;
+  font-size:28px;
+  line-height:1.05;
+  letter-spacing:-0.03em;
+  margin-top:0;
+}
+
+.continue-button:hover{
+  transform:translateY(-3px) scale(1.02);
+  background:
+    radial-gradient(circle at 30% 28%, rgba(255,255,255,0.95), rgba(255,255,255,0.15) 26%, transparent 28%),
+    linear-gradient(180deg, #95f64f 0%, #63d70b 58%, #4fad08 100%);
+}
+
+.continue-button:active{
+  transform:translateY(8px) scale(0.99);
+  box-shadow:
+    0 8px 0 #3f9714,
+    0 16px 26px rgba(47,121,8,0.24);
+}
+
+.continue-button span{
+  display:block;
+}
+
 .button-row{
-  display:grid;
-  grid-template-columns:1.1fr 1fr 1fr;
-  gap:12px;
+  display:flex;
+  align-items:center;
+  gap:18px;
+  flex-wrap:wrap;
 }
 
 .button-row button{
@@ -226,6 +286,23 @@ button:active{
   color:#1c80cf;
   border-color:#c7dff2;
   box-shadow:0 5px 0 #c7dff2;
+}
+
+.button-row .secondary-button{
+  width:auto;
+  min-width:150px;
+  padding:16px 18px;
+}
+
+.progress-note{
+  margin:16px 0 0;
+  padding:16px 18px;
+  border-radius:20px;
+  background:linear-gradient(180deg, #fff8df 0%, #fff2c7 100%);
+  border:2px solid #f0d789;
+  color:#845b04;
+  font-weight:900;
+  font-size:16px;
 }
 
 .stats{
@@ -255,8 +332,15 @@ button:active{
 .profileStat span{
   display:block;
   margin-top:6px;
-  font-size:28px;
+  font-size:30px;
   color:#7f5900;
+}
+
+.progress-layout{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:22px;
+  align-items:center;
 }
 
 #owlHome{
@@ -321,8 +405,14 @@ button:active{
   .header h1{font-size:34px;}
   .card{padding:18px 14px;}
   .stats{grid-template-columns:1fr;}
-  .button-row{grid-template-columns:1fr;}
+  .progress-layout{grid-template-columns:1fr;}
+  .button-row{justify-content:center;}
   .hero-panel-grid{grid-template-columns:1fr 1fr;}
+  .continue-button{
+    width:160px;
+    height:160px;
+    font-size:24px;
+  }
 }
 </style>
 </head>
@@ -336,6 +426,10 @@ button:active{
       <h1>🐯 Pilingo</h1>
       <p>Learn daily. Build streaks. Stay consistent.</p>
       <div class="hero-note">Kurmanji to English path with games, quests, and progress in one place</div>
+      <div class="hero-actions">
+        <button class="continue-button" onclick="goLearn()"><span>Continue<br>Learning</span></button>
+        <div class="hero-side-note">Jump straight back into your learning path with one big tap.</div>
+      </div>
     </div>
     <div class="hero-panel">
       <div id="owlHome">🐯</div>
@@ -358,24 +452,26 @@ button:active{
     <div class="stack">
       <div class="card">
         <h2>📊 Your Progress</h2>
-        <div class="stats">
-          <div class="stat-box">
-            <strong>Total XP</strong>
-            <span id="xpInline">0</span>
+        <div class="progress-layout">
+          <div class="stats">
+            <div class="stat-box">
+              <strong>Total XP</strong>
+              <span id="xpInline">0</span>
+            </div>
+            <div class="stat-box">
+              <strong>🔥 Streak</strong>
+              <span id="streak">0</span>
+            </div>
+            <div class="stat-box">
+              <strong>Level</strong>
+              <span id="level">0</span>
+            </div>
           </div>
-          <div class="stat-box">
-            <strong>🔥 Streak</strong>
-            <span id="streak">0</span>
-          </div>
-          <div class="stat-box">
-            <strong>Level</strong>
-            <span id="level">0</span>
+          <div class="button-row">
+            <button class="secondary-button" id="installApp" onclick="installPilingo()" hidden>Install app</button>
           </div>
         </div>
-        <div class="button-row">
-          <button onclick="goLearn()">▶ Continue Learning</button>
-          <button id="installApp" onclick="installPilingo()" hidden>Install app</button>
-        </div>
+        <div class="progress-note">Your next lesson is one tap away in the big green circle above.</div>
       </div>
 
       <div class="card">

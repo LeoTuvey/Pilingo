@@ -10,7 +10,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="pilingo-icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="pilingo-icon-192.png">
-<title>Choose Voice</title>
+<title>Samantha Voice</title>
 <style>
 body{
   margin:0;
@@ -58,89 +58,16 @@ button.save{
 </head>
 <body>
 <div class="card">
-  <h1>🐯 Choose voice</h1>
-  <p class="hint">Tap a voice to hear it. Save the one you like.</p>
-  <div id="voices">Loading voices...</div>
+  <h1>🐯 Samantha Voice</h1>
+  <p class="hint">Pilingo now uses Samantha as the lesson voice.</p>
+  <div id="voices">Samantha is selected automatically when available.</div>
   <button onclick="window.location.href='index.html'">Back</button>
 </div>
 
 <script src="pwa.js"></script>
 <script>
-let selectedVoiceName = localStorage.getItem("pilingo_voice_name") || "";
-
-function sampleText(){
-  return "Hello, Susan! Great job! You finished this lesson.";
-}
-
-function englishVoices(){
-  return speechSynthesis.getVoices().filter((voice) => {
-    const lang = (voice.lang || "").toLowerCase();
-    const name = (voice.name || "").toLowerCase();
-    return lang.startsWith("en") && !lang.startsWith("sv") &&
-      !name.includes("swedish") && !name.includes("svenska");
-  });
-}
-
-function speakWith(voice){
-  speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(sampleText());
-  utterance.voice = voice;
-  utterance.lang = voice.lang || "en-US";
-  utterance.rate = 0.82;
-  utterance.pitch = 1.22;
-  speechSynthesis.speak(utterance);
-}
-
-function saveVoice(name){
-  selectedVoiceName = name;
-  localStorage.setItem("pilingo_voice_name", name);
-  renderVoices();
-}
-
-function renderVoices(){
-  const root = document.getElementById("voices");
-
-  if(!window.speechSynthesis){
-    root.innerHTML = "<p>Your browser does not support voice playback.</p>";
-    return;
-  }
-
-  const voices = englishVoices();
-
-  if(voices.length === 0){
-    root.innerHTML = "<p>No English voices found. Add an English voice in your phone settings.</p>";
-    return;
-  }
-
-  root.innerHTML = voices.map((voice, index) => {
-    const selected = voice.name === selectedVoiceName ? " selected" : "";
-    return `
-      <button class="voice${selected}" onclick="previewVoice(${index})">
-        ${voice.name} (${voice.lang})
-      </button>
-      <button class="save" onclick="saveVoiceByIndex(${index})">
-        Save this voice
-      </button>
-    `;
-  }).join("");
-}
-
-function previewVoice(index){
-  const voice = englishVoices()[index];
-  if(voice) speakWith(voice);
-}
-
-function saveVoiceByIndex(index){
-  const voice = englishVoices()[index];
-  if(voice) saveVoice(voice.name);
-}
-
-if(window.speechSynthesis){
-  speechSynthesis.onvoiceschanged = renderVoices;
-}
-
-renderVoices();
-setTimeout(renderVoices, 400);
+document.getElementById("voices").innerText =
+  "Samantha is selected automatically when your device provides that voice.";
 </script>
 </body>
 </html>

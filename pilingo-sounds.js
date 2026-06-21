@@ -135,13 +135,6 @@ const PilingoAudio = (() => {
     if(!window.speechSynthesis) return null;
 
     const voices = window.speechSynthesis.getVoices();
-    const savedVoiceName = localStorage.getItem("pilingo_voice_name");
-    const savedVoice = savedVoiceName
-      ? voices.find((voice) => voice.name === savedVoiceName)
-      : null;
-
-    if(savedVoice) return savedVoice;
-
     const englishVoices = voices.filter((voice) => {
       const lang = (voice.lang || "").toLowerCase();
       const name = (voice.name || "").toLowerCase();
@@ -152,12 +145,15 @@ const PilingoAudio = (() => {
       return true;
     });
 
+    const samanthaVoice = englishVoices.find((voice) => (voice.name || "").toLowerCase() === "samantha");
+    if(samanthaVoice) return samanthaVoice;
+
     const preferredNames = [
+      "samantha",
       "ivy",
       "aria",
       "ava",
       "allison",
-      "samantha",
       "serena",
       "salli",
       "kimberly",

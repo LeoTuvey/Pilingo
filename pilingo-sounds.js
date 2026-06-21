@@ -158,6 +158,23 @@ const PilingoAudio = (() => {
     });
   }
 
+  function bindGameOpenSound(gameIndex){
+    let played = false;
+
+    function trigger(){
+      if(played) return;
+      played = true;
+      playGameOpen(gameIndex);
+      window.removeEventListener("pointerdown", trigger, true);
+      window.removeEventListener("keydown", trigger, true);
+      window.removeEventListener("touchstart", trigger, true);
+    }
+
+    window.addEventListener("pointerdown", trigger, true);
+    window.addEventListener("keydown", trigger, true);
+    window.addEventListener("touchstart", trigger, true);
+  }
+
   function playPartAnimal(partIndex){
     switch(Number(partIndex)) {
       case 0:
@@ -268,6 +285,7 @@ const PilingoAudio = (() => {
     playWrong,
     playLessonComplete,
     playGameOpen,
+    bindGameOpenSound,
     playPartAnimal,
     speak,
     getYoungEnglishFemaleVoice

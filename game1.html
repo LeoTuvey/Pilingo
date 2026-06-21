@@ -218,10 +218,16 @@ button.wrong{
     width:min(100%, 520px);
     height:520px;
     margin:20px auto 8px;
-    border-radius:50%;
+    border-radius:46% 46% 50% 50% / 42% 42% 58% 58%;
     background:
-        radial-gradient(circle at center, rgba(123,228,29,0.08) 0%, rgba(123,228,29,0.08) 22%, rgba(123,228,29,0.02) 23%, rgba(123,228,29,0.02) 46%, transparent 47%),
-        radial-gradient(circle at center, rgba(37,48,68,0.05) 0%, transparent 68%);
+        radial-gradient(circle at 34% 24%, rgba(255,255,255,0.9), rgba(255,255,255,0.18) 24%, transparent 28%),
+        radial-gradient(circle at center, rgba(255,227,186,0.34) 0%, rgba(255,227,186,0.34) 24%, rgba(248,238,219,0.28) 25%, rgba(248,238,219,0.28) 48%, transparent 49%),
+        radial-gradient(circle at center, rgba(37,48,68,0.05) 0%, transparent 68%),
+        linear-gradient(180deg, #fffdf7 0%, #f8efdf 100%);
+    box-shadow:
+        inset 0 -12px 0 rgba(224,207,176,0.45),
+        0 16px 28px rgba(122,83,0,0.1);
+    border:3px solid rgba(255,255,255,0.9);
 }
 
 .part-menu-core{

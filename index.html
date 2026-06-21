@@ -112,6 +112,17 @@ body{
   text-align:left;
 }
 
+.hero-text-block{
+  margin-top:16px;
+  max-width:560px;
+  padding:18px 20px;
+  border-radius:28px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.1) 100%);
+  border:1px solid rgba(255,255,255,0.2);
+  box-shadow:0 16px 28px rgba(154,82,12,0.14);
+  backdrop-filter:blur(4px);
+}
+
 .hero-title{
   margin:0;
   max-width:540px;
@@ -122,12 +133,13 @@ body{
 }
 
 .hero-subtitle{
-  margin:16px 0 0;
-  max-width:540px;
-  font-size:22px;
-  line-height:1.35;
-  font-weight:800;
-  color:rgba(255,255,255,0.96);
+  margin:0;
+  max-width:520px;
+  font-size:24px;
+  line-height:1.28;
+  font-weight:900;
+  color:#ffffff;
+  letter-spacing:-0.02em;
 }
 
 .hero-subtitle strong{
@@ -135,12 +147,14 @@ body{
 }
 
 .hero-motto{
-  margin:12px 0 0;
-  max-width:520px;
-  font-size:18px;
-  line-height:1.4;
+  margin:14px 0 0;
+  max-width:500px;
+  font-size:16px;
+  line-height:1.45;
   font-weight:900;
-  color:rgba(255,255,255,0.9);
+  color:rgba(255,247,220,0.96);
+  padding-top:14px;
+  border-top:1px solid rgba(255,255,255,0.24);
 }
 
 .hero-copy p{
@@ -579,6 +593,7 @@ button:active{
   .hero-title{font-size:42px;}
   .hero-subtitle{font-size:19px;}
   .hero-motto{font-size:16px;}
+  .hero-text-block{padding:16px 16px;}
   .card{padding:18px 14px;}
   .stats{grid-template-columns:1fr;}
   .progress-layout{grid-template-columns:1fr;}
@@ -609,8 +624,10 @@ button:active{
   <div class="hero-wrap">
     <div class="hero-copy">
       <h1 class="hero-title">🐯 Pilingo</h1>
-      <p class="hero-subtitle">Learn Kurmanji and English step by step</p>
-      <p class="hero-motto">Learn daily. Build streaks. Stay consistent.</p>
+      <div class="hero-text-block">
+        <p class="hero-subtitle">Learn Kurmanji and English step by step</p>
+        <p class="hero-motto">Learn daily. Build streaks. Stay consistent.</p>
+      </div>
       <div class="hero-actions">
         <button class="continue-button" onclick="goLearn()"><span>Continue<br>Learning</span></button>
       </div>

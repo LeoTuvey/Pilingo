@@ -17,149 +17,312 @@
   box-sizing:border-box;
 }
 
+:root{
+  --cream:#fff7e3;
+  --gold:#f2c45f;
+  --gold-deep:#d79a18;
+  --leaf:#58cc02;
+  --leaf-deep:#46a302;
+  --sky:#dff3ff;
+  --ink:#253044;
+  --muted:#6b7280;
+  --card:#fffdf8;
+  --edge:#eddcba;
+}
+
 body{
   margin:0;
   font-family:Inter,Arial,sans-serif;
-  background:#f7fbff;
-  color:#253044;
-  text-align:center;
+  background:
+    radial-gradient(circle at top left, rgba(255,214,102,0.45), transparent 26%),
+    radial-gradient(circle at top right, rgba(126,210,255,0.24), transparent 24%),
+    linear-gradient(180deg, #fffdf7 0%, #f7fbff 38%, #f7efd9 100%);
+  color:var(--ink);
   min-height:100vh;
 }
 
 .header{
   background:
-    radial-gradient(circle at 18% 12%, rgba(255,255,255,0.28), transparent 28%),
-    linear-gradient(135deg,#58cc02,#7ddb18);
+    radial-gradient(circle at 18% 12%, rgba(255,255,255,0.34), transparent 28%),
+    radial-gradient(circle at 78% 24%, rgba(255,228,149,0.3), transparent 24%),
+    linear-gradient(135deg,#49b400 0%, #58cc02 38%, #8adb20 100%);
   color:white;
-  padding:26px 18px 30px;
-  border-bottom:4px solid #46a302;
+  padding:32px 18px 34px;
+  border-bottom:5px solid var(--leaf-deep);
+  position:relative;
+  overflow:hidden;
 }
 
 .header h1{
   margin:0;
-  font-size:34px;
-  letter-spacing:0;
+  font-size:40px;
+  letter-spacing:-0.02em;
+}
+
+.hero-wrap{
+  width:min(1100px, calc(100% - 24px));
+  margin:0 auto;
+  display:grid;
+  grid-template-columns:1.1fr 0.9fr;
+  gap:22px;
+  align-items:center;
+}
+
+.hero-copy{
+  text-align:left;
+}
+
+.hero-copy p{
+  margin:10px 0 0;
+  font-size:18px;
+  font-weight:800;
+  color:rgba(255,255,255,0.92);
+}
+
+.hero-note{
+  margin-top:16px;
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 14px;
+  border-radius:999px;
+  background:rgba(255,255,255,0.16);
+  border:1px solid rgba(255,255,255,0.2);
+  font-size:14px;
+  font-weight:900;
+}
+
+.hero-panel{
+  background:rgba(255,255,255,0.14);
+  border:1px solid rgba(255,255,255,0.2);
+  box-shadow:0 18px 36px rgba(39,90,2,0.18);
+  border-radius:30px;
+  padding:22px;
+  backdrop-filter:blur(6px);
+}
+
+.hero-panel-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+.hero-chip{
+  background:rgba(255,255,255,0.18);
+  border-radius:22px;
+  padding:14px;
+  text-align:left;
+}
+
+.hero-chip-label{
+  display:block;
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+  color:rgba(255,255,255,0.82);
+  margin-bottom:6px;
+  font-weight:900;
+}
+
+.hero-chip-value{
+  font-size:28px;
+  font-weight:900;
+}
+
+#xp{
+  position:absolute;
+  top:20px;
+  right:20px;
+  background:linear-gradient(180deg, #fff8df 0%, #f4d27d 100%);
+  color:#845b04;
+  border:2px solid #e7bc53;
+  box-shadow:0 5px 0 #d2a53d;
+  padding:10px 14px;
+  border-radius:999px;
+  font-weight:900;
+  z-index:10;
+}
+
+.shell{
+  width:min(1100px, calc(100% - 24px));
+  margin:22px auto 40px;
+}
+
+.dashboard{
+  display:grid;
+  grid-template-columns:1.2fr 0.8fr;
+  gap:18px;
+}
+
+.stack{
+  display:grid;
+  gap:18px;
 }
 
 .card{
-  background:white;
-  width:min(620px, calc(100% - 28px));
-  margin:16px auto;
-  padding:20px;
-  border:2px solid #e5edf5;
-  border-radius:8px;
-  box-shadow:0 8px 0 #e5edf5;
+  background:var(--card);
+  padding:22px;
+  border:2px solid var(--edge);
+  border-radius:28px;
+  box-shadow:0 10px 0 #ead7b0, 0 18px 30px rgba(122,83,0,0.09);
   text-align:left;
+  position:relative;
+  overflow:hidden;
+}
+
+.card::before{
+  content:"";
+  position:absolute;
+  inset:0 0 auto;
+  height:8px;
+  background:linear-gradient(90deg, var(--gold), #ffdf8b, var(--leaf));
 }
 
 .card h2{
   margin:0 0 14px;
-  color:#253044;
-  font-size:21px;
-  letter-spacing:0;
+  color:var(--ink);
+  font-size:22px;
+  letter-spacing:-0.01em;
 }
 
 button{
-  padding:14px 16px;
+  padding:15px 16px;
   width:100%;
-  border:2px solid #46a302;
-  border-radius:8px;
-  background:#58cc02;
+  border:2px solid var(--leaf-deep);
+  border-radius:18px;
+  background:linear-gradient(180deg, #67db10 0%, var(--leaf) 100%);
   color:white;
   font-size:16px;
   font-weight:900;
   margin-top:12px;
   cursor:pointer;
-  box-shadow:0 4px 0 #46a302;
+  box-shadow:0 5px 0 var(--leaf-deep);
   transition:transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
 }
 
 button:hover{
-  background:#61d80a;
+  background:linear-gradient(180deg, #76e71f 0%, #61d80a 100%);
   transform:translateY(-1px);
 }
 
 button:active{
   transform:translateY(2px);
-  box-shadow:0 2px 0 #46a302;
+  box-shadow:0 2px 0 var(--leaf-deep);
 }
 
-button:nth-of-type(2),
-button:nth-of-type(3){
+.button-row{
+  display:grid;
+  grid-template-columns:1.1fr 1fr 1fr;
+  gap:12px;
+}
+
+.button-row button{
+  margin-top:0;
+}
+
+.button-row button:nth-child(2),
+.button-row button:nth-child(3){
   background:white;
-  color:#1cb0f6;
-  border-color:#b9d9f2;
-  box-shadow:0 4px 0 #b9d9f2;
+  color:#1c80cf;
+  border-color:#c7dff2;
+  box-shadow:0 5px 0 #c7dff2;
 }
 
 .stats{
   display:grid;
-  grid-template-columns:repeat(2, minmax(0, 1fr));
-  gap:10px;
-  margin:4px 0 16px;
+  grid-template-columns:repeat(3, minmax(0, 1fr));
+  gap:12px;
+  margin:6px 0 18px;
   font-weight:900;
 }
 
-.stats div,
+.stat-box,
 .profileStat{
-  background:#f7fbff;
-  border:2px solid #e5edf5;
-  border-radius:8px;
-  padding:12px;
+  background:linear-gradient(180deg, #fffefb 0%, #f9f2e5 100%);
+  border:2px solid #efdfbf;
+  border-radius:22px;
+  padding:14px 12px;
   text-align:center;
 }
 
+.stat-box strong,
 .profileStat{
-  margin-top:10px;
   font-size:18px;
   font-weight:900;
 }
 
+.stat-box span,
+.profileStat span{
+  display:block;
+  margin-top:6px;
+  font-size:28px;
+  color:#7f5900;
+}
+
 #owlHome{
-  font-size:56px;
-  margin:10px auto 8px;
-  width:86px;
-  height:86px;
+  font-size:76px;
+  margin:0 auto;
+  width:126px;
+  height:126px;
   display:flex;
   align-items:center;
   justify-content:center;
-  background:white;
-  border-radius:50%;
-  box-shadow:0 5px 0 rgba(0,0,0,0.12);
-}
-
-select{
-  width:100%;
-  padding:12px;
-  border:2px solid #58cc02;
-  border-radius:10px;
-  background:white;
-  font-size:16px;
+  background:
+    radial-gradient(circle at 28% 22%, rgba(255,255,255,0.95), rgba(255,255,255,0.2) 30%, transparent 32%),
+    linear-gradient(180deg, #fff5d8 0%, #f2cf75 100%);
+  border-radius:44% 44% 50% 50% / 38% 38% 58% 58%;
+  box-shadow:inset 0 -10px 0 rgba(184,137,31,0.18), 0 12px 0 rgba(184,137,31,0.34);
 }
 
 .course-label{
-  padding:14px;
-  border:2px solid #e5edf5;
-  border-radius:8px;
-  background:#f7fbff;
-  font-size:16px;
+  padding:18px 20px;
+  border:2px solid #efdfbf;
+  border-radius:22px;
+  background:linear-gradient(180deg, #fffefb 0%, #f9f2e5 100%);
+  font-size:18px;
   font-weight:900;
   text-align:center;
+  color:#7f5900;
 }
 
 #questText{
   margin:0;
-  padding:14px;
-  background:#fff8df;
-  border:2px solid #ffe08a;
-  border-radius:8px;
+  padding:18px;
+  background:linear-gradient(180deg, #fff8df 0%, #ffeab2 100%);
+  border:2px solid #f2d47c;
+  border-radius:22px;
   font-weight:800;
+  font-size:18px;
+  color:#845b04;
+}
+
+.profile-grid{
+  display:grid;
+  gap:12px;
+}
+
+.mini-note{
+  margin-top:14px;
+  font-size:13px;
+  color:var(--muted);
+  font-weight:700;
 }
 
 @media (max-width:520px){
-  .header h1{font-size:30px;}
+  #xp{
+    position:static;
+    display:inline-flex;
+    margin:0 auto 14px;
+  }
+  .hero-wrap,
+  .dashboard{
+    grid-template-columns:1fr;
+  }
+  .header h1{font-size:34px;}
   .card{padding:18px 14px;}
   .stats{grid-template-columns:1fr;}
+  .button-row{grid-template-columns:1fr;}
+  .hero-panel-grid{grid-template-columns:1fr 1fr;}
 }
 </style>
 </head>
@@ -167,62 +330,83 @@ select{
 <body>
 
 <div class="header">
-
-  <h1>🐯 Pilingo</h1>
-
-  <div id="owlHome">🐯</div>
-
-  <div>Learn daily. Build streaks. Stay consistent.</div>
-
-</div>
-
-<!-- PROGRESS -->
-<div class="card">
-
-  <h2>📊 Your Progress</h2>
-
-  <div class="stats">
-    <div>XP: <span id="xp">0</span></div>
-    <div>🔥 Streak: <span id="streak">0</span></div>
+  <div id="xp">XP: 0</div>
+  <div class="hero-wrap">
+    <div class="hero-copy">
+      <h1>🐯 Pilingo</h1>
+      <p>Learn daily. Build streaks. Stay consistent.</p>
+      <div class="hero-note">Kurmanji to English path with games, quests, and progress in one place</div>
+    </div>
+    <div class="hero-panel">
+      <div id="owlHome">🐯</div>
+      <div class="hero-panel-grid">
+        <div class="hero-chip">
+          <span class="hero-chip-label">Current Level</span>
+          <span class="hero-chip-value" id="heroLevel">0</span>
+        </div>
+        <div class="hero-chip">
+          <span class="hero-chip-label">Daily Streak</span>
+          <span class="hero-chip-value" id="heroStreak">0</span>
+        </div>
+      </div>
+    </div>
   </div>
-
-  <button onclick="goLearn()">▶ Continue Learning</button>
-  <button onclick="window.location.href='voice.html'">Choose voice</button>
-  <button id="installApp" onclick="installPilingo()" hidden>Install app</button>
-
 </div>
 
-<!-- COURSE -->
-<div class="card">
+<div class="shell">
+  <div class="dashboard">
+    <div class="stack">
+      <div class="card">
+        <h2>📊 Your Progress</h2>
+        <div class="stats">
+          <div class="stat-box">
+            <strong>Total XP</strong>
+            <span id="xpInline">0</span>
+          </div>
+          <div class="stat-box">
+            <strong>🔥 Streak</strong>
+            <span id="streak">0</span>
+          </div>
+          <div class="stat-box">
+            <strong>Level</strong>
+            <span id="level">0</span>
+          </div>
+        </div>
+        <div class="button-row">
+          <button onclick="goLearn()">▶ Continue Learning</button>
+          <button onclick="window.location.href='voice.html'">Choose voice</button>
+          <button id="installApp" onclick="installPilingo()" hidden>Install app</button>
+        </div>
+      </div>
 
-  <h2>🌍 Course</h2>
+      <div class="card">
+        <h2>🎯 Daily Quest</h2>
+        <p id="questText">Loading...</p>
+        <div class="mini-note">Small steps every day make the path easier.</div>
+      </div>
+    </div>
 
-  <div class="course-label">Kurmanji to English</div>
+    <div class="stack">
+      <div class="card">
+        <h2>🌍 Course</h2>
+        <div class="course-label">Kurmanji to English</div>
+      </div>
 
-</div>
-
-<!-- DAILY QUEST -->
-<div class="card">
-
-  <h2>🎯 Daily Quest</h2>
-
-  <p id="questText">Loading...</p>
-
-</div>
-
-<!-- PROFILE -->
-<div class="card">
-
-  <h2>🏆 Profile</h2>
-
-  <div class="profileStat">
-    Level: <span id="level">0</span>
+      <div class="card">
+        <h2>🏆 Profile</h2>
+        <div class="profile-grid">
+          <div class="profileStat">
+            Level
+            <span id="profileLevel">0</span>
+          </div>
+          <div class="profileStat">
+            Badges
+            <span id="badgeCount">0</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-
-  <div class="profileStat">
-    Badges: <span id="badgeCount">0</span>
-  </div>
-
 </div>
 
 <!-- SCRIPTS -->
@@ -244,7 +428,8 @@ if(window.Engine && typeof Engine.getXP === "function"){
   xp = Engine.getXP();
 }
 
-document.getElementById("xp").innerText = xp;
+document.getElementById("xp").innerText = "XP: " + xp;
+document.getElementById("xpInline").innerText = xp;
 
 if(window.Engine?.setCourse){
   Engine.setCourse("en-ku");
@@ -263,6 +448,7 @@ if(window.Engine && typeof Engine.getHearts === "function"){
 }
 
 document.getElementById("streak").innerText = streak;
+document.getElementById("heroStreak").innerText = streak;
 
 /* =========================
    LEVEL (ENGINE-BASED, NOT MANUAL)
@@ -282,6 +468,8 @@ else{
 }
 
 document.getElementById("level").innerText = level;
+document.getElementById("heroLevel").innerText = level;
+document.getElementById("profileLevel").innerText = level;
 
 /* =========================
    BADGES

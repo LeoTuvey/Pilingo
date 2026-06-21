@@ -22,7 +22,9 @@ body{
   margin:0;
   padding:26px 18px 36px;
   text-align:center;
-  background:#f7fbff;
+  background:
+    radial-gradient(circle at top left, rgba(255,235,193,0.65), transparent 30%),
+    linear-gradient(180deg, #fffef9 0%, #f7fbff 44%, #f6efe0 100%);
   color:#253044;
   min-height:100vh;
 }
@@ -54,12 +56,12 @@ h1{
 
 .course-label{
   padding:14px;
-  border:2px solid #e5edf5;
-  border-radius:8px;
-  background:white;
+  border:2px solid #efe2c7;
+  border-radius:999px;
+  background:linear-gradient(180deg, #fffefb 0%, #fbf2e2 100%);
   font-size:16px;
   font-weight:900;
-  box-shadow:0 5px 0 #e5edf5;
+  box-shadow:0 6px 0 #eadfca;
 }
 
 .path{
@@ -102,19 +104,22 @@ h1{
 }
 
 .node{
-  width:min(230px, 78vw);
-  min-height:118px;
+  width:min(236px, 78vw);
+  min-height:150px;
   margin:28px auto;
-  padding:16px;
-  border-radius:8px;
-  background:white;
-  border:2px solid #e5edf5;
-  box-shadow:0 7px 0 #e5edf5;
+  padding:18px 18px 20px;
+  border-radius:45% 45% 48% 48% / 36% 36% 58% 58%;
+  background:
+    radial-gradient(circle at 30% 24%, rgba(255,255,255,0.96), rgba(255,255,255,0.22) 28%, transparent 30%),
+    linear-gradient(180deg, #fffefb 0%, #f8efe1 100%);
+  border:3px solid rgba(255,255,255,0.95);
+  box-shadow:0 10px 0 #eadfca, 0 18px 28px rgba(122,83,0,0.12);
   cursor:pointer;
   transition:transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
   position:relative;
   z-index:2;
   font-weight:900;
+  overflow:hidden;
 }
 
 .node:nth-child(odd){
@@ -126,8 +131,8 @@ h1{
 }
 
 .node:hover{
-  box-shadow:0 5px 0 #46a302;
-  border-color:#58cc02;
+  box-shadow:0 8px 0 #d9ccb0, 0 18px 30px rgba(122,83,0,0.16);
+  border-color:#fff8ef;
 }
 
 .node:nth-child(odd):hover{
@@ -139,42 +144,54 @@ h1{
 }
 
 .locked{
-  opacity:0.45;
+  opacity:0.55;
   pointer-events:none;
-  filter:grayscale(0.9);
+  filter:grayscale(0.35);
 }
 
 .unlocked{
-  border-color:#58cc02;
-  box-shadow:0 7px 0 #46a302;
+  box-shadow:0 10px 0 #eadfca, 0 18px 28px rgba(88,167,0,0.12);
 }
 
 .completed{
-  border-color:#ffb020;
-  box-shadow:0 7px 0 #d99100;
+  box-shadow:0 10px 0 #eadfca, 0 18px 28px rgba(255,176,32,0.16);
 }
 
 .icon{
   display:inline-flex;
-  width:50px;
-  height:50px;
+  width:78px;
+  height:78px;
   align-items:center;
   justify-content:center;
-  border-radius:50%;
-  background:#fff4ca;
-  font-size:27px;
-  margin-bottom:8px;
+  border-radius:46% 46% 52% 52% / 40% 40% 60% 60%;
+  background:
+    radial-gradient(circle at 30% 24%, rgba(255,255,255,0.96), rgba(255,255,255,0.2) 30%, transparent 32%),
+    linear-gradient(180deg, #fffefc 0%, #f5ead8 100%);
+  font-size:38px;
+  margin:0 auto 10px;
+  box-shadow:inset 0 -7px 0 rgba(214,197,168,0.6), 0 8px 0 rgba(214,197,168,0.75);
+}
+
+.skill-name{
+  font-size:17px;
+  line-height:1.2;
+}
+
+.skill-name .skill-emoji{
+  display:block;
+  font-size:24px;
+  margin-bottom:4px;
 }
 
 .small{
   font-size:13px;
-  color:#65748b;
-  margin-top:5px;
+  color:#7f6d58;
+  margin-top:8px;
 }
 
 .bar{
   height:10px;
-  background:#e5edf5;
+  background:#efe5d5;
   border-radius:999px;
   margin-top:12px;
   overflow:hidden;
@@ -278,13 +295,13 @@ document.addEventListener("DOMContentLoaded", () => {
   ========================= */
 
   const skills = [
-    { name:"Animals 🐶", id:"animals" },
-    { name:"Actions 🏃", id:"verbs" },
-    { name:"This / That 👇", id:"this-that" },
-    { name:"Articles 🍎", id:"articles" },
-    { name:"Numbers 🔢", id:"numbers" },
-    { name:"Listening 🔊", id:"listening" },
-    { name:"Final Review 🏆", id:"review" }
+    { name:"Animals", emoji:"🐶", id:"animals" },
+    { name:"Actions", emoji:"🏃", id:"verbs" },
+    { name:"This / That", emoji:"👇", id:"this-that" },
+    { name:"Articles", emoji:"🍎", id:"articles" },
+    { name:"Numbers", emoji:"🔢", id:"numbers" },
+    { name:"Listening", emoji:"🔊", id:"listening" },
+    { name:"Final Review", emoji:"🏆", id:"review" }
   ];
 
   function getSkillLevel(i){
@@ -339,10 +356,13 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="node ${state} level-${level}" onclick="openSkill(${i})">
 
           <div class="icon">
-            ${level === 4 ? "👑" : "🐯"}
+            ${level === 4 ? "👑" : s.emoji}
           </div>
 
-          <div>${s.name}</div>
+          <div class="skill-name">
+            <span class="skill-emoji">${s.emoji}</span>
+            <span>${s.name}</span>
+          </div>
 
           <div class="small">Level ${level}/4</div>
 

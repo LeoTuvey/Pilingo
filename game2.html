@@ -62,6 +62,11 @@ button{
     box-shadow:0 4px 0 #b86a1e;
 }
 
+button.correct{
+    background:#58cc02 !important;
+    box-shadow:0 4px 0 #46a302 !important;
+}
+
 #feedback{min-height:20px;font-weight:bold;}
 </style>
 </head>
@@ -181,18 +186,19 @@ document.getElementById("question").innerText=q.q;
 
 let html="";
 q.options.forEach((o,i)=>{
-html+=`<button onclick="check(${i})">${o}</button>`;
+html+=`<button onclick="check(${i}, this)">${o}</button>`;
 });
 
 document.getElementById("options").innerHTML=html;
 }
 
-function check(i){
+function check(i, button){
 let q=questions[current];
 
 if(i===q.answer){
 
 playSound("correct");
+if(button) button.classList.add("correct");
 document.getElementById("feedback").innerText="✅ Correct";
 current++;
 

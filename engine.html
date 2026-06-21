@@ -111,9 +111,9 @@ h1{
   border-radius:45% 45% 48% 48% / 36% 36% 58% 58%;
   background:
     radial-gradient(circle at 30% 24%, rgba(255,255,255,0.96), rgba(255,255,255,0.22) 28%, transparent 30%),
-    linear-gradient(180deg, #fff8df 0%, #efcf7c 100%);
+    linear-gradient(180deg, var(--egg-top, #fff8df) 0%, var(--egg-bottom, #efcf7c) 100%);
   border:3px solid rgba(255,248,222,0.96);
-  box-shadow:0 10px 0 #d7ae56, 0 18px 28px rgba(122,83,0,0.18);
+  box-shadow:0 10px 0 var(--egg-shadow, #d7ae56), 0 18px 28px rgba(122,83,0,0.18);
   cursor:pointer;
   transition:transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
   position:relative;
@@ -131,7 +131,7 @@ h1{
 }
 
 .node:hover{
-  box-shadow:0 8px 0 #cfa145, 0 18px 30px rgba(122,83,0,0.22);
+  box-shadow:0 8px 0 var(--egg-hover-shadow, #cfa145), 0 18px 30px rgba(122,83,0,0.22);
   border-color:#fff4ce;
 }
 
@@ -150,11 +150,11 @@ h1{
 }
 
 .unlocked{
-  box-shadow:0 10px 0 #d7ae56, 0 18px 28px rgba(230,171,24,0.18);
+  box-shadow:0 10px 0 var(--egg-shadow, #d7ae56), 0 18px 28px rgba(230,171,24,0.18);
 }
 
 .completed{
-  box-shadow:0 10px 0 #c8912d, 0 18px 28px rgba(255,176,32,0.24);
+  box-shadow:0 10px 0 var(--egg-complete-shadow, #c8912d), 0 18px 28px rgba(255,176,32,0.24);
 }
 
 .icon{
@@ -166,10 +166,10 @@ h1{
   border-radius:46% 46% 52% 52% / 40% 40% 60% 60%;
   background:
     radial-gradient(circle at 30% 24%, rgba(255,255,255,0.96), rgba(255,255,255,0.2) 30%, transparent 32%),
-    linear-gradient(180deg, #fff7d3 0%, #e9c062 100%);
+    linear-gradient(180deg, var(--icon-top, #fff7d3) 0%, var(--icon-bottom, #e9c062) 100%);
   font-size:38px;
   margin:0 auto 10px;
-  box-shadow:inset 0 -7px 0 rgba(184,137,31,0.34), 0 8px 0 rgba(196,148,45,0.7);
+  box-shadow:inset 0 -7px 0 rgba(184,137,31,0.34), 0 8px 0 var(--icon-shadow, rgba(196,148,45,0.7));
 }
 
 .skill-name{
@@ -296,13 +296,13 @@ document.addEventListener("DOMContentLoaded", () => {
   ========================= */
 
   const skills = [
-    { name:"Animals", emoji:"🐶", id:"animals" },
-    { name:"Actions", emoji:"🏃", id:"verbs" },
-    { name:"This / That", emoji:"👇", id:"this-that" },
-    { name:"Articles", emoji:"🍎", id:"articles" },
-    { name:"Numbers", emoji:"🔢", id:"numbers" },
-    { name:"Listening", emoji:"🔊", id:"listening" },
-    { name:"Final Review", emoji:"🏆", id:"review" }
+    { name:"Animals", emoji:"🐶", id:"animals", eggTop:"#fff1cf", eggBottom:"#f0c46f", eggShadow:"#d39d3b", eggHover:"#bf8c2d", eggComplete:"#b67f21", iconTop:"#fff7d8", iconBottom:"#ebc35b", iconShadow:"rgba(201,148,27,0.72)" },
+    { name:"Actions", emoji:"🏃", id:"verbs", eggTop:"#ffe2c9", eggBottom:"#f0a56d", eggShadow:"#cf7d42", eggHover:"#b76832", eggComplete:"#a85922", iconTop:"#fff0df", iconBottom:"#eead7d", iconShadow:"rgba(196,110,46,0.68)" },
+    { name:"This / That", emoji:"👇", id:"this-that", eggTop:"#dff3ff", eggBottom:"#8bc9f5", eggShadow:"#5fa2d4", eggHover:"#438cbe", eggComplete:"#2f77ab", iconTop:"#edf8ff", iconBottom:"#93d4ff", iconShadow:"rgba(67,140,190,0.62)" },
+    { name:"Articles", emoji:"🍎", id:"articles", eggTop:"#ffe0e8", eggBottom:"#ee98ae", eggShadow:"#c96b82", eggHover:"#b45770", eggComplete:"#a1415b", iconTop:"#fff0f4", iconBottom:"#f4a8bc", iconShadow:"rgba(180,87,112,0.66)" },
+    { name:"Numbers", emoji:"🔢", id:"numbers", eggTop:"#efe2ff", eggBottom:"#b89af0", eggShadow:"#8c6fcb", eggHover:"#7558b3", eggComplete:"#5f439e", iconTop:"#f8f2ff", iconBottom:"#c4a8ff", iconShadow:"rgba(117,88,179,0.66)" },
+    { name:"Listening", emoji:"🔊", id:"listening", eggTop:"#ddf8e6", eggBottom:"#8ed0a7", eggShadow:"#5da679", eggHover:"#458c62", eggComplete:"#35704d", iconTop:"#edfdf2", iconBottom:"#95ddb1", iconShadow:"rgba(69,140,98,0.62)" },
+    { name:"Final Review", emoji:"🏆", id:"review", eggTop:"#ffe7bf", eggBottom:"#f0b44b", eggShadow:"#ce8c21", eggHover:"#b77616", eggComplete:"#a5640e", iconTop:"#fff2d8", iconBottom:"#f6c86f", iconShadow:"rgba(183,118,22,0.68)" }
   ];
 
   function getSkillLevel(i){
@@ -354,7 +354,7 @@ document.addEventListener("DOMContentLoaded", () => {
       let state = isSkillUnlocked(i) ? "unlocked" : "locked";
 
       html += `
-        <div class="node ${state} level-${level}" onclick="openSkill(${i})">
+        <div class="node ${state} level-${level}" style="--egg-top:${s.eggTop}; --egg-bottom:${s.eggBottom}; --egg-shadow:${s.eggShadow}; --egg-hover-shadow:${s.eggHover}; --egg-complete-shadow:${s.eggComplete}; --icon-top:${s.iconTop}; --icon-bottom:${s.iconBottom}; --icon-shadow:${s.iconShadow};" onclick="openSkill(${i})">
 
           <div class="icon">
             ${level === 4 ? "👑" : s.emoji}

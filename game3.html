@@ -77,6 +77,11 @@ button:hover{
     opacity:0.95;
 }
 
+button.correct{
+    background:#58cc02 !important;
+    box-shadow:0 4px 0 #46a302 !important;
+}
+
 #feedback{
     min-height:25px;
     margin-top:10px;
@@ -215,20 +220,21 @@ function load(){
     let html = "";
 
     q.options.forEach((opt,i)=>{
-        html += `<button onclick="check(${i})">${opt}</button>`;
+        html += `<button onclick="check(${i}, this)">${opt}</button>`;
     });
 
     document.getElementById("options").innerHTML = html;
     document.getElementById("feedback").innerHTML = "";
 }
 
-function check(i){
+function check(i, button){
 
     let q = questions[current];
 
     if(i === q.answer){
 
         playSound("correct");
+        if(button) button.classList.add("correct");
 
         document.getElementById("feedback").innerHTML =
         t("✅ Correct!","✅ Rast e!","✅ Rätt!");

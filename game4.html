@@ -75,6 +75,11 @@ color:white;
 cursor:pointer;
 box-shadow:0 4px 0 #d97424;
 }
+
+button.correct{
+background:#58cc02 !important;
+box-shadow:0 4px 0 #46a302 !important;
+}
 </style>
 </head>
 <body>
@@ -150,13 +155,14 @@ let x=q[current];
 document.getElementById("visual").innerText=x.visual;
 document.getElementById("q").innerText=x.q;
 document.getElementById("opt").innerHTML=
-x.opt.map((o,i)=>`<button onclick="check(${i})">${o}</button>`).join("");
+x.opt.map((o,i)=>`<button onclick="check(${i}, this)">${o}</button>`).join("");
 document.getElementById("feedback").innerText="";
 }
 
-function check(i){
+function check(i, button){
 if(i===q[current].a){
 playSound("correct");
+if(button) button.classList.add("correct");
 document.getElementById("feedback").innerText="✅ Correct";
 current++;
 setTimeout(()=>{

@@ -1,33 +1,20 @@
 (function(){
   let installPrompt = null;
-  let reloadingForUpdate = false;
 
   if("serviceWorker" in navigator){
-    window.addEventListener("load", () => {
-      navigator.serviceWorker.register("./sw.js?v=6").then((registration) => {
-        registration.update().catch(() => {});
+    window.addEventListener("load", async () => {
+      try {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(registrations.map((registration) => registration.unregister()));
 
-        if(registration.waiting) {
-          registration.waiting.postMessage({ type:"SKIP_WAITING" });
+        if("caches" in window) {
+          const keys = await caches.keys();
+          const pilingoKeys = keys.filter((key) => key.startsWith("pilingo-"));
+          await Promise.all(pilingoKeys.map((key) => caches.delete(key)));
         }
-
-        registration.addEventListener("updatefound", () => {
-          const worker = registration.installing;
-          if(!worker) return;
-
-          worker.addEventListener("statechange", () => {
-            if(worker.state === "installed" && navigator.serviceWorker.controller) {
-              worker.postMessage({ type:"SKIP_WAITING" });
-            }
-          });
-        });
-      }).catch(() => {});
-    });
-
-    navigator.serviceWorker.addEventListener("controllerchange", () => {
-      if(reloadingForUpdate) return;
-      reloadingForUpdate = true;
-      window.location.reload();
+      } catch(error) {
+        // fail silently to keep app startup stable
+      }
     });
   }
 

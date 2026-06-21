@@ -15,19 +15,22 @@
 <style>
 body{
     font-family: Arial, sans-serif;
-    background:#f5f9ff;
+    background:
+        radial-gradient(circle at top right, rgba(173,216,255,0.35), transparent 26%),
+        linear-gradient(180deg, #eef8ff 0%, #dff3ff 48%, #d2e9ff 100%);
     text-align:center;
     margin:0;
     padding:20px;
 }
 
 .card{
-    background:white;
+    background:rgba(255,255,255,0.95);
     max-width:550px;
     margin:auto;
     padding:20px;
     border-radius:15px;
-    box-shadow:0 3px 10px rgba(0,0,0,0.1);
+    border:2px solid #bfe0f7;
+    box-shadow:0 10px 24px rgba(39,106,163,0.14);
 }
 
 #hearts{
@@ -47,7 +50,7 @@ body{
 #bar{
     height:100%;
     width:0%;
-    background:#4caf50;
+    background:linear-gradient(90deg, #5cc9ff, #8fe8ff);
 }
 
 #visual{
@@ -64,13 +67,14 @@ button{
     font-size:16px;
     border:none;
     border-radius:10px;
-    background:#1976d2;
+    background:#2c88c9;
     color:white;
     cursor:pointer;
+    box-shadow:0 4px 0 #1f689b;
 }
 
 button:hover{
-    opacity:0.9;
+    opacity:0.95;
 }
 
 #feedback{

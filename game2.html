@@ -15,19 +15,22 @@
 <style>
 body{
     font-family: Arial, sans-serif;
-    background:#f5f9ff;
+    background:
+        radial-gradient(circle at top left, rgba(255,209,102,0.35), transparent 28%),
+        linear-gradient(180deg, #fff7df 0%, #fff1cd 52%, #ffe4ae 100%);
     text-align:center;
     margin:0;
     padding:20px;
 }
 
 .card{
-    background:white;
+    background:rgba(255,255,255,0.94);
     max-width:550px;
     margin:auto;
     padding:20px;
     border-radius:15px;
-    box-shadow:0 3px 10px rgba(0,0,0,0.1);
+    border:2px solid #f2d48c;
+    box-shadow:0 10px 24px rgba(141,98,10,0.14);
 }
 
 #hearts{font-size:28px;margin-bottom:10px;}
@@ -39,7 +42,7 @@ body{
     border-radius:10px;
 }
 
-#bar{height:100%;width:0%;background:#4caf50;}
+#bar{height:100%;width:0%;background:linear-gradient(90deg, #ffb300, #ffd54f);}
 
 #visual{
     font-size:82px;
@@ -53,8 +56,10 @@ button{
     margin:10px auto;
     padding:15px;
     border:none;
-    background:#1976d2;
+    border-radius:12px;
+    background:#d9822b;
     color:white;
+    box-shadow:0 4px 0 #b86a1e;
 }
 
 #feedback{min-height:20px;font-weight:bold;}

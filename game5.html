@@ -32,6 +32,25 @@ border:2px solid #f2bfd0;
 box-shadow:0 10px 24px rgba(156,66,101,0.14);
 }
 
+.top-actions{
+display:flex;
+justify-content:flex-start;
+margin-bottom:12px;
+}
+
+.back-button{
+width:auto;
+margin:0;
+padding:12px 16px;
+font-size:15px;
+border:none;
+border-radius:14px;
+background:#fff4f8;
+color:#c34c79;
+cursor:pointer;
+box-shadow:0 4px 0 #f2bfd0;
+}
+
 #hearts{
 font-size:28px;
 margin-bottom:10px;
@@ -85,6 +104,7 @@ font-weight:bold;
 <body>
 
 <div class="card">
+<div class="top-actions"><button class="back-button" onclick="goBackToGames()">← Choose another game</button></div>
 <div id="hearts"></div>
 <div id="progress"><div id="bar"></div></div>
 <div id="visual" aria-hidden="true"></div>
@@ -100,6 +120,10 @@ font-weight:bold;
 
 let course = Engine.getCourse();
 let hearts = Engine.getHearts();
+
+function goBackToGames(){
+window.location.href="engine.html";
+}
 
 function t(en,ku){
 return ku;

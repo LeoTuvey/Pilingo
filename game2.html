@@ -33,6 +33,24 @@ body{
     box-shadow:0 10px 24px rgba(141,98,10,0.14);
 }
 
+.top-actions{
+    display:flex;
+    justify-content:flex-start;
+    margin-bottom:12px;
+}
+
+.back-button{
+    width:auto;
+    margin:0;
+    padding:12px 16px;
+    border:2px solid #f2d48c;
+    border-radius:14px;
+    background:#fffaf0;
+    color:#9b5d11;
+    font-weight:800;
+    box-shadow:0 4px 0 #e8c97f;
+}
+
 #hearts{font-size:28px;margin-bottom:10px;}
 
 #progress{
@@ -74,6 +92,9 @@ button.correct{
 <body>
 
 <div class="card">
+<div class="top-actions">
+<button class="back-button" onclick="goBackToGames()">← Choose another game</button>
+</div>
 
 <div id="hearts"></div>
 <div id="progress"><div id="bar"></div></div>
@@ -94,6 +115,10 @@ button.correct{
 
 let course = Engine.getCourse();
 let hearts = Engine.getHearts();
+
+function goBackToGames(){
+    window.location.href = "engine.html";
+}
 
 function renderHearts(){
     let html = "";

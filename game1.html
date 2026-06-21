@@ -76,9 +76,12 @@ body{
 
 .lesson-top{
     display:flex;
-    justify-content:flex-start;
+    justify-content:space-between;
+    align-items:center;
     min-height:42px;
     margin-bottom:6px;
+    gap:10px;
+    flex-wrap:wrap;
 }
 
 .menu-button{
@@ -95,6 +98,23 @@ body{
 
 .menu-button:hover{
     background:#f7fbff;
+}
+
+.back-button{
+    display:inline-block;
+    width:auto;
+    margin:0;
+    padding:9px 12px;
+    background:#fff9ef;
+    color:#8c5b08;
+    border:2px solid #ead8aa;
+    box-shadow:0 3px 0 #ead8aa;
+    font-size:14px;
+    font-weight:800;
+}
+
+.back-button:hover{
+    background:#fff4d8;
 }
 
 #partLabel{
@@ -580,6 +600,7 @@ button.wrong{
     <div id="hearts"></div>
     <div id="progress"><div id="bar"></div></div>
     <div class="lesson-top">
+        <button class="back-button" onclick="goBackToGames()">← Choose another game</button>
         <button id="menuButton" class="menu-button" onclick="showPartSelect()">← Parts</button>
     </div>
     <div id="partLabel"></div>
@@ -1095,6 +1116,10 @@ function renderHearts(){
     for(let i = 0; i < hearts; i++) html += "❤️ ";
     for(let i = hearts; i < 5; i++) html += "🖤 ";
     document.getElementById("hearts").innerHTML = html;
+}
+
+function goBackToGames(){
+    window.location.href = "engine.html";
 }
 
 function playSound(type){

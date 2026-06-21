@@ -33,6 +33,25 @@ body{
     box-shadow:0 10px 24px rgba(39,106,163,0.14);
 }
 
+.top-actions{
+    display:flex;
+    justify-content:flex-start;
+    margin-bottom:12px;
+}
+
+.back-button{
+    width:auto;
+    margin:0;
+    padding:12px 16px;
+    font-size:15px;
+    border:none;
+    border-radius:14px;
+    background:#ffffff;
+    color:#276a9d;
+    cursor:pointer;
+    box-shadow:0 4px 0 #bfe0f7;
+}
+
 #hearts{
     font-size:28px;
     margin-bottom:10px;
@@ -94,6 +113,9 @@ button.correct{
 <body>
 
 <div class="card">
+<div class="top-actions">
+    <button class="back-button" onclick="goBackToGames()">← Choose another game</button>
+</div>
 
 <div id="hearts"></div>
 
@@ -116,6 +138,10 @@ button.correct{
 <script>
 
 let course = localStorage.getItem("course") || "en-ku";
+
+function goBackToGames(){
+    window.location.href = "engine.html";
+}
 
 function t(en, ku){
     return ku;

@@ -32,6 +32,26 @@ border:2px solid #f3c997;
 box-shadow:0 10px 24px rgba(154,92,13,0.14);
 }
 
+.top-actions{
+display:flex;
+justify-content:flex-start;
+margin-bottom:12px;
+}
+
+.back-button{
+display:inline-block;
+width:auto;
+margin:0;
+padding:12px 16px;
+font-size:15px;
+border:none;
+border-radius:14px;
+background:#fff7eb;
+color:#b4661d;
+cursor:pointer;
+box-shadow:0 4px 0 #f3c997;
+}
+
 #visual{
 font-size:82px;
 line-height:1;
@@ -85,6 +105,7 @@ box-shadow:0 4px 0 #46a302 !important;
 <body>
 
 <div class="card">
+<div class="top-actions"><button class="back-button" onclick="goBackToGames()">← Choose another game</button></div>
 <div id="hearts"></div>
 <div id="progress"><div id="bar"></div></div>
 <div id="visual" aria-hidden="true"></div>
@@ -100,6 +121,10 @@ box-shadow:0 4px 0 #46a302 !important;
 
 let course=window.Engine?.getCourse ? Engine.getCourse() : (localStorage.getItem("course")||"en-ku");
 let hearts=window.Engine?.getHearts ? Engine.getHearts() : parseInt(localStorage.getItem("hearts")||"5",10);
+
+function goBackToGames(){
+window.location.href="engine.html";
+}
 
 function t(e,k){
 return k;

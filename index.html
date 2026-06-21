@@ -19,46 +19,76 @@
 
 :root{
   --cream:#fff7e3;
-  --gold:#f2c45f;
-  --gold-deep:#d79a18;
+  --gold:#f4c85f;
+  --gold-deep:#d99914;
   --leaf:#58cc02;
   --leaf-deep:#46a302;
   --leaf-light:#86f03a;
+  --leaf-shadow:#2e7e0a;
   --sky:#dff3ff;
-  --ink:#253044;
+  --ink:#233048;
   --muted:#6b7280;
   --card:#fffdf8;
   --edge:#eddcba;
+  --berry:#ff8fb1;
+  --ocean:#78c8ff;
+  --sun:#ffd96a;
 }
 
 body{
   margin:0;
   font-family:"Trebuchet MS","Avenir Next",Arial,sans-serif;
   background:
-    radial-gradient(circle at top left, rgba(255,214,102,0.45), transparent 26%),
-    radial-gradient(circle at top right, rgba(126,210,255,0.24), transparent 24%),
-    radial-gradient(circle at 50% 100%, rgba(255,233,169,0.55), transparent 30%),
-    linear-gradient(180deg, #fffdf7 0%, #f7fbff 38%, #f7efd9 100%);
+    radial-gradient(circle at 12% 10%, rgba(255,214,102,0.52), transparent 25%),
+    radial-gradient(circle at 85% 18%, rgba(126,210,255,0.3), transparent 22%),
+    radial-gradient(circle at 50% 100%, rgba(255,233,169,0.58), transparent 28%),
+    linear-gradient(180deg, #fffdf7 0%, #f7fbff 35%, #f6edd3 100%);
   color:var(--ink);
   min-height:100vh;
 }
 
 .header{
   background:
-    radial-gradient(circle at 18% 12%, rgba(255,255,255,0.34), transparent 28%),
-    radial-gradient(circle at 78% 24%, rgba(255,228,149,0.3), transparent 24%),
-    linear-gradient(135deg,#49b400 0%, #58cc02 38%, #8adb20 100%);
+    radial-gradient(circle at 18% 12%, rgba(255,255,255,0.36), transparent 28%),
+    radial-gradient(circle at 78% 24%, rgba(255,228,149,0.35), transparent 24%),
+    radial-gradient(circle at 62% 92%, rgba(255,255,255,0.16), transparent 22%),
+    linear-gradient(135deg,#45b100 0%, #58cc02 35%, #9be627 100%);
   color:white;
-  padding:32px 18px 34px;
-  border-bottom:5px solid var(--leaf-deep);
+  padding:36px 18px 38px;
+  border-bottom:6px solid var(--leaf-deep);
   position:relative;
   overflow:hidden;
 }
 
+.header::before,
+.header::after{
+  content:"";
+  position:absolute;
+  border-radius:50%;
+  pointer-events:none;
+}
+
+.header::before{
+  width:240px;
+  height:240px;
+  right:-80px;
+  top:-90px;
+  background:rgba(255,255,255,0.12);
+}
+
+.header::after{
+  width:180px;
+  height:180px;
+  left:-60px;
+  bottom:-70px;
+  background:rgba(255,255,255,0.08);
+}
+
 .header h1{
   margin:0;
-  font-size:40px;
-  letter-spacing:-0.02em;
+  font-size:48px;
+  line-height:0.96;
+  letter-spacing:-0.03em;
 }
 
 .hero-wrap{
@@ -76,7 +106,7 @@ body{
 
 .hero-copy p{
   margin:12px 0 0;
-  font-size:20px;
+  font-size:21px;
   font-weight:800;
   color:rgba(255,255,255,0.92);
 }
@@ -92,21 +122,26 @@ body{
   border:1px solid rgba(255,255,255,0.2);
   font-size:14px;
   font-weight:900;
+  box-shadow:0 12px 24px rgba(24,86,2,0.14);
 }
 
 .hero-panel{
-  background:rgba(255,255,255,0.14);
-  border:1px solid rgba(255,255,255,0.2);
+  background:linear-gradient(180deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.12) 100%);
+  border:1px solid rgba(255,255,255,0.24);
   box-shadow:0 18px 36px rgba(39,90,2,0.18);
-  border-radius:30px;
-  padding:22px;
+  border-radius:36px;
+  padding:24px;
   backdrop-filter:blur(6px);
+  position:relative;
+  overflow:hidden;
 }
 
 .hero-panel-grid{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:12px;
+  position:relative;
+  z-index:1;
 }
 
 .hero-actions{
@@ -119,17 +154,18 @@ body{
 
 .hero-side-note{
   max-width:220px;
-  font-size:14px;
+  font-size:15px;
   line-height:1.4;
   font-weight:900;
   color:rgba(255,255,255,0.92);
 }
 
 .hero-chip{
-  background:rgba(255,255,255,0.18);
-  border-radius:22px;
-  padding:14px;
+  background:rgba(255,255,255,0.2);
+  border-radius:24px;
+  padding:16px;
   text-align:left;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.24);
 }
 
 .hero-chip-label{
@@ -163,7 +199,7 @@ body{
 
 .shell{
   width:min(1100px, calc(100% - 24px));
-  margin:22px auto 40px;
+  margin:26px auto 44px;
 }
 
 .dashboard{
@@ -179,10 +215,10 @@ body{
 
 .card{
   background:var(--card);
-  padding:22px;
+  padding:24px;
   border:2px solid var(--edge);
-  border-radius:28px;
-  box-shadow:0 10px 0 #ead7b0, 0 18px 30px rgba(122,83,0,0.09);
+  border-radius:30px;
+  box-shadow:0 12px 0 #ead7b0, 0 22px 34px rgba(122,83,0,0.1);
   text-align:left;
   position:relative;
   overflow:hidden;
@@ -197,9 +233,9 @@ body{
 }
 
 .card h2{
-  margin:0 0 14px;
+  margin:0 0 16px;
   color:var(--ink);
-  font-size:22px;
+  font-size:24px;
   letter-spacing:-0.01em;
 }
 
@@ -229,8 +265,8 @@ button:active{
 }
 
 .continue-button{
-  width:190px;
-  height:190px;
+  width:210px;
+  height:210px;
   border-radius:50%;
   border:6px solid #ffffff;
   background:
@@ -238,17 +274,27 @@ button:active{
     linear-gradient(180deg, var(--leaf-light) 0%, var(--leaf) 58%, var(--leaf-deep) 100%);
   color:white;
   box-shadow:
-    0 16px 0 #3f9714,
-    0 30px 45px rgba(47,121,8,0.28);
+    0 18px 0 var(--leaf-shadow),
+    0 32px 48px rgba(47,121,8,0.28);
   display:flex;
   align-items:center;
   justify-content:center;
   text-align:center;
   padding:22px;
-  font-size:28px;
-  line-height:1.05;
+  font-size:30px;
+  line-height:1;
   letter-spacing:-0.03em;
   margin-top:0;
+  position:relative;
+  overflow:hidden;
+}
+
+.continue-button::before{
+  content:"";
+  position:absolute;
+  inset:14px;
+  border-radius:50%;
+  border:2px solid rgba(255,255,255,0.24);
 }
 
 .continue-button:hover{
@@ -261,12 +307,14 @@ button:active{
 .continue-button:active{
   transform:translateY(8px) scale(0.99);
   box-shadow:
-    0 8px 0 #3f9714,
+    0 8px 0 var(--leaf-shadow),
     0 16px 26px rgba(47,121,8,0.24);
 }
 
 .continue-button span{
   display:block;
+  position:relative;
+  z-index:1;
 }
 
 .button-row{
@@ -292,6 +340,7 @@ button:active{
   width:auto;
   min-width:150px;
   padding:16px 18px;
+  border-radius:18px;
 }
 
 .progress-note{
@@ -308,7 +357,7 @@ button:active{
 .stats{
   display:grid;
   grid-template-columns:repeat(3, minmax(0, 1fr));
-  gap:12px;
+  gap:14px;
   margin:6px 0 18px;
   font-weight:900;
 }
@@ -317,9 +366,10 @@ button:active{
 .profileStat{
   background:linear-gradient(180deg, #fffefb 0%, #f9f2e5 100%);
   border:2px solid #efdfbf;
-  border-radius:22px;
-  padding:14px 12px;
+  border-radius:24px;
+  padding:16px 14px;
   text-align:center;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.92);
 }
 
 .stat-box strong,
@@ -344,10 +394,10 @@ button:active{
 }
 
 #owlHome{
-  font-size:76px;
+  font-size:84px;
   margin:0 auto;
-  width:126px;
-  height:126px;
+  width:148px;
+  height:148px;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -355,41 +405,123 @@ button:active{
     radial-gradient(circle at 28% 22%, rgba(255,255,255,0.95), rgba(255,255,255,0.2) 30%, transparent 32%),
     linear-gradient(180deg, #fff5d8 0%, #f2cf75 100%);
   border-radius:44% 44% 50% 50% / 38% 38% 58% 58%;
-  box-shadow:inset 0 -10px 0 rgba(184,137,31,0.18), 0 12px 0 rgba(184,137,31,0.34);
+  box-shadow:inset 0 -12px 0 rgba(184,137,31,0.18), 0 14px 0 rgba(184,137,31,0.34);
+  position:relative;
+  z-index:1;
+}
+
+.hero-rings{
+  width:228px;
+  height:228px;
+  margin:0 auto 18px;
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.hero-rings::before,
+.hero-rings::after{
+  content:"";
+  position:absolute;
+  border-radius:50%;
+  border:2px dashed rgba(255,255,255,0.32);
+}
+
+.hero-rings::before{
+  inset:0;
+}
+
+.hero-rings::after{
+  inset:26px;
+  border-style:solid;
+  border-color:rgba(255,255,255,0.2);
+}
+
+.spark{
+  position:absolute;
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:22px;
+  background:rgba(255,255,255,0.18);
+  box-shadow:0 8px 18px rgba(24,86,2,0.16);
+}
+
+.spark.one{top:8px; left:26px;}
+.spark.two{top:18px; right:18px;}
+.spark.three{bottom:12px; left:14px;}
+.spark.four{bottom:18px; right:26px;}
+
+.section-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:8px 14px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  margin-bottom:12px;
+}
+
+.section-badge.progress{
+  background:#eef9df;
+  color:#4f9900;
+}
+
+.section-badge.quest{
+  background:#fff4cf;
+  color:#aa7700;
+}
+
+.section-badge.course{
+  background:#def2ff;
+  color:#1376b9;
+}
+
+.section-badge.profile{
+  background:#ffe2ea;
+  color:#c14d78;
 }
 
 .course-label{
-  padding:18px 20px;
-  border:2px solid #efdfbf;
-  border-radius:22px;
-  background:linear-gradient(180deg, #fffefb 0%, #f9f2e5 100%);
-  font-size:18px;
+  padding:22px 20px;
+  border:2px solid #cae8fb;
+  border-radius:24px;
+  background:linear-gradient(180deg, #ffffff 0%, #eaf7ff 100%);
+  font-size:20px;
   font-weight:900;
   text-align:center;
-  color:#7f5900;
+  color:#0d78ba;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.9);
 }
 
 #questText{
   margin:0;
-  padding:18px;
-  background:linear-gradient(180deg, #fff8df 0%, #ffeab2 100%);
+  padding:20px;
+  background:linear-gradient(180deg, #fff8df 0%, #ffe8a6 100%);
   border:2px solid #f2d47c;
-  border-radius:22px;
+  border-radius:24px;
   font-weight:800;
-  font-size:18px;
+  font-size:19px;
   color:#845b04;
 }
 
 .profile-grid{
   display:grid;
-  gap:12px;
+  gap:14px;
 }
 
 .mini-note{
   margin-top:14px;
-  font-size:13px;
+  font-size:14px;
   color:var(--muted);
-  font-weight:700;
+  font-weight:800;
 }
 
 @media (max-width:520px){
@@ -402,15 +534,19 @@ button:active{
   .dashboard{
     grid-template-columns:1fr;
   }
-  .header h1{font-size:34px;}
+  .header h1{font-size:38px;}
   .card{padding:18px 14px;}
   .stats{grid-template-columns:1fr;}
   .progress-layout{grid-template-columns:1fr;}
   .button-row{justify-content:center;}
   .hero-panel-grid{grid-template-columns:1fr 1fr;}
+  .hero-rings{
+    width:192px;
+    height:192px;
+  }
   .continue-button{
-    width:160px;
-    height:160px;
+    width:172px;
+    height:172px;
     font-size:24px;
   }
 }
@@ -432,7 +568,13 @@ button:active{
       </div>
     </div>
     <div class="hero-panel">
-      <div id="owlHome">🐯</div>
+      <div class="hero-rings">
+        <div class="spark one">✨</div>
+        <div class="spark two">⭐</div>
+        <div class="spark three">💚</div>
+        <div class="spark four">🏆</div>
+        <div id="owlHome">🐯</div>
+      </div>
       <div class="hero-panel-grid">
         <div class="hero-chip">
           <span class="hero-chip-label">Current Level</span>
@@ -451,6 +593,7 @@ button:active{
   <div class="dashboard">
     <div class="stack">
       <div class="card">
+        <div class="section-badge progress">Progress Center</div>
         <h2>📊 Your Progress</h2>
         <div class="progress-layout">
           <div class="stats">
@@ -475,6 +618,7 @@ button:active{
       </div>
 
       <div class="card">
+        <div class="section-badge quest">Daily Mission</div>
         <h2>🎯 Daily Quest</h2>
         <p id="questText">Loading...</p>
         <div class="mini-note">Small steps every day make the path easier.</div>
@@ -483,11 +627,13 @@ button:active{
 
     <div class="stack">
       <div class="card">
+        <div class="section-badge course">Active Course</div>
         <h2>🌍 Course</h2>
         <div class="course-label">Kurmanji to English</div>
       </div>
 
       <div class="card">
+        <div class="section-badge profile">Player Profile</div>
         <h2>🏆 Profile</h2>
         <div class="profile-grid">
           <div class="profileStat">

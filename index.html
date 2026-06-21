@@ -274,12 +274,17 @@ button:active{
   border-radius:50%;
   border:6px solid #ffffff;
   background:
-    radial-gradient(circle at 30% 28%, rgba(255,255,255,0.95), rgba(255,255,255,0.15) 26%, transparent 28%),
-    linear-gradient(180deg, var(--cta-orange-light) 0%, var(--cta-orange) 58%, var(--cta-orange-deep) 100%);
+    radial-gradient(circle at 35% 26%, rgba(255,255,255,0.98), rgba(255,247,205,0.72) 18%, rgba(255,214,112,0.26) 34%, transparent 42%),
+    radial-gradient(circle at 50% 50%, rgba(255,238,180,0.3), rgba(255,180,65,0.18) 48%, transparent 72%),
+    linear-gradient(180deg, #ffe8a8 0%, var(--cta-orange-light) 18%, var(--cta-orange) 58%, var(--cta-orange-deep) 100%);
   color:#ffffff;
   box-shadow:
+    inset 0 10px 18px rgba(255,255,255,0.34),
+    inset 0 -18px 24px rgba(170,79,10,0.22),
+    0 0 0 10px rgba(255,191,73,0.16),
+    0 0 38px rgba(255,186,63,0.5),
     0 18px 0 var(--cta-orange-shadow),
-    0 32px 48px rgba(200,100,18,0.28);
+    0 34px 54px rgba(200,100,18,0.34);
   display:flex;
   align-items:center;
   justify-content:center;
@@ -292,9 +297,10 @@ button:active{
   position:relative;
   overflow:hidden;
   text-shadow:
-    0 0 8px rgba(255,255,255,0.9),
-    0 0 20px rgba(255,255,255,0.8),
-    0 0 36px rgba(255,240,206,0.62),
+    0 0 8px rgba(255,255,255,1),
+    0 0 20px rgba(255,255,255,0.92),
+    0 0 42px rgba(255,250,223,0.9),
+    0 0 70px rgba(255,233,156,0.7),
     0 2px 0 rgba(138,77,12,0.28);
 }
 
@@ -303,19 +309,36 @@ button:active{
   position:absolute;
   inset:14px;
   border-radius:50%;
-  border:2px solid rgba(255,255,255,0.24);
+  border:2px solid rgba(255,255,255,0.32);
+  box-shadow:inset 0 0 20px rgba(255,255,255,0.12);
+}
+
+.continue-button::after{
+  content:"";
+  position:absolute;
+  width:96px;
+  height:50px;
+  top:22px;
+  left:32px;
+  border-radius:50%;
+  background:rgba(255,255,255,0.3);
+  filter:blur(3px);
+  transform:rotate(-18deg);
 }
 
 .continue-button:hover{
   transform:translateY(-3px) scale(1.02);
   background:
-    radial-gradient(circle at 30% 28%, rgba(255,255,255,0.95), rgba(255,255,255,0.15) 26%, transparent 28%),
-    linear-gradient(180deg, #ffe09a 0%, #ffb042 58%, #f1861d 100%);
+    radial-gradient(circle at 35% 26%, rgba(255,255,255,1), rgba(255,249,220,0.78) 18%, rgba(255,220,130,0.34) 34%, transparent 42%),
+    radial-gradient(circle at 50% 50%, rgba(255,244,194,0.34), rgba(255,185,70,0.22) 48%, transparent 72%),
+    linear-gradient(180deg, #fff0bf 0%, #ffd981 18%, #ffb042 58%, #f1861d 100%);
 }
 
 .continue-button:active{
   transform:translateY(8px) scale(0.99);
   box-shadow:
+    inset 0 10px 16px rgba(255,255,255,0.3),
+    inset 0 -14px 20px rgba(170,79,10,0.18),
     0 8px 0 var(--cta-orange-shadow),
     0 16px 26px rgba(200,100,18,0.24);
 }

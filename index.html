@@ -104,11 +104,11 @@ body{
   margin:0 auto;
   display:grid;
   grid-template-columns:1.1fr 0.9fr;
-  grid-template-areas:
-    "copy panel"
-    "actions actions";
+  grid-template-areas:"copy panel";
   gap:22px;
   align-items:center;
+  position:relative;
+  padding-bottom:132px;
 }
 
 .hero-copy{
@@ -186,13 +186,20 @@ body{
 }
 
 .hero-actions{
-  grid-area:actions;
-  margin-top:4px;
+  margin-top:0;
   display:flex;
   align-items:center;
   justify-content:center;
-  gap:18px;
-  flex-wrap:wrap;
+  position:absolute;
+  left:50%;
+  top:52%;
+  transform:translate(-50%,-50%);
+  z-index:6;
+  pointer-events:none;
+}
+
+.hero-actions .continue-button{
+  pointer-events:auto;
 }
 
 .hero-chip{
@@ -599,8 +606,8 @@ button:active{
   .hero-wrap{
     grid-template-areas:
       "copy"
-      "panel"
-      "actions";
+      "panel";
+    padding-bottom:0;
   }
   .header h1{font-size:38px;}
   .hero-title{font-size:42px;}
@@ -625,6 +632,12 @@ button:active{
     width:172px;
     height:172px;
     font-size:24px;
+  }
+  .hero-actions{
+    position:static;
+    transform:none;
+    margin-top:18px;
+    pointer-events:auto;
   }
 }
 </style>

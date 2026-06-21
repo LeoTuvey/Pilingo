@@ -108,7 +108,7 @@ body{
   gap:22px;
   align-items:center;
   position:relative;
-  padding-bottom:132px;
+  z-index:3;
 }
 
 .hero-copy{
@@ -177,6 +177,20 @@ body{
   overflow:hidden;
 }
 
+.hero-sun{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  width:270px;
+  height:270px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:2;
+  pointer-events:none;
+}
+
 .hero-panel-grid{
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -186,20 +200,12 @@ body{
 }
 
 .hero-actions{
-  margin-top:0;
+  margin-top:22px;
   display:flex;
   align-items:center;
-  justify-content:center;
-  position:absolute;
-  left:50%;
-  top:52%;
-  transform:translate(-50%,-50%);
-  z-index:6;
-  pointer-events:none;
-}
-
-.hero-actions .continue-button{
-  pointer-events:auto;
+  justify-content:flex-start;
+  gap:18px;
+  flex-wrap:wrap;
 }
 
 .hero-chip{
@@ -465,24 +471,25 @@ button:active{
 #owlHome{
   font-size:104px;
   margin:0 auto;
-  width:176px;
-  height:176px;
+  width:150px;
+  height:150px;
   display:flex;
   align-items:center;
   justify-content:center;
-  background:
-    radial-gradient(circle at 28% 22%, rgba(255,255,255,0.95), rgba(255,255,255,0.2) 30%, transparent 32%),
-    linear-gradient(180deg, #fff5d8 0%, #f2cf75 100%);
-  border-radius:44% 44% 50% 50% / 38% 38% 58% 58%;
-  box-shadow:inset 0 -12px 0 rgba(184,137,31,0.18), 0 14px 0 rgba(184,137,31,0.34);
+  background:radial-gradient(circle at 30% 28%, rgba(255,250,214,0.98), rgba(255,219,95,0.92) 48%, rgba(228,165,16,1) 100%);
+  border-radius:50%;
+  box-shadow:
+    inset 0 10px 18px rgba(255,255,255,0.3),
+    inset 0 -16px 18px rgba(168,110,7,0.24),
+    0 0 24px rgba(255,211,87,0.58);
   position:relative;
   z-index:1;
 }
 
 .hero-rings{
-  width:254px;
-  height:254px;
-  margin:0 auto 18px;
+  width:100%;
+  height:100%;
+  margin:0;
   position:relative;
   display:flex;
   align-items:center;
@@ -494,17 +501,21 @@ button:active{
   content:"";
   position:absolute;
   border-radius:50%;
-  border:2px dashed rgba(255,255,255,0.32);
 }
 
 .hero-rings::before{
   inset:0;
+  background:repeating-conic-gradient(from -3deg, rgba(255,210,72,0.98) 0deg 8deg, transparent 8deg 16deg);
+  filter:drop-shadow(0 0 10px rgba(255,210,72,0.45));
 }
 
 .hero-rings::after{
-  inset:26px;
-  border-style:solid;
-  border-color:rgba(255,255,255,0.2);
+  inset:34px;
+  background:radial-gradient(circle, rgba(255,243,188,0.96) 0%, rgba(255,215,86,0.94) 55%, rgba(230,167,20,1) 100%);
+  box-shadow:
+    inset 0 10px 16px rgba(255,255,255,0.24),
+    inset 0 -14px 18px rgba(160,104,7,0.2),
+    0 0 24px rgba(255,216,103,0.45);
 }
 
 .spark{
@@ -607,7 +618,6 @@ button:active{
     grid-template-areas:
       "copy"
       "panel";
-    padding-bottom:0;
   }
   .header h1{font-size:38px;}
   .hero-title{font-size:42px;}
@@ -619,26 +629,30 @@ button:active{
   .progress-layout{grid-template-columns:1fr;}
   .button-row{justify-content:center;}
   .hero-panel-grid{grid-template-columns:1fr 1fr;}
+  .hero-sun{
+    position:relative;
+    left:auto;
+    top:auto;
+    transform:none;
+    width:210px;
+    height:210px;
+    margin:0 auto 18px;
+  }
   .hero-rings{
     width:192px;
     height:192px;
   }
   #owlHome{
-    width:148px;
-    height:148px;
-    font-size:88px;
+    width:122px;
+    height:122px;
+    font-size:80px;
   }
   .continue-button{
     width:172px;
     height:172px;
     font-size:24px;
   }
-  .hero-actions{
-    position:static;
-    transform:none;
-    margin-top:18px;
-    pointer-events:auto;
-  }
+  .hero-actions{margin-top:18px;}
 }
 </style>
 </head>
@@ -647,6 +661,11 @@ button:active{
 
 <div class="header">
   <div id="xp">XP: 0</div>
+  <div class="hero-sun">
+    <div class="hero-rings">
+      <div id="owlHome">🐯</div>
+    </div>
+  </div>
   <div class="hero-wrap">
     <div class="hero-copy">
       <h1 class="hero-title">🐯 Pilingo</h1>
@@ -654,15 +673,11 @@ button:active{
         <p class="hero-subtitle">Learn Kurmanji and English step by step</p>
         <p class="hero-motto">Learn daily. Build streaks. Stay consistent.</p>
       </div>
+      <div class="hero-actions">
+        <button class="continue-button" onclick="goLearn()"><span>Continue<br>Learning</span></button>
+      </div>
     </div>
     <div class="hero-panel">
-      <div class="hero-rings">
-        <div class="spark one">✨</div>
-        <div class="spark two">⭐</div>
-        <div class="spark three">❤️</div>
-        <div class="spark four">🏆</div>
-        <div id="owlHome">🐯</div>
-      </div>
       <div class="hero-panel-grid">
         <div class="hero-chip">
           <span class="hero-chip-label">Current Level</span>
@@ -673,9 +688,6 @@ button:active{
           <span class="hero-chip-value" id="heroStreak">0</span>
         </div>
       </div>
-    </div>
-    <div class="hero-actions">
-      <button class="continue-button" onclick="goLearn()"><span>Continue<br>Learning</span></button>
     </div>
   </div>
 </div>

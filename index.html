@@ -182,21 +182,6 @@ body{
   transform:translateX(68px);
 }
 
-.hero-sun{
-  position:absolute;
-  left:50%;
-  top:50%;
-  transform:translate(-50%,-50%);
-  width:224px;
-  height:224px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:1;
-  pointer-events:none;
-  opacity:0.98;
-}
-
 .hero-mascot{
   width:150px;
   height:150px;
@@ -713,52 +698,6 @@ button:active{
   align-items:center;
 }
 
-.hero-rings{
-  width:100%;
-  height:100%;
-  margin:0;
-  position:relative;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-.hero-rings::before,
-.hero-rings::after{
-  content:"";
-  position:absolute;
-}
-
-.hero-rings::before{
-  display:none;
-}
-
-.hero-rings::after{
-  inset:28px;
-  border-radius:50%;
-  background:radial-gradient(circle, rgba(255,243,188,0.96) 0%, rgba(255,215,86,0.94) 55%, rgba(230,167,20,1) 100%);
-  box-shadow:
-    inset 0 10px 16px rgba(255,255,255,0.24),
-    inset 0 -14px 18px rgba(160,104,7,0.2),
-    0 0 20px rgba(255,216,103,0.28);
-}
-
-.sun-ray{
-  position:absolute;
-  left:50%;
-  top:50%;
-  width:16px;
-  height:60px;
-  transform:
-    translate(-50%,-50%)
-    rotate(calc(var(--i) * 17.142857deg))
-    translateY(-95px);
-  transform-origin:center center;
-  clip-path:polygon(50% 0%, 100% 100%, 0% 100%);
-  background:linear-gradient(180deg, rgba(255,233,132,1) 0%, rgba(255,206,62,0.98) 55%, rgba(222,155,18,0.98) 100%);
-  filter:drop-shadow(0 0 5px rgba(255,214,82,0.24));
-}
-
 .section-badge{
   display:inline-flex;
   align-items:center;
@@ -856,19 +795,6 @@ button:active{
   .progress-layout{grid-template-columns:1fr;}
   .button-row{justify-content:center;}
   .hero-panel-grid{grid-template-columns:1fr 1fr;}
-  .hero-sun{
-    position:relative;
-    left:auto;
-    top:auto;
-    transform:none;
-    width:180px;
-    height:180px;
-    margin:0 auto 10px;
-  }
-  .hero-rings{
-    width:192px;
-    height:192px;
-  }
   .hero-mascot{
     width:122px;
     height:122px;
@@ -905,31 +831,6 @@ button:active{
 
 <div class="header">
   <div id="xp">XP: 0</div>
-  <div class="hero-sun">
-    <div class="hero-rings">
-      <div class="sun-ray" style="--i:0"></div>
-      <div class="sun-ray" style="--i:1"></div>
-      <div class="sun-ray" style="--i:2"></div>
-      <div class="sun-ray" style="--i:3"></div>
-      <div class="sun-ray" style="--i:4"></div>
-      <div class="sun-ray" style="--i:5"></div>
-      <div class="sun-ray" style="--i:6"></div>
-      <div class="sun-ray" style="--i:7"></div>
-      <div class="sun-ray" style="--i:8"></div>
-      <div class="sun-ray" style="--i:9"></div>
-      <div class="sun-ray" style="--i:10"></div>
-      <div class="sun-ray" style="--i:11"></div>
-      <div class="sun-ray" style="--i:12"></div>
-      <div class="sun-ray" style="--i:13"></div>
-      <div class="sun-ray" style="--i:14"></div>
-      <div class="sun-ray" style="--i:15"></div>
-      <div class="sun-ray" style="--i:16"></div>
-      <div class="sun-ray" style="--i:17"></div>
-      <div class="sun-ray" style="--i:18"></div>
-      <div class="sun-ray" style="--i:19"></div>
-      <div class="sun-ray" style="--i:20"></div>
-    </div>
-  </div>
   <div class="hero-wrap">
     <div class="hero-copy">
       <h1 class="hero-title">🐯 Pilingo</h1>

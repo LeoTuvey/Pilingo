@@ -427,7 +427,7 @@ button:active{
   text-align:center;
   padding:22px;
   font-size:30px;
-  line-height:1;
+  line-height:1.02;
   letter-spacing:-0.03em;
   margin-top:0;
   position:relative;
@@ -463,6 +463,28 @@ button:active{
   transform:rotate(-18deg);
 }
 
+.button-label{
+  display:block;
+  position:relative;
+  z-index:1;
+}
+
+.button-sun{
+  width:36px;
+  height:36px;
+  margin:0 auto 10px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:20px;
+  color:#d49a00;
+  background:radial-gradient(circle, #fff7c8 0%, #ffd95c 70%, #efb91f 100%);
+  box-shadow:
+    0 0 0 4px rgba(255,215,94,0.18),
+    0 0 14px rgba(255,215,94,0.34);
+}
+
 .continue-button:hover{
   transform:translateY(-3px) scale(1.02);
   background:
@@ -477,12 +499,6 @@ button:active{
     inset 0 -18px 22px rgba(22,99,60,0.14),
     0 8px 0 rgba(22,99,60,0.74),
     0 16px 26px rgba(82,36,20,0.18);
-}
-
-.continue-button span{
-  display:block;
-  position:relative;
-  z-index:1;
 }
 
 .button-row{
@@ -578,15 +594,7 @@ button:active{
 }
 
 .hero-rings::before{
-  inset:0;
-  background:repeating-conic-gradient(
-    from -90deg,
-    rgba(255,208,62,0.98) 0deg 4.5deg,
-    transparent 4.5deg calc(360deg / 21)
-  );
-  -webkit-mask:radial-gradient(circle, transparent 0 47%, #000 48%);
-  mask:radial-gradient(circle, transparent 0 47%, #000 48%);
-  filter:drop-shadow(0 0 6px rgba(255,210,72,0.22));
+  display:none;
 }
 
 .hero-rings::after{
@@ -597,6 +605,22 @@ button:active{
     inset 0 10px 16px rgba(255,255,255,0.24),
     inset 0 -14px 18px rgba(160,104,7,0.2),
     0 0 20px rgba(255,216,103,0.28);
+}
+
+.sun-ray{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:16px;
+  height:60px;
+  transform:
+    translate(-50%,-50%)
+    rotate(calc(var(--i) * 17.142857deg))
+    translateY(-95px);
+  transform-origin:center center;
+  clip-path:polygon(50% 0%, 100% 100%, 0% 100%);
+  background:linear-gradient(180deg, rgba(255,233,132,1) 0%, rgba(255,206,62,0.98) 55%, rgba(222,155,18,0.98) 100%);
+  filter:drop-shadow(0 0 5px rgba(255,214,82,0.24));
 }
 
 .section-badge{
@@ -736,6 +760,12 @@ button:active{
     height:172px;
     font-size:24px;
   }
+  .button-sun{
+    width:30px;
+    height:30px;
+    font-size:16px;
+    margin-bottom:8px;
+  }
   .hero-actions{margin-top:18px;}
 }
 </style>
@@ -747,6 +777,27 @@ button:active{
   <div id="xp">XP: 0</div>
   <div class="hero-sun">
     <div class="hero-rings">
+      <div class="sun-ray" style="--i:0"></div>
+      <div class="sun-ray" style="--i:1"></div>
+      <div class="sun-ray" style="--i:2"></div>
+      <div class="sun-ray" style="--i:3"></div>
+      <div class="sun-ray" style="--i:4"></div>
+      <div class="sun-ray" style="--i:5"></div>
+      <div class="sun-ray" style="--i:6"></div>
+      <div class="sun-ray" style="--i:7"></div>
+      <div class="sun-ray" style="--i:8"></div>
+      <div class="sun-ray" style="--i:9"></div>
+      <div class="sun-ray" style="--i:10"></div>
+      <div class="sun-ray" style="--i:11"></div>
+      <div class="sun-ray" style="--i:12"></div>
+      <div class="sun-ray" style="--i:13"></div>
+      <div class="sun-ray" style="--i:14"></div>
+      <div class="sun-ray" style="--i:15"></div>
+      <div class="sun-ray" style="--i:16"></div>
+      <div class="sun-ray" style="--i:17"></div>
+      <div class="sun-ray" style="--i:18"></div>
+      <div class="sun-ray" style="--i:19"></div>
+      <div class="sun-ray" style="--i:20"></div>
     </div>
   </div>
   <div class="hero-wrap">
@@ -757,7 +808,7 @@ button:active{
         <p class="hero-motto">Learn daily. Build streaks. Stay consistent.</p>
       </div>
       <div class="hero-actions">
-        <button class="continue-button" onclick="goLearn()"><span>Continue<br>Learning</span></button>
+        <button class="continue-button" onclick="goLearn()"><span class="button-label"><span class="button-sun">☀</span>Continue<br>Learning</span></button>
       </div>
     </div>
     <div class="hero-panel">

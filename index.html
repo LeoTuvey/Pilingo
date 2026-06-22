@@ -217,6 +217,13 @@ body{
   isolation:isolate;
 }
 
+.hero-mascot-face{
+  display:inline-block;
+  transform-origin:center 68%;
+  animation:mascotFaceMove 4.8s ease-in-out infinite;
+  will-change:transform, filter;
+}
+
 .hero-mascot::before,
 .hero-mascot::after{
   content:"";
@@ -305,6 +312,42 @@ body{
 @keyframes mascotOrbit{
   from{transform:rotate(0deg);}
   to{transform:rotate(360deg);}
+}
+
+@keyframes mascotFaceMove{
+  0%{
+    transform:translateY(0) rotate(0deg) scale(1,1);
+    filter:brightness(1);
+  }
+  10%{
+    transform:translateY(-2px) rotate(-2deg) scale(1.02,0.98);
+  }
+  18%{
+    transform:translateY(0) rotate(2deg) scale(1,1);
+  }
+  30%{
+    transform:translateY(0) rotate(0deg) scale(1,0.9);
+  }
+  34%{
+    transform:translateY(0) rotate(0deg) scale(1,1);
+  }
+  52%{
+    transform:translateY(-3px) rotate(1deg) scale(1.03,0.99);
+    filter:brightness(1.06);
+  }
+  66%{
+    transform:translateY(0) rotate(-1deg) scale(1,1);
+  }
+  78%{
+    transform:translateY(0) rotate(0deg) scale(1,0.92);
+  }
+  82%{
+    transform:translateY(0) rotate(0deg) scale(1,1);
+  }
+  100%{
+    transform:translateY(0) rotate(0deg) scale(1,1);
+    filter:brightness(1);
+  }
 }
 
 .hero-panel-grid{
@@ -845,7 +888,7 @@ button:active{
         <div class="hero-mascot-orbit two"><div class="hero-mascot-spark two">⭐</div></div>
         <div class="hero-mascot-orbit three"><div class="hero-mascot-spark three">❤️</div></div>
         <div class="hero-mascot-orbit four"><div class="hero-mascot-spark four">🏆</div></div>
-        🐯
+        <span class="hero-mascot-face">🐯</span>
       </div>
       <div class="hero-panel-grid">
         <div class="hero-chip">

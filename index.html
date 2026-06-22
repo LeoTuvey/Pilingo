@@ -178,7 +178,7 @@ body{
   position:relative;
   overflow:hidden;
   z-index:3;
-  transform:translateX(44px);
+  transform:translateX(68px);
 }
 
 .hero-sun{
@@ -575,21 +575,23 @@ button:active{
 .hero-rings::after{
   content:"";
   position:absolute;
-  border-radius:50%;
 }
 
 .hero-rings::before{
   inset:0;
   background:repeating-conic-gradient(
     from -90deg,
-    rgba(255,210,72,0.96) 0deg 8deg,
-    transparent 8deg calc(360deg / 21)
+    rgba(255,210,72,0.98) 0deg 5deg,
+    transparent 5deg calc(360deg / 21)
   );
+  -webkit-mask:radial-gradient(circle, transparent 0 42%, #000 43%);
+  mask:radial-gradient(circle, transparent 0 42%, #000 43%);
   filter:drop-shadow(0 0 10px rgba(255,210,72,0.34));
 }
 
 .hero-rings::after{
   inset:28px;
+  border-radius:50%;
   background:radial-gradient(circle, rgba(255,243,188,0.96) 0%, rgba(255,215,86,0.94) 55%, rgba(230,167,20,1) 100%);
   box-shadow:
     inset 0 10px 16px rgba(255,255,255,0.24),

@@ -173,6 +173,22 @@ h1{
   filter:grayscale(0.35);
 }
 
+.lock-badge{
+  position:absolute;
+  top:12px;
+  right:12px;
+  width:34px;
+  height:34px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:50%;
+  background:rgba(37,48,68,0.82);
+  color:#fff;
+  font-size:18px;
+  box-shadow:0 4px 0 rgba(18,24,34,0.28);
+}
+
 .unlocked{
   box-shadow:0 10px 0 var(--egg-shadow, #d7ae56), 0 18px 28px rgba(230,171,24,0.18);
 }
@@ -351,7 +367,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function isSkillUnlocked(i){
     if(i === 0) return true;
-    if(getSkillLevel(i) > 0) return true;
 
     try {
       let course = window.Engine?.getCourse ? Engine.getCourse() : "en-ku";
@@ -360,10 +375,14 @@ document.addEventListener("DOMContentLoaded", () => {
         "[true,false,false,false,false,false,false]"
       );
 
-      return Array.isArray(unlocked) && unlocked[i] === true;
+      if (Array.isArray(unlocked) && unlocked[i] === true) {
+        return true;
+      }
     } catch(e) {
-      return false;
+      // fall through to sequential check below
     }
+
+    return getSkillLevel(i - 1) >= 4;
   }
 
   function getBar(level){
@@ -387,6 +406,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       html += `
         <div class="node ${state} level-${level}" style="--egg-top:${s.eggTop}; --egg-bottom:${s.eggBottom}; --egg-shadow:${s.eggShadow}; --egg-hover-shadow:${s.eggHover}; --egg-complete-shadow:${s.eggComplete}; --icon-top:${s.iconTop}; --icon-bottom:${s.iconBottom}; --icon-shadow:${s.iconShadow};" onclick="openSkill(${i})">
+          ${state === "locked" ? `<div class="lock-badge">🔒</div>` : ""}
 
           <div class="icon">
             ${level === 4 ? "👑" : s.emoji}
@@ -397,7 +417,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <span>${s.name}</span>
           </div>
 
-          <div class="small">Level ${level}/4</div>
+          <div class="small">${state === "locked" ? "Finish the previous game first" : `Level ${level}/4`}</div>
 
           <div class="bar">
             <div class="bar-fill" style="width:${progress}%"></div>

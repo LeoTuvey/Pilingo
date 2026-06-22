@@ -178,7 +178,7 @@ body{
   position:relative;
   overflow:hidden;
   z-index:3;
-  transform:translateX(22px);
+  transform:translateX(44px);
 }
 
 .hero-sun{
@@ -211,6 +211,7 @@ body{
   box-shadow:inset 0 -12px 0 rgba(184,137,31,0.18), 0 14px 0 rgba(184,137,31,0.34);
   position:relative;
   z-index:1;
+  isolation:isolate;
 }
 
 .hero-mascot::before,
@@ -231,6 +232,31 @@ body{
   border:3px solid rgba(255,255,255,0.18);
 }
 
+.hero-mascot-orbit{
+  position:absolute;
+  inset:-28px;
+  pointer-events:none;
+  animation:mascotOrbit 13s linear infinite;
+  z-index:2;
+}
+
+.hero-mascot-orbit.two{
+  inset:-42px;
+  animation-duration:16s;
+  animation-direction:reverse;
+}
+
+.hero-mascot-orbit.three{
+  inset:-22px;
+  animation-duration:11s;
+}
+
+.hero-mascot-orbit.four{
+  inset:-48px;
+  animation-duration:18s;
+  animation-direction:reverse;
+}
+
 .hero-mascot-spark{
   position:absolute;
   width:42px;
@@ -243,12 +269,20 @@ body{
   background:rgba(255,255,255,0.18);
   box-shadow:0 8px 18px rgba(24,86,2,0.16);
   z-index:2;
+  top:50%;
+  left:50%;
+  transform:translate(-50%, -50%);
 }
 
-.hero-mascot-spark.one{top:-10px; left:2px;}
-.hero-mascot-spark.two{top:8px; right:-8px;}
-.hero-mascot-spark.three{bottom:8px; left:-14px;}
-.hero-mascot-spark.four{bottom:-6px; right:6px;}
+.hero-mascot-spark.one{margin-top:-50%;}
+.hero-mascot-spark.two{margin-left:50%;}
+.hero-mascot-spark.three{margin-top:50%;}
+.hero-mascot-spark.four{margin-left:-50%;}
+
+@keyframes mascotOrbit{
+  from{transform:rotate(0deg);}
+  to{transform:rotate(360deg);}
+}
 
 .hero-panel-grid{
   display:grid;
@@ -683,6 +717,18 @@ button:active{
     height:34px;
     font-size:18px;
   }
+  .hero-mascot-orbit{
+    inset:-20px;
+  }
+  .hero-mascot-orbit.two{
+    inset:-30px;
+  }
+  .hero-mascot-orbit.three{
+    inset:-16px;
+  }
+  .hero-mascot-orbit.four{
+    inset:-34px;
+  }
   .continue-button{
     width:172px;
     height:172px;
@@ -714,10 +760,10 @@ button:active{
     </div>
     <div class="hero-panel">
       <div class="hero-mascot">
-        <div class="hero-mascot-spark one">✨</div>
-        <div class="hero-mascot-spark two">⭐</div>
-        <div class="hero-mascot-spark three">❤️</div>
-        <div class="hero-mascot-spark four">🏆</div>
+        <div class="hero-mascot-orbit one"><div class="hero-mascot-spark one">✨</div></div>
+        <div class="hero-mascot-orbit two"><div class="hero-mascot-spark two">⭐</div></div>
+        <div class="hero-mascot-orbit three"><div class="hero-mascot-spark three">❤️</div></div>
+        <div class="hero-mascot-orbit four"><div class="hero-mascot-spark four">🏆</div></div>
         🐯
       </div>
       <div class="hero-panel-grid">

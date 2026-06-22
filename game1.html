@@ -250,6 +250,11 @@ button.wrong{
     border:3px solid rgba(255,255,255,0.9);
 }
 
+.part-selector{
+    width:min(100%, 560px);
+    margin:0 auto;
+}
+
 .part-menu-core{
     position:absolute;
     left:50%;
@@ -365,6 +370,101 @@ button.wrong{
 
 .part-choice:nth-child(3n) .part-animal{
     animation-name:animalHop;
+}
+
+.part-extra-list{
+    display:grid;
+    gap:14px;
+    width:min(100%, 560px);
+    margin:18px auto 0;
+}
+
+.part-extra-title{
+    margin:6px auto 4px;
+    font-size:14px;
+    font-weight:900;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:#9a6b07;
+}
+
+.part-extra-choice{
+    width:100%;
+    margin:0;
+    padding:16px 18px;
+    border-radius:28px;
+    border:2px solid #f1d9a4;
+    background:
+        radial-gradient(circle at 18% 22%, rgba(255,255,255,0.95), rgba(255,255,255,0.35) 26%, transparent 30%),
+        linear-gradient(180deg, #fff8e7 0%, #fff1ce 100%);
+    box-shadow:
+        inset 0 -8px 0 rgba(228,192,110,0.18),
+        0 8px 0 rgba(234,206,146,0.85),
+        0 16px 24px rgba(153,112,17,0.12);
+    display:flex;
+    align-items:center;
+    gap:14px;
+    text-align:left;
+}
+
+.part-extra-choice:hover{
+    background:
+        radial-gradient(circle at 18% 22%, rgba(255,255,255,0.98), rgba(255,255,255,0.4) 26%, transparent 30%),
+        linear-gradient(180deg, #fffaf0 0%, #fff4d9 100%);
+}
+
+.part-extra-badge{
+    flex:0 0 88px;
+    width:88px;
+    height:88px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    background:
+        radial-gradient(circle at 30% 28%, rgba(255,255,255,0.96), rgba(255,255,255,0.36) 28%, transparent 34%),
+        linear-gradient(180deg, #ffefc8 0%, #ffd97a 100%);
+    border:3px solid rgba(255,255,255,0.94);
+    box-shadow:
+        inset 0 -8px 0 rgba(209,162,41,0.18),
+        0 7px 0 rgba(228,186,77,0.82),
+        0 14px 20px rgba(153,112,17,0.15);
+    font-size:46px;
+}
+
+.part-extra-copy{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    min-width:0;
+}
+
+.part-extra-name{
+    font-size:18px;
+    font-weight:900;
+    color:#65461b;
+}
+
+.part-extra-detail{
+    font-size:13px;
+    font-weight:700;
+    color:#8e6b35;
+}
+
+.part-extra-status{
+    margin-left:auto;
+    align-self:center;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-width:84px;
+    padding:8px 12px;
+    border-radius:999px;
+    background:#58cc02;
+    color:#fff;
+    font-size:13px;
+    font-weight:900;
+    box-shadow:0 4px 0 #46a302;
 }
 
 @keyframes animalBob{
@@ -560,6 +660,9 @@ button.wrong{
     .card{padding:18px 14px;}
     #question{font-size:25px; max-width:100%;}
     button{width:96%;}
+    .part-selector{
+        width:100%;
+    }
     .part-menu{
         display:grid;
         grid-template-columns:repeat(2, minmax(0, 1fr));
@@ -587,6 +690,25 @@ button.wrong{
     }
     .part-copy{
         padding:8px 4px 0;
+    }
+    .part-extra-choice{
+        width:100%;
+        padding:14px;
+        gap:12px;
+    }
+    .part-extra-badge{
+        flex-basis:74px;
+        width:74px;
+        height:74px;
+        font-size:40px;
+    }
+    .part-extra-name{
+        font-size:16px;
+    }
+    .part-extra-status{
+        min-width:72px;
+        padding:7px 10px;
+        font-size:12px;
     }
     .image-options{grid-template-columns:1fr;}
     .match-grid{gap:10px;}
@@ -1225,6 +1347,8 @@ function showPartSelect(){
     selectedWords = [];
     matchedKeys = [];
     selectedMatch = null;
+    const primaryParts = gameParts.slice(0, 5);
+    const extraParts = gameParts.slice(5);
 
     renderHearts();
     document.getElementById("menuButton").style.display = "none";
@@ -1236,23 +1360,43 @@ function showPartSelect(){
     document.getElementById("image").removeAttribute("src");
     document.getElementById("feedback").innerText = "";
     document.getElementById("activity").innerHTML = `
-        <div class="part-menu">
-            <div class="part-menu-core">
-                <strong>🐯</strong>
-                <span>Game One</span>
+        <div class="part-selector">
+            <div class="part-menu">
+                <div class="part-menu-core">
+                    <strong>🐯</strong>
+                    <span>Game One</span>
+                </div>
+                ${primaryParts.map((part, index) => `
+                    <button class="part-choice" style="${partOrbitStyle(index, primaryParts.length)}" onclick="startPart(${index})">
+                        <span class="part-badge" aria-hidden="true">
+                            <span class="part-animal" style="animation-delay:${(index * 0.18).toFixed(2)}s">${partEmojis[index] || "🦉"}</span>
+                        </span>
+                        <span class="part-copy">
+                            <span class="part-name">${escapeHtml(part.title)}</span>
+                            <span class="part-detail">${escapeHtml(partDescriptions[index] || "Practice section")}</span>
+                        </span>
+                        <span class="part-status">${completedParts.includes(index) ? "✓ Done" : "Start"}</span>
+                    </button>
+                `).join("")}
             </div>
-            ${gameParts.map((part, index) => `
-                <button class="part-choice" style="${partOrbitStyle(index, gameParts.length)}" onclick="startPart(${index})">
-                    <span class="part-badge" aria-hidden="true">
-                        <span class="part-animal" style="animation-delay:${(index * 0.18).toFixed(2)}s">${partEmojis[index] || "🦉"}</span>
-                    </span>
-                    <span class="part-copy">
-                        <span class="part-name">${escapeHtml(part.title)}</span>
-                        <span class="part-detail">${escapeHtml(partDescriptions[index] || "Practice section")}</span>
-                    </span>
-                    <span class="part-status">${completedParts.includes(index) ? "✓ Done" : "Start"}</span>
-                </button>
-            `).join("")}
+            ${extraParts.length ? `
+                <div class="part-extra-list">
+                    <div class="part-extra-title">More Lessons</div>
+                    ${extraParts.map((part, extraIndex) => {
+                        const actualIndex = extraIndex + primaryParts.length;
+                        return `
+                            <button class="part-extra-choice" onclick="startPart(${actualIndex})">
+                                <span class="part-extra-badge" aria-hidden="true">${partEmojis[actualIndex] || "🦉"}</span>
+                                <span class="part-extra-copy">
+                                    <span class="part-extra-name">${escapeHtml(part.title)}</span>
+                                    <span class="part-extra-detail">${escapeHtml(partDescriptions[actualIndex] || "Practice section")}</span>
+                                </span>
+                                <span class="part-extra-status">${completedParts.includes(actualIndex) ? "✓ Done" : "Start"}</span>
+                            </button>
+                        `;
+                    }).join("")}
+                </div>
+            ` : ""}
         </div>
     `;
 }

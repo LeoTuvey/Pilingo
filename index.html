@@ -409,18 +409,18 @@ button:active{
   width:210px;
   height:210px;
   border-radius:50%;
-  border:0;
+  border:1px solid rgba(255,255,255,0.34);
   background:
-    radial-gradient(circle at 35% 26%, rgba(255,255,255,0.98), rgba(255,244,188,0.58) 18%, rgba(255,208,86,0.24) 34%, transparent 42%),
-    linear-gradient(180deg, #ffd76a 0%, #e7b833 24%, #c99718 58%, #926707 100%);
+    radial-gradient(circle at 35% 24%, rgba(255,255,255,0.98), rgba(255,255,255,0.62) 18%, rgba(255,255,255,0.14) 34%, transparent 42%),
+    linear-gradient(180deg, rgba(255,255,255,0.74) 0%, rgba(255,255,255,0.48) 38%, rgba(223,232,240,0.38) 100%);
   color:#ffffff;
   box-shadow:
-    inset 0 12px 22px rgba(255,255,255,0.34),
-    inset 0 -20px 24px rgba(122,83,0,0.22),
+    inset 0 12px 22px rgba(255,255,255,0.42),
+    inset 0 -18px 24px rgba(108,125,140,0.16),
     0 0 0 12px rgba(255,42,42,0.28),
     0 0 62px rgba(255,0,0,0.72),
-    0 18px 0 #7a5704,
-    0 36px 58px rgba(122,83,0,0.34);
+    0 18px 0 rgba(163,176,188,0.8),
+    0 36px 58px rgba(70,86,99,0.24);
   display:flex;
   align-items:center;
   justify-content:center;
@@ -435,9 +435,9 @@ button:active{
   text-shadow:
     0 0 10px rgba(255,255,255,1),
     0 0 24px rgba(255,255,255,0.98),
-    0 0 52px rgba(255,220,220,0.9),
-    0 0 84px rgba(255,55,55,0.55),
-    0 2px 0 rgba(122,83,0,0.24);
+    0 0 42px rgba(255,232,232,0.8),
+    0 0 72px rgba(255,62,62,0.42),
+    0 2px 0 rgba(95,108,118,0.16);
 }
 
 .continue-button::before{
@@ -446,8 +446,8 @@ button:active{
   inset:12px;
   border-radius:50%;
   box-shadow:
-    inset 0 0 26px rgba(255,255,255,0.18),
-    inset 0 -10px 18px rgba(122,83,0,0.12);
+    inset 0 0 26px rgba(255,255,255,0.28),
+    inset 0 -10px 18px rgba(108,125,140,0.12);
 }
 
 .continue-button::after{
@@ -466,17 +466,17 @@ button:active{
 .continue-button:hover{
   transform:translateY(-3px) scale(1.02);
   background:
-    radial-gradient(circle at 35% 26%, rgba(255,255,255,1), rgba(255,247,208,0.64) 18%, rgba(255,218,106,0.28) 34%, transparent 42%),
-    linear-gradient(180deg, #ffe48b 0%, #efc347 24%, #d9a520 58%, #a77609 100%);
+    radial-gradient(circle at 35% 24%, rgba(255,255,255,1), rgba(255,255,255,0.7) 18%, rgba(255,255,255,0.18) 34%, transparent 42%),
+    linear-gradient(180deg, rgba(255,255,255,0.86) 0%, rgba(246,250,255,0.58) 38%, rgba(225,235,242,0.44) 100%);
 }
 
 .continue-button:active{
   transform:translateY(8px) scale(0.99);
   box-shadow:
-    inset 0 10px 18px rgba(255,255,255,0.28),
-    inset 0 -18px 22px rgba(122,83,0,0.18),
-    0 8px 0 #7a5704,
-    0 16px 26px rgba(122,83,0,0.24);
+    inset 0 10px 18px rgba(255,255,255,0.32),
+    inset 0 -18px 22px rgba(108,125,140,0.14),
+    0 8px 0 rgba(163,176,188,0.85),
+    0 16px 26px rgba(70,86,99,0.2);
 }
 
 .continue-button span{
@@ -579,14 +579,61 @@ button:active{
 
 .hero-rings::before{
   inset:0;
-  background:repeating-conic-gradient(
-    from -90deg,
-    rgba(255,210,72,0.98) 0deg 5deg,
-    transparent 5deg calc(360deg / 21)
+  background:
+    conic-gradient(
+      from -90deg,
+      rgba(255,208,62,0.98) 0deg 7deg,
+      transparent 7deg 17.14deg,
+      rgba(255,208,62,0.98) 17.14deg 24.14deg,
+      transparent 24.14deg 34.28deg,
+      rgba(255,208,62,0.98) 34.28deg 41.28deg,
+      transparent 41.28deg 51.42deg,
+      rgba(255,208,62,0.98) 51.42deg 58.42deg,
+      transparent 58.42deg 68.56deg,
+      rgba(255,208,62,0.98) 68.56deg 75.56deg,
+      transparent 75.56deg 85.7deg,
+      rgba(255,208,62,0.98) 85.7deg 92.7deg,
+      transparent 92.7deg 102.84deg,
+      rgba(255,208,62,0.98) 102.84deg 109.84deg,
+      transparent 109.84deg 119.98deg,
+      rgba(255,208,62,0.98) 119.98deg 126.98deg,
+      transparent 126.98deg 137.12deg,
+      rgba(255,208,62,0.98) 137.12deg 144.12deg,
+      transparent 144.12deg 154.26deg,
+      rgba(255,208,62,0.98) 154.26deg 161.26deg,
+      transparent 161.26deg 171.4deg,
+      rgba(255,208,62,0.98) 171.4deg 178.4deg,
+      transparent 178.4deg 188.54deg,
+      rgba(255,208,62,0.98) 188.54deg 195.54deg,
+      transparent 195.54deg 205.68deg,
+      rgba(255,208,62,0.98) 205.68deg 212.68deg,
+      transparent 212.68deg 222.82deg,
+      rgba(255,208,62,0.98) 222.82deg 229.82deg,
+      transparent 229.82deg 239.96deg,
+      rgba(255,208,62,0.98) 239.96deg 246.96deg,
+      transparent 246.96deg 257.1deg,
+      rgba(255,208,62,0.98) 257.1deg 264.1deg,
+      transparent 264.1deg 274.24deg,
+      rgba(255,208,62,0.98) 274.24deg 281.24deg,
+      transparent 281.24deg 291.38deg,
+      rgba(255,208,62,0.98) 291.38deg 298.38deg,
+      transparent 298.38deg 308.52deg,
+      rgba(255,208,62,0.98) 308.52deg 315.52deg,
+      transparent 315.52deg 325.66deg,
+      rgba(255,208,62,0.98) 325.66deg 332.66deg,
+      transparent 332.66deg 342.8deg,
+      rgba(255,208,62,0.98) 342.8deg 349.8deg,
+      transparent 349.8deg 360deg
+    );
+  clip-path:polygon(
+    50% 0%,
+    53% 15%, 57% 3%, 58% 17%, 65% 6%, 63% 20%, 73% 12%, 69% 24%, 81% 20%, 75% 30%,
+    88% 30%, 79% 37%, 93% 44%, 82% 46%, 95% 59%, 81% 55%, 92% 73%, 77% 62%, 85% 84%, 72% 68%,
+    74% 96%, 64% 72%, 61% 97%, 56% 72%, 50% 100%, 44% 72%, 39% 97%, 36% 72%, 26% 96%, 28% 68%,
+    15% 84%, 23% 62%, 8% 73%, 19% 55%, 5% 59%, 18% 46%, 7% 44%, 21% 37%, 12% 30%, 25% 30%,
+    19% 20%, 31% 24%, 27% 12%, 37% 20%, 35% 6%, 42% 17%, 43% 3%, 47% 15%
   );
-  -webkit-mask:radial-gradient(circle, transparent 0 42%, #000 43%);
-  mask:radial-gradient(circle, transparent 0 42%, #000 43%);
-  filter:drop-shadow(0 0 10px rgba(255,210,72,0.34));
+  filter:drop-shadow(0 0 8px rgba(255,210,72,0.24));
 }
 
 .hero-rings::after{

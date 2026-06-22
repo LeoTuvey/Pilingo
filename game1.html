@@ -255,6 +255,19 @@ button.wrong{
     margin:0 auto;
 }
 
+.part-cluster{
+    margin:0 auto 24px;
+}
+
+.part-cluster-title{
+    margin:4px auto 0;
+    font-size:13px;
+    font-weight:900;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:#9a6b07;
+}
+
 .part-menu-core{
     position:absolute;
     left:50%;
@@ -1347,8 +1360,10 @@ function showPartSelect(){
     selectedWords = [];
     matchedKeys = [];
     selectedMatch = null;
-    const primaryParts = gameParts.slice(0, 5);
-    const extraParts = gameParts.slice(5);
+    const partGroups = [];
+    for(let i = 0; i < gameParts.length; i += 5) {
+        partGroups.push(gameParts.slice(i, i + 5));
+    }
 
     renderHearts();
     document.getElementById("menuButton").style.display = "none";
@@ -1361,42 +1376,32 @@ function showPartSelect(){
     document.getElementById("feedback").innerText = "";
     document.getElementById("activity").innerHTML = `
         <div class="part-selector">
-            <div class="part-menu">
-                <div class="part-menu-core">
-                    <strong>🐯</strong>
-                    <span>Game One</span>
+            ${partGroups.map((group, groupIndex) => `
+                <div class="part-cluster">
+                    ${groupIndex > 0 ? `<div class="part-cluster-title">More Lessons</div>` : ""}
+                    <div class="part-menu">
+                        <div class="part-menu-core">
+                            <strong>${groupIndex === 0 ? "🐯" : "📘"}</strong>
+                            <span>${groupIndex === 0 ? "Game One" : `Page ${groupIndex + 1}`}</span>
+                        </div>
+                        ${group.map((part, index) => {
+                            const actualIndex = (groupIndex * 5) + index;
+                            return `
+                                <button class="part-choice" style="${partOrbitStyle(index, group.length)}" onclick="startPart(${actualIndex})">
+                                    <span class="part-badge" aria-hidden="true">
+                                        <span class="part-animal" style="animation-delay:${(actualIndex * 0.18).toFixed(2)}s">${partEmojis[actualIndex] || "🦉"}</span>
+                                    </span>
+                                    <span class="part-copy">
+                                        <span class="part-name">${escapeHtml(part.title)}</span>
+                                        <span class="part-detail">${escapeHtml(partDescriptions[actualIndex] || "Practice section")}</span>
+                                    </span>
+                                    <span class="part-status">${completedParts.includes(actualIndex) ? "✓ Done" : "Start"}</span>
+                                </button>
+                            `;
+                        }).join("")}
+                    </div>
                 </div>
-                ${primaryParts.map((part, index) => `
-                    <button class="part-choice" style="${partOrbitStyle(index, primaryParts.length)}" onclick="startPart(${index})">
-                        <span class="part-badge" aria-hidden="true">
-                            <span class="part-animal" style="animation-delay:${(index * 0.18).toFixed(2)}s">${partEmojis[index] || "🦉"}</span>
-                        </span>
-                        <span class="part-copy">
-                            <span class="part-name">${escapeHtml(part.title)}</span>
-                            <span class="part-detail">${escapeHtml(partDescriptions[index] || "Practice section")}</span>
-                        </span>
-                        <span class="part-status">${completedParts.includes(index) ? "✓ Done" : "Start"}</span>
-                    </button>
-                `).join("")}
-            </div>
-            ${extraParts.length ? `
-                <div class="part-extra-list">
-                    <div class="part-extra-title">More Lessons</div>
-                    ${extraParts.map((part, extraIndex) => {
-                        const actualIndex = extraIndex + primaryParts.length;
-                        return `
-                            <button class="part-extra-choice" onclick="startPart(${actualIndex})">
-                                <span class="part-extra-badge" aria-hidden="true">${partEmojis[actualIndex] || "🦉"}</span>
-                                <span class="part-extra-copy">
-                                    <span class="part-extra-name">${escapeHtml(part.title)}</span>
-                                    <span class="part-extra-detail">${escapeHtml(partDescriptions[actualIndex] || "Practice section")}</span>
-                                </span>
-                                <span class="part-extra-status">${completedParts.includes(actualIndex) ? "✓ Done" : "Start"}</span>
-                            </button>
-                        `;
-                    }).join("")}
-                </div>
-            ` : ""}
+            `).join("")}
         </div>
     `;
 }

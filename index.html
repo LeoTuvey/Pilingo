@@ -226,6 +226,45 @@ body{
   will-change:transform, filter;
 }
 
+.hero-mascot-features{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:4;
+}
+
+.hero-eye{
+  position:absolute;
+  top:46px;
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  background:#2d2107;
+  box-shadow:0 1px 0 rgba(255,255,255,0.16);
+  animation:mascotEyeMove 4.2s ease-in-out infinite;
+}
+
+.hero-eye.left{
+  left:44px;
+}
+
+.hero-eye.right{
+  right:44px;
+  animation-delay:0.08s;
+}
+
+.hero-mouth{
+  position:absolute;
+  left:50%;
+  top:78px;
+  width:32px;
+  height:16px;
+  margin-left:-16px;
+  border-bottom:4px solid #7a2d18;
+  border-radius:0 0 20px 20px;
+  animation:mascotMouthMove 4.2s ease-in-out infinite;
+}
+
 .hero-mascot-face::after{
   content:"✨";
   position:absolute;
@@ -421,6 +460,53 @@ body{
   84%{
     opacity:0;
     transform:scale(0.5) rotate(10deg);
+  }
+}
+
+@keyframes mascotEyeMove{
+  0%,100%{
+    transform:translate(0,0) scaleY(1);
+  }
+  18%{
+    transform:translate(2px,-1px) scaleY(1);
+  }
+  28%{
+    transform:translate(0,0) scaleY(0.15);
+  }
+  32%{
+    transform:translate(0,0) scaleY(1);
+  }
+  56%{
+    transform:translate(-2px,1px) scaleY(1);
+  }
+  74%{
+    transform:translate(1px,0) scaleY(0.2);
+  }
+  78%{
+    transform:translate(1px,0) scaleY(1);
+  }
+}
+
+@keyframes mascotMouthMove{
+  0%,100%{
+    transform:scaleX(1) scaleY(1);
+    border-bottom-width:4px;
+  }
+  22%{
+    transform:scaleX(1.08) scaleY(0.9);
+    border-bottom-width:5px;
+  }
+  40%{
+    transform:scaleX(0.82) scaleY(0.85);
+    border-bottom-width:3px;
+  }
+  62%{
+    transform:scaleX(1.12) scaleY(1.08);
+    border-bottom-width:5px;
+  }
+  80%{
+    transform:scaleX(0.92) scaleY(0.88);
+    border-bottom-width:3px;
   }
 }
 
@@ -889,6 +975,19 @@ button:active{
     height:122px;
     font-size:70px;
   }
+  .hero-eye{
+    top:38px;
+    width:10px;
+    height:10px;
+  }
+  .hero-eye.left{left:34px;}
+  .hero-eye.right{right:34px;}
+  .hero-mouth{
+    top:64px;
+    width:26px;
+    height:14px;
+    margin-left:-13px;
+  }
   .hero-mascot-spark{
     width:34px;
     height:34px;
@@ -963,6 +1062,11 @@ button:active{
         <div class="hero-mascot-orbit three"><div class="hero-mascot-spark three">❤️</div></div>
         <div class="hero-mascot-orbit four"><div class="hero-mascot-spark four">🏆</div></div>
         <span class="hero-mascot-face">🐯</span>
+        <div class="hero-mascot-features">
+          <div class="hero-eye left"></div>
+          <div class="hero-eye right"></div>
+          <div class="hero-mouth"></div>
+        </div>
       </div>
       <div class="hero-panel-grid">
         <div class="hero-chip">

@@ -108,6 +108,21 @@ const PilingoAudio = (() => {
     }, 420);
   }
 
+  function playStudyAlarm(){
+    [
+      { frequency:659.25, start:0.00, duration:0.18, type:"sine", volume:0.028, filter:3400 },
+      { frequency:880.0, start:0.12, duration:0.18, type:"triangle", volume:0.024, filter:3600 },
+      { frequency:659.25, start:0.28, duration:0.18, type:"sine", volume:0.028, filter:3400 },
+      { frequency:987.77, start:0.42, duration:0.26, type:"triangle", volume:0.026, filter:3800 }
+    ].forEach((note) => {
+      tone(note.frequency, note.start, note.duration, {
+        type:note.type,
+        volume:note.volume,
+        filter:note.filter
+      });
+    });
+  }
+
   function playPartAnimal(partIndex){
     switch(Number(partIndex)) {
       case 0:
@@ -213,6 +228,7 @@ const PilingoAudio = (() => {
     playCorrect,
     playWrong,
     playLessonComplete,
+    playStudyAlarm,
     playPartAnimal,
     speak,
     getYoungEnglishFemaleVoice

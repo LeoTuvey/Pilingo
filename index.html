@@ -529,8 +529,8 @@ button:active{
     inset 0 16px 24px rgba(255,255,255,0.32),
     inset 0 -22px 28px rgba(29,84,22,0.24),
     inset 0 0 0 2px rgba(255,255,255,0.18),
-    0 0 0 6px rgba(255,215,120,0.26),
-    0 0 0 13px rgba(255,255,255,0.12),
+    0 0 0 6px rgba(255,82,82,0.46),
+    0 0 0 13px rgba(255,120,120,0.18),
     0 14px 30px rgba(112,83,9,0.22),
     0 20px 0 rgba(22,99,60,0.68),
     0 38px 64px rgba(20,84,16,0.28);
@@ -597,8 +597,8 @@ button:active{
       inset 0 16px 24px rgba(255,255,255,0.32),
       inset 0 -22px 28px rgba(29,84,22,0.24),
       inset 0 0 0 2px rgba(255,255,255,0.18),
-      0 0 0 6px rgba(255,215,120,0.26),
-      0 0 0 13px rgba(255,255,255,0.12),
+      0 0 0 6px rgba(255,82,82,0.46),
+      0 0 0 13px rgba(255,120,120,0.18),
       -18px 0 34px rgba(255,62,62,0.34),
       18px 0 34px rgba(72,166,255,0.12),
       0 20px 0 rgba(22,99,60,0.68),
@@ -609,8 +609,8 @@ button:active{
       inset 0 16px 24px rgba(255,255,255,0.32),
       inset 0 -22px 28px rgba(29,84,22,0.24),
       inset 0 0 0 2px rgba(255,255,255,0.18),
-      0 0 0 6px rgba(255,215,120,0.26),
-      0 0 0 13px rgba(255,255,255,0.12),
+      0 0 0 6px rgba(255,82,82,0.46),
+      0 0 0 13px rgba(255,120,120,0.18),
       -30px -6px 42px rgba(255,62,62,0.42),
       26px 8px 18px rgba(72,166,255,0.08),
       0 20px 0 rgba(22,99,60,0.68),
@@ -621,8 +621,8 @@ button:active{
       inset 0 16px 24px rgba(255,255,255,0.32),
       inset 0 -22px 28px rgba(29,84,22,0.24),
       inset 0 0 0 2px rgba(255,255,255,0.18),
-      0 0 0 6px rgba(255,215,120,0.26),
-      0 0 0 13px rgba(255,255,255,0.12),
+      0 0 0 6px rgba(255,82,82,0.46),
+      0 0 0 13px rgba(255,120,120,0.18),
       -18px 0 18px rgba(255,62,62,0.12),
       18px 0 34px rgba(72,166,255,0.34),
       0 20px 0 rgba(22,99,60,0.68),
@@ -633,8 +633,8 @@ button:active{
       inset 0 16px 24px rgba(255,255,255,0.32),
       inset 0 -22px 28px rgba(29,84,22,0.24),
       inset 0 0 0 2px rgba(255,255,255,0.18),
-      0 0 0 6px rgba(255,215,120,0.26),
-      0 0 0 13px rgba(255,255,255,0.12),
+      0 0 0 6px rgba(255,82,82,0.46),
+      0 0 0 13px rgba(255,120,120,0.18),
       -24px 8px 18px rgba(255,62,62,0.08),
       30px -6px 42px rgba(72,166,255,0.42),
       0 20px 0 rgba(22,99,60,0.68),
@@ -645,8 +645,8 @@ button:active{
       inset 0 16px 24px rgba(255,255,255,0.32),
       inset 0 -22px 28px rgba(29,84,22,0.24),
       inset 0 0 0 2px rgba(255,255,255,0.18),
-      0 0 0 6px rgba(255,215,120,0.26),
-      0 0 0 13px rgba(255,255,255,0.12),
+      0 0 0 6px rgba(255,82,82,0.46),
+      0 0 0 13px rgba(255,120,120,0.18),
       -18px 0 34px rgba(255,62,62,0.34),
       18px 0 34px rgba(72,166,255,0.12),
       0 20px 0 rgba(22,99,60,0.68),
@@ -1000,6 +1000,7 @@ button:active{
 <script src="app-ui.js"></script>
 <script src="app-state.js"></script>
 <script src="app-polish.js"></script>
+<script src="pilingo-sounds.js"></script>
 <script src="pwa.js"></script>
 
 <script>
@@ -1009,6 +1010,18 @@ button:active{
 ========================= */
 
 let xp = 0;
+let studyAlarmPlayed = false;
+
+function playStudyReminderOnce(){
+  if(studyAlarmPlayed) return;
+  studyAlarmPlayed = true;
+  if(window.PilingoAudio?.playStudyAlarm){
+    PilingoAudio.playStudyAlarm();
+  }
+}
+
+window.addEventListener("pointerdown", playStudyReminderOnce, { once:true });
+window.addEventListener("keydown", playStudyReminderOnce, { once:true });
 
 if(window.Engine && typeof Engine.getXP === "function"){
   xp = Engine.getXP();

@@ -545,7 +545,7 @@ button:active{
   margin-top:0;
   position:relative;
   overflow:hidden;
-  animation:continueButtonPulse 8s linear infinite;
+  animation:continueButtonPulse 8s linear infinite, continuePoliceLight 2.4s linear infinite;
   text-shadow:
     0 1px 0 rgba(30,89,20,0.34),
     0 0 14px rgba(255,255,255,0.95),
@@ -588,6 +588,69 @@ button:active{
   }
   100%{
     filter:hue-rotate(360deg) saturate(1);
+  }
+}
+
+@keyframes continuePoliceLight{
+  0%{
+    box-shadow:
+      inset 0 16px 24px rgba(255,255,255,0.32),
+      inset 0 -22px 28px rgba(29,84,22,0.24),
+      inset 0 0 0 2px rgba(255,255,255,0.18),
+      0 0 0 6px rgba(255,215,120,0.26),
+      0 0 0 13px rgba(255,255,255,0.12),
+      -18px 0 34px rgba(255,62,62,0.34),
+      18px 0 34px rgba(72,166,255,0.12),
+      0 20px 0 rgba(22,99,60,0.68),
+      0 38px 64px rgba(20,84,16,0.28);
+  }
+  25%{
+    box-shadow:
+      inset 0 16px 24px rgba(255,255,255,0.32),
+      inset 0 -22px 28px rgba(29,84,22,0.24),
+      inset 0 0 0 2px rgba(255,255,255,0.18),
+      0 0 0 6px rgba(255,215,120,0.26),
+      0 0 0 13px rgba(255,255,255,0.12),
+      -30px -6px 42px rgba(255,62,62,0.42),
+      26px 8px 18px rgba(72,166,255,0.08),
+      0 20px 0 rgba(22,99,60,0.68),
+      0 38px 64px rgba(20,84,16,0.28);
+  }
+  50%{
+    box-shadow:
+      inset 0 16px 24px rgba(255,255,255,0.32),
+      inset 0 -22px 28px rgba(29,84,22,0.24),
+      inset 0 0 0 2px rgba(255,255,255,0.18),
+      0 0 0 6px rgba(255,215,120,0.26),
+      0 0 0 13px rgba(255,255,255,0.12),
+      -18px 0 18px rgba(255,62,62,0.12),
+      18px 0 34px rgba(72,166,255,0.34),
+      0 20px 0 rgba(22,99,60,0.68),
+      0 38px 64px rgba(20,84,16,0.28);
+  }
+  75%{
+    box-shadow:
+      inset 0 16px 24px rgba(255,255,255,0.32),
+      inset 0 -22px 28px rgba(29,84,22,0.24),
+      inset 0 0 0 2px rgba(255,255,255,0.18),
+      0 0 0 6px rgba(255,215,120,0.26),
+      0 0 0 13px rgba(255,255,255,0.12),
+      -24px 8px 18px rgba(255,62,62,0.08),
+      30px -6px 42px rgba(72,166,255,0.42),
+      0 20px 0 rgba(22,99,60,0.68),
+      0 38px 64px rgba(20,84,16,0.28);
+  }
+  100%{
+    box-shadow:
+      inset 0 16px 24px rgba(255,255,255,0.32),
+      inset 0 -22px 28px rgba(29,84,22,0.24),
+      inset 0 0 0 2px rgba(255,255,255,0.18),
+      0 0 0 6px rgba(255,215,120,0.26),
+      0 0 0 13px rgba(255,255,255,0.12),
+      -18px 0 34px rgba(255,62,62,0.34),
+      18px 0 34px rgba(72,166,255,0.12),
+      0 20px 0 rgba(22,99,60,0.68),
+      0 38px 64px rgba(20,84,16,0.28);
   }
 }
 

@@ -1723,8 +1723,7 @@ function shuffleChoiceOptions(options){
 }
 
 function shouldShuffleChoiceStep(step){
-    return step.instruction.includes("🎯 Match the Meaning") ||
-        step.instruction.includes("🎯 Fill in the Missing Word");
+    return partIndex === 5 && stepIndex >= 0 && stepIndex <= 4;
 }
 
 function emojiForCorrectChoice(step, option){

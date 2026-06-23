@@ -1338,7 +1338,7 @@ function movingPromptChoiceStep(kurdishWord, kurdishRest, englishPrompt, options
         type:"choice",
         instruction:"🎯 Fill in the Missing Word | Peyva winda temam bike!",
         prompt:kurdishWord + " " + kurdishRest + "\n\n" + englishPrompt,
-        promptHtml:`${escapeHtml(kurdishWord)} <span class="moving-demo-word">${escapeHtml(kurdishRest)}</span><br><br>${escapeHtml(englishPrompt)}`,
+        promptHtml:`${escapeHtml(kurdishWord)} ${escapeHtml(kurdishRest)}<br><br>${escapeHtml(englishPrompt)}`,
         options:options,
         answer:answer
     };

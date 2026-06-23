@@ -161,18 +161,6 @@ body{
     animation:movingDemoWord 1.8s ease-in-out infinite;
 }
 
-.moving-demo-blank{
-    display:inline-block;
-    min-width:68px;
-    text-decoration:underline;
-    text-decoration-thickness:3px;
-    text-underline-offset:6px;
-    color:#ff8a00;
-    font-weight:1000;
-    letter-spacing:0.08em;
-    animation:movingDemoWord 1.8s ease-in-out infinite;
-}
-
 @keyframes movingDemoWord{
     0%, 100%{ transform:translateY(0); }
     35%{ transform:translateY(-3px); }
@@ -1335,24 +1323,22 @@ function choiceStep(instruction, prompt, options, answer){
 }
 
 function movingWordChoiceStep(word, suffix, kurdishPrompt, options, answer){
-    const styledPrompt = escapeHtml(kurdishPrompt).replace("_____", `<span class="moving-demo-blank">_____</span>`);
     return {
         type:"choice",
         instruction:"🎯🎯 Fill in the Missing Word | Peyva winda temam bike!",
         prompt:word + " " + suffix + "\n" + kurdishPrompt,
-        promptHtml:`<span class="moving-demo-word">${escapeHtml(word)}</span> ${escapeHtml(suffix)}<br>${styledPrompt}`,
+        promptHtml:`<span class="moving-demo-word">${escapeHtml(word)}</span> ${escapeHtml(suffix)}<br>${escapeHtml(kurdishPrompt)}`,
         options:options,
         answer:answer
     };
 }
 
 function movingPromptChoiceStep(kurdishWord, kurdishRest, englishPrompt, options, answer){
-    const styledEnglishPrompt = escapeHtml(englishPrompt).replace("_____", `<span class="moving-demo-blank">_____</span>`);
     return {
         type:"choice",
         instruction:"🎯 Fill in the Missing Word | Peyva winda temam bike!",
         prompt:kurdishWord + " " + kurdishRest + "\n\n" + englishPrompt,
-        promptHtml:`<span class="moving-demo-word">${escapeHtml(kurdishWord)}</span> ${escapeHtml(kurdishRest)}<br><br>${styledEnglishPrompt}`,
+        promptHtml:`<span class="moving-demo-word">${escapeHtml(kurdishWord)}</span> ${escapeHtml(kurdishRest)}<br><br>${escapeHtml(englishPrompt)}`,
         options:options,
         answer:answer
     };

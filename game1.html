@@ -586,6 +586,49 @@ button.wrong{
     box-shadow:0 4px 0 #d6e3ef;
 }
 
+.section-select{
+    display:grid;
+    gap:12px;
+    width:94%;
+    margin:10px auto 0;
+}
+
+.section-card{
+    width:100%;
+    margin:0;
+    text-align:left;
+    padding:16px 18px;
+    border-radius:18px;
+}
+
+.section-card strong,
+.section-card span{
+    display:block;
+}
+
+.section-card strong{
+    font-size:18px;
+    margin-bottom:6px;
+}
+
+.section-card span{
+    font-size:13px;
+    color:#65748b;
+    line-height:1.35;
+}
+
+.section-card.locked{
+    background:#f7f8fb;
+    border-color:#dde4ee;
+    color:#93a0b4;
+    box-shadow:0 4px 0 #dde4ee;
+}
+
+.section-card.locked span,
+.section-card.locked strong{
+    color:#93a0b4;
+}
+
 .image-options{
     display:grid;
     grid-template-columns:repeat(2, minmax(0, 1fr));
@@ -778,6 +821,7 @@ let selectedWords = [];
 let matchedKeys = [];
 let selectedMatch = null;
 let completedParts = loadCompletedParts();
+let completedSections = loadCompletedSections();
 
 const emoji = {
     coffee:"☕",
@@ -1199,6 +1243,13 @@ const partDescriptions = [
 
 const partEmojis = ["🐈", "🐕", "🐇", "🦜", "🦆", "🍎"];
 
+const partSections = {
+    5: [
+        { id:"f-part-1", label:"Part 1", detail:"This, that, these, and those", start:0, end:10 },
+        { id:"f-part-2", label:"Part 2", detail:"Apple colors and sentence practice", start:11, end:gameParts[5].steps.length - 1 }
+    ]
+};
+
 function imgOpt(label, key){
     return { label:label, emoji:emoji[key] || "", value:label };
 }
@@ -1386,6 +1437,58 @@ function saveCompletedParts(){
     localStorage.setItem("pilingo_game1_completed_parts", JSON.stringify(completedParts));
 }
 
+function loadCompletedSections(){
+    try {
+        const saved = JSON.parse(localStorage.getItem("pilingo_game1_completed_sections") || "{}");
+        return saved && typeof saved === "object" ? saved : {};
+    } catch(error) {
+        return {};
+    }
+}
+
+function saveCompletedSections(){
+    localStorage.setItem("pilingo_game1_completed_sections", JSON.stringify(completedSections));
+}
+
+function sectionsForPart(index){
+    return partSections[index] || [];
+}
+
+function sectionKey(index){
+    return String(index);
+}
+
+function isSectionComplete(index, sectionIndex){
+    const sections = sectionsForPart(index);
+    const section = sections[sectionIndex];
+    if(!section) return false;
+
+    return (completedSections[sectionKey(index)] || []).includes(section.id);
+}
+
+function isSectionUnlocked(index, sectionIndex){
+    if(sectionIndex === 0) return true;
+    return isSectionComplete(index, sectionIndex - 1);
+}
+
+function markSectionComplete(index, sectionIndex){
+    const sections = sectionsForPart(index);
+    const section = sections[sectionIndex];
+    if(!section) return;
+
+    const key = sectionKey(index);
+    const saved = completedSections[key] || [];
+    if(saved.includes(section.id)) return;
+
+    completedSections[key] = [...saved, section.id];
+    saveCompletedSections();
+}
+
+function currentSectionIndex(){
+    const sections = sectionsForPart(partIndex);
+    return sections.findIndex((section) => stepIndex >= section.start && stepIndex <= section.end);
+}
+
 function markPartComplete(index){
     if(!completedParts.includes(index)) {
         completedParts.push(index);
@@ -1402,11 +1505,72 @@ function allPartsComplete(){
 }
 
 function startPart(index){
+    if(sectionsForPart(index).length) {
+        showSectionSelect(index);
+        return;
+    }
+
     partIndex = index;
     stepIndex = 0;
     hearts = Engine.getHearts();
     PilingoAudio.playPartAnimal(index);
     load();
+}
+
+function startSection(index, sectionIndex){
+    const sections = sectionsForPart(index);
+    const section = sections[sectionIndex];
+    if(!section || !isSectionUnlocked(index, sectionIndex)) return;
+
+    partIndex = index;
+    stepIndex = section.start;
+    hearts = Engine.getHearts();
+    PilingoAudio.playPartAnimal(index);
+    load();
+}
+
+function showSectionSelect(index, message){
+    const sections = sectionsForPart(index);
+    if(!sections.length) {
+        startPart(index);
+        return;
+    }
+
+    partIndex = index;
+    selectedWords = [];
+    matchedKeys = [];
+    selectedMatch = null;
+
+    renderHearts();
+    document.getElementById("menuButton").style.display = "none";
+    document.getElementById("bar").style.width = "0%";
+    document.getElementById("partLabel").innerText = "Kurmanji to English";
+    document.getElementById("instruction").innerText = message || "Choose a section to study";
+    document.getElementById("question").innerText = gameParts[index].title;
+    document.getElementById("question").classList.remove("rich-prompt");
+    document.getElementById("image").style.display = "none";
+    document.getElementById("image").removeAttribute("src");
+    document.getElementById("feedback").innerText = "";
+    document.getElementById("activity").innerHTML = `
+        <div class="section-select">
+            ${sections.map((section, sectionIndex) => {
+                const unlocked = isSectionUnlocked(index, sectionIndex);
+                const complete = isSectionComplete(index, sectionIndex);
+                return `
+                    <button
+                        class="section-card ${unlocked ? "" : "locked"}"
+                        onclick="${unlocked ? `startSection(${index}, ${sectionIndex})` : ""}"
+                        ${unlocked ? "" : "disabled"}
+                    >
+                        <strong>${escapeHtml(section.label)} ${complete ? "✓" : ""}</strong>
+                        <span>${escapeHtml(section.detail)}</span>
+                        <span>${unlocked ? (complete ? "Open again" : "Start section") : "Finish the previous section first"}</span>
+                    </button>
+                `;
+            }).join("")}
+            <button class="secondary" onclick="showPartSelect()">Back to parts</button>
+        </div>
+    `;
 }
 
 function showPartSelect(){
@@ -1480,6 +1644,8 @@ function load(){
     renderHearts();
     updateProgress();
     document.getElementById("menuButton").style.display = "block";
+    document.getElementById("menuButton").innerText = sectionsForPart(partIndex).length ? "← Sections" : "← Parts";
+    document.getElementById("menuButton").onclick = () => sectionsForPart(partIndex).length ? showSectionSelect(partIndex) : showPartSelect();
     document.getElementById("partLabel").innerText =
         "Kurmanji to English\nPart " + (partIndex + 1) + " of " + gameParts.length + " • " + part.title;
     document.getElementById("instruction").innerText = step.instruction || "";
@@ -1871,6 +2037,17 @@ function markWrong(){
 }
 
 function completeStep(){
+    const sections = sectionsForPart(partIndex);
+    const sectionIndex = currentSectionIndex();
+    if(sections.length && sectionIndex >= 0 && stepIndex === sections[sectionIndex].end) {
+        markSectionComplete(partIndex, sectionIndex);
+
+        if(sectionIndex < sections.length - 1) {
+            showSectionSelect(partIndex, sections[sectionIndex + 1].label + " is now unlocked");
+            return;
+        }
+    }
+
     stepIndex++;
 
     if(stepIndex < gameParts[partIndex].steps.length) {

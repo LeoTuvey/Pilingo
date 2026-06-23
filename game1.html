@@ -161,16 +161,6 @@ body{
     animation:movingDemoWord 1.8s ease-in-out infinite;
 }
 
-.moving-demo-option{
-    display:inline-block;
-    text-decoration:underline;
-    text-decoration-thickness:3px;
-    text-underline-offset:5px;
-    color:#1674b8;
-    font-weight:1000;
-    animation:movingDemoWord 1.8s ease-in-out infinite;
-}
-
 @keyframes movingDemoWord{
     0%, 100%{ transform:translateY(0); }
     35%{ transform:translateY(-3px); }
@@ -1245,7 +1235,6 @@ function movingWordChoiceStep(word, suffix, kurdishPrompt, options, answer){
         instruction:"🎯🎯 Fill in the Missing Word | Peyva winda temam bike!",
         prompt:word + " " + suffix + "\n" + kurdishPrompt,
         promptHtml:`<span class="moving-demo-word">${escapeHtml(word)}</span> ${escapeHtml(suffix)}<br>${escapeHtml(kurdishPrompt)}`,
-        highlightedOptions:["Ev", "Ew"],
         options:options,
         answer:answer
     };
@@ -1524,16 +1513,8 @@ function renderChoiceStep(step){
 
     document.getElementById("activity").innerHTML =
         options.map(option => `
-            <button onclick="checkChoice('${escapeHtml(option)}', this)">${renderChoiceOption(step, option)}</button>
+            <button onclick="checkChoice('${escapeHtml(option)}', this)">${escapeHtml(option)}</button>
         `).join("");
-}
-
-function renderChoiceOption(step, option){
-    if(step.highlightedOptions?.includes(option)) {
-        return `<span class="moving-demo-option">${escapeHtml(option)}</span>`;
-    }
-
-    return escapeHtml(option);
 }
 
 function shouldShuffleChoiceStep(step){

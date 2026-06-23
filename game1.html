@@ -1216,6 +1216,14 @@ const gameParts = [
             movingNounChoiceStep("That", "apple.", "Ew _____.", ["sêve", "sêva he", "sêvêt he"], "sêva he"),
             movingNounChoiceStep("These", "apples.", "Ev _____.", ["sêve", "sêva he", "sêvêt he"], "sêve"),
             movingNounChoiceStep("Those", "apples.", "Ew _____.", ["sêve", "sêva he", "sêvêt he"], "sêvêt he"),
+            movingPromptChoiceStep("Ev", "sêve.", "This _____.", ["apple", "apples"], "apple"),
+            movingPromptChoiceStep("Ew", "sêva he.", "That _____.", ["apple", "apples"], "apple"),
+            movingPromptChoiceStep("Ev", "sêve.", "These _____.", ["apple", "apples"], "apples"),
+            movingPromptChoiceStep("Ew", "sêvêt he.", "Those _____.", ["apple", "apples"], "apples"),
+            movingPromptChoiceStep("Ev", "sêve.", "This _____.", ["apple", "apples"], "apple"),
+            movingPromptChoiceStep("Ew", "sêva he.", "That _____.", ["apple", "apples"], "apple"),
+            movingPromptChoiceStep("Ev", "sêve.", "These _____.", ["apple", "apples"], "apples"),
+            movingPromptChoiceStep("Ew", "sêvêt he.", "Those _____.", ["apple", "apples"], "apples"),
             nextStep("Game One F • Part 1 complete"),
             choiceStep("🎯 Match the Meaning", "Ev sêve ya kesk e. 🍏", ["This apple is green.", "These apples are green.", "That apple is green.", "Those apples are green."], "This apple is green."),
             choiceStep("🎯 Match the Meaning", "Ev sêvet  sor in. 🍎🍎", ["This apple is red.", "These apples are red.", "That apple is red.", "Those apples are red."], "These apples are red."),
@@ -1278,8 +1286,8 @@ const partSections = {
         { id:"e-part-8", label:"Part 8", detail:"Dog lesson", start:91, end:103 }
     ],
     5: [
-        { id:"f-part-1", label:"Part 1", detail:"This, that, these, and those", start:0, end:18 },
-        { id:"f-part-2", label:"Part 2", detail:"Apple colors and sentence practice", start:19, end:gameParts[5].steps.length - 1 }
+        { id:"f-part-1", label:"Part 1", detail:"This, that, these, and those", start:0, end:26 },
+        { id:"f-part-2", label:"Part 2", detail:"Apple colors and sentence practice", start:27, end:gameParts[5].steps.length - 1 }
     ]
 };
 

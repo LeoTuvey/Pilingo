@@ -74,6 +74,54 @@ body{
     transition:width 0.25s ease;
 }
 
+.grade-panel{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+    margin:0 0 16px;
+    padding:12px 14px;
+    border-radius:18px;
+    background:linear-gradient(180deg, #fff7dc 0%, #ffe7a8 100%);
+    border:2px solid #f0d27a;
+    box-shadow:0 4px 0 #e4c05d;
+}
+
+.grade-main{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:4px;
+}
+
+.grade-label{
+    font-size:12px;
+    font-weight:900;
+    letter-spacing:0.04em;
+    color:#8c6608;
+    text-transform:uppercase;
+}
+
+.grade-value{
+    font-size:22px;
+    font-weight:1000;
+    color:#253044;
+}
+
+.grade-score{
+    font-size:14px;
+    font-weight:800;
+    color:#715415;
+}
+
+.grade-note{
+    font-size:13px;
+    font-weight:800;
+    color:#846722;
+    text-align:right;
+}
+
 .lesson-top{
     display:flex;
     justify-content:space-between;
@@ -617,6 +665,12 @@ button.wrong{
     line-height:1.35;
 }
 
+.section-grade{
+    font-size:12px !important;
+    font-weight:900;
+    color:#a06d0d !important;
+}
+
 .section-card.locked{
     background:#f7f8fb;
     border-color:#dde4ee;
@@ -797,6 +851,14 @@ button.wrong{
 <div class="card">
     <div id="hearts"></div>
     <div id="progress"><div id="bar"></div></div>
+    <div id="gradePanel" class="grade-panel">
+        <div class="grade-main">
+            <span class="grade-label">Current Grade</span>
+            <span id="gradeValue" class="grade-value">A+ • 100%</span>
+            <span id="gradeScore" class="grade-score">0/0 first-try correct</span>
+        </div>
+        <div id="gradeNote" class="grade-note">Keep your first answer right to keep a high grade.</div>
+    </div>
     <div class="lesson-top">
         <button class="back-button" onclick="goBackToGames()">← Choose another game</button>
         <button id="menuButton" class="menu-button" onclick="showPartSelect()">← Parts</button>
@@ -822,6 +884,8 @@ let matchedKeys = [];
 let selectedMatch = null;
 let completedParts = loadCompletedParts();
 let completedSections = loadCompletedSections();
+let gradebook = loadGradebook();
+let gradeState = null;
 
 const emoji = {
     coffee:"☕",
@@ -1648,6 +1712,19 @@ function saveCompletedSections(){
     localStorage.setItem("pilingo_game1_completed_sections", JSON.stringify(completedSections));
 }
 
+function loadGradebook(){
+    try {
+        const saved = JSON.parse(localStorage.getItem("pilingo_game1_grades") || "{}");
+        return saved && typeof saved === "object" ? saved : {};
+    } catch(error) {
+        return {};
+    }
+}
+
+function saveGradebook(){
+    localStorage.setItem("pilingo_game1_grades", JSON.stringify(gradebook));
+}
+
 function sectionsForPart(index){
     return partSections[index] || [];
 }
@@ -1687,6 +1764,167 @@ function currentSectionIndex(){
     return sections.findIndex((section) => stepIndex >= section.start && stepIndex <= section.end);
 }
 
+function isGradableStep(step){
+    return !!step && step.type !== "next";
+}
+
+function currentScope(){
+    const sections = sectionsForPart(partIndex);
+    const sectionIndex = currentSectionIndex();
+
+    if(sections.length && sectionIndex >= 0) {
+        const section = sections[sectionIndex];
+        return {
+            kind:"section",
+            id:section.id,
+            label:gameParts[partIndex].title + " • " + section.label,
+            start:section.start,
+            end:section.end
+        };
+    }
+
+    return {
+        kind:"part",
+        id:"game1-part-" + partIndex,
+        label:gameParts[partIndex].title,
+        start:0,
+        end:gameParts[partIndex].steps.length - 1
+    };
+}
+
+function gradableCountForScope(scope){
+    let total = 0;
+
+    for(let i = scope.start; i <= scope.end; i++) {
+        if(isGradableStep(gameParts[partIndex].steps[i])) total++;
+    }
+
+    return total;
+}
+
+function ensureGradeState(){
+    const scope = currentScope();
+    if(gradeState && gradeState.scopeId === scope.id) return;
+
+    gradeState = {
+        scopeId:scope.id,
+        label:scope.label,
+        kind:scope.kind,
+        total:gradableCountForScope(scope),
+        completed:0,
+        earned:0,
+        mistakes:0,
+        stepStates:{}
+    };
+}
+
+function currentStepGradeState(){
+    ensureGradeState();
+    const key = String(stepIndex);
+
+    if(!gradeState.stepStates[key]) {
+        gradeState.stepStates[key] = { missed:false, completed:false };
+    }
+
+    return gradeState.stepStates[key];
+}
+
+function currentGradePercent(){
+    ensureGradeState();
+    if(!gradeState.total) return 100;
+    return Math.round((gradeState.earned / gradeState.total) * 100);
+}
+
+function gradeLetter(percent){
+    if(percent >= 97) return "A+";
+    if(percent >= 93) return "A";
+    if(percent >= 90) return "A-";
+    if(percent >= 87) return "B+";
+    if(percent >= 83) return "B";
+    if(percent >= 80) return "B-";
+    if(percent >= 77) return "C+";
+    if(percent >= 73) return "C";
+    if(percent >= 70) return "C-";
+    if(percent >= 67) return "D+";
+    if(percent >= 63) return "D";
+    if(percent >= 60) return "D-";
+    return "F";
+}
+
+function updateGradeDisplay(){
+    if(!document.getElementById("gradeValue")) return;
+    ensureGradeState();
+
+    const percent = currentGradePercent();
+    document.getElementById("gradeValue").innerText = gradeLetter(percent) + " • " + percent + "%";
+    document.getElementById("gradeScore").innerText = gradeState.earned + "/" + gradeState.total + " first-try correct";
+    document.getElementById("gradeNote").innerText = gradeState.completed + " finished • " + gradeState.mistakes + " mistakes";
+}
+
+function showIdleGrade(message){
+    const value = document.getElementById("gradeValue");
+    const score = document.getElementById("gradeScore");
+    const note = document.getElementById("gradeNote");
+
+    if(!value || !score || !note) return;
+
+    value.innerText = "Ready";
+    score.innerText = message || "Start a section to begin grading";
+    note.innerText = "Grades are saved when a section is finished.";
+}
+
+function registerCorrectForGrade(){
+    if(!isGradableStep(currentStep())) return;
+
+    const state = currentStepGradeState();
+    if(state.completed) return;
+
+    state.completed = true;
+    gradeState.completed++;
+    if(!state.missed) gradeState.earned++;
+    updateGradeDisplay();
+}
+
+function registerWrongForGrade(){
+    if(!isGradableStep(currentStep())) return;
+
+    const state = currentStepGradeState();
+    if(state.completed || state.missed) return;
+
+    state.missed = true;
+    gradeState.mistakes++;
+    updateGradeDisplay();
+}
+
+function saveCurrentGradeRecord(){
+    ensureGradeState();
+    const percent = currentGradePercent();
+    const existing = gradebook[gradeState.scopeId] || {};
+    const bestPercent = Math.max(existing.bestPercent || 0, percent);
+
+    gradebook[gradeState.scopeId] = {
+        id:gradeState.scopeId,
+        label:gradeState.label,
+        kind:gradeState.kind,
+        latestPercent:percent,
+        latestLetter:gradeLetter(percent),
+        latestEarned:gradeState.earned,
+        latestTotal:gradeState.total,
+        latestMistakes:gradeState.mistakes,
+        bestPercent:bestPercent,
+        bestLetter:gradeLetter(bestPercent),
+        attempts:(existing.attempts || 0) + 1,
+        updatedAt:new Date().toISOString()
+    };
+
+    saveGradebook();
+}
+
+function gradeSummaryText(record){
+    if(!record) return "No grade yet";
+    return "Latest " + record.latestLetter + " (" + record.latestPercent + "%) • Best " + record.bestLetter + " (" + record.bestPercent + "%)";
+}
+
 function markPartComplete(index){
     if(!completedParts.includes(index)) {
         completedParts.push(index);
@@ -1711,6 +1949,7 @@ function startPart(index){
     partIndex = index;
     stepIndex = 0;
     hearts = Engine.getHearts();
+    gradeState = null;
     PilingoAudio.playPartAnimal(index);
     load();
 }
@@ -1723,6 +1962,7 @@ function startSection(index, sectionIndex){
     partIndex = index;
     stepIndex = section.start;
     hearts = Engine.getHearts();
+    gradeState = null;
     PilingoAudio.playPartAnimal(index);
     load();
 }
@@ -1749,11 +1989,13 @@ function showSectionSelect(index, message){
     document.getElementById("image").style.display = "none";
     document.getElementById("image").removeAttribute("src");
     document.getElementById("feedback").innerText = "";
+    showIdleGrade("Choose a section to see its live grade");
     document.getElementById("activity").innerHTML = `
         <div class="section-select">
             ${sections.map((section, sectionIndex) => {
                 const unlocked = isSectionUnlocked(index, sectionIndex);
                 const complete = isSectionComplete(index, sectionIndex);
+                const record = gradebook[section.id];
                 return `
                     <button
                         class="section-card ${unlocked ? "" : "locked"}"
@@ -1762,6 +2004,7 @@ function showSectionSelect(index, message){
                     >
                         <strong>${escapeHtml(section.label)} ${complete ? "✓" : ""}</strong>
                         <span>${escapeHtml(section.detail)}</span>
+                        <span class="section-grade">${escapeHtml(gradeSummaryText(record))}</span>
                         <span>${unlocked ? (complete ? "Open again" : "Start section") : "Finish the previous section first"}</span>
                     </button>
                 `;
@@ -1789,6 +2032,7 @@ function showPartSelect(){
     document.getElementById("image").style.display = "none";
     document.getElementById("image").removeAttribute("src");
     document.getElementById("feedback").innerText = "";
+    showIdleGrade("Choose a part to begin grading");
     document.getElementById("activity").innerHTML = `
         <div class="part-selector">
             ${partGroups.map((group, groupIndex) => `
@@ -1834,6 +2078,7 @@ function partOrbitStyle(index, total){
 function load(){
     const part = gameParts[partIndex];
     const step = currentStep();
+    ensureGradeState();
 
     selectedWords = [];
     matchedKeys = [];
@@ -1857,6 +2102,7 @@ function load(){
     document.getElementById("image").style.display = "none";
     document.getElementById("image").removeAttribute("src");
     document.getElementById("feedback").innerText = "";
+    updateGradeDisplay();
 
     if(step.type === "image") renderImageStep(step);
     if(step.type === "choice") renderChoiceStep(step);
@@ -2227,12 +2473,14 @@ function normalize(value){
 }
 
 function markCorrect(){
+    registerCorrectForGrade();
     playSound("correct");
     document.getElementById("feedback").innerText = "✅ Correct";
     setTimeout(completeStep, 650);
 }
 
 function markWrong(){
+    registerWrongForGrade();
     hearts = Engine.loseHeart();
     renderHearts();
     playSound("wrong");
@@ -2245,10 +2493,12 @@ function completeStep(){
     const sections = sectionsForPart(partIndex);
     const sectionIndex = currentSectionIndex();
     if(sections.length && sectionIndex >= 0 && stepIndex === sections[sectionIndex].end) {
+        saveCurrentGradeRecord();
         markSectionComplete(partIndex, sectionIndex);
 
         if(sectionIndex < sections.length - 1) {
-            showSectionSelect(partIndex, sections[sectionIndex + 1].label + " is now unlocked");
+            const percent = currentGradePercent();
+            showSectionSelect(partIndex, sections[sectionIndex + 1].label + " is now unlocked • Grade " + gradeLetter(percent) + " " + percent + "%");
             return;
         }
     }
@@ -2258,6 +2508,10 @@ function completeStep(){
     if(stepIndex < gameParts[partIndex].steps.length) {
         load();
         return;
+    }
+
+    if(!sections.length) {
+        saveCurrentGradeRecord();
     }
 
     markPartComplete(partIndex);
@@ -2279,8 +2533,12 @@ function showPartComplete(completedIndex){
     document.getElementById("image").style.display = "none";
     document.getElementById("image").removeAttribute("src");
     document.getElementById("feedback").innerText = "✅ Great job!";
+    const partSectionsForResult = sectionsForPart(completedIndex);
+    const recordKey = partSectionsForResult.length ? partSectionsForResult[partSectionsForResult.length - 1].id : "game1-part-" + completedIndex;
+    const record = gradebook[recordKey];
     document.getElementById("activity").innerHTML = `
         <div class="part-complete-actions">
+            <div class="section-grade" style="font-size:16px !important; margin-bottom:10px;">${escapeHtml(record ? `Your latest grade: ${record.latestLetter} (${record.latestPercent}%)` : "Your grade was saved.")}</div>
             ${openPart >= 0 ? `<button class="primary-action" onclick="startPart(${openPart})">Start next part</button>` : ""}
             <button class="secondary-action" onclick="showPartSelect()">Choose another part</button>
             ${isAllDone ? `<button class="primary-action" onclick="finish()">Finish Game One</button>` : ""}

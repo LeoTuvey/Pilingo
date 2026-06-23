@@ -1327,7 +1327,7 @@ function movingWordChoiceStep(word, suffix, kurdishPrompt, options, answer){
         type:"choice",
         instruction:"🎯🎯 Fill in the Missing Word | Peyva winda temam bike!",
         prompt:word + " " + suffix + "\n" + kurdishPrompt,
-        promptHtml:`${escapeHtml(word)} <span class="moving-demo-word">${escapeHtml(suffix)}</span><br>${escapeHtml(kurdishPrompt)}`,
+        promptHtml:`<span class="moving-demo-word">${escapeHtml(word)}</span> ${escapeHtml(suffix)}<br>${escapeHtml(kurdishPrompt)}`,
         options:options,
         answer:answer
     };

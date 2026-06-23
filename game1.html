@@ -161,6 +161,16 @@ body{
     animation:movingDemoWord 1.8s ease-in-out infinite;
 }
 
+.moving-demo-noun{
+    display:inline-block;
+    text-decoration:underline;
+    text-decoration-thickness:3px;
+    text-underline-offset:5px;
+    color:#1c80cf;
+    font-weight:1000;
+    animation:movingDemoWord 1.8s ease-in-out infinite;
+}
+
 @keyframes movingDemoWord{
     0%, 100%{ transform:translateY(0); }
     35%{ transform:translateY(-3px); }
@@ -1327,18 +1337,21 @@ function movingWordChoiceStep(word, suffix, kurdishPrompt, options, answer){
         type:"choice",
         instruction:"🎯🎯 Fill in the Missing Word | Peyva winda temam bike!",
         prompt:word + " " + suffix + "\n" + kurdishPrompt,
-        promptHtml:`<span class="moving-demo-word">${escapeHtml(word)}</span> ${escapeHtml(suffix)}<br>${escapeHtml(kurdishPrompt)}`,
+        promptHtml:`${escapeHtml(word)} <span class="moving-demo-noun">${escapeHtml(suffix)}</span><br>${escapeHtml(kurdishPrompt)}`,
         options:options,
         answer:answer
     };
 }
 
 function movingPromptChoiceStep(kurdishWord, kurdishRest, englishPrompt, options, answer){
+    const styledEnglishPrompt = escapeHtml(englishPrompt)
+        .replace(" apples.", ` <span class="moving-demo-noun">apples.</span>`)
+        .replace(" apple.", ` <span class="moving-demo-noun">apple.</span>`);
     return {
         type:"choice",
         instruction:"🎯 Fill in the Missing Word | Peyva winda temam bike!",
         prompt:kurdishWord + " " + kurdishRest + "\n\n" + englishPrompt,
-        promptHtml:`<span class="moving-demo-word">${escapeHtml(kurdishWord)}</span> ${escapeHtml(kurdishRest)}<br><br>${escapeHtml(englishPrompt)}`,
+        promptHtml:`<span class="moving-demo-word">${escapeHtml(kurdishWord)}</span> ${escapeHtml(kurdishRest)}<br><br>${styledEnglishPrompt}`,
         options:options,
         answer:answer
     };

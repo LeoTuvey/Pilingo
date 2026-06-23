@@ -1230,6 +1230,11 @@ const gameParts = [
             movingLeadPromptChoiceStep("Ev", "sêvet zer in.", "_____ apples are yellow.", ["This", "That", "These", "Those"], "These"),
             movingLeadPromptChoiceStep("Ew", "sêvêt het şîn in.", "_____ apples are blue.", ["This", "That", "These", "Those"], "Those"),
             movingLeadPromptChoiceStep("Ev", "sêve ya sor e.", "_____ apple is red.", ["This", "That", "These", "Those"], "This"),
+            movingWordChoiceStep("This", "apple is green.", "_____ sêve ya kesk e.", ["Ev", "Ew"], "Ev"),
+            movingWordChoiceStep("That", "apple is red.", "_____ sêva he ya sor e.", ["Ev", "Ew"], "Ew"),
+            movingWordChoiceStep("These", "apples are yellow.", "_____ sêvet zer in.", ["Ev", "Ew"], "Ev"),
+            movingWordChoiceStep("Those", "apples are blue.", "_____ sêvêt het şîn in.", ["Ev", "Ew"], "Ew"),
+            movingWordChoiceStep("This", "apple is red.", "_____ sêve ya sor e.", ["Ev", "Ew"], "Ev"),
             nextStep("Game One F • Part 2 complete"),
             choiceStep("🎯 Match the Meaning", "Ev sêve ya kesk e. 🍏", ["This apple is green.", "These apples are green.", "That apple is green.", "Those apples are green."], "This apple is green."),
             choiceStep("🎯 Match the Meaning", "Ev sêvet  sor in. 🍎🍎", ["This apple is red.", "These apples are red.", "That apple is red.", "Those apples are red."], "These apples are red."),
@@ -1293,8 +1298,8 @@ const partSections = {
     ],
     5: [
         { id:"f-part-1", label:"Part 1", detail:"This, that, these, and those", start:0, end:26 },
-        { id:"f-part-2", label:"Part 2", detail:"Apple colors with this, that, these, and those", start:27, end:32 },
-        { id:"f-part-3", label:"Part 3", detail:"Apple colors and sentence practice", start:33, end:gameParts[5].steps.length - 1 }
+        { id:"f-part-2", label:"Part 2", detail:"Apple colors with this, that, these, and those", start:27, end:37 },
+        { id:"f-part-3", label:"Part 3", detail:"Apple colors and sentence practice", start:38, end:gameParts[5].steps.length - 1 }
     ]
 };
 

@@ -1274,7 +1274,62 @@ const gameParts = [
             choiceStep("🎯 True or False", "Ew sêva he = That apple", ["True", "False"], "True"),
             choiceStep("🎯 True or False", "Ev sêve = These apples", ["True", "False"], "True"),
             choiceStep("🎯 True or False", "Ew sêvêt he = These apples", ["True", "False"], "False"),
-            nextStep("Game One F • Part 2 complete"),
+            nextStep("Game One F • Part 2A complete"),
+            matchStep([
+                ["This apple", "Ev sêve"],
+                ["That apple", "Ew sêva he"],
+                ["These apples", "Ev sêve"],
+                ["Those apples", "Ew sêvêt he"]
+            ], "🎯 Match the Pairs | Cotên wekhev bi hev ve girêde!"),
+            matchStep([
+                ["This apple is red.", "Ev sêve ya sor e."],
+                ["That apple is red.", "Ew sêva he ya sor e."],
+                ["These apples are red.", "Ev sêvet sor in."],
+                ["Those apples are red.", "Ew sêvêt het sor in."]
+            ], "🎯 Match the Pairs | Cotên wekhev bi hev ve girêde!"),
+            matchStep([
+                ["This apple is green.", "Ev sêve ya kesk e."],
+                ["That apple is green.", "Ew sêva he ya kesk e."],
+                ["These apples are green.", "Ev sêvet kesk in."],
+                ["Those apples are green.", "Ew sêvêt het kesk in."]
+            ], "🎯 Match the Pairs | Cotên wekhev bi hev ve girêde!"),
+            matchStep([
+                ["This apple is yellow.", "Ev sêve ya zer e."],
+                ["That apple is yellow.", "Ew sêva he ya zer e."],
+                ["These apples are yellow.", "Ev sêvet zer in."],
+                ["Those apples are yellow.", "Ew sêvêt het zer in."]
+            ], "🎯 Match the Pairs | Cotên wekhev bi hev ve girêde!"),
+            matchStep([
+                ["This apple is blue.", "Ev sêve ya şîn e."],
+                ["That apple is blue.", "Ew sêva he ya şîn e."],
+                ["These apples are blue.", "Ev sêvet şîn in."],
+                ["Those apples are blue.", "Ew sêvêt het şîn in."]
+            ], "🎯 Match the Pairs | Cotên wekhev bi hev ve girêde!"),
+            matchStep([
+                ["This apple is sweet.", "Ev sêve ya şîrîn e."],
+                ["That apple is sweet.", "Ew sêva he ya şîrîn e."],
+                ["These apples are sweet.", "Ev sêvet şîrîn in."],
+                ["Those apples are sweet.", "Ew sêvêt het şîrîn in."]
+            ], "🎯 Match the Pairs | Cotên wekhev bi hev ve girêde!"),
+            matchStep([
+                ["This apple is good.", "Ev sêve ya baş e."],
+                ["That apple is good.", "Ew sêva he ya baş e."],
+                ["These apples are good.", "Ev sêvet baş in."],
+                ["Those apples are good.", "Ew sêvêt het baş in."]
+            ], "🎯 Match the Pairs | Cotên wekhev bi hev ve girêde!"),
+            matchStep([
+                ["This apple is big.", "Ev sêve ya mezin e."],
+                ["That apple is big.", "Ew sêva he ya mezin e."],
+                ["These apples are big.", "Ev sêvet mezin in."],
+                ["Those apples are big.", "Ew sêvêt het mezin in."]
+            ], "🎯 Match the Pairs | Cotên wekhev bi hev ve girêde!"),
+            matchStep([
+                ["This apple is small.", "Ev sêve ya biçûk e."],
+                ["That apple is small.", "Ew sêva he ya biçûk e."],
+                ["These apples are small.", "Ev sêvet biçûk in."],
+                ["Those apples are small.", "Ew sêvêt het biçûk in."]
+            ], "🎯 Match the Pairs | Cotên wekhev bi hev ve girêde!"),
+            nextStep("Game One F • Part 2B complete"),
             choiceStep("🎯 Match the Meaning", "Ev sêve ya kesk e. 🍏", ["This apple is green.", "These apples are green.", "That apple is green.", "Those apples are green."], "This apple is green."),
             choiceStep("🎯 Match the Meaning", "Ev sêvet  sor in. 🍎🍎", ["This apple is red.", "These apples are red.", "That apple is red.", "Those apples are red."], "These apples are red."),
             choiceStep("🎯 Match the Meaning", "Ew sêva he ya sor e. 🍎", ["This apple is red.", "That apple is red.", "These apples are red.", "Those apples are red."], "That apple is red."),
@@ -1337,8 +1392,9 @@ const partSections = {
     ],
     5: [
         { id:"f-part-1", label:"Part 1", detail:"This, that, these, and those", start:0, end:26 },
-        { id:"f-part-2", label:"Part 2", detail:"Apple colors with this, that, these, and those", start:27, end:76 },
-        { id:"f-part-3", label:"Part 3", detail:"Apple colors and sentence practice", start:77, end:gameParts[5].steps.length - 1 }
+        { id:"f-part-2a", label:"Part 2A", detail:"Apple colors quiz practice", start:27, end:76 },
+        { id:"f-part-2b", label:"Part 2B", detail:"Apple sentence pair matching", start:77, end:86 },
+        { id:"f-part-3", label:"Part 3", detail:"Apple colors and sentence practice", start:87, end:gameParts[5].steps.length - 1 }
     ]
 };
 
@@ -1911,6 +1967,7 @@ function renderMatchStep(step){
         kurmanjiCards.push({ text:pair[1], key:index, id:"ku-" + index });
     });
 
+    shuffleCards(kurmanjiCards, "match-kurmanji");
     shuffleCards(englishCards, "match-english");
 
     document.getElementById("activity").innerHTML = `

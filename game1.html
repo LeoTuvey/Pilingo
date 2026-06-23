@@ -1203,6 +1203,11 @@ const gameParts = [
             movingWordChoiceStep("These", "apples.", "_____ sêve.", ["Ev", "Ew"], "Ev"),
             movingWordChoiceStep("Those", "apples.", "_____ sêvêt he.", ["Ev", "Ew"], "Ew"),
             movingWordChoiceStep("This", "apple.", "_____ sêve.", ["Ev", "Ew"], "Ev"),
+            movingLeadPromptChoiceStep("Ev", "sêve.", "_____ apple.", ["This", "That", "These", "Those"], "This"),
+            movingLeadPromptChoiceStep("Ew", "sêva he.", "_____ apple.", ["This", "That", "These", "Those"], "That"),
+            movingLeadPromptChoiceStep("Ev", "sêve.", "_____ apples.", ["This", "That", "These", "Those"], "These"),
+            movingLeadPromptChoiceStep("Ew", "sêvêt he.", "_____ apples.", ["This", "That", "These", "Those"], "Those"),
+            movingLeadPromptChoiceStep("Ev", "sêve.", "_____ apple.", ["This", "That", "These", "Those"], "This"),
             nextStep("Game One F • Part 1 complete"),
             choiceStep("🎯 Match the Meaning", "Ev sêve ya kesk e. 🍏", ["This apple is green.", "These apples are green.", "That apple is green.", "Those apples are green."], "This apple is green."),
             choiceStep("🎯 Match the Meaning", "Ev sêvet  sor in. 🍎🍎", ["This apple is red.", "These apples are red.", "That apple is red.", "Those apples are red."], "These apples are red."),
@@ -1265,8 +1270,8 @@ const partSections = {
         { id:"e-part-8", label:"Part 8", detail:"Dog lesson", start:91, end:103 }
     ],
     5: [
-        { id:"f-part-1", label:"Part 1", detail:"This, that, these, and those", start:0, end:5 },
-        { id:"f-part-2", label:"Part 2", detail:"Apple colors and sentence practice", start:6, end:gameParts[5].steps.length - 1 }
+        { id:"f-part-1", label:"Part 1", detail:"This, that, these, and those", start:0, end:10 },
+        { id:"f-part-2", label:"Part 2", detail:"Apple colors and sentence practice", start:11, end:gameParts[5].steps.length - 1 }
     ]
 };
 
@@ -1318,6 +1323,17 @@ function movingPromptChoiceStep(kurdishWord, kurdishRest, englishPrompt, options
         instruction:"🎯 Fill in the Missing Word | Peyva winda temam bike!",
         prompt:kurdishWord + " " + kurdishRest + "\n\n" + englishPrompt,
         promptHtml:`${escapeHtml(kurdishWord)} ${escapeHtml(kurdishRest)}<br><br>${escapeHtml(englishPrompt)}`,
+        options:options,
+        answer:answer
+    };
+}
+
+function movingLeadPromptChoiceStep(kurdishWord, kurdishRest, englishPrompt, options, answer){
+    return {
+        type:"choice",
+        instruction:"🎯 🎯 Fill in the Missing Word | Peyva winda temam bike!",
+        prompt:kurdishWord + " " + kurdishRest + "\n" + englishPrompt,
+        promptHtml:`<span class="moving-demo-word">${escapeHtml(kurdishWord)}</span> ${escapeHtml(kurdishRest)}<br>${escapeHtml(englishPrompt)}`,
         options:options,
         answer:answer
     };

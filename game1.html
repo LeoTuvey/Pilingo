@@ -1706,13 +1706,20 @@ function renderImageStep(step){
 function renderChoiceStep(step){
     const options = [...step.options];
     if(shouldShuffleChoiceStep(step)) {
-        shuffleCards(options, "choice-" + step.instruction + "-" + step.prompt);
+        shuffleChoiceOptions(options);
     }
 
     document.getElementById("activity").innerHTML =
         options.map(option => `
             <button onclick="checkChoice('${escapeHtml(option)}', this)">${escapeHtml(option)}</button>
         `).join("");
+}
+
+function shuffleChoiceOptions(options){
+    for(let i = options.length - 1; i > 0; i--) {
+        const swapIndex = Math.floor(Math.random() * (i + 1));
+        [options[i], options[swapIndex]] = [options[swapIndex], options[i]];
+    }
 }
 
 function shouldShuffleChoiceStep(step){

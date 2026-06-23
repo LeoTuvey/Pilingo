@@ -147,6 +147,26 @@ body{
     color:#1f2937;
 }
 
+#question.rich-prompt{
+    line-height:1.3;
+}
+
+.moving-demo-word{
+    display:inline-block;
+    text-decoration:underline;
+    text-decoration-thickness:3px;
+    text-underline-offset:5px;
+    color:#1c80cf;
+    font-weight:1000;
+    animation:movingDemoWord 1.8s ease-in-out infinite;
+}
+
+@keyframes movingDemoWord{
+    0%, 100%{ transform:translateY(0); }
+    35%{ transform:translateY(-3px); }
+    65%{ transform:translateY(2px); }
+}
+
 #image{
     display:none;
     width:120px;
@@ -1134,11 +1154,11 @@ const gameParts = [
     {
         title:"Game One; F • 🍎 Sentence Challenge",
         steps:[
-            choiceStep("🎯🎯 Fill in the Missing Word", "This apple.\n_____ sêve.", ["Ev", "Ew"], "Ev"),
-            choiceStep("🎯🎯 Fill in the Missing Word", "That apple.\n_____ sêva he.", ["Ev", "Ew"], "Ew"),
-            choiceStep("🎯🎯 Fill in the Missing Word", "These apples.\n_____ sêve.", ["Ev", "Ew"], "Ev"),
-            choiceStep("🎯🎯 Fill in the Missing Word", "Those apples.\n_____ sêvêt he.", ["Ev", "Ew"], "Ew"),
-            choiceStep("🎯🎯 Fill in the Missing Word", "This apple.\n_____ sêve.", ["Ev", "Ew"], "Ev"),
+            movingWordChoiceStep("This", "apple.", "_____ sêve.", ["Ev", "Ew"], "Ev"),
+            movingWordChoiceStep("That", "apple.", "_____ sêva he.", ["Ev", "Ew"], "Ew"),
+            movingWordChoiceStep("These", "apples.", "_____ sêve.", ["Ev", "Ew"], "Ev"),
+            movingWordChoiceStep("Those", "apples.", "_____ sêvêt he.", ["Ev", "Ew"], "Ew"),
+            movingWordChoiceStep("This", "apple.", "_____ sêve.", ["Ev", "Ew"], "Ev"),
             choiceStep("🎯 Match the Meaning", "Ev sêve ya kesk e. 🍏", ["This apple is green.", "These apples are green.", "That apple is green.", "Those apples are green."], "This apple is green."),
             choiceStep("🎯 Match the Meaning", "Ev sêvet  sor in. 🍎🍎", ["This apple is red.", "These apples are red.", "That apple is red.", "Those apples are red."], "These apples are red."),
             choiceStep("🎯 Match the Meaning", "Ew sêva he ya sor e. 🍎", ["This apple is red.", "That apple is red.", "These apples are red.", "Those apples are red."], "That apple is red."),
@@ -1193,12 +1213,23 @@ function choiceStep(instruction, prompt, options, answer){
     if(instruction === "Select the correct translation") helper = " | Wergera rast hilbijêre!";
     if(instruction === "Select the correct word") helper = " | Peyva rast hilbijêre!";
     if(instruction === "🎯 Match the Meaning") helper = " | Wateya rast hilbijêre!";
-    if(instruction === "🎯 Fill in the Missing Word") helper = " | Peyva winda temam bike!";
+    if(instruction.includes("Fill in the Missing Word")) helper = " | Peyva winda temam bike!";
 
     return {
         type:"choice",
         instruction:instruction + helper,
         prompt:prompt,
+        options:options,
+        answer:answer
+    };
+}
+
+function movingWordChoiceStep(word, suffix, kurdishPrompt, options, answer){
+    return {
+        type:"choice",
+        instruction:"🎯🎯 Fill in the Missing Word | Peyva winda temam bike!",
+        prompt:word + " " + suffix + "\n" + kurdishPrompt,
+        promptHtml:`<span class="moving-demo-word">${escapeHtml(word)}</span> ${escapeHtml(suffix)}<br>${escapeHtml(kurdishPrompt)}`,
         options:options,
         answer:answer
     };
@@ -1435,7 +1466,13 @@ function load(){
     document.getElementById("partLabel").innerText =
         "Kurmanji to English\nPart " + (partIndex + 1) + " of " + gameParts.length + " • " + part.title;
     document.getElementById("instruction").innerText = step.instruction || "";
-    document.getElementById("question").innerText = step.prompt || "";
+    const questionEl = document.getElementById("question");
+    questionEl.classList.toggle("rich-prompt", Boolean(step.promptHtml));
+    if(step.promptHtml) {
+        questionEl.innerHTML = step.promptHtml;
+    } else {
+        questionEl.innerText = step.prompt || "";
+    }
     document.getElementById("image").style.display = "none";
     document.getElementById("image").removeAttribute("src");
     document.getElementById("feedback").innerText = "";

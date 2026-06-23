@@ -164,6 +164,98 @@ body{
   text-shadow:none;
 }
 
+.account-gate{
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  background:rgba(26, 39, 58, 0.7);
+  backdrop-filter:blur(8px);
+  z-index:1000;
+}
+
+.account-gate.open{
+  display:flex;
+}
+
+.account-card{
+  width:min(100%, 460px);
+  padding:28px 24px;
+  border-radius:32px;
+  background:linear-gradient(180deg, #fffdf5 0%, #fff1c8 100%);
+  border:3px solid #f1d37a;
+  box-shadow:0 18px 40px rgba(36,27,0,0.22);
+  text-align:left;
+}
+
+.account-card h2{
+  margin:0 0 8px;
+  font-size:28px;
+  color:#7f5600;
+}
+
+.account-card p{
+  margin:0 0 16px;
+  font-size:15px;
+  line-height:1.45;
+  color:#775e2d;
+}
+
+.account-form{
+  display:grid;
+  gap:12px;
+}
+
+.account-form label{
+  font-size:13px;
+  font-weight:900;
+  color:#7a5b13;
+}
+
+.account-form input{
+  width:100%;
+  margin-top:6px;
+  padding:14px 15px;
+  border-radius:16px;
+  border:2px solid #ecd8a5;
+  background:#fffdf7;
+  font-size:15px;
+  color:#233048;
+}
+
+.account-form input:focus{
+  outline:none;
+  border-color:#58cc02;
+  box-shadow:0 0 0 4px rgba(88,204,2,0.14);
+}
+
+.account-submit{
+  margin-top:6px;
+}
+
+.account-error{
+  min-height:20px;
+  font-size:13px;
+  font-weight:900;
+  color:#d63636;
+}
+
+.welcome-chip{
+  margin-top:14px;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 14px;
+  border-radius:999px;
+  background:rgba(255,255,255,0.18);
+  border:1px solid rgba(255,255,255,0.22);
+  color:#fffbe2;
+  font-size:14px;
+  font-weight:900;
+}
+
 .hero-copy p{
   margin:0;
 }
@@ -910,6 +1002,7 @@ button:active{
       </div>
       <div class="hero-actions">
         <button class="continue-button" onclick="goLearn()"><span>Continue<br>Learning</span></button>
+        <div id="welcomeChip" class="welcome-chip" hidden>👤 <span id="welcomeName">Learner</span></div>
       </div>
     </div>
     <div class="hero-panel">
@@ -931,6 +1024,29 @@ button:active{
         </div>
       </div>
     </div>
+  </div>
+</div>
+
+<div id="accountGate" class="account-gate">
+  <div class="account-card">
+    <h2>Create your account</h2>
+    <p>Students need an account before they can open the lessons. Create one account on this device to start learning.</p>
+    <form class="account-form" onsubmit="createAccount(event)">
+      <label>
+        Full name
+        <input id="accountName" type="text" placeholder="Enter your name" autocomplete="name">
+      </label>
+      <label>
+        Email
+        <input id="accountEmail" type="email" placeholder="Enter your email" autocomplete="email">
+      </label>
+      <label>
+        Password
+        <input id="accountPassword" type="password" placeholder="Create a password" autocomplete="new-password">
+      </label>
+      <div id="accountError" class="account-error"></div>
+      <button class="continue-button account-submit" type="submit"><span>Create<br>Account</span></button>
+    </form>
   </div>
 </div>
 
@@ -997,6 +1113,7 @@ button:active{
 
 <!-- SCRIPTS -->
 <script src="engine-core.js"></script>
+<script src="pilingo-auth.js"></script>
 <script src="app-ui.js"></script>
 <script src="app-state.js"></script>
 <script src="app-polish.js"></script>
@@ -1011,6 +1128,7 @@ button:active{
 
 let xp = 0;
 let studyAlarmPlayed = false;
+const continueButton = document.querySelector(".continue-button");
 
 function playStudyReminderOnce(){
   if(studyAlarmPlayed) return;
@@ -1104,6 +1222,10 @@ if(window.AppUI && typeof AppUI.updateOwl === "function"){
 ========================= */
 
 function goLearn(){
+  if(window.PilingoAuth && !PilingoAuth.hasAccount()){
+    showAccountGate();
+    return;
+  }
 
   if(window.AppState && typeof AppState.go === "function"){
     AppState.go("engine.html");
@@ -1111,6 +1233,58 @@ function goLearn(){
     window.location.href = "engine.html";
   }
 }
+
+function showAccountGate(){
+  const gate = document.getElementById("accountGate");
+  const error = document.getElementById("accountError");
+  if(error) error.innerText = "";
+  if(gate) gate.classList.add("open");
+}
+
+function hideAccountGate(){
+  const gate = document.getElementById("accountGate");
+  if(gate) gate.classList.remove("open");
+}
+
+function updateAccountUI(){
+  const hasAccount = window.PilingoAuth && PilingoAuth.hasAccount();
+  const welcomeChip = document.getElementById("welcomeChip");
+  const welcomeName = document.getElementById("welcomeName");
+
+  if(hasAccount){
+    const account = PilingoAuth.loadAccount();
+    if(welcomeChip) welcomeChip.hidden = false;
+    if(welcomeName) welcomeName.innerText = account?.name || "Learner";
+    hideAccountGate();
+    return;
+  }
+
+  if(welcomeChip) welcomeChip.hidden = true;
+  showAccountGate();
+}
+
+function createAccount(event){
+  event.preventDefault();
+
+  const name = document.getElementById("accountName").value;
+  const email = document.getElementById("accountEmail").value;
+  const password = document.getElementById("accountPassword").value;
+  const error = document.getElementById("accountError");
+
+  if(!name.trim() || !email.trim() || !password.trim()){
+    error.innerText = "Please fill in name, email, and password.";
+    return;
+  }
+
+  if(!window.PilingoAuth?.createAccount({ name, email, password })){
+    error.innerText = "The account could not be created. Please try again.";
+    return;
+  }
+
+  updateAccountUI();
+}
+
+updateAccountUI();
 
 </script>
 

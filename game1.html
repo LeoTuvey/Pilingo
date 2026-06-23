@@ -1235,6 +1235,11 @@ const gameParts = [
             movingWordChoiceStep("These", "apples are yellow.", "_____ sêvet zer in.", ["Ev", "Ew"], "Ev"),
             movingWordChoiceStep("Those", "apples are blue.", "_____ sêvêt het şîn in.", ["Ev", "Ew"], "Ew"),
             movingWordChoiceStep("This", "apple is red.", "_____ sêve ya sor e.", ["Ev", "Ew"], "Ev"),
+            movingVerbChoiceStep("This apple", "is", "green.", "Ev sêve ya kesk _____", ["e", "in"], "e"),
+            movingVerbChoiceStep("That apple", "is", "red.", "Ew sêva he ya sor _____", ["e", "in"], "e"),
+            movingVerbChoiceStep("These apples", "are", "yellow.", "Ev sêvet zer _____", ["e", "in"], "in"),
+            movingVerbChoiceStep("Those apples", "are", "blue.", "Ew sêvêt het şîn _____", ["e", "in"], "in"),
+            movingVerbChoiceStep("This apple", "is", "red.", "Ev sêve ya sor _____", ["e", "in"], "e"),
             nextStep("Game One F • Part 2 complete"),
             choiceStep("🎯 Match the Meaning", "Ev sêve ya kesk e. 🍏", ["This apple is green.", "These apples are green.", "That apple is green.", "Those apples are green."], "This apple is green."),
             choiceStep("🎯 Match the Meaning", "Ev sêvet  sor in. 🍎🍎", ["This apple is red.", "These apples are red.", "That apple is red.", "Those apples are red."], "These apples are red."),
@@ -1298,8 +1303,8 @@ const partSections = {
     ],
     5: [
         { id:"f-part-1", label:"Part 1", detail:"This, that, these, and those", start:0, end:26 },
-        { id:"f-part-2", label:"Part 2", detail:"Apple colors with this, that, these, and those", start:27, end:37 },
-        { id:"f-part-3", label:"Part 3", detail:"Apple colors and sentence practice", start:38, end:gameParts[5].steps.length - 1 }
+        { id:"f-part-2", label:"Part 2", detail:"Apple colors with this, that, these, and those", start:27, end:42 },
+        { id:"f-part-3", label:"Part 3", detail:"Apple colors and sentence practice", start:43, end:gameParts[5].steps.length - 1 }
     ]
 };
 
@@ -1373,6 +1378,17 @@ function movingNounChoiceStep(word, suffix, kurdishPrompt, options, answer){
         instruction:"🎯 🎯 Fill in the Missing Word | Peyva winda temam bike!",
         prompt:word + " " + suffix + "\n" + kurdishPrompt,
         promptHtml:`${escapeHtml(word)} <span class="moving-demo-word">${escapeHtml(suffix)}</span><br>${escapeHtml(kurdishPrompt)}`,
+        options:options,
+        answer:answer
+    };
+}
+
+function movingVerbChoiceStep(subject, verb, ending, kurdishPrompt, options, answer){
+    return {
+        type:"choice",
+        instruction:"🎯 Fill in the Missing Word | Peyva winda temam bike!",
+        prompt:subject + " " + verb + " " + ending + "\n" + kurdishPrompt,
+        promptHtml:`${escapeHtml(subject)} <span class="moving-demo-word">${escapeHtml(verb)}</span> ${escapeHtml(ending)}<br>${escapeHtml(kurdishPrompt)}`,
         options:options,
         answer:answer
     };

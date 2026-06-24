@@ -367,6 +367,56 @@ body{
   color:#4e6983;
 }
 
+.reminder-card{
+  margin-top:18px;
+  padding:18px;
+  border-radius:24px;
+  background:linear-gradient(180deg, #fff3ea 0%, #ffd8bd 100%);
+  border:3px solid #f3b98f;
+  box-shadow:0 10px 0 #df9b67, 0 18px 28px rgba(146,80,42,0.14);
+}
+
+.reminder-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:12px;
+}
+
+.reminder-bird{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:58px;
+  height:58px;
+  border-radius:50%;
+  background:rgba(255,255,255,0.72);
+  border:2px solid rgba(255,255,255,0.92);
+  font-size:30px;
+  box-shadow:0 6px 0 rgba(207,139,91,0.55);
+}
+
+.reminder-note{
+  margin:0 0 12px;
+  font-size:12px;
+  line-height:1.45;
+  color:#7a4d2b;
+}
+
+.reminder-status{
+  margin:0 0 12px;
+  font-size:13px;
+  font-weight:1000;
+  color:#804112;
+}
+
+.reminder-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
 .notify-actions{
   display:flex;
   justify-content:flex-start;
@@ -1265,6 +1315,19 @@ button:active{
           </div>
         </div>
       </div>
+
+      <div class="reminder-card">
+        <div class="reminder-top">
+          <strong>🪵 Woodpecker Study Alarm</strong>
+          <span class="reminder-bird">🐦</span>
+        </div>
+        <div class="reminder-note">Turn this on and the woodpecker will peck and remind students to come back and learn again.</div>
+        <div id="reminderStatus" class="reminder-status">Reminder is off</div>
+        <div class="reminder-actions">
+          <button class="secondary-button" type="button" onclick="toggleStudyReminder()">Turn on woodpecker reminder</button>
+          <button class="secondary-button" type="button" onclick="playWoodpeckerReminderNow()">Remind now</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -1288,6 +1351,8 @@ button:active{
 let xp = 0;
 let studyAlarmPlayed = false;
 const continueButton = document.querySelector(".continue-button");
+const reminderKey = "pilingo_study_reminder_v1";
+let reminderTimer = null;
 
 function playStudyReminderOnce(){
   if(studyAlarmPlayed) return;
@@ -1295,6 +1360,80 @@ function playStudyReminderOnce(){
   if(window.PilingoAudio?.playStudyAlarm){
     PilingoAudio.playStudyAlarm();
   }
+}
+
+function loadReminderSettings(){
+  try {
+    const saved = JSON.parse(localStorage.getItem(reminderKey) || "{}");
+    return {
+      enabled: !!saved.enabled,
+      intervalMinutes: Number(saved.intervalMinutes) || 30,
+      lastSentAt: Number(saved.lastSentAt) || 0
+    };
+  } catch(error) {
+    return { enabled:false, intervalMinutes:30, lastSentAt:0 };
+  }
+}
+
+function saveReminderSettings(settings){
+  localStorage.setItem(reminderKey, JSON.stringify(settings));
+}
+
+function updateReminderUI(){
+  const settings = loadReminderSettings();
+  const status = document.getElementById("reminderStatus");
+  if(!status) return;
+
+  if(settings.enabled){
+    const nextAt = settings.lastSentAt
+      ? new Date(settings.lastSentAt + (settings.intervalMinutes * 60000)).toLocaleTimeString()
+      : "soon";
+    status.innerText = "Reminder is on • Next woodpecker call around " + nextAt;
+  } else {
+    status.innerText = "Reminder is off";
+  }
+}
+
+function triggerWoodpeckerReminder(source){
+  const settings = loadReminderSettings();
+  settings.lastSentAt = Date.now();
+  saveReminderSettings(settings);
+  updateReminderUI();
+
+  if(window.PilingoAudio?.playWoodpeckerAlarm){
+    PilingoAudio.playWoodpeckerAlarm();
+  }
+
+  if(window.PilingoAudio?.speak){
+    PilingoAudio.speak("Woodpecker says it is time to study Pilingo.");
+  }
+
+  if("Notification" in window && Notification.permission === "granted"){
+    new Notification("Pilingo woodpecker reminder", {
+      body: "Time to come back and study."
+    });
+  }
+
+  if(window.PilingoNotify?.track){
+    PilingoNotify.track("study_reminder", "Woodpecker reminder", { source:source || "manual" });
+  }
+}
+
+function checkStudyReminder(){
+  const settings = loadReminderSettings();
+  if(!settings.enabled) return;
+
+  const now = Date.now();
+  const waitMs = settings.intervalMinutes * 60000;
+  if(!settings.lastSentAt || now - settings.lastSentAt >= waitMs){
+    triggerWoodpeckerReminder("automatic");
+  }
+}
+
+function startStudyReminderWatcher(){
+  if(reminderTimer) clearInterval(reminderTimer);
+  reminderTimer = setInterval(checkStudyReminder, 60000);
+  updateReminderUI();
 }
 
 window.addEventListener("pointerdown", playStudyReminderOnce, { once:true });
@@ -1405,6 +1544,27 @@ function goLearn(){
   }
 }
 
+function toggleStudyReminder(){
+  const settings = loadReminderSettings();
+  settings.enabled = !settings.enabled;
+  if(!settings.enabled){
+    settings.lastSentAt = 0;
+  }
+  saveReminderSettings(settings);
+  updateReminderUI();
+
+  if(settings.enabled){
+    if("Notification" in window && Notification.permission === "default"){
+      Notification.requestPermission();
+    }
+    triggerWoodpeckerReminder("enabled");
+  }
+}
+
+function playWoodpeckerReminderNow(){
+  triggerWoodpeckerReminder("manual");
+}
+
 function showAccountGate(){
   const gate = document.getElementById("accountGate");
   const error = document.getElementById("accountError");
@@ -1480,6 +1640,10 @@ if(window.PilingoNotify){
   PilingoNotify.startPolling("notifyList", "notifyStatus");
   PilingoNotify.startLeaderboardPolling("leaderList");
 }
+startStudyReminderWatcher();
+document.addEventListener("visibilitychange", () => {
+  if(document.visibilityState === "visible") checkStudyReminder();
+});
 
 </script>
 

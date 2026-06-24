@@ -123,6 +123,23 @@ const PilingoAudio = (() => {
     });
   }
 
+  function playWoodpeckerAlarm(){
+    [
+      { frequency:1180, start:0.00, duration:0.035, type:"square", volume:0.018, filter:2600 },
+      { frequency:1240, start:0.06, duration:0.035, type:"square", volume:0.018, filter:2800 },
+      { frequency:1310, start:0.12, duration:0.04, type:"square", volume:0.019, filter:3000 },
+      { frequency:980, start:0.26, duration:0.09, type:"triangle", volume:0.022, filter:2600, slideTo:1180 },
+      { frequency:1120, start:0.38, duration:0.08, type:"triangle", volume:0.018, filter:2800, slideTo:920 }
+    ].forEach((note) => {
+      tone(note.frequency, note.start, note.duration, {
+        type:note.type,
+        volume:note.volume,
+        filter:note.filter,
+        slideTo:note.slideTo
+      });
+    });
+  }
+
   function playPartAnimal(partIndex){
     switch(Number(partIndex)) {
       case 0:
@@ -229,6 +246,7 @@ const PilingoAudio = (() => {
     playWrong,
     playLessonComplete,
     playStudyAlarm,
+    playWoodpeckerAlarm,
     playPartAnimal,
     speak,
     getYoungEnglishFemaleVoice

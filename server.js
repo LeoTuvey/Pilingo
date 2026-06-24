@@ -7,6 +7,11 @@ const PORT = process.env.PORT || 3000;
 const ROOT = __dirname;
 const DATA_DIR = path.join(ROOT, "data");
 const EVENTS_FILE = path.join(DATA_DIR, "student-events.json");
+const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || "";
+const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID || "";
+const RESEND_API_KEY = process.env.RESEND_API_KEY || "";
+const EMAIL_TO = process.env.EMAIL_TO || "";
+const EMAIL_FROM = process.env.EMAIL_FROM || "";
 
 const MIME_TYPES = {
   ".html": "text/html; charset=utf-8",
@@ -50,6 +55,7 @@ const server = http.createServer(async (req, res) => {
       const events = readEvents();
       events.push(event);
       writeEvents(events.slice(-400));
+      sendNotifications(event).catch(() => {});
 
       return sendJson(res, 200, { ok: true, event });
     } catch (error) {
@@ -66,6 +72,12 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(PORT, () => {
   console.log(`Pilingo server running on http://localhost:${PORT}`);
+  if (TELEGRAM_BOT_TOKEN && TELEGRAM_CHAT_ID) {
+    console.log("Telegram notifications: enabled");
+  }
+  if (RESEND_API_KEY && EMAIL_TO && EMAIL_FROM) {
+    console.log("Email notifications: enabled");
+  }
 });
 
 function ensureDataFile() {
@@ -138,4 +150,70 @@ function serveStatic(requestPath, res) {
     });
     res.end(content);
   });
+}
+
+async function sendNotifications(event) {
+  await Promise.allSettled([
+    sendTelegramNotification(event),
+    sendEmailNotification(event)
+  ]);
+}
+
+async function sendTelegramNotification(event) {
+  if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) return;
+
+  const text = [
+    "Pilingo student activity",
+    `Student: ${event.studentName || "Unknown student"}`,
+    `Action: ${event.label || event.type || "Activity"}`,
+    `Page: ${event.page || ""}`,
+    `Time: ${event.createdAt || ""}`
+  ].join("\n");
+
+  await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      chat_id: TELEGRAM_CHAT_ID,
+      text
+    })
+  });
+}
+
+async function sendEmailNotification(event) {
+  if (!RESEND_API_KEY || !EMAIL_TO || !EMAIL_FROM) return;
+
+  const subject = `Pilingo student activity: ${event.label || event.type || "Activity"}`;
+  const html = `
+    <div style="font-family:Arial,sans-serif;line-height:1.5">
+      <h2>Pilingo student activity</h2>
+      <p><strong>Student:</strong> ${escapeHtml(event.studentName || "Unknown student")}</p>
+      <p><strong>Email:</strong> ${escapeHtml(event.studentEmail || "")}</p>
+      <p><strong>Action:</strong> ${escapeHtml(event.label || event.type || "Activity")}</p>
+      <p><strong>Page:</strong> ${escapeHtml(event.page || "")}</p>
+      <p><strong>Time:</strong> ${escapeHtml(event.createdAt || "")}</p>
+    </div>
+  `;
+
+  await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${RESEND_API_KEY}`
+    },
+    body: JSON.stringify({
+      from: EMAIL_FROM,
+      to: [EMAIL_TO],
+      subject,
+      html
+    })
+  });
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 }

@@ -315,6 +315,12 @@ body{
   color:#7d6630;
 }
 
+.notify-actions{
+  display:flex;
+  justify-content:flex-start;
+  margin:0 0 12px;
+}
+
 .hero-copy p{
   margin:0;
 }
@@ -1172,6 +1178,9 @@ button:active{
           <strong>🔔 Student Notifications</strong>
           <span id="notifyStatus" class="notify-status">Waiting</span>
         </div>
+        <div class="notify-actions">
+          <button class="secondary-button" type="button" onclick="enablePhoneNotifications()">Enable phone notifications</button>
+        </div>
         <div id="notifyList" class="notify-list">
           <div class="notify-item">
             <strong>No student activity yet</strong>
@@ -1363,6 +1372,14 @@ function createAccount(event){
   }
 
   updateAccountUI();
+}
+
+async function enablePhoneNotifications(){
+  if(!("Notification" in window)) return;
+  await Notification.requestPermission();
+  if(window.PilingoNotify){
+    PilingoNotify.renderInto("notifyList", "notifyStatus");
+  }
 }
 
 updateAccountUI();

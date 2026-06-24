@@ -69,7 +69,17 @@ const PilingoNotify = {
 
     const events = await this.fetchNotifications();
 
-    if(status) status.innerText = events.length ? "Live" : "Waiting";
+    if(status) {
+      if(!("Notification" in window)) {
+        status.innerText = events.length ? "Live" : "Waiting";
+      } else if(Notification.permission === "granted") {
+        status.innerText = events.length ? "Live + Phone" : "Phone Ready";
+      } else if(Notification.permission === "denied") {
+        status.innerText = "Blocked";
+      } else {
+        status.innerText = events.length ? "Live" : "Waiting";
+      }
+    }
 
     if(!events.length) {
       list.innerHTML = `
@@ -112,10 +122,6 @@ const PilingoNotify = {
         body: `${event.studentName || "Student"} • ${event.label || event.type || "Activity"}`
       });
       return;
-    }
-
-    if(Notification.permission !== "denied") {
-      Notification.requestPermission();
     }
   }
 };

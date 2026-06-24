@@ -315,10 +315,71 @@ body{
   color:#7d6630;
 }
 
+.leaderboard-card{
+  margin-top:18px;
+  padding:18px;
+  border-radius:24px;
+  background:linear-gradient(180deg, #eef8ff 0%, #d8efff 100%);
+  border:3px solid #a9d8ff;
+  box-shadow:0 10px 0 #87c3f0, 0 18px 28px rgba(42,95,146,0.14);
+}
+
+.leaderboard-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:12px;
+}
+
+.leaderboard-note{
+  margin:0 0 12px;
+  font-size:12px;
+  line-height:1.45;
+  color:#46657f;
+}
+
+.leader-list{
+  display:grid;
+  gap:10px;
+}
+
+.leader-item{
+  padding:12px 14px;
+  border-radius:18px;
+  background:rgba(255,255,255,0.86);
+  border:2px solid rgba(169,216,255,0.9);
+}
+
+.leader-item strong,
+.leader-item span{
+  display:block;
+}
+
+.leader-item strong{
+  font-size:14px;
+  color:#253044;
+}
+
+.leader-item span{
+  margin-top:4px;
+  font-size:12px;
+  color:#4e6983;
+}
+
 .notify-actions{
   display:flex;
   justify-content:flex-start;
+  flex-wrap:wrap;
+  gap:10px;
   margin:0 0 12px;
+}
+
+.notify-help{
+  margin:0 0 12px;
+  font-size:12px;
+  line-height:1.45;
+  color:#846b2f;
 }
 
 .hero-copy p{
@@ -1178,13 +1239,29 @@ button:active{
           <strong>🔔 Student Notifications</strong>
           <span id="notifyStatus" class="notify-status">Waiting</span>
         </div>
+        <div class="notify-help">Phone notifications currently work while this page stays open on your phone. Use the test button below to confirm they are allowed.</div>
         <div class="notify-actions">
           <button class="secondary-button" type="button" onclick="enablePhoneNotifications()">Enable phone notifications</button>
+          <button class="secondary-button" type="button" onclick="testPhoneNotification()">Test phone notification</button>
         </div>
         <div id="notifyList" class="notify-list">
           <div class="notify-item">
             <strong>No student activity yet</strong>
             <span>Notifications will appear here when students open the app or lessons.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="leaderboard-card">
+        <div class="leaderboard-top">
+          <strong>🏅 Student Ranking</strong>
+          <span class="notify-status">Top Learners</span>
+        </div>
+        <div class="leaderboard-note">Students climb higher with more XP, better grades, and more completed sections.</div>
+        <div id="leaderList" class="leader-list">
+          <div class="leader-item">
+            <strong>No rankings yet</strong>
+            <span>Student rankings will appear here after learners start studying.</span>
           </div>
         </div>
       </div>
@@ -1269,6 +1346,14 @@ else{
 document.getElementById("level").innerText = level;
 document.getElementById("heroLevel").innerText = level;
 document.getElementById("profileLevel").innerText = level;
+
+if(window.PilingoNotify?.submitStudentStats){
+  PilingoNotify.submitStudentStats({
+    xp: xp,
+    level: level,
+    streak: streak
+  });
+}
 
 /* =========================
    BADGES
@@ -1379,6 +1464,13 @@ async function enablePhoneNotifications(){
   await Notification.requestPermission();
   if(window.PilingoNotify){
     PilingoNotify.renderInto("notifyList", "notifyStatus");
+    PilingoNotify.sendTestNotification();
+  }
+}
+
+function testPhoneNotification(){
+  if(!window.PilingoNotify?.sendTestNotification()){
+    alert("Phone notifications are not allowed yet. Press Enable phone notifications first.");
   }
 }
 
@@ -1386,6 +1478,7 @@ updateAccountUI();
 if(window.PilingoNotify){
   PilingoNotify.track("page_open", "Opened home page", { page:"index" });
   PilingoNotify.startPolling("notifyList", "notifyStatus");
+  PilingoNotify.startLeaderboardPolling("leaderList");
 }
 
 </script>

@@ -1,6 +1,8 @@
 const PilingoNotify = {
   endpoint: "/api/track",
   listEndpoint: "/api/notifications",
+  leaderboardEndpoint: "/api/leaderboard",
+  statsEndpoint: "/api/student-stats",
   pollTimer: null,
   lastSeenEventId: null,
 
@@ -39,6 +41,28 @@ const PilingoNotify = {
     }
   },
 
+  async submitStudentStats(stats){
+    if(!this.canUseServer()) return null;
+
+    const student = this.currentStudent();
+
+    try {
+      const response = await fetch(this.statsEndpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          studentName: student.name,
+          studentEmail: student.email,
+          ...(stats || {})
+        })
+      });
+      const data = await response.json();
+      return data.student || null;
+    } catch(error) {
+      return null;
+    }
+  },
+
   async fetchNotifications(){
     if(!this.canUseServer()) return [];
 
@@ -46,6 +70,18 @@ const PilingoNotify = {
       const response = await fetch(this.listEndpoint, { cache:"no-store" });
       const data = await response.json();
       return Array.isArray(data.events) ? data.events : [];
+    } catch(error) {
+      return [];
+    }
+  },
+
+  async fetchLeaderboard(){
+    if(!this.canUseServer()) return [];
+
+    try {
+      const response = await fetch(this.leaderboardEndpoint, { cache:"no-store" });
+      const data = await response.json();
+      return Array.isArray(data.students) ? data.students : [];
     } catch(error) {
       return [];
     }
@@ -105,6 +141,45 @@ const PilingoNotify = {
     if(this.pollTimer) clearInterval(this.pollTimer);
     this.renderInto(listId, statusId);
     this.pollTimer = setInterval(() => this.renderInto(listId, statusId), 12000);
+  },
+
+  async renderLeaderboard(listId){
+    const list = document.getElementById(listId);
+    if(!list) return;
+
+    const students = await this.fetchLeaderboard();
+
+    if(!students.length) {
+      list.innerHTML = `
+        <div class="leader-item">
+          <strong>No rankings yet</strong>
+          <span>Student rankings will appear here after learners start studying.</span>
+        </div>
+      `;
+      return;
+    }
+
+    list.innerHTML = students.slice(0, 10).map((student, index) => `
+      <div class="leader-item">
+        <strong>#${index + 1} ${escapeHtml(student.name || "Student")}</strong>
+        <span>XP ${student.xp || 0} • Grade ${Math.round(student.averageGrade || 0)}% • Sections ${student.completedSections || 0}</span>
+      </div>
+    `).join("");
+  },
+
+  startLeaderboardPolling(listId){
+    this.renderLeaderboard(listId);
+    setInterval(() => this.renderLeaderboard(listId), 15000);
+  },
+
+  sendTestNotification(){
+    if(!("Notification" in window)) return false;
+    if(Notification.permission !== "granted") return false;
+
+    new Notification("Pilingo phone notifications", {
+      body: "Phone notifications are working on this device."
+    });
+    return true;
   },
 
   maybeShowBrowserNotification(event){

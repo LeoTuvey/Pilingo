@@ -7,6 +7,7 @@ const PORT = process.env.PORT || 3000;
 const ROOT = __dirname;
 const DATA_DIR = path.join(ROOT, "data");
 const EVENTS_FILE = path.join(DATA_DIR, "student-events.json");
+const STATS_FILE = path.join(DATA_DIR, "student-stats.json");
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || "";
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID || "";
 const RESEND_API_KEY = process.env.RESEND_API_KEY || "";
@@ -37,6 +38,13 @@ const server = http.createServer(async (req, res) => {
     });
   }
 
+  if (req.method === "GET" && parsed.pathname === "/api/leaderboard") {
+    return sendJson(res, 200, {
+      ok: true,
+      students: getLeaderboard()
+    });
+  }
+
   if (req.method === "POST" && parsed.pathname === "/api/track") {
     try {
       const body = await readBody(req);
@@ -63,6 +71,17 @@ const server = http.createServer(async (req, res) => {
     }
   }
 
+  if (req.method === "POST" && parsed.pathname === "/api/student-stats") {
+    try {
+      const body = await readBody(req);
+      const payload = JSON.parse(body || "{}");
+      const student = upsertStudentStats(payload || {});
+      return sendJson(res, 200, { ok: true, student });
+    } catch (error) {
+      return sendJson(res, 400, { ok: false, error: "Invalid student stats body" });
+    }
+  }
+
   if (req.method !== "GET") {
     return sendJson(res, 405, { ok: false, error: "Method not allowed" });
   }
@@ -83,6 +102,7 @@ server.listen(PORT, () => {
 function ensureDataFile() {
   if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
   if (!fs.existsSync(EVENTS_FILE)) fs.writeFileSync(EVENTS_FILE, "[]", "utf8");
+  if (!fs.existsSync(STATS_FILE)) fs.writeFileSync(STATS_FILE, "[]", "utf8");
 }
 
 function readEvents() {
@@ -95,6 +115,18 @@ function readEvents() {
 
 function writeEvents(events) {
   fs.writeFileSync(EVENTS_FILE, JSON.stringify(events, null, 2), "utf8");
+}
+
+function readStudentStats() {
+  try {
+    return JSON.parse(fs.readFileSync(STATS_FILE, "utf8"));
+  } catch (error) {
+    return [];
+  }
+}
+
+function writeStudentStats(students) {
+  fs.writeFileSync(STATS_FILE, JSON.stringify(students, null, 2), "utf8");
 }
 
 function readBody(req) {
@@ -150,6 +182,68 @@ function serveStatic(requestPath, res) {
     });
     res.end(content);
   });
+}
+
+function upsertStudentStats(payload) {
+  const name = String(payload.studentName || "Unknown student").trim() || "Unknown student";
+  const email = String(payload.studentEmail || "").trim().toLowerCase();
+  const students = readStudentStats();
+  const key = email || name.toLowerCase();
+  const existingIndex = students.findIndex((student) => (student.email || student.name.toLowerCase()) === key);
+  const existing = existingIndex >= 0 ? students[existingIndex] : null;
+
+  const merged = {
+    id: existing?.id || `${Date.now()}-${Math.random().toString(16).slice(2, 8)}`,
+    name,
+    email,
+    xp: safeNumber(payload.xp, existing?.xp || 0),
+    level: safeNumber(payload.level, existing?.level || 0),
+    streak: safeNumber(payload.streak, existing?.streak || 0),
+    completedSections: safeNumber(payload.completedSections, existing?.completedSections || 0),
+    averageGrade: safeNumber(payload.averageGrade, existing?.averageGrade || 0),
+    bestGrade: safeNumber(payload.bestGrade, existing?.bestGrade || 0),
+    lessonsFinished: safeNumber(payload.lessonsFinished, existing?.lessonsFinished || 0),
+    updatedAt: new Date().toISOString()
+  };
+
+  if (existingIndex >= 0) {
+    students[existingIndex] = merged;
+  } else {
+    students.push(merged);
+  }
+
+  writeStudentStats(students);
+  return merged;
+}
+
+function getLeaderboard() {
+  return readStudentStats()
+    .map((student) => ({
+      ...student,
+      rankScore: leaderboardScore(student)
+    }))
+    .sort((a, b) =>
+      b.rankScore - a.rankScore ||
+      b.xp - a.xp ||
+      b.averageGrade - a.averageGrade ||
+      b.completedSections - a.completedSections ||
+      a.name.localeCompare(b.name)
+    )
+    .slice(0, 20);
+}
+
+function leaderboardScore(student) {
+  return (
+    safeNumber(student.xp, 0) +
+    (safeNumber(student.averageGrade, 0) * 4) +
+    (safeNumber(student.completedSections, 0) * 25) +
+    (safeNumber(student.streak, 0) * 3)
+  );
+}
+
+function safeNumber(value, fallback) {
+  const number = Number(value);
+  return Number.isFinite(number) ? number : fallback;
 }
 
 async function sendNotifications(event) {

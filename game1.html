@@ -1922,11 +1922,34 @@ function saveCurrentGradeRecord(){
     };
 
     saveGradebook();
+
+    if(window.PilingoNotify?.submitStudentStats){
+        PilingoNotify.submitStudentStats(leaderboardSummary());
+    }
 }
 
 function gradeSummaryText(record){
     if(!record) return "No grade yet";
     return "Latest " + record.latestLetter + " (" + record.latestPercent + "%) • Best " + record.bestLetter + " (" + record.bestPercent + "%)";
+}
+
+function leaderboardSummary(){
+    const records = Object.values(gradebook || {});
+    const count = records.length;
+    const bestGrade = records.reduce((best, record) => Math.max(best, Number(record.bestPercent) || 0), 0);
+    const averageGrade = count
+        ? Math.round(records.reduce((sum, record) => sum + (Number(record.bestPercent) || 0), 0) / count)
+        : 0;
+
+    return {
+        completedSections: count,
+        averageGrade: averageGrade,
+        bestGrade: bestGrade,
+        lessonsFinished: completedParts.length,
+        xp: typeof Engine.getXP === "function" ? Engine.getXP() : 0,
+        level: typeof Engine.getLevel === "function" ? Engine.getLevel() : 0,
+        streak: Number(localStorage.getItem("streak") || "0") || 0
+    };
 }
 
 function markPartComplete(index){

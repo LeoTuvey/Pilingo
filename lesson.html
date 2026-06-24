@@ -80,6 +80,8 @@ button:active{
 <body>
 <script src="pilingo-auth.js"></script>
 <script>PilingoAuth.requireAccount();</script>
+<script src="pilingo-notify.js"></script>
+<script>PilingoNotify.track("page_open", "Opened lesson page", { page:"lesson" });</script>
 
 <div class="lesson-card">
   <h1>🐯 Lesson Page</h1>

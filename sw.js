@@ -1,4 +1,4 @@
-const CACHE_NAME = "pilingo-v7";
+const CACHE_NAME = "pilingo-v8";
 
 const APP_FILES = [
   "./",
@@ -15,6 +15,8 @@ const APP_FILES = [
   "./game6.html",
   "./game7.html",
   "./engine-core.js",
+  "./pilingo-auth.js",
+  "./pilingo-notify.js",
   "./pwa.js",
   "./pilingo-sounds.js",
   "./app-ui.js",

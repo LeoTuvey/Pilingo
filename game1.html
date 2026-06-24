@@ -849,6 +849,8 @@ button.wrong{
 <body>
 <script src="pilingo-auth.js"></script>
 <script>PilingoAuth.requireAccount();</script>
+<script src="pilingo-notify.js"></script>
+<script>PilingoNotify.track("page_open", "Opened Game 1", { page:"game1" });</script>
 
 <div class="card">
     <div id="hearts"></div>

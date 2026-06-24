@@ -59,6 +59,8 @@ button.save{
 <body>
 <script src="pilingo-auth.js"></script>
 <script>PilingoAuth.requireAccount();</script>
+<script src="pilingo-notify.js"></script>
+<script>PilingoNotify.track("page_open", "Opened voice page", { page:"voice" });</script>
 <div class="card">
   <h1>🐯 Samantha Voice</h1>
   <p class="hint">Pilingo now uses Samantha as the lesson voice.</p>

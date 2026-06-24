@@ -104,6 +104,8 @@ box-shadow:0 4px 0 #46a302 !important;
 <body>
 <script src="pilingo-auth.js"></script>
 <script>PilingoAuth.requireAccount();</script>
+<script src="pilingo-notify.js"></script>
+<script>PilingoNotify.track("page_open", "Opened Game 7", { page:"game7" });</script>
 
 <div class="card">
 <div class="top-actions"><button class="back-button" onclick="goBackToGames()">← Choose another game</button></div>

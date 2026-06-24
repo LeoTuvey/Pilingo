@@ -388,13 +388,206 @@ body{
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  width:58px;
-  height:58px;
+  position:relative;
+  width:92px;
+  height:92px;
   border-radius:50%;
-  background:rgba(255,255,255,0.72);
+  background:
+    radial-gradient(circle at 35% 28%, rgba(255,255,255,0.96), rgba(255,239,216,0.82) 44%, rgba(251,198,147,0.94) 74%, rgba(231,145,85,0.95) 100%);
   border:2px solid rgba(255,255,255,0.92);
-  font-size:30px;
-  box-shadow:0 6px 0 rgba(207,139,91,0.55);
+  box-shadow:0 9px 0 rgba(207,139,91,0.55), 0 16px 24px rgba(146,80,42,0.2);
+  overflow:hidden;
+}
+
+.reminder-bird::before{
+  content:"";
+  position:absolute;
+  left:14px;
+  bottom:10px;
+  width:20px;
+  height:60px;
+  border-radius:20px;
+  background:
+    repeating-linear-gradient(180deg, #7f4920 0 8px, #9a5b2a 8px 16px);
+  box-shadow:inset -3px 0 0 rgba(58,29,11,0.16), 3px 0 0 rgba(255,214,173,0.14);
+}
+
+.reminder-bird::after{
+  content:"";
+  position:absolute;
+  inset:9px;
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,0.46);
+}
+
+.woodpecker{
+  position:relative;
+  width:56px;
+  height:68px;
+  margin-left:10px;
+  animation:woodpeckerBob 3s ease-in-out infinite;
+  transform-origin:38% 58%;
+}
+
+.woodpecker-head{
+  position:absolute;
+  top:7px;
+  left:12px;
+  width:28px;
+  height:27px;
+  border-radius:56% 46% 48% 52%;
+  background:linear-gradient(180deg, #141414 0%, #38322d 100%);
+  animation:woodpeckerPeck 3s ease-in-out infinite;
+  transform-origin:16% 64%;
+  box-shadow:inset -5px -3px 0 rgba(255,255,255,0.08);
+}
+
+.woodpecker-head::before{
+  content:"";
+  position:absolute;
+  top:-9px;
+  left:8px;
+  width:16px;
+  height:15px;
+  background:linear-gradient(180deg, #ff7255 0%, #d72418 100%);
+  clip-path:polygon(45% 0, 100% 80%, 10% 100%);
+  transform:rotate(-8deg);
+}
+
+.woodpecker-head::after{
+  content:"";
+  position:absolute;
+  top:12px;
+  right:-14px;
+  width:18px;
+  height:7px;
+  background:linear-gradient(90deg, #f5cb58 0%, #d38d0e 100%);
+  clip-path:polygon(0 50%, 100% 0, 100% 100%);
+}
+
+.woodpecker-eye{
+  position:absolute;
+  top:10px;
+  left:7px;
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:#ffffff;
+  box-shadow:0 0 0 2px #161616 inset;
+}
+
+.woodpecker-eye::after{
+  content:"";
+  position:absolute;
+  inset:1px;
+  border-radius:50%;
+  background:#111111;
+}
+
+.woodpecker-body{
+  position:absolute;
+  left:14px;
+  top:28px;
+  width:30px;
+  height:33px;
+  border-radius:56% 54% 48% 52%;
+  background:linear-gradient(180deg, #fff9f3 0%, #edd9c6 42%, #181818 43%, #35302a 100%);
+  box-shadow:inset -6px -9px 0 rgba(255,255,255,0.22);
+}
+
+.woodpecker-wing{
+  position:absolute;
+  left:21px;
+  top:33px;
+  width:20px;
+  height:24px;
+  border-radius:58% 42% 56% 44%;
+  background:linear-gradient(180deg, #232220 0%, #4a443d 100%);
+  transform:rotate(-18deg);
+  box-shadow:inset -3px -4px 0 rgba(255,255,255,0.08);
+}
+
+.woodpecker-wing::after{
+  content:"";
+  position:absolute;
+  inset:4px 4px 6px 6px;
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 35% 24%, rgba(255,255,255,0.56) 0 1px, transparent 2px),
+    radial-gradient(circle at 62% 48%, rgba(255,255,255,0.34) 0 1px, transparent 2px),
+    radial-gradient(circle at 40% 72%, rgba(255,255,255,0.28) 0 1px, transparent 2px);
+}
+
+.woodpecker-tail{
+  position:absolute;
+  left:13px;
+  top:50px;
+  width:22px;
+  height:14px;
+  background:linear-gradient(180deg, #1d1c1b 0%, #5a5047 100%);
+  clip-path:polygon(0 0, 100% 45%, 12% 100%);
+  transform:rotate(34deg);
+}
+
+.woodpecker-leg{
+  position:absolute;
+  bottom:5px;
+  left:24px;
+  width:2px;
+  height:13px;
+  background:#7b431a;
+  box-shadow:8px 0 0 #7b431a;
+}
+
+.woodpecker-leg::before,
+.woodpecker-leg::after{
+  content:"";
+  position:absolute;
+  bottom:-2px;
+  width:8px;
+  height:2px;
+  background:#7b431a;
+  border-radius:3px;
+}
+
+.woodpecker-leg::before{
+  left:-2px;
+  transform:rotate(20deg);
+}
+
+.woodpecker-leg::after{
+  left:5px;
+  transform:rotate(-20deg);
+}
+
+@keyframes woodpeckerBob{
+  0%, 100%{
+    transform:translateY(0) rotate(-2deg);
+  }
+  30%{
+    transform:translateY(-3px) rotate(2deg);
+  }
+  58%{
+    transform:translateY(1px) rotate(-1deg);
+  }
+}
+
+@keyframes woodpeckerPeck{
+  0%, 15%, 100%{
+    transform:rotate(0deg) translateX(0);
+  }
+  22%{
+    transform:rotate(18deg) translateX(4px);
+  }
+  28%{
+    transform:rotate(-2deg) translateX(0);
+  }
+  38%{
+    transform:rotate(14deg) translateX(3px);
+  }
+  44%{
+    transform:rotate(0deg) translateX(0);
+  }
 }
 
 .reminder-note{
@@ -1319,7 +1512,17 @@ button:active{
       <div class="reminder-card">
         <div class="reminder-top">
           <strong>🪵 Woodpecker Study Alarm</strong>
-          <span class="reminder-bird">🐦</span>
+          <span class="reminder-bird" aria-hidden="true">
+            <span class="woodpecker">
+              <span class="woodpecker-head">
+                <span class="woodpecker-eye"></span>
+              </span>
+              <span class="woodpecker-body"></span>
+              <span class="woodpecker-wing"></span>
+              <span class="woodpecker-tail"></span>
+              <span class="woodpecker-leg"></span>
+            </span>
+          </span>
         </div>
         <div class="reminder-note">Turn this on and the woodpecker will peck and remind students to come back and learn again.</div>
         <div id="reminderStatus" class="reminder-status">Reminder is off</div>
@@ -1402,10 +1605,6 @@ function triggerWoodpeckerReminder(source){
 
   if(window.PilingoAudio?.playWoodpeckerAlarm){
     PilingoAudio.playWoodpeckerAlarm();
-  }
-
-  if(window.PilingoAudio?.speak){
-    PilingoAudio.speak("Woodpecker says it is time to study Pilingo.");
   }
 
   if("Notification" in window && Notification.permission === "granted"){

@@ -1,4 +1,6 @@
 const Engine = {
+  HEARTS_MAX: 5,
+  HEART_REFILL_MS: 2 * 60 * 60 * 1000,
 
   init(){
     this.dailyReset();
@@ -62,13 +64,52 @@ const Engine = {
   },
 
   getHearts(){
-    const hearts = parseInt(localStorage.getItem("hearts") || "5", 10);
-    return Math.max(0, Math.min(5, hearts || 0));
+    this.applyHeartRefill();
+    const hearts = parseInt(localStorage.getItem("hearts") || String(this.HEARTS_MAX), 10);
+    return Math.max(0, Math.min(this.HEARTS_MAX, hearts || 0));
   },
 
   loseHeart(){
-    const hearts = Math.max(0, this.getHearts() - 1);
+    this.applyHeartRefill();
+    const current = this.getHearts();
+    if (current >= this.HEARTS_MAX) {
+      localStorage.setItem("heartsRefillStartedAt", String(Date.now()));
+    }
+
+    const hearts = Math.max(0, current - 1);
     localStorage.setItem("hearts", String(hearts));
+    return hearts;
+  },
+
+  getHeartRefillRemainingMs(){
+    this.applyHeartRefill();
+    const hearts = this.getHearts();
+    if (hearts >= this.HEARTS_MAX) return 0;
+
+    const startedAt = parseInt(localStorage.getItem("heartsRefillStartedAt") || "0", 10) || 0;
+    if (!startedAt) return this.HEART_REFILL_MS;
+
+    return Math.max(0, this.HEART_REFILL_MS - (Date.now() - startedAt));
+  },
+
+  applyHeartRefill(){
+    const hearts = parseInt(localStorage.getItem("hearts") || String(this.HEARTS_MAX), 10) || 0;
+    if (hearts >= this.HEARTS_MAX) {
+      localStorage.removeItem("heartsRefillStartedAt");
+      return this.HEARTS_MAX;
+    }
+
+    const startedAt = parseInt(localStorage.getItem("heartsRefillStartedAt") || "0", 10) || 0;
+    if (!startedAt) {
+      localStorage.setItem("heartsRefillStartedAt", String(Date.now()));
+      return hearts;
+    }
+
+    if (Date.now() - startedAt >= this.HEART_REFILL_MS) {
+      this.resetHearts();
+      return this.HEARTS_MAX;
+    }
+
     return hearts;
   },
 
@@ -171,7 +212,8 @@ const Engine = {
   },
 
   resetHearts(){
-    localStorage.setItem("hearts", "5");
+    localStorage.setItem("hearts", String(this.HEARTS_MAX));
+    localStorage.removeItem("heartsRefillStartedAt");
   },
 
   dailyReset(){

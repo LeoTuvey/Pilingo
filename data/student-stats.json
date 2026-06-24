@@ -3,6 +3,8 @@
     "id": "1782268798659-9c7abc",
     "name": "Leo Shean",
     "email": "leotuvey@gmail.com",
+    "phone": "+358442431431",
+    "location": "Location unavailable",
     "xp": 0,
     "level": 0,
     "streak": 1,
@@ -10,6 +12,21 @@
     "averageGrade": 100,
     "bestGrade": 100,
     "lessonsFinished": 0,
-    "updatedAt": "2026-06-24T03:10:14.933Z"
+    "updatedAt": "2026-06-24T06:27:23.096Z"
+  },
+  {
+    "id": "1782281584940-701094",
+    "name": "Leo Shean",
+    "email": "",
+    "phone": "",
+    "location": "",
+    "xp": 0,
+    "level": 0,
+    "streak": 1,
+    "completedSections": 0,
+    "averageGrade": 0,
+    "bestGrade": 0,
+    "lessonsFinished": 0,
+    "updatedAt": "2026-06-24T06:22:50.829Z"
   }
 ]

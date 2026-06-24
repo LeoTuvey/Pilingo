@@ -208,6 +208,10 @@ body{
   gap:12px;
 }
 
+.account-row[hidden]{
+  display:none;
+}
+
 .account-form label{
   font-size:13px;
   font-weight:900;
@@ -242,6 +246,25 @@ body{
   color:#d63636;
 }
 
+.account-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:6px;
+}
+
+.account-link{
+  appearance:none;
+  border:none;
+  background:none;
+  padding:0;
+  font-size:13px;
+  font-weight:900;
+  color:#2d7a12;
+  text-decoration:underline;
+  cursor:pointer;
+}
+
 .welcome-chip{
   margin-top:14px;
   display:inline-flex;
@@ -254,6 +277,27 @@ body{
   color:#fffbe2;
   font-size:14px;
   font-weight:900;
+}
+
+.account-bar{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:14px;
+}
+
+.logout-button{
+  appearance:none;
+  border:none;
+  border-radius:999px;
+  padding:10px 16px;
+  background:rgba(128,9,9,0.88);
+  color:#fff7eb;
+  font-size:13px;
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:0 10px 18px rgba(77,9,9,0.28);
 }
 
 .notify-card{
@@ -389,27 +433,18 @@ body{
   align-items:center;
   justify-content:center;
   position:relative;
-  width:92px;
-  height:92px;
+  width:108px;
+  height:108px;
   border-radius:50%;
   background:
-    radial-gradient(circle at 35% 28%, rgba(255,255,255,0.96), rgba(255,239,216,0.82) 44%, rgba(251,198,147,0.94) 74%, rgba(231,145,85,0.95) 100%);
+    radial-gradient(circle at 34% 28%, rgba(255,255,255,0.98), rgba(235,245,255,0.94) 38%, rgba(176,212,255,0.94) 70%, rgba(107,164,232,0.96) 100%);
   border:2px solid rgba(255,255,255,0.92);
-  box-shadow:0 9px 0 rgba(207,139,91,0.55), 0 16px 24px rgba(146,80,42,0.2);
+  box-shadow:0 10px 0 rgba(98,138,192,0.55), 0 18px 28px rgba(43,95,158,0.2);
   overflow:hidden;
 }
 
 .reminder-bird::before{
-  content:"";
-  position:absolute;
-  left:14px;
-  bottom:10px;
-  width:20px;
-  height:60px;
-  border-radius:20px;
-  background:
-    repeating-linear-gradient(180deg, #7f4920 0 8px, #9a5b2a 8px 16px);
-  box-shadow:inset -3px 0 0 rgba(58,29,11,0.16), 3px 0 0 rgba(255,214,173,0.14);
+  content:none;
 }
 
 .reminder-bird::after{
@@ -418,175 +453,105 @@ body{
   inset:9px;
   border-radius:50%;
   border:1px solid rgba(255,255,255,0.46);
+  pointer-events:none;
 }
 
-.woodpecker{
+.owl-bird{
   position:relative;
-  width:56px;
-  height:68px;
-  margin-left:10px;
-  animation:woodpeckerBob 3s ease-in-out infinite;
-  transform-origin:38% 58%;
+  width:82px;
+  height:82px;
+  margin-left:-18px;
+  margin-top:-2px;
+  animation:nightingaleFlight 4.6s ease-in-out infinite;
+  transform-origin:46% 60%;
 }
 
-.woodpecker-head{
-  position:absolute;
-  top:7px;
-  left:12px;
-  width:28px;
-  height:27px;
-  border-radius:56% 46% 48% 52%;
-  background:linear-gradient(180deg, #141414 0%, #38322d 100%);
-  animation:woodpeckerPeck 3s ease-in-out infinite;
-  transform-origin:16% 64%;
-  box-shadow:inset -5px -3px 0 rgba(255,255,255,0.08);
+.owl-bird svg{
+  width:100%;
+  height:100%;
+  overflow:visible;
 }
 
-.woodpecker-head::before{
-  content:"";
-  position:absolute;
-  top:-9px;
-  left:8px;
-  width:16px;
-  height:15px;
-  background:linear-gradient(180deg, #ff7255 0%, #d72418 100%);
-  clip-path:polygon(45% 0, 100% 80%, 10% 100%);
-  transform:rotate(-8deg);
+.owl-body{
+  transform-origin:36px 42px;
+  animation:nightingaleSing 4.2s ease-in-out infinite;
 }
 
-.woodpecker-head::after{
-  content:"";
-  position:absolute;
-  top:12px;
-  right:-14px;
-  width:18px;
-  height:7px;
-  background:linear-gradient(90deg, #f5cb58 0%, #d38d0e 100%);
-  clip-path:polygon(0 50%, 100% 0, 100% 100%);
+.owl-wing{
+  transform-origin:38px 46px;
+  animation:nightingaleWing 4.2s ease-in-out infinite;
 }
 
-.woodpecker-eye{
-  position:absolute;
-  top:10px;
-  left:7px;
-  width:7px;
-  height:7px;
-  border-radius:50%;
-  background:#ffffff;
-  box-shadow:0 0 0 2px #161616 inset;
+.owl-eye{
+  animation:nightingaleBlink 4.2s ease-in-out infinite;
 }
 
-.woodpecker-eye::after{
-  content:"";
-  position:absolute;
-  inset:1px;
-  border-radius:50%;
-  background:#111111;
-}
-
-.woodpecker-body{
-  position:absolute;
-  left:14px;
-  top:28px;
-  width:30px;
-  height:33px;
-  border-radius:56% 54% 48% 52%;
-  background:linear-gradient(180deg, #fff9f3 0%, #edd9c6 42%, #181818 43%, #35302a 100%);
-  box-shadow:inset -6px -9px 0 rgba(255,255,255,0.22);
-}
-
-.woodpecker-wing{
-  position:absolute;
-  left:21px;
-  top:33px;
-  width:20px;
-  height:24px;
-  border-radius:58% 42% 56% 44%;
-  background:linear-gradient(180deg, #232220 0%, #4a443d 100%);
-  transform:rotate(-18deg);
-  box-shadow:inset -3px -4px 0 rgba(255,255,255,0.08);
-}
-
-.woodpecker-wing::after{
-  content:"";
-  position:absolute;
-  inset:4px 4px 6px 6px;
-  border-radius:50%;
-  background:
-    radial-gradient(circle at 35% 24%, rgba(255,255,255,0.56) 0 1px, transparent 2px),
-    radial-gradient(circle at 62% 48%, rgba(255,255,255,0.34) 0 1px, transparent 2px),
-    radial-gradient(circle at 40% 72%, rgba(255,255,255,0.28) 0 1px, transparent 2px);
-}
-
-.woodpecker-tail{
-  position:absolute;
-  left:13px;
-  top:50px;
-  width:22px;
-  height:14px;
-  background:linear-gradient(180deg, #1d1c1b 0%, #5a5047 100%);
-  clip-path:polygon(0 0, 100% 45%, 12% 100%);
-  transform:rotate(34deg);
-}
-
-.woodpecker-leg{
-  position:absolute;
-  bottom:5px;
-  left:24px;
-  width:2px;
-  height:13px;
-  background:#7b431a;
-  box-shadow:8px 0 0 #7b431a;
-}
-
-.woodpecker-leg::before,
-.woodpecker-leg::after{
-  content:"";
-  position:absolute;
-  bottom:-2px;
-  width:8px;
-  height:2px;
-  background:#7b431a;
-  border-radius:3px;
-}
-
-.woodpecker-leg::before{
-  left:-2px;
-  transform:rotate(20deg);
-}
-
-.woodpecker-leg::after{
-  left:5px;
-  transform:rotate(-20deg);
-}
-
-@keyframes woodpeckerBob{
+@keyframes nightingaleFloat{
   0%, 100%{
     transform:translateY(0) rotate(-2deg);
   }
-  30%{
+  28%{
     transform:translateY(-3px) rotate(2deg);
   }
-  58%{
+  60%{
     transform:translateY(1px) rotate(-1deg);
   }
 }
 
-@keyframes woodpeckerPeck{
-  0%, 15%, 100%{
-    transform:rotate(0deg) translateX(0);
+@keyframes nightingaleFlight{
+  0%, 100%{
+    transform:translate(-4px, 5px) rotate(-8deg);
   }
   22%{
-    transform:rotate(18deg) translateX(4px);
+    transform:translate(-12px, -4px) rotate(-2deg);
   }
-  28%{
-    transform:rotate(-2deg) translateX(0);
+  48%{
+    transform:translate(-20px, 2px) rotate(-10deg);
   }
-  38%{
-    transform:rotate(14deg) translateX(3px);
+  72%{
+    transform:translate(-10px, -7px) rotate(0deg);
   }
-  44%{
-    transform:rotate(0deg) translateX(0);
+}
+
+@keyframes nightingaleSing{
+  0%, 18%, 100%{
+    transform:rotate(0deg) translateY(0);
+  }
+  24%{
+    transform:rotate(-6deg) translateY(-2px);
+  }
+  33%{
+    transform:rotate(5deg) translateY(-1px);
+  }
+  42%{
+    transform:rotate(0deg) translateY(0);
+  }
+}
+
+@keyframes nightingaleWing{
+  0%, 100%{
+    transform:rotate(0deg);
+  }
+  18%{
+    transform:rotate(-16deg);
+  }
+  34%{
+    transform:rotate(10deg);
+  }
+  50%{
+    transform:rotate(-14deg);
+  }
+  68%{
+    transform:rotate(8deg);
+  }
+}
+
+@keyframes nightingaleBlink{
+  0%, 44%, 100%{
+    transform:scaleY(1);
+  }
+  46%, 48%{
+    transform:scaleY(0.18);
   }
 }
 
@@ -1371,7 +1336,10 @@ button:active{
       </div>
       <div class="hero-actions">
         <button class="continue-button" onclick="goLearn()"><span>Continue<br>Learning</span></button>
-        <div id="welcomeChip" class="welcome-chip" hidden>👤 <span id="welcomeName">Learner</span></div>
+        <div id="accountBar" class="account-bar" hidden>
+          <div id="welcomeChip" class="welcome-chip" hidden>👤 <span id="welcomeName">Learner</span></div>
+          <button id="logoutButton" class="logout-button" type="button" onclick="logoutAccount()" hidden>Log out</button>
+        </div>
       </div>
     </div>
     <div class="hero-panel">
@@ -1398,10 +1366,10 @@ button:active{
 
 <div id="accountGate" class="account-gate">
   <div class="account-card">
-    <h2>Create your account</h2>
-    <p>Students need an account before they can open the lessons. Create one account on this device to start learning.</p>
-    <form class="account-form" onsubmit="createAccount(event)">
-      <label>
+    <h2 id="accountGateTitle">Sign up</h2>
+    <p id="accountGateMessage">Everyone needs an account before using the app. Sign up with your email and phone number to start learning.</p>
+    <form class="account-form" onsubmit="submitAccountForm(event)">
+      <label id="accountNameRow" class="account-row">
         Full name
         <input id="accountName" type="text" placeholder="Enter your name" autocomplete="name">
       </label>
@@ -1409,12 +1377,28 @@ button:active{
         Email
         <input id="accountEmail" type="email" placeholder="Enter your email" autocomplete="email">
       </label>
-      <label>
+      <label id="accountPhoneRow" class="account-row">
+        Phone number
+        <input id="accountPhone" type="tel" placeholder="Enter your phone number" autocomplete="tel">
+      </label>
+      <label id="accountPasswordRow" class="account-row">
         Password
         <input id="accountPassword" type="password" placeholder="Create a password" autocomplete="new-password">
       </label>
+      <label id="accountCodeRow" class="account-row" hidden>
+        Reset code
+        <input id="accountCode" type="text" inputmode="numeric" placeholder="Enter the 6-digit code" autocomplete="one-time-code">
+      </label>
+      <div id="accountMiniNote" class="mini-note">If location permission is allowed, your location will be included in the new account notification.</div>
+      <div id="accountSupportNote" class="mini-note">No guest mode: every student must sign up or log in before using the lessons. If they forget their password, they can recover the account with a code sent to their email.</div>
       <div id="accountError" class="account-error"></div>
-      <button class="continue-button account-submit" type="submit"><span>Create<br>Account</span></button>
+      <button class="continue-button account-submit" type="submit"><span id="accountSubmitText">Sign<br>Up</span></button>
+      <div class="account-actions">
+        <button id="accountSwitchLogin" class="account-link" type="button" onclick="setAccountMode('login')">I already have an account</button>
+        <button id="accountSwitchCreate" class="account-link" type="button" onclick="setAccountMode('register')" hidden>Sign up</button>
+        <button id="accountSwitchReset" class="account-link" type="button" onclick="setAccountMode('requestReset')">Forgot password?</button>
+        <button id="accountSwitchBackLogin" class="account-link" type="button" onclick="setAccountMode('login')" hidden>Back to login</button>
+      </div>
     </form>
   </div>
 </div>
@@ -1511,23 +1495,38 @@ button:active{
 
       <div class="reminder-card">
         <div class="reminder-top">
-          <strong>🪵 Woodpecker Study Alarm</strong>
+          <strong>🦉 Owl Study Alarm</strong>
           <span class="reminder-bird" aria-hidden="true">
-            <span class="woodpecker">
-              <span class="woodpecker-head">
-                <span class="woodpecker-eye"></span>
-              </span>
-              <span class="woodpecker-body"></span>
-              <span class="woodpecker-wing"></span>
-              <span class="woodpecker-tail"></span>
-              <span class="woodpecker-leg"></span>
+            <span class="owl-bird">
+              <svg viewBox="0 0 72 78" role="presentation" aria-hidden="true">
+                <g class="owl-body">
+                  <path d="M19 25 C22 14, 30 10, 38 13 C46 10, 54 14, 57 25 C61 39, 58 56, 47 64 C42 68, 34 68, 29 64 C18 56, 15 39, 19 25 Z" fill="#8c6a4a"></path>
+                  <path d="M25 20 L30 11 L35 22 Z" fill="#8c6a4a"></path>
+                  <path d="M41 22 L46 11 L51 20 Z" fill="#8c6a4a"></path>
+                  <path d="M24 30 C25 23, 31 20, 36 22 C40 24, 42 29, 40 34 C38 39, 32 41, 27 39 C24 37, 23 34, 24 30 Z" fill="#f5d74f"></path>
+                  <path d="M36 22 C41 20, 47 23, 48 30 C49 34, 48 37, 45 39 C40 41, 34 39, 32 34 C30 29, 32 24, 36 22 Z" fill="#f5d74f"></path>
+                  <circle class="owl-eye" cx="31.5" cy="30.5" r="4.2" fill="#181818"></circle>
+                  <circle class="owl-eye" cx="40.5" cy="30.5" r="4.2" fill="#181818"></circle>
+                  <circle cx="30.7" cy="29.3" r="1.1" fill="#ffffff"></circle>
+                  <circle cx="39.7" cy="29.3" r="1.1" fill="#ffffff"></circle>
+                  <path d="M33.8 36 L36 40 L38.2 36 Z" fill="#e4a321"></path>
+                  <path d="M29 44 C32 47, 40 47, 43 44" fill="none" stroke="rgba(246,233,214,0.9)" stroke-width="2" stroke-linecap="round"></path>
+                  <path class="owl-wing" d="M19 39 C14 42, 12 48, 15 55 C20 57, 24 55, 26 49 C25 44, 23 41, 19 39 Z" fill="#745439"></path>
+                  <path class="owl-wing" d="M53 39 C58 42, 60 48, 57 55 C52 57, 48 55, 46 49 C47 44, 49 41, 53 39 Z" fill="#745439"></path>
+                  <path d="M24 52 C28 57, 33 60, 36 60 C39 60, 44 57, 48 52" fill="none" stroke="rgba(255,243,227,0.45)" stroke-width="2" stroke-linecap="round"></path>
+                  <path d="M29 60 L27 75" stroke="#7e4b20" stroke-width="2.2" stroke-linecap="round"></path>
+                  <path d="M42 60 L44 75" stroke="#7e4b20" stroke-width="2.2" stroke-linecap="round"></path>
+                  <path d="M24 75 L31 73" stroke="#7e4b20" stroke-width="2" stroke-linecap="round"></path>
+                  <path d="M41 73 L48 75" stroke="#7e4b20" stroke-width="2" stroke-linecap="round"></path>
+                </g>
+              </svg>
             </span>
           </span>
         </div>
-        <div class="reminder-note">Turn this on and the woodpecker will peck and remind students to come back and learn again.</div>
+        <div class="reminder-note">Turn this on and the owl will sing from time to time to remind students to come back and learn again.</div>
         <div id="reminderStatus" class="reminder-status">Reminder is off</div>
         <div class="reminder-actions">
-          <button class="secondary-button" type="button" onclick="toggleStudyReminder()">Turn on woodpecker reminder</button>
+          <button class="secondary-button" type="button" onclick="toggleStudyReminder()">Turn on owl reminder</button>
           <button class="secondary-button" type="button" onclick="playWoodpeckerReminderNow()">Remind now</button>
         </div>
       </div>
@@ -1553,6 +1552,7 @@ button:active{
 
 let xp = 0;
 let studyAlarmPlayed = false;
+let accountMode = "register";
 const continueButton = document.querySelector(".continue-button");
 const reminderKey = "pilingo_study_reminder_v1";
 let reminderTimer = null;
@@ -1591,7 +1591,7 @@ function updateReminderUI(){
     const nextAt = settings.lastSentAt
       ? new Date(settings.lastSentAt + (settings.intervalMinutes * 60000)).toLocaleTimeString()
       : "soon";
-    status.innerText = "Reminder is on • Next woodpecker call around " + nextAt;
+    status.innerText = "Reminder is on • Next owl song around " + nextAt;
   } else {
     status.innerText = "Reminder is off";
   }
@@ -1608,13 +1608,13 @@ function triggerWoodpeckerReminder(source){
   }
 
   if("Notification" in window && Notification.permission === "granted"){
-    new Notification("Pilingo woodpecker reminder", {
+    new Notification("Pilingo owl reminder", {
       body: "Time to come back and study."
     });
   }
 
   if(window.PilingoNotify?.track){
-    PilingoNotify.track("study_reminder", "Woodpecker reminder", { source:source || "manual" });
+    PilingoNotify.track("study_reminder", "Owl reminder", { source:source || "manual" });
   }
 }
 
@@ -1768,6 +1768,7 @@ function showAccountGate(){
   const gate = document.getElementById("accountGate");
   const error = document.getElementById("accountError");
   if(error) error.innerText = "";
+  syncAccountGateState();
   if(gate) gate.classList.add("open");
 }
 
@@ -1776,46 +1777,240 @@ function hideAccountGate(){
   if(gate) gate.classList.remove("open");
 }
 
+function setAccountMode(mode){
+  accountMode = mode || "register";
+  syncAccountGateState();
+}
+
+function syncAccountGateState(){
+  const title = document.getElementById("accountGateTitle");
+  const message = document.getElementById("accountGateMessage");
+  const submit = document.getElementById("accountSubmitText");
+  const nameRow = document.getElementById("accountNameRow");
+  const phoneRow = document.getElementById("accountPhoneRow");
+  const passwordRow = document.getElementById("accountPasswordRow");
+  const codeRow = document.getElementById("accountCodeRow");
+  const note = document.getElementById("accountMiniNote");
+  const support = document.getElementById("accountSupportNote");
+  const password = document.getElementById("accountPassword");
+  const switchLogin = document.getElementById("accountSwitchLogin");
+  const switchCreate = document.getElementById("accountSwitchCreate");
+  const switchReset = document.getElementById("accountSwitchReset");
+  const switchBackLogin = document.getElementById("accountSwitchBackLogin");
+  const error = document.getElementById("accountError");
+
+  if(error) error.innerText = "";
+
+  if(accountMode === "login"){
+    if(title) title.innerText = "Log in to your account";
+    if(message) message.innerText = "Students need to log in before they can open the lessons. No one can use the app without an account.";
+    if(submit) submit.innerHTML = "Log In";
+    if(nameRow) nameRow.hidden = true;
+    if(phoneRow) phoneRow.hidden = true;
+    if(passwordRow) passwordRow.hidden = false;
+    if(codeRow) codeRow.hidden = true;
+    if(note) note.innerText = "Use the same email and password you created before.";
+    if(support) support.innerText = "If a student forgets the password, press Forgot password and use the code sent to the account email to get the account back.";
+    if(password){
+      password.placeholder = "Enter your password";
+      password.autocomplete = "current-password";
+    }
+    if(switchLogin) switchLogin.hidden = true;
+    if(switchCreate) switchCreate.hidden = false;
+    if(switchReset) switchReset.hidden = false;
+    if(switchBackLogin) switchBackLogin.hidden = true;
+    return;
+  }
+
+  if(accountMode === "requestReset"){
+    if(title) title.innerText = "Forgot your password?";
+    if(message) message.innerText = "Enter the account email first. Pilingo will send a 6-digit code so the student can get the account back and create a new password.";
+    if(submit) submit.innerHTML = "Send Reset<br>Code";
+    if(nameRow) nameRow.hidden = true;
+    if(phoneRow) phoneRow.hidden = true;
+    if(passwordRow) passwordRow.hidden = true;
+    if(codeRow) codeRow.hidden = true;
+    if(note) note.innerText = "The code is sent to the email for that account and works for 15 minutes.";
+    if(support) support.innerText = "Step 1: enter the account email. Step 2: open the email, copy the code, then come back to set a new password.";
+    if(password){
+      password.placeholder = "New password";
+      password.autocomplete = "new-password";
+    }
+    if(switchLogin) switchLogin.hidden = true;
+    if(switchCreate) switchCreate.hidden = false;
+    if(switchReset) switchReset.hidden = true;
+    if(switchBackLogin) switchBackLogin.hidden = false;
+    return;
+  }
+
+  if(accountMode === "reset"){
+    if(title) title.innerText = "Enter your reset code";
+    if(message) message.innerText = "Paste the 6-digit code you received, then choose a new password to return to the account.";
+    if(submit) submit.innerHTML = "Change<br>Password";
+    if(nameRow) nameRow.hidden = true;
+    if(phoneRow) phoneRow.hidden = true;
+    if(passwordRow) passwordRow.hidden = false;
+    if(codeRow) codeRow.hidden = false;
+    if(note) note.innerText = "After the password is changed, the student will be logged in on this device.";
+    if(support) support.innerText = "This recovery code helps the student return to the same account even after forgetting the password.";
+    if(password){
+      password.placeholder = "New password";
+      password.autocomplete = "new-password";
+    }
+    if(switchLogin) switchLogin.hidden = true;
+    if(switchCreate) switchCreate.hidden = false;
+    if(switchReset) switchReset.hidden = true;
+    if(switchBackLogin) switchBackLogin.hidden = false;
+    return;
+  }
+
+  if(title) title.innerText = "Sign up";
+  if(message) message.innerText = "Everyone needs an account before using the app. Sign up with your email and phone number to start learning.";
+  if(submit) submit.innerHTML = "Sign<br>Up";
+  if(nameRow) nameRow.hidden = false;
+  if(phoneRow) phoneRow.hidden = false;
+  if(passwordRow) passwordRow.hidden = false;
+  if(codeRow) codeRow.hidden = true;
+  if(note) note.innerText = "If location permission is allowed, your location will be included in the new account notification.";
+  if(support) support.innerText = "No guest mode: every student must sign up or log in before using the lessons. If they forget their password, they can recover the account with a code sent to their email.";
+  if(password){
+    password.placeholder = "Create a password";
+    password.autocomplete = "new-password";
+  }
+  if(switchLogin) switchLogin.hidden = false;
+  if(switchCreate) switchCreate.hidden = true;
+  if(switchReset) switchReset.hidden = false;
+  if(switchBackLogin) switchBackLogin.hidden = true;
+}
+
 function updateAccountUI(){
   const hasAccount = window.PilingoAuth && PilingoAuth.hasAccount();
+  const accountBar = document.getElementById("accountBar");
   const welcomeChip = document.getElementById("welcomeChip");
   const welcomeName = document.getElementById("welcomeName");
+  const logoutButton = document.getElementById("logoutButton");
 
   if(hasAccount){
     const account = PilingoAuth.loadAccount();
+    if(accountBar) accountBar.hidden = false;
     if(welcomeChip) welcomeChip.hidden = false;
     if(welcomeName) welcomeName.innerText = account?.name || "Learner";
+    if(logoutButton) logoutButton.hidden = false;
     hideAccountGate();
     return;
   }
 
+  if(accountBar) accountBar.hidden = true;
   if(welcomeChip) welcomeChip.hidden = true;
+  if(logoutButton) logoutButton.hidden = true;
   showAccountGate();
 }
 
-function createAccount(event){
+function logoutAccount(){
+  const account = window.PilingoAuth?.loadAccount?.();
+  if(window.PilingoNotify?.track){
+    PilingoNotify.track("account_logout", "Logged out", {
+      source:"index",
+      email: account?.email || "",
+      phone: account?.phone || ""
+    });
+  }
+  window.PilingoAuth?.logout?.();
+  setAccountMode("login");
+  updateAccountUI();
+}
+
+async function getApproxLocation(){
+  if(!("geolocation" in navigator)) return "Location unavailable";
+
+  return await new Promise((resolve) => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = Number(position.coords.latitude || 0).toFixed(4);
+        const lng = Number(position.coords.longitude || 0).toFixed(4);
+        resolve(`Lat ${lat}, Lng ${lng}`);
+      },
+      () => resolve("Location unavailable"),
+      { enableHighAccuracy:false, timeout:8000, maximumAge:300000 }
+    );
+  });
+}
+
+async function submitAccountForm(event){
   event.preventDefault();
 
-  const name = document.getElementById("accountName").value;
-  const email = document.getElementById("accountEmail").value;
-  const password = document.getElementById("accountPassword").value;
+  const name = document.getElementById("accountName").value.trim();
+  const email = document.getElementById("accountEmail").value.trim();
+  const phone = document.getElementById("accountPhone").value.trim();
+  const password = document.getElementById("accountPassword").value.trim();
+  const code = document.getElementById("accountCode").value.trim();
   const error = document.getElementById("accountError");
+  const form = event.currentTarget;
 
-  if(!name.trim() || !email.trim() || !password.trim()){
-    error.innerText = "Please fill in name, email, and password.";
-    return;
+  if(error) error.innerText = "";
+
+  try {
+    if(accountMode === "login"){
+      if(!email || !password){
+        error.innerText = "Please enter your email and password.";
+        return;
+      }
+
+      const account = await window.PilingoAuth.loginAccount({ email, password });
+      if(window.PilingoNotify?.track){
+        PilingoNotify.track("account_login", "Logged in", { source:"index" });
+      }
+      form.reset();
+      updateAccountUI();
+      return account;
+    }
+
+    if(accountMode === "requestReset"){
+      if(!email){
+        error.innerText = "Please enter the account email first.";
+        return;
+      }
+      await window.PilingoAuth.requestPasswordReset(email);
+      accountMode = "reset";
+      syncAccountGateState();
+      error.innerText = "A reset code has been sent. Check the email and enter the code here.";
+      return;
+    }
+
+    if(accountMode === "reset"){
+      if(!email || !code || !password){
+        error.innerText = "Please enter your email, reset code, and new password.";
+        return;
+      }
+      await window.PilingoAuth.resetPassword(email, code, password);
+      if(window.PilingoNotify?.track){
+        PilingoNotify.track("password_reset", "Changed password", { source:"index" });
+      }
+      form.reset();
+      updateAccountUI();
+      return;
+    }
+
+    if(!name || !email || !phone || !password){
+      error.innerText = "Please fill in name, email, phone number, and password.";
+      return;
+    }
+
+    const location = await getApproxLocation();
+    await window.PilingoAuth.registerAccount({ name, email, phone, password, location });
+
+    if(window.PilingoNotify?.track){
+      PilingoNotify.track("account_created", "Created account", {
+        source:"index",
+        location
+      });
+    }
+
+    form.reset();
+    updateAccountUI();
+  } catch(err){
+    error.innerText = err?.message || "Something went wrong. Please try again.";
   }
-
-  if(!window.PilingoAuth?.createAccount({ name, email, password })){
-    error.innerText = "The account could not be created. Please try again.";
-    return;
-  }
-
-  if(window.PilingoNotify?.track){
-    PilingoNotify.track("account_created", "Created account", { source:"index" });
-  }
-
-  updateAccountUI();
 }
 
 async function enablePhoneNotifications(){
@@ -1833,6 +2028,7 @@ function testPhoneNotification(){
   }
 }
 
+syncAccountGateState();
 updateAccountUI();
 if(window.PilingoNotify){
   PilingoNotify.track("page_open", "Opened home page", { page:"index" });

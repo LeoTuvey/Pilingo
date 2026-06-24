@@ -1,5 +1,6 @@
 (function(){
   let installPrompt = null;
+  const reloadKey = "pilingo_cache_reset_v2";
 
   if("serviceWorker" in navigator){
     window.addEventListener("load", async () => {
@@ -9,8 +10,14 @@
 
         if("caches" in window) {
           const keys = await caches.keys();
-          const pilingoKeys = keys.filter((key) => key.startsWith("pilingo-"));
-          await Promise.all(pilingoKeys.map((key) => caches.delete(key)));
+          await Promise.all(keys.map((key) => caches.delete(key)));
+        }
+
+        const needsRefresh = registrations.length > 0;
+        if(needsRefresh && !sessionStorage.getItem(reloadKey)) {
+          sessionStorage.setItem(reloadKey, "done");
+          window.location.replace(window.location.pathname + "?fresh=1");
+          return;
         }
       } catch(error) {
         // fail silently to keep app startup stable

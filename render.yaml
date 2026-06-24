@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: pilingo
+    runtime: node
+    plan: free
+    buildCommand: "echo Pilingo build ready"
+    startCommand: "node server.js"
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 20

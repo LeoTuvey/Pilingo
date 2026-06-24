@@ -5,6 +5,7 @@ const PilingoNotify = {
   statsEndpoint: "/api/student-stats",
   pollTimer: null,
   lastSeenEventId: null,
+  lastCompetitionMessage: "",
 
   canUseServer(){
     return location.protocol.startsWith("http");
@@ -14,7 +15,9 @@ const PilingoNotify = {
     const account = window.PilingoAuth?.loadAccount?.() || null;
     return {
       name: account?.name || localStorage.getItem("pilingo_current_user") || "Unknown student",
-      email: account?.email || ""
+      email: account?.email || "",
+      phone: account?.phone || "",
+      location: account?.location || ""
     };
   },
 
@@ -33,6 +36,8 @@ const PilingoNotify = {
           page: location.pathname.split("/").pop() || "index.html",
           studentName: student.name,
           studentEmail: student.email,
+          studentPhone: student.phone,
+          studentLocation: student.location,
           details: details || {}
         })
       });
@@ -53,6 +58,8 @@ const PilingoNotify = {
         body: JSON.stringify({
           studentName: student.name,
           studentEmail: student.email,
+          studentPhone: student.phone,
+          studentLocation: student.location,
           ...(stats || {})
         })
       });
@@ -130,6 +137,8 @@ const PilingoNotify = {
     list.innerHTML = events.slice(0, 8).map((event) => `
       <div class="notify-item">
         <strong>${escapeHtml(event.studentName || "Student")} • ${escapeHtml(event.label || event.type || "Activity")}</strong>
+        <span>${escapeHtml(event.studentEmail || "No email")} • ${escapeHtml(event.studentPhone || "No phone")}</span>
+        <span>${escapeHtml(event.studentLocation || "Location unavailable")}</span>
         <span>${escapeHtml(event.page || "")} • ${formatWhen(event.createdAt)}</span>
       </div>
     `).join("");
@@ -159,12 +168,28 @@ const PilingoNotify = {
       return;
     }
 
-    list.innerHTML = students.slice(0, 10).map((student, index) => `
+    const current = this.currentStudent();
+    const currentKey = (current.email || current.name || "").trim().toLowerCase();
+    const currentIndex = students.findIndex((student) => {
+      const studentKey = String(student.email || student.name || "").trim().toLowerCase();
+      return studentKey === currentKey;
+    });
+    const leader = students[0] || null;
+    const competition = this.buildCompetitionState(students, currentIndex, leader);
+
+    list.innerHTML = `
+      <div class="leader-item">
+        <strong>${escapeHtml(competition.title)}</strong>
+        <span>${escapeHtml(competition.body)}</span>
+      </div>
+    ` + students.slice(0, 10).map((student, index) => `
       <div class="leader-item">
         <strong>#${index + 1} ${escapeHtml(student.name || "Student")}</strong>
         <span>XP ${student.xp || 0} • Grade ${Math.round(student.averageGrade || 0)}% • Sections ${student.completedSections || 0}</span>
       </div>
     `).join("");
+
+    this.maybeShowCompetitionNotification(competition);
   },
 
   startLeaderboardPolling(listId){
@@ -197,6 +222,69 @@ const PilingoNotify = {
         body: `${event.studentName || "Student"} • ${event.label || event.type || "Activity"}`
       });
       return;
+    }
+  },
+  buildCompetitionState(students, currentIndex, leader){
+    const stateKey = "pilingo_competition_state_v1";
+    let previous = {};
+
+    try {
+      previous = JSON.parse(localStorage.getItem(stateKey) || "{}");
+    } catch(error) {
+      previous = {};
+    }
+
+    const leaderName = leader?.name || "A student";
+    const currentRank = currentIndex >= 0 ? currentIndex + 1 : null;
+    const previousRank = Number(previous.rank || 0) || null;
+    const previousLeader = previous.leaderName || "";
+    let title = "Competition is live";
+    let body = leader
+      ? `${leaderName} is on top right now. Keep learning and catch them.`
+      : "Students will appear here after they start learning.";
+
+    if(currentRank === 1) {
+      title = "You are #1";
+      body = "Everyone is chasing you now. Keep learning and stay on top.";
+    } else if(currentRank && previousRank && currentRank > previousRank) {
+      title = "Someone passed you";
+      body = `${leaderName} left you behind. Win your place back with more study.`;
+    } else if(currentRank && previousRank && currentRank < previousRank) {
+      title = "You climbed higher";
+      body = `Great work. You moved up to #${currentRank}. Keep pushing upward.`;
+    } else if(currentRank && leader) {
+      title = "Top student alert";
+      body = `${leaderName} is #1 now. Do not let them stay there too long.`;
+    } else if(leader) {
+      title = "Top student alert";
+      body = `${leaderName} is leading the ranking. Other students can chase the top now.`;
+    }
+
+    localStorage.setItem(stateKey, JSON.stringify({
+      rank: currentRank || 0,
+      leaderName
+    }));
+
+    return {
+      title,
+      body,
+      notify: previousLeader && previousLeader !== leaderName
+        ? `${leaderName} reached the top of the ranking.`
+        : (currentRank && previousRank && currentRank > previousRank
+          ? `${leaderName} passed you in the ranking.`
+          : "")
+    };
+  },
+
+  maybeShowCompetitionNotification(competition){
+    if(!competition || !competition.notify) return;
+    if(this.lastCompetitionMessage === competition.notify) return;
+    this.lastCompetitionMessage = competition.notify;
+
+    if("Notification" in window && Notification.permission === "granted") {
+      new Notification("Pilingo competition", {
+        body: competition.notify
+      });
     }
   }
 };

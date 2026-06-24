@@ -125,11 +125,12 @@ const PilingoAudio = (() => {
 
   function playWoodpeckerAlarm(){
     [
-      { frequency:1180, start:0.00, duration:0.035, type:"square", volume:0.018, filter:2600 },
-      { frequency:1240, start:0.06, duration:0.035, type:"square", volume:0.018, filter:2800 },
-      { frequency:1310, start:0.12, duration:0.04, type:"square", volume:0.019, filter:3000 },
-      { frequency:980, start:0.26, duration:0.09, type:"triangle", volume:0.022, filter:2600, slideTo:1180 },
-      { frequency:1120, start:0.38, duration:0.08, type:"triangle", volume:0.018, filter:2800, slideTo:920 }
+      { frequency:760, start:0.00, duration:0.028, type:"square", volume:0.022, filter:1800 },
+      { frequency:720, start:0.055, duration:0.028, type:"square", volume:0.022, filter:1750 },
+      { frequency:780, start:0.22, duration:0.03, type:"square", volume:0.021, filter:1850 },
+      { frequency:735, start:0.275, duration:0.03, type:"square", volume:0.021, filter:1800 },
+      { frequency:860, start:0.46, duration:0.05, type:"triangle", volume:0.018, filter:2100, slideTo:690 },
+      { frequency:690, start:0.54, duration:0.05, type:"triangle", volume:0.016, filter:1900, slideTo:620 }
     ].forEach((note) => {
       tone(note.frequency, note.start, note.duration, {
         type:note.type,

@@ -240,6 +240,24 @@ body.account-gate-open{
   color:#233048;
 }
 
+.password-tools{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  margin-top:8px;
+}
+
+.password-toggle{
+  appearance:none;
+  border:none;
+  background:none;
+  padding:0;
+  font-size:13px;
+  font-weight:900;
+  color:#7a5b13;
+  cursor:pointer;
+}
+
 .account-form input:focus{
   outline:none;
   border-color:#58cc02;
@@ -994,18 +1012,16 @@ button:active{
   border:4px solid rgba(255,250,228,0.92);
   background:
     radial-gradient(circle at 34% 22%, rgba(255,255,255,0.82), rgba(255,255,255,0.2) 20%, transparent 24%),
-    radial-gradient(circle at 50% 120%, rgba(84,48,18,0.32), transparent 48%),
-    linear-gradient(180deg, #b97a42 0%, #9f6431 24%, #804a1f 58%, #5d3313 100%);
+    radial-gradient(circle at 50% 120%, rgba(95,54,20,0.18), transparent 48%),
+    linear-gradient(180deg, #c6884f 0%, #ad703a 26%, #8b5426 62%, #6a3d18 100%);
   color:#ffffff;
   box-shadow:
-    inset 0 16px 24px rgba(255,255,255,0.32),
-    inset 0 -22px 28px rgba(29,84,22,0.24),
+    inset 0 16px 24px rgba(255,255,255,0.28),
+    inset 0 -18px 24px rgba(95,54,20,0.18),
     inset 0 0 0 2px rgba(255,255,255,0.18),
-    0 0 0 6px rgba(255,82,82,0.46),
-    0 0 0 13px rgba(255,120,120,0.18),
-    0 14px 30px rgba(112,83,9,0.22),
-    0 20px 0 rgba(22,99,60,0.68),
-    0 38px 64px rgba(20,84,16,0.28);
+    0 12px 28px rgba(112,83,9,0.22),
+    0 18px 0 rgba(120,72,26,0.52),
+    0 34px 56px rgba(77,48,17,0.22);
   display:flex;
   align-items:center;
   justify-content:center;
@@ -1017,7 +1033,7 @@ button:active{
   margin-top:0;
   position:relative;
   overflow:hidden;
-  animation:continueButtonPulse 8s linear infinite, continuePoliceLight 2.4s linear infinite;
+  animation:none;
   text-shadow:
     0 1px 0 rgba(88,52,20,0.34),
     0 0 14px rgba(255,255,255,0.95),
@@ -1037,93 +1053,6 @@ button:active{
     inset 0 0 28px rgba(255,255,255,0.18),
     inset 0 0 0 2px rgba(255,250,228,0.34),
     inset 0 -12px 18px rgba(95,54,20,0.16);
-}
-
-@keyframes continueButtonPulse{
-  0%{
-    filter:hue-rotate(0deg) saturate(1);
-  }
-  16%{
-    filter:hue-rotate(60deg) saturate(1.12);
-  }
-  32%{
-    filter:hue-rotate(120deg) saturate(1.12);
-  }
-  48%{
-    filter:hue-rotate(180deg) saturate(1.12);
-  }
-  64%{
-    filter:hue-rotate(240deg) saturate(1.12);
-  }
-  80%{
-    filter:hue-rotate(300deg) saturate(1.12);
-  }
-  100%{
-    filter:hue-rotate(360deg) saturate(1);
-  }
-}
-
-@keyframes continuePoliceLight{
-  0%{
-    box-shadow:
-      inset 0 16px 24px rgba(255,255,255,0.32),
-      inset 0 -22px 28px rgba(29,84,22,0.24),
-      inset 0 0 0 2px rgba(255,255,255,0.18),
-      0 0 0 6px rgba(255,82,82,0.46),
-      0 0 0 13px rgba(255,120,120,0.18),
-      -18px 0 34px rgba(255,62,62,0.34),
-      18px 0 34px rgba(72,166,255,0.12),
-      0 20px 0 rgba(22,99,60,0.68),
-      0 38px 64px rgba(20,84,16,0.28);
-  }
-  25%{
-    box-shadow:
-      inset 0 16px 24px rgba(255,255,255,0.32),
-      inset 0 -22px 28px rgba(29,84,22,0.24),
-      inset 0 0 0 2px rgba(255,255,255,0.18),
-      0 0 0 6px rgba(255,82,82,0.46),
-      0 0 0 13px rgba(255,120,120,0.18),
-      -30px -6px 42px rgba(255,62,62,0.42),
-      26px 8px 18px rgba(72,166,255,0.08),
-      0 20px 0 rgba(22,99,60,0.68),
-      0 38px 64px rgba(20,84,16,0.28);
-  }
-  50%{
-    box-shadow:
-      inset 0 16px 24px rgba(255,255,255,0.32),
-      inset 0 -22px 28px rgba(29,84,22,0.24),
-      inset 0 0 0 2px rgba(255,255,255,0.18),
-      0 0 0 6px rgba(255,82,82,0.46),
-      0 0 0 13px rgba(255,120,120,0.18),
-      -18px 0 18px rgba(255,62,62,0.12),
-      18px 0 34px rgba(72,166,255,0.34),
-      0 20px 0 rgba(22,99,60,0.68),
-      0 38px 64px rgba(20,84,16,0.28);
-  }
-  75%{
-    box-shadow:
-      inset 0 16px 24px rgba(255,255,255,0.32),
-      inset 0 -22px 28px rgba(29,84,22,0.24),
-      inset 0 0 0 2px rgba(255,255,255,0.18),
-      0 0 0 6px rgba(255,82,82,0.46),
-      0 0 0 13px rgba(255,120,120,0.18),
-      -24px 8px 18px rgba(255,62,62,0.08),
-      30px -6px 42px rgba(72,166,255,0.42),
-      0 20px 0 rgba(22,99,60,0.68),
-      0 38px 64px rgba(20,84,16,0.28);
-  }
-  100%{
-    box-shadow:
-      inset 0 16px 24px rgba(255,255,255,0.32),
-      inset 0 -22px 28px rgba(29,84,22,0.24),
-      inset 0 0 0 2px rgba(255,255,255,0.18),
-      0 0 0 6px rgba(255,82,82,0.46),
-      0 0 0 13px rgba(255,120,120,0.18),
-      -18px 0 34px rgba(255,62,62,0.34),
-      18px 0 34px rgba(72,166,255,0.12),
-      0 20px 0 rgba(22,99,60,0.68),
-      0 38px 64px rgba(20,84,16,0.28);
-  }
 }
 
 .continue-button::after{
@@ -1455,15 +1384,18 @@ button:active{
       </label>
       <label>
         Email
-        <input id="accountEmail" type="email" placeholder="Enter your email" autocomplete="email">
+        <input id="accountEmail" type="email" placeholder="Enter your email" autocomplete="email" autocapitalize="none" autocorrect="off" spellcheck="false" inputmode="email">
       </label>
       <label id="accountPhoneRow" class="account-row">
         Phone number
-        <input id="accountPhone" type="tel" placeholder="Enter your phone number" autocomplete="tel">
+        <input id="accountPhone" type="tel" placeholder="Enter your phone number" autocomplete="tel" autocapitalize="none" autocorrect="off" spellcheck="false" inputmode="tel">
       </label>
       <label id="accountPasswordRow" class="account-row">
         Password
-        <input id="accountPassword" type="password" placeholder="Create a password" autocomplete="new-password">
+        <input id="accountPassword" type="password" placeholder="Create a password" autocomplete="new-password" autocapitalize="none" autocorrect="off" spellcheck="false">
+        <div class="password-tools">
+          <button id="accountPasswordToggle" class="password-toggle" type="button" onclick="toggleAccountPassword()">Show password</button>
+        </div>
       </label>
       <label id="accountCodeRow" class="account-row" hidden>
         Reset code
@@ -1611,13 +1543,13 @@ button:active{
 
 <!-- SCRIPTS -->
 <script src="engine-core.js"></script>
-<script src="pilingo-auth.js"></script>
-<script src="pilingo-notify.js"></script>
+<script src="pilingo-auth.js?v=8"></script>
+<script src="pilingo-notify.js?v=8"></script>
 <script src="app-ui.js"></script>
 <script src="app-state.js"></script>
 <script src="app-polish.js"></script>
 <script src="pilingo-sounds.js"></script>
-<script src="pwa.js"></script>
+<script src="pwa.js?v=8"></script>
 
 <script>
 
@@ -1861,6 +1793,16 @@ function setAccountMode(mode){
   syncAccountGateState();
 }
 
+function toggleAccountPassword(){
+  const password = document.getElementById("accountPassword");
+  const toggle = document.getElementById("accountPasswordToggle");
+  if(!password || !toggle) return;
+
+  const showing = password.type === "text";
+  password.type = showing ? "password" : "text";
+  toggle.innerText = showing ? "Show password" : "Hide password";
+}
+
 function syncAccountGateState(){
   const title = document.getElementById("accountGateTitle");
   const message = document.getElementById("accountGateMessage");
@@ -1878,10 +1820,17 @@ function syncAccountGateState(){
   const switchBackLogin = document.getElementById("accountSwitchBackLogin");
   const error = document.getElementById("accountError");
   const success = document.getElementById("accountSuccess");
+  const passwordToggle = document.getElementById("accountPasswordToggle");
   const localMode = !!window.PilingoAuth?.shouldUseLocalMode?.();
 
   if(error) error.innerText = "";
   if(success) success.innerText = "";
+  if(password){
+    password.type = "password";
+  }
+  if(passwordToggle){
+    passwordToggle.innerText = "Show password";
+  }
 
   if(accountMode === "login"){
     if(title) title.innerText = "Log in to your account";

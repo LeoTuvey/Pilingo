@@ -3,9 +3,11 @@ const fs = require("fs");
 const path = require("path");
 const { URL } = require("url");
 
+loadEnvFile();
+
 const PORT = process.env.PORT || 3000;
 const ROOT = __dirname;
-const DATA_DIR = path.join(ROOT, "data");
+const DATA_DIR = path.resolve(process.env.DATA_DIR || path.join(ROOT, "data"));
 const EVENTS_FILE = path.join(DATA_DIR, "student-events.json");
 const STATS_FILE = path.join(DATA_DIR, "student-stats.json");
 const ACCOUNTS_FILE = path.join(DATA_DIR, "accounts.json");
@@ -33,6 +35,13 @@ ensureDataFile();
 
 const server = http.createServer(async (req, res) => {
   const parsed = new URL(req.url, `http://${req.headers.host}`);
+  applyApiHeaders(res);
+
+  if (req.method === "OPTIONS") {
+    res.writeHead(204);
+    res.end();
+    return;
+  }
 
   if (req.method === "GET" && parsed.pathname === "/api/health") {
     return sendJson(res, 200, {
@@ -142,7 +151,11 @@ const server = http.createServer(async (req, res) => {
         }
         return sendJson(res, 400, { ok: false, error: "Could not start password recovery." });
       }
-      return sendJson(res, 200, { ok: true });
+      return sendJson(res, 200, {
+        ok: true,
+        code: result.code || null,
+        deliveredByEmail: !!result.deliveredByEmail
+      });
     } catch (error) {
       return sendJson(res, 400, { ok: false, error: "Invalid password reset request" });
     }
@@ -185,6 +198,30 @@ function ensureDataFile() {
   if (!fs.existsSync(STATS_FILE)) fs.writeFileSync(STATS_FILE, "[]", "utf8");
   if (!fs.existsSync(ACCOUNTS_FILE)) fs.writeFileSync(ACCOUNTS_FILE, "[]", "utf8");
   if (!fs.existsSync(RESETS_FILE)) fs.writeFileSync(RESETS_FILE, "[]", "utf8");
+}
+
+function loadEnvFile() {
+  const envPath = path.join(__dirname, ".env");
+  if (!fs.existsSync(envPath)) return;
+
+  const raw = fs.readFileSync(envPath, "utf8");
+  raw.split(/\r?\n/).forEach((line) => {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#")) return;
+    const index = trimmed.indexOf("=");
+    if (index < 0) return;
+
+    const key = trimmed.slice(0, index).trim();
+    let value = trimmed.slice(index + 1).trim();
+
+    if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+      value = value.slice(1, -1);
+    }
+
+    if (key && !(key in process.env)) {
+      process.env[key] = value;
+    }
+  });
 }
 
 function readEvents() {
@@ -256,6 +293,13 @@ function sendJson(res, status, payload) {
     "Cache-Control": "no-store"
   });
   res.end(JSON.stringify(payload));
+}
+
+function applyApiHeaders(res) {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Cache-Control", "no-store");
 }
 
 function serveStatic(requestPath, res) {
@@ -424,8 +468,12 @@ async function createPasswordReset(payload) {
   });
   writePasswordResets(resets);
 
-  await sendPasswordResetCode(account, code);
-  return { ok: true };
+  const delivery = await sendPasswordResetCode(account, code);
+  return {
+    ok: true,
+    deliveredByEmail: !!delivery?.deliveredByEmail,
+    code: delivery?.deliveredByEmail ? null : code
+  };
 }
 
 function resetPassword(payload) {
@@ -589,7 +637,9 @@ async function sendPasswordResetCode(account, code) {
     sendEmailNotification(event)
   ]);
 
-  if (!RESEND_API_KEY || !EMAIL_FROM) return;
+  if (!RESEND_API_KEY || !EMAIL_FROM) {
+    return { deliveredByEmail: false };
+  }
 
   const html = `
     <div style="font-family:Arial,sans-serif;line-height:1.5">
@@ -600,7 +650,7 @@ async function sendPasswordResetCode(account, code) {
     </div>
   `;
 
-  await fetch("https://api.resend.com/emails", {
+  const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -613,6 +663,8 @@ async function sendPasswordResetCode(account, code) {
       html
     })
   });
+
+  return { deliveredByEmail: response.ok };
 }
 
 function escapeHtml(value) {

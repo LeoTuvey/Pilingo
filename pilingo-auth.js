@@ -196,16 +196,53 @@ const PilingoAuth = {
 
   buildUrl(path){
     try {
-      return new URL(path, window.location.origin).toString();
+      return new URL(path, this.getPreferredApiOrigin()).toString();
     } catch(error) {
       return path;
     }
   },
 
-  postJsonWithXhr(url, payload){
+  getPreferredApiOrigin(){
+    const origin = String(window.location.origin || "").trim();
+    if(origin) return origin;
+
+    const protocol = window.location.protocol === "https:" ? "https:" : "http:";
+    const host = window.location.hostname || "localhost";
+    const port = window.location.port || "3000";
+    return `${protocol}//${host}${port ? `:${port}` : ""}`;
+  },
+
+  getApiOrigins(){
+    const host = String(window.location.hostname || "").trim();
+    const protocol = window.location.protocol === "https:" ? "https:" : "http:";
+    const origins = [];
+
+    const addOrigin = (value) => {
+      const normalized = String(value || "").trim();
+      if(!normalized || origins.includes(normalized)) return;
+      origins.push(normalized);
+    };
+
+    addOrigin(this.getPreferredApiOrigin());
+
+    if(host && host !== "localhost" && host !== "127.0.0.1"){
+      addOrigin(`${protocol}//${host}:3000`);
+    }
+
+    addOrigin("http://localhost:3000");
+    addOrigin("http://127.0.0.1:3000");
+
+    return origins;
+  },
+
+  postJsonWithXhr(url, payload, origin){
     return new Promise((resolve, reject) => {
       const request = new XMLHttpRequest();
-      request.open("POST", this.buildUrl(url), true);
+      const requestUrl = origin
+        ? new URL(url, origin).toString()
+        : this.buildUrl(url);
+
+      request.open("POST", requestUrl, true);
       request.setRequestHeader("Content-Type", "application/json");
 
       request.onreadystatechange = () => {
@@ -223,7 +260,7 @@ const PilingoAuth = {
           return;
         }
 
-        reject(new Error(data.error || "Request failed."));
+        reject(new Error(data.error || `Request failed (${request.status || "unknown"}).`));
       };
 
       request.onerror = () => {
@@ -235,24 +272,37 @@ const PilingoAuth = {
   },
 
   async postJson(url, payload){
-    let response;
+    const origins = this.getApiOrigins();
+    let lastError = null;
 
-    try {
-      response = await fetch(this.buildUrl(url), {
-        method:"POST",
-        headers:{ "Content-Type":"application/json" },
-        cache:"no-store",
-        body: JSON.stringify(payload || {})
-      });
-    } catch(error) {
-      return this.postJsonWithXhr(url, payload);
+    for(const origin of origins){
+      let response;
+
+      try {
+        response = await fetch(new URL(url, origin).toString(), {
+          method:"POST",
+          headers:{ "Content-Type":"application/json" },
+          cache:"no-store",
+          body: JSON.stringify(payload || {})
+        });
+
+        const data = await response.json().catch(() => ({}));
+        if(!response.ok || !data.ok){
+          throw new Error(data.error || `Request failed (${response.status || "unknown"}).`);
+        }
+        return data;
+      } catch(error) {
+        lastError = error;
+
+        try {
+          return await this.postJsonWithXhr(url, payload, origin);
+        } catch(xhrError) {
+          lastError = xhrError;
+        }
+      }
     }
 
-    const data = await response.json().catch(() => ({}));
-    if(!response.ok || !data.ok){
-      throw new Error(data.error || "Request failed.");
-    }
-    return data;
+    throw lastError || new Error("The app could not reach the server. Please refresh the page and try again.");
   },
 
   async registerAccount(data){
@@ -289,8 +339,7 @@ const PilingoAuth = {
     const payload = {
       email: String(email || "").trim().toLowerCase()
     };
-    await this.postJson(this.requestResetEndpoint, payload);
-    return true;
+    return await this.postJson(this.requestResetEndpoint, payload);
   },
 
   async resetPassword(email, code, newPassword){

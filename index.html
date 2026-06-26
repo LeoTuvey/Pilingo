@@ -246,6 +246,13 @@ body{
   color:#d63636;
 }
 
+.account-success{
+  min-height:20px;
+  font-size:13px;
+  font-weight:900;
+  color:#1d7d1b;
+}
+
 .account-actions{
   display:flex;
   flex-wrap:wrap;
@@ -1392,6 +1399,7 @@ button:active{
       <div id="accountMiniNote" class="mini-note">If location permission is allowed, your location will be included in the new account notification.</div>
       <div id="accountSupportNote" class="mini-note">No guest mode: every student must sign up or log in before using the lessons. If they forget their password, they can recover the account with a code sent to their email.</div>
       <div id="accountError" class="account-error"></div>
+      <div id="accountSuccess" class="account-success"></div>
       <button class="continue-button account-submit" type="submit"><span id="accountSubmitText">Sign<br>Up</span></button>
       <div class="account-actions">
         <button id="accountSwitchLogin" class="account-link" type="button" onclick="setAccountMode('login')">I already have an account</button>
@@ -1767,7 +1775,9 @@ function playWoodpeckerReminderNow(){
 function showAccountGate(){
   const gate = document.getElementById("accountGate");
   const error = document.getElementById("accountError");
+  const success = document.getElementById("accountSuccess");
   if(error) error.innerText = "";
+  if(success) success.innerText = "";
   syncAccountGateState();
   if(gate) gate.classList.add("open");
 }
@@ -1798,8 +1808,11 @@ function syncAccountGateState(){
   const switchReset = document.getElementById("accountSwitchReset");
   const switchBackLogin = document.getElementById("accountSwitchBackLogin");
   const error = document.getElementById("accountError");
+  const success = document.getElementById("accountSuccess");
+  const localMode = !!window.PilingoAuth?.shouldUseLocalMode?.();
 
   if(error) error.innerText = "";
+  if(success) success.innerText = "";
 
   if(accountMode === "login"){
     if(title) title.innerText = "Log in to your account";
@@ -1810,7 +1823,9 @@ function syncAccountGateState(){
     if(passwordRow) passwordRow.hidden = false;
     if(codeRow) codeRow.hidden = true;
     if(note) note.innerText = "Use the same email and password you created before.";
-    if(support) support.innerText = "If a student forgets the password, press Forgot password and use the code sent to the account email to get the account back.";
+    if(support) support.innerText = localMode
+      ? "If a student forgets the password, press Forgot password and use the recovery code shown on this device to get the account back."
+      : "If a student forgets the password, press Forgot password and use the code sent to the account email to get the account back.";
     if(password){
       password.placeholder = "Enter your password";
       password.autocomplete = "current-password";
@@ -1824,14 +1839,20 @@ function syncAccountGateState(){
 
   if(accountMode === "requestReset"){
     if(title) title.innerText = "Forgot your password?";
-    if(message) message.innerText = "Enter the account email first. Pilingo will send a 6-digit code so the student can get the account back and create a new password.";
+    if(message) message.innerText = localMode
+      ? "Enter the account email first. Pilingo will create a 6-digit recovery code on this device so the student can get the account back and create a new password."
+      : "Enter the account email first. Pilingo will send a 6-digit code so the student can get the account back and create a new password.";
     if(submit) submit.innerHTML = "Send Reset<br>Code";
     if(nameRow) nameRow.hidden = true;
     if(phoneRow) phoneRow.hidden = true;
     if(passwordRow) passwordRow.hidden = true;
     if(codeRow) codeRow.hidden = true;
-    if(note) note.innerText = "The code is sent to the email for that account and works for 15 minutes.";
-    if(support) support.innerText = "Step 1: enter the account email. Step 2: open the email, copy the code, then come back to set a new password.";
+    if(note) note.innerText = localMode
+      ? "The recovery code appears on this device and works for 15 minutes."
+      : "The code is sent to the email for that account and works for 15 minutes.";
+    if(support) support.innerText = localMode
+      ? "Step 1: enter the account email. Step 2: copy the code shown here, then come back to set a new password."
+      : "Step 1: enter the account email. Step 2: open the email, copy the code, then come back to set a new password.";
     if(password){
       password.placeholder = "New password";
       password.autocomplete = "new-password";
@@ -1872,7 +1893,9 @@ function syncAccountGateState(){
   if(passwordRow) passwordRow.hidden = false;
   if(codeRow) codeRow.hidden = true;
   if(note) note.innerText = "If location permission is allowed, your location will be included in the new account notification.";
-  if(support) support.innerText = "No guest mode: every student must sign up or log in before using the lessons. If they forget their password, they can recover the account with a code sent to their email.";
+  if(support) support.innerText = localMode
+    ? "No guest mode: every student must sign up or log in before using the lessons. On this public static version, password recovery uses a code shown on the same device."
+    : "No guest mode: every student must sign up or log in before using the lessons. If they forget their password, they can recover the account with a code sent to their email.";
   if(password){
     password.placeholder = "Create a password";
     password.autocomplete = "new-password";
@@ -1945,9 +1968,14 @@ async function submitAccountForm(event){
   const password = document.getElementById("accountPassword").value.trim();
   const code = document.getElementById("accountCode").value.trim();
   const error = document.getElementById("accountError");
+  const success = document.getElementById("accountSuccess");
   const form = event.currentTarget;
+  const submitButton = form.querySelector('button[type="submit"]');
 
   if(error) error.innerText = "";
+  if(success) success.innerText = "";
+
+  if(submitButton) submitButton.disabled = true;
 
   try {
     if(accountMode === "login"){
@@ -1960,6 +1988,7 @@ async function submitAccountForm(event){
       if(window.PilingoNotify?.track){
         PilingoNotify.track("account_login", "Logged in", { source:"index" });
       }
+      if(success) success.innerText = "Login successful. Opening your account now.";
       form.reset();
       updateAccountUI();
       return account;
@@ -1970,10 +1999,15 @@ async function submitAccountForm(event){
         error.innerText = "Please enter the account email first.";
         return;
       }
-      await window.PilingoAuth.requestPasswordReset(email);
+      const resetResult = await window.PilingoAuth.requestPasswordReset(email);
       accountMode = "reset";
       syncAccountGateState();
-      error.innerText = "A reset code has been sent. Check the email and enter the code here.";
+      if(success) {
+        success.innerText = resetResult?.code
+          ? `Recovery code: ${resetResult.code}. Enter it below with your new password.`
+          : "A reset code has been sent. Check the email and enter the code here.";
+      }
+      document.getElementById("accountEmail").value = email;
       return;
     }
 
@@ -1986,6 +2020,7 @@ async function submitAccountForm(event){
       if(window.PilingoNotify?.track){
         PilingoNotify.track("password_reset", "Changed password", { source:"index" });
       }
+      if(success) success.innerText = "Password changed successfully. Opening the account now.";
       form.reset();
       updateAccountUI();
       return;
@@ -2006,10 +2041,13 @@ async function submitAccountForm(event){
       });
     }
 
+    if(success) success.innerText = "Account created successfully. Opening your account now.";
     form.reset();
     updateAccountUI();
   } catch(err){
     error.innerText = err?.message || "Something went wrong. Please try again.";
+  } finally {
+    if(submitButton) submitButton.disabled = false;
   }
 }
 

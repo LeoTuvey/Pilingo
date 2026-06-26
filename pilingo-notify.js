@@ -17,7 +17,8 @@ const PilingoNotify = {
       name: account?.name || localStorage.getItem("pilingo_current_user") || "Unknown student",
       email: account?.email || "",
       phone: account?.phone || "",
-      location: account?.location || ""
+      location: account?.location || "",
+      hasAccount: !!(account?.email && account?.phone)
     };
   },
 
@@ -25,6 +26,14 @@ const PilingoNotify = {
     if(!this.canUseServer()) return;
 
     const student = this.currentStudent();
+    const page = location.pathname.split("/").pop() || "index.html";
+
+    if(type === "page_open"){
+      const dedupeKey = `pilingo_track_${page}_${label || type}`;
+      const lastSentAt = Number(sessionStorage.getItem(dedupeKey) || 0);
+      if(Date.now() - lastSentAt < 10000) return;
+      sessionStorage.setItem(dedupeKey, String(Date.now()));
+    }
 
     try {
       await fetch(this.endpoint, {
@@ -33,7 +42,7 @@ const PilingoNotify = {
         body: JSON.stringify({
           type: type || "activity",
           label: label || "",
-          page: location.pathname.split("/").pop() || "index.html",
+          page,
           studentName: student.name,
           studentEmail: student.email,
           studentPhone: student.phone,
@@ -50,6 +59,7 @@ const PilingoNotify = {
     if(!this.canUseServer()) return null;
 
     const student = this.currentStudent();
+    if(!student.hasAccount) return null;
 
     try {
       const response = await fetch(this.statsEndpoint, {
@@ -134,7 +144,27 @@ const PilingoNotify = {
       return;
     }
 
-    list.innerHTML = events.slice(0, 8).map((event) => `
+    const uniqueEvents = [];
+
+    for(const event of events){
+      const signature = [
+        event.studentEmail || event.studentName || "student",
+        event.studentPhone || "",
+        event.label || event.type || "activity",
+        event.page || ""
+      ].join("|");
+      const createdAt = new Date(event.createdAt || 0).getTime();
+      const alreadyShown = uniqueEvents.some((item) => {
+        const sameSignature = item.signature === signature;
+        const sameWindow = Math.abs(item.createdAt - createdAt) < 15000;
+        return sameSignature && sameWindow;
+      });
+      if(alreadyShown) continue;
+      uniqueEvents.push({ signature, createdAt, event });
+      if(uniqueEvents.length >= 8) break;
+    }
+
+    list.innerHTML = uniqueEvents.map(({ event }) => `
       <div class="notify-item">
         <strong>${escapeHtml(event.studentName || "Student")} • ${escapeHtml(event.label || event.type || "Activity")}</strong>
         <span>${escapeHtml(event.studentEmail || "No email")} • ${escapeHtml(event.studentPhone || "No phone")}</span>
@@ -143,7 +173,7 @@ const PilingoNotify = {
       </div>
     `).join("");
 
-    this.maybeShowBrowserNotification(events[0]);
+    this.maybeShowBrowserNotification(uniqueEvents[0]?.event || events[0]);
   },
 
   startPolling(listId, statusId){

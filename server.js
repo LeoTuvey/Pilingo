@@ -287,7 +287,14 @@ function serveStatic(requestPath, res) {
       "Content-Type": MIME_TYPES[ext] || "application/octet-stream"
     };
 
-    if (ext === ".html" || path.basename(absolutePath) === "sw.js" || ext === ".webmanifest") {
+    if (
+      ext === ".html" ||
+      ext === ".js" ||
+      ext === ".css" ||
+      ext === ".json" ||
+      path.basename(absolutePath) === "sw.js" ||
+      ext === ".webmanifest"
+    ) {
       headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0";
       headers.Pragma = "no-cache";
       headers.Expires = "0";
@@ -442,7 +449,38 @@ function resetPassword(payload) {
 }
 
 function getLeaderboard() {
-  return readStudentStats()
+  const merged = new Map();
+
+  readStudentStats().forEach((student) => {
+    const email = String(student.email || "").trim().toLowerCase();
+    const phone = String(student.phone || "").trim();
+    const name = String(student.name || "Unknown student").trim();
+    const key = email || phone || name.toLowerCase();
+    const current = merged.get(key);
+
+    if (!current) {
+      merged.set(key, { ...student });
+      return;
+    }
+
+    merged.set(key, {
+      ...current,
+      name: current.name || name,
+      email: current.email || email,
+      phone: current.phone || phone,
+      location: current.location || student.location || "",
+      xp: Math.max(safeNumber(current.xp, 0), safeNumber(student.xp, 0)),
+      level: Math.max(safeNumber(current.level, 0), safeNumber(student.level, 0)),
+      streak: Math.max(safeNumber(current.streak, 0), safeNumber(student.streak, 0)),
+      completedSections: Math.max(safeNumber(current.completedSections, 0), safeNumber(student.completedSections, 0)),
+      averageGrade: Math.max(safeNumber(current.averageGrade, 0), safeNumber(student.averageGrade, 0)),
+      bestGrade: Math.max(safeNumber(current.bestGrade, 0), safeNumber(student.bestGrade, 0)),
+      lessonsFinished: Math.max(safeNumber(current.lessonsFinished, 0), safeNumber(student.lessonsFinished, 0)),
+      updatedAt: current.updatedAt > student.updatedAt ? current.updatedAt : student.updatedAt
+    });
+  });
+
+  return Array.from(merged.values())
     .map((student) => ({
       ...student,
       rankScore: leaderboardScore(student)

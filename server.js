@@ -472,7 +472,7 @@ async function createPasswordReset(payload) {
   return {
     ok: true,
     deliveredByEmail: !!delivery?.deliveredByEmail,
-    code: delivery?.deliveredByEmail ? null : code
+    code
   };
 }
 

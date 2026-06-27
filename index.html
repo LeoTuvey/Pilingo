@@ -2022,7 +2022,7 @@ async function submitAccountForm(event){
       syncAccountGateState();
       if(success) {
         success.innerText = resetResult?.code
-          ? `Recovery code: ${resetResult.code}. Enter it below with your new password.`
+          ? `Recovery code: ${resetResult.code}. Check your email too, then enter the code below with your new password.`
           : "A reset code has been sent. Check the email and enter the code here.";
       }
       document.getElementById("accountEmail").value = email;

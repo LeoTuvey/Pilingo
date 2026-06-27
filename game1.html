@@ -1761,6 +1761,20 @@ function markSectionComplete(index, sectionIndex){
 
     completedSections[key] = [...saved, section.id];
     saveCompletedSections();
+
+    // Award progress the first time a section is completed so home stats move
+    // immediately instead of waiting until the entire lesson is finished.
+    if(window.Engine?.addXP){
+        Engine.addXP(10);
+    }
+
+    if(window.AppUI?.updateQuestProgress){
+        AppUI.updateQuestProgress(10);
+    }
+
+    if(window.PilingoNotify?.submitStudentStats){
+        PilingoNotify.submitStudentStats(leaderboardSummary());
+    }
 }
 
 function currentSectionIndex(){

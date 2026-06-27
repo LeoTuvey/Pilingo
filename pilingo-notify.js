@@ -11,6 +11,15 @@ const PilingoNotify = {
     return location.protocol.startsWith("http");
   },
 
+  canViewOwnerNotifications(){
+    return !!window.PilingoAuth?.isOwner?.();
+  },
+
+  ownerHeaders(){
+    const token = window.PilingoAuth?.getOwnerPanelToken?.() || "";
+    return token ? { "X-Pilingo-Owner-Token": token } : {};
+  },
+
   currentStudent(){
     const account = window.PilingoAuth?.loadAccount?.() || null;
     return {
@@ -81,10 +90,14 @@ const PilingoNotify = {
   },
 
   async fetchNotifications(){
-    if(!this.canUseServer()) return [];
+    if(!this.canUseServer() || !this.canViewOwnerNotifications()) return [];
 
     try {
-      const response = await fetch(this.listEndpoint, { cache:"no-store" });
+      const response = await fetch(this.listEndpoint, {
+        cache:"no-store",
+        headers: this.ownerHeaders()
+      });
+      if(!response.ok) return [];
       const data = await response.json();
       return Array.isArray(data.events) ? data.events : [];
     } catch(error) {
@@ -108,6 +121,17 @@ const PilingoNotify = {
     const list = document.getElementById(listId);
     const status = document.getElementById(statusId);
     if(!list) return;
+
+    if(!this.canViewOwnerNotifications()){
+      list.innerHTML = `
+        <div class="notify-item">
+          <strong>Owner only</strong>
+          <span>This activity panel is visible only for the owner account.</span>
+        </div>
+      `;
+      if(status) status.innerText = "Private";
+      return;
+    }
 
     if(!this.canUseServer()) {
       list.innerHTML = `

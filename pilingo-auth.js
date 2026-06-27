@@ -1,5 +1,6 @@
 const PilingoAuth = {
   accountKey: "pilingo_account_v1",
+  ownerTokenKey: "pilingo_owner_panel_token_v1",
   accountsKey: "pilingo_accounts_v1",
   resetsKey: "pilingo_resets_v1",
   registerEndpoint: "/api/auth/register",
@@ -25,11 +26,17 @@ const PilingoAuth = {
     if(!account) return null;
     localStorage.setItem(this.accountKey, JSON.stringify(account));
     localStorage.setItem("pilingo_current_user", account.name || "Learner");
+    if(account.isOwner && account.ownerPanelToken){
+      localStorage.setItem(this.ownerTokenKey, String(account.ownerPanelToken));
+    } else {
+      localStorage.removeItem(this.ownerTokenKey);
+    }
     return account;
   },
 
   clearAccount(){
     localStorage.removeItem(this.accountKey);
+    localStorage.removeItem(this.ownerTokenKey);
   },
 
   logout(){
@@ -372,6 +379,15 @@ const PilingoAuth = {
 
     window.location.href = "index.html";
     return false;
+  },
+
+  isOwner(){
+    const account = this.loadAccount();
+    return !!account?.isOwner;
+  },
+
+  getOwnerPanelToken(){
+    return localStorage.getItem(this.ownerTokenKey) || "";
   }
 };
 

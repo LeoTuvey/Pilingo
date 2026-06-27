@@ -17,6 +17,8 @@ const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID || "";
 const RESEND_API_KEY = process.env.RESEND_API_KEY || "";
 const EMAIL_TO = process.env.EMAIL_TO || "";
 const EMAIL_FROM = process.env.EMAIL_FROM || "";
+const OWNER_EMAILS = parseOwnerEmails(process.env.OWNER_EMAILS || EMAIL_TO);
+const OWNER_PANEL_TOKEN = process.env.OWNER_PANEL_TOKEN || `owner-${Math.random().toString(36).slice(2)}-${Date.now().toString(36)}`;
 const RESET_CODE_TTL_MS = 15 * 60 * 1000;
 
 const MIME_TYPES = {
@@ -51,6 +53,12 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (req.method === "GET" && parsed.pathname === "/api/notifications") {
+    if (!hasOwnerAccess(req)) {
+      return sendJson(res, 403, {
+        ok: false,
+        error: "Owner access only"
+      });
+    }
     return sendJson(res, 200, {
       ok: true,
       events: readEvents().slice(-50).reverse()
@@ -298,7 +306,7 @@ function sendJson(res, status, payload) {
 function applyApiHeaders(res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, X-Pilingo-Owner-Token");
   res.setHeader("Cache-Control", "no-store");
 }
 
@@ -389,13 +397,16 @@ function upsertStudentStats(payload) {
 }
 
 function publicAccount(account) {
+  const isOwner = isOwnerEmail(account?.email);
   return {
     id: account.id,
     name: account.name,
     email: account.email,
     phone: account.phone,
     location: account.location || "",
-    createdAt: account.createdAt
+    createdAt: account.createdAt,
+    isOwner,
+    ownerPanelToken: isOwner ? OWNER_PANEL_TOKEN : ""
   };
 }
 
@@ -449,6 +460,23 @@ function loginAccount(payload) {
   }
 
   return { ok: true, account };
+}
+
+function parseOwnerEmails(value) {
+  return String(value || "")
+    .split(",")
+    .map((item) => item.trim().toLowerCase())
+    .filter(Boolean);
+}
+
+function isOwnerEmail(email) {
+  const normalizedEmail = String(email || "").trim().toLowerCase();
+  return !!(normalizedEmail && OWNER_EMAILS.includes(normalizedEmail));
+}
+
+function hasOwnerAccess(req) {
+  const token = String(req.headers["x-pilingo-owner-token"] || "").trim();
+  return !!(token && token === OWNER_PANEL_TOKEN);
 }
 
 async function createPasswordReset(payload) {

@@ -1468,7 +1468,7 @@ button:active{
         </div>
       </div>
 
-      <div class="notify-card">
+      <div id="ownerNotifyCard" class="notify-card">
         <div class="notify-top">
           <strong>🔔 Student Notifications</strong>
           <span id="notifyStatus" class="notify-status">Waiting</span>
@@ -1937,6 +1937,7 @@ function updateAccountUI(){
     if(welcomeChip) welcomeChip.hidden = false;
     if(welcomeName) welcomeName.innerText = account?.name || "Learner";
     if(logoutButton) logoutButton.hidden = false;
+    updateOwnerOnlyPanels();
     hideAccountGate();
     return;
   }
@@ -1944,6 +1945,7 @@ function updateAccountUI(){
   if(accountBar) accountBar.hidden = true;
   if(welcomeChip) welcomeChip.hidden = true;
   if(logoutButton) logoutButton.hidden = true;
+  updateOwnerOnlyPanels();
   showAccountGate();
 }
 
@@ -2084,11 +2086,25 @@ function testPhoneNotification(){
   }
 }
 
+function updateOwnerOnlyPanels(){
+  const notifyCard = document.getElementById("ownerNotifyCard");
+  if(!notifyCard) return;
+
+  const isOwner = !!window.PilingoAuth?.isOwner?.();
+  notifyCard.hidden = !isOwner;
+
+  if(isOwner && window.PilingoNotify){
+    window.PilingoNotify.startPolling("notifyList", "notifyStatus");
+  }
+}
+
 syncAccountGateState();
 updateAccountUI();
 if(window.PilingoNotify){
   PilingoNotify.track("page_open", "Opened home page", { page:"index" });
-  PilingoNotify.startPolling("notifyList", "notifyStatus");
+  if(window.PilingoAuth?.isOwner?.()){
+    PilingoNotify.startPolling("notifyList", "notifyStatus");
+  }
   PilingoNotify.startLeaderboardPolling("leaderList");
 }
 startStudyReminderWatcher();

@@ -99,8 +99,11 @@ const PilingoSocial = {
       return;
     }
 
-    const snapshot = this.lastSnapshot || await this.fetchSnapshot();
-    this.lastSnapshot = snapshot;
+    const freshSnapshot = await this.fetchSnapshot();
+    if(freshSnapshot){
+      this.lastSnapshot = freshSnapshot;
+    }
+    const snapshot = freshSnapshot || this.lastSnapshot;
 
     if(!snapshot?.currentStudent){
       summary.innerHTML = `<div class="social-empty">Your social circle will appear here after the app finds your account.</div>`;

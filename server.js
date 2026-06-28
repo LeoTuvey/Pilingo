@@ -433,6 +433,19 @@ function registerAccount(payload) {
   };
   accounts.push(account);
   writeAccounts(accounts);
+  upsertStudentStats({
+    studentName: account.name,
+    studentEmail: account.email,
+    studentPhone: account.phone,
+    studentLocation: account.location || "",
+    xp: 0,
+    level: 0,
+    streak: 0,
+    completedSections: 0,
+    averageGrade: 0,
+    bestGrade: 0,
+    lessonsFinished: 0
+  });
   return account;
 }
 
@@ -526,6 +539,30 @@ function resetPassword(payload) {
 
 function getLeaderboard() {
   const merged = new Map();
+
+  readAccounts().forEach((account) => {
+    const email = String(account.email || "").trim().toLowerCase();
+    const phone = String(account.phone || "").trim();
+    const name = String(account.name || "Unknown student").trim();
+    const key = email || phone || name.toLowerCase();
+    if (!key || merged.has(key)) return;
+
+    merged.set(key, {
+      id: account.id || `${Date.now()}-${Math.random().toString(16).slice(2, 8)}`,
+      name,
+      email,
+      phone,
+      location: String(account.location || "").trim(),
+      xp: 0,
+      level: 0,
+      streak: 0,
+      completedSections: 0,
+      averageGrade: 0,
+      bestGrade: 0,
+      lessonsFinished: 0,
+      updatedAt: account.createdAt || new Date().toISOString()
+    });
+  });
 
   readStudentStats().forEach((student) => {
     const email = String(student.email || "").trim().toLowerCase();

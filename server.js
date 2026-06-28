@@ -1060,8 +1060,7 @@ function getLeaderboard() {
       b.averageGrade - a.averageGrade ||
       b.completedSections - a.completedSections ||
       a.name.localeCompare(b.name)
-    )
-    .slice(0, 20);
+    );
 }
 
 function getSocialSnapshot(viewerEmail) {
@@ -1337,8 +1336,7 @@ function getOwnerStudentRoster() {
       const aSeen = new Date(a.lastSeenAt || a.createdAt || 0).getTime();
       const bSeen = new Date(b.lastSeenAt || b.createdAt || 0).getTime();
       return bSeen - aSeen || String(a.name || "").localeCompare(String(b.name || ""));
-    })
-    .slice(0, 50);
+    });
 }
 
 function leaderboardScore(student) {

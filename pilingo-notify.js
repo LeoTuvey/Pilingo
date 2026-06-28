@@ -283,7 +283,7 @@ const PilingoNotify = {
         isNew: !!student?.createdAt && (!student?.lastSeenAt || student.lastSeenAt === student.createdAt)
       });
 
-      if(registeredStudents.length >= 6) break;
+      if(registeredStudents.length >= 20) break;
     }
 
     if(status) {
@@ -298,7 +298,7 @@ const PilingoNotify = {
 
     const studentsToShow = liveStudents.length
       ? liveStudents
-      : (recentStudents.length ? recentStudents.slice(0, 4) : registeredStudents.slice(0, 6));
+      : (recentStudents.length ? recentStudents.slice(0, 8) : registeredStudents.slice(0, 20));
     const title = liveStudents.length ? "Live now" : (recentStudents.length ? "Recently seen" : "Registered students");
     const detail = liveStudents.length
       ? "Students active in the app right now."
@@ -367,7 +367,7 @@ const PilingoNotify = {
     const topCount = Math.min(3, students.length);
     const dangerCount = students.length > 5 ? Math.min(2, students.length - topCount) : 0;
     const currentStudent = currentIndex >= 0 ? students[currentIndex] : null;
-    const standings = students.slice(0, 10);
+    const standings = students.slice();
 
     list.innerHTML = `
       <div class="league-hero ${escapeHtml(league.slug)}">
@@ -378,6 +378,7 @@ const PilingoNotify = {
           <span class="league-rule promote">Top ${topCount} go up</span>
           <span class="league-rule safe">Middle stay safe</span>
           ${dangerCount ? `<span class="league-rule danger">Bottom ${dangerCount} go down</span>` : ""}
+          <span class="league-rule safe">${students.length} learners in this league</span>
         </div>
       </div>
       <div class="league-summary-card">

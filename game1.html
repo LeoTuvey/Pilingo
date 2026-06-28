@@ -904,7 +904,7 @@ const gameParts = [
     {
         title:"Game One; A",
         steps:[
-            matchStep([
+            spokenMatchStep([
                 ["A", "Adam"],
                 ["B", "Ben"],
                 ["C", "Jack"],
@@ -913,8 +913,8 @@ const gameParts = [
                 ["E", "Emma"],
                 ["Ê", "April"],
                 ["F", "Frank"]
-            ], "🎯 Match the Kurmanji letters | Tîpên Kurmancî li hev bîne!"),
-            matchStep([
+            ], "🎯 Match the Kurmanji letters | Tîpên Kurmancî li hev bîne!", "english"),
+            spokenMatchStep([
                 ["G", "Gary"],
                 ["H", "Harry"],
                 ["I", "Ian"],
@@ -923,8 +923,8 @@ const gameParts = [
                 ["K", "Kate"],
                 ["L", "Lucy"],
                 ["M", "Michael"]
-            ], "🎯 Match the Kurmanji letters | Tîpên Kurmancî li hev bîne!"),
-            matchStep([
+            ], "🎯 Match the Kurmanji letters | Tîpên Kurmancî li hev bîne!", "english"),
+            spokenMatchStep([
                 ["N", "Nancy"],
                 ["O", "Oliver"],
                 ["P", "Peter"],
@@ -933,8 +933,8 @@ const gameParts = [
                 ["S", "Sarah"],
                 ["Ş", "Sharon"],
                 ["T", "Thomas"]
-            ], "🎯 Match the Kurmanji letters | Tîpên Kurmancî li hev bîne!"),
-            matchStep([
+            ], "🎯 Match the Kurmanji letters | Tîpên Kurmancî li hev bîne!", "english"),
+            spokenMatchStep([
                 ["U", "Uma"],
                 ["Û", "Uma"],
                 ["V", "Victoria"],
@@ -942,7 +942,7 @@ const gameParts = [
                 ["X", "Xalid"],
                 ["Y", "Yusuf"],
                 ["Z", "Zoe"]
-            ], "🎯 Match the Kurmanji letters | Tîpên Kurmancî li hev bîne!"),
+            ], "🎯 Match the Kurmanji letters | Tîpên Kurmancî li hev bîne!", "english"),
             hearStep("Adam", ["A", "E", "Ê", "I"], "A", "🎧 Hear the name and choose the letter | Navê bibihîze û tîpa rast hilbijêre!", "🔊 Adam"),
             hearStep("Charlie", ["C", "Ç", "Ş", "J"], "Ç", "🎧 Hear the name and choose the letter | Navê bibihîze û tîpa rast hilbijêre!", "🔊 Charlie"),
             hearStep("Jacques", ["J", "X", "Ş", "Ç"], "J", "🎧 Hear the name and choose the letter | Navê bibihîze û tîpa rast hilbijêre!", "🔊 Jacques"),
@@ -1663,6 +1663,16 @@ function matchStep(pairs, instruction){
     };
 }
 
+function spokenMatchStep(pairs, instruction, speakSide){
+    return {
+        type:"match",
+        instruction:instruction || "Tap the match pairs! | Li ser cotên wekhev bitikîne!",
+        prompt:"",
+        pairs:pairs,
+        speakSide:speakSide || "english"
+    };
+}
+
 function audioMatchStep(pairs){
     return {
         type:"audioMatch",
@@ -2305,8 +2315,18 @@ function renderMatchStep(step){
     const englishCards = [];
 
     step.pairs.forEach((pair, index) => {
-        englishCards.push({ text:pair[0], key:index, id:"en-" + index });
-        kurmanjiCards.push({ text:pair[1], key:index, id:"ku-" + index });
+        englishCards.push({
+            text:pair[0],
+            key:index,
+            id:"en-" + index,
+            spoken:step.speakSide === "english" ? pair[1] : ""
+        });
+        kurmanjiCards.push({
+            text:pair[1],
+            key:index,
+            id:"ku-" + index,
+            spoken:step.speakSide === "kurmanji" ? pair[1] : ""
+        });
     });
 
     shuffleCards(kurmanjiCards, "match-kurmanji");
@@ -2317,16 +2337,16 @@ function renderMatchStep(step){
             <div class="match-column">
                 <div class="match-heading">Kurmanji</div>
                 ${kurmanjiCards.map((card) => `
-                    <button class="secondary" id="match-${card.id}" onclick="selectMatch('${card.id}', ${card.key})">
-                        ${escapeHtml(card.text)}
+                    <button class="secondary" id="match-${card.id}" onclick="${card.spoken ? `speakAndSelectMatch('${card.id}', ${card.key}, '${escapeHtml(card.spoken)}')` : `selectMatch('${card.id}', ${card.key})`}">
+                        ${card.spoken ? "🔊 " : ""}${escapeHtml(card.text)}
                     </button>
                 `).join("")}
             </div>
             <div class="match-column">
                 <div class="match-heading">English</div>
                 ${englishCards.map((card) => `
-                    <button class="secondary" id="match-${card.id}" onclick="selectMatch('${card.id}', ${card.key})">
-                        ${escapeHtml(card.text)}
+                    <button class="secondary" id="match-${card.id}" onclick="${card.spoken ? `speakAndSelectMatch('${card.id}', ${card.key}, '${escapeHtml(card.spoken)}')` : `selectMatch('${card.id}', ${card.key})`}">
+                        ${card.spoken ? "🔊 " : ""}${escapeHtml(card.text)}
                     </button>
                 `).join("")}
             </div>
@@ -2394,6 +2414,11 @@ function shuffleCards(cards, salt){
 }
 
 function selectAudioMatch(buttonIndex, key, spoken){
+    speak(spoken);
+    selectMatch(buttonIndex, key);
+}
+
+function speakAndSelectMatch(buttonIndex, key, spoken){
     speak(spoken);
     selectMatch(buttonIndex, key);
 }

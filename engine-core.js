@@ -81,6 +81,21 @@ const Engine = {
     return hearts;
   },
 
+  addHeart(amount = 1){
+    this.applyHeartRefill();
+    const current = this.getHearts();
+    const next = Math.max(0, Math.min(this.HEARTS_MAX, current + (Number(amount) || 0)));
+    localStorage.setItem("hearts", String(next));
+
+    if (next >= this.HEARTS_MAX) {
+      localStorage.removeItem("heartsRefillStartedAt");
+    } else if (!localStorage.getItem("heartsRefillStartedAt")) {
+      localStorage.setItem("heartsRefillStartedAt", String(Date.now()));
+    }
+
+    return next;
+  },
+
   getHeartRefillRemainingMs(){
     this.applyHeartRefill();
     const hearts = this.getHearts();

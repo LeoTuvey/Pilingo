@@ -2697,10 +2697,12 @@ function completeStep(){
     if(sections.length && sectionIndex >= 0 && stepIndex === sections[sectionIndex].end) {
         saveCurrentGradeRecord();
         markSectionComplete(partIndex, sectionIndex);
+        hearts = window.Engine?.addHeart ? Engine.addHeart(1) : Math.min(5, hearts + 1);
+        renderHearts();
 
         if(sectionIndex < sections.length - 1) {
             const percent = currentGradePercent();
-            showSectionSelect(partIndex, sections[sectionIndex + 1].label + " is now unlocked • Grade " + gradeLetter(percent) + " " + percent + "%");
+            showSectionSelect(partIndex, "❤️ +1 heart • " + sections[sectionIndex + 1].label + " is now unlocked • Grade " + gradeLetter(percent) + " " + percent + "%");
             return;
         }
     }

@@ -938,50 +938,33 @@ const gameParts = [
     {
         title:"Game One; A",
         steps:[
-            letterMatchStep([
-                ["A", "Adam"],
-                ["B", "Ben"],
-                ["C", "Jack"],
-                ["Ç", "Charlie"],
-                ["D", "David"],
-                ["E", "Emma"],
-                ["Ê", "April"],
-                ["F", "Frank"]
-            ], "🎯 Match the Kurmanji letters | Tîpên Kurmancî li hev bîne!"),
-            letterMatchStep([
-                ["G", "Gary"],
-                ["H", "Harry"],
-                ["I", "Ian"],
-                ["Î", "Ethan"],
-                ["J", "Jin"],
-                ["K", "Kate"],
-                ["L", "Lucy"],
-                ["M", "Michael"]
-            ], "🎯 Match the Kurmanji letters | Tîpên Kurmancî li hev bîne!"),
-            letterMatchStep([
-                ["N", "Nancy"],
-                ["O", "Oliver"],
-                ["P", "Peter"],
-                ["Q", "Qasim"],
-                ["R", "Robert"],
-                ["S", "Sarah"],
-                ["Ş", "Sharon"],
-                ["T", "Thomas"]
-            ], "🎯 Match the Kurmanji letters | Tîpên Kurmancî li hev bîne!"),
-            letterMatchStep([
-                ["U", "Uma"],
-                ["Û", "Uma"],
-                ["V", "Victoria"],
-                ["W", "William"],
-                ["X", "Xalid"],
-                ["Y", "Yusuf"],
-                ["Z", "Zoe"]
-            ], "🎯 Match the Kurmanji letters | Tîpên Kurmancî li hev bîne!"),
-            hearStep("Adam", ["A", "E", "Ê", "I"], "A", "🎧 Hear the name and choose the letter | Navê bibihîze û tîpa rast hilbijêre!", "🔊 Adam"),
-            hearStep("Charlie", ["C", "Ç", "Ş", "J"], "Ç", "🎧 Hear the name and choose the letter | Navê bibihîze û tîpa rast hilbijêre!", "🔊 Charlie"),
-            hearStep("Jin", ["J", "X", "Ş", "Ç"], "J", "🎧 Hear the word and choose the letter | Peyvê bibihîze û tîpa rast hilbijêre!", "🔊 Jin"),
-            hearStep("Xalid", ["Q", "X", "H", "Y"], "X", "🎧 Hear the name and choose the letter | Navê bibihîze û tîpa rast hilbijêre!", "🔊 Xalid"),
-            hearStep("Ethan", ["I", "Î", "Ê", "E"], "Î", "🎧 Hear the name and choose the letter | Navê bibihîze û tîpa rast hilbijêre!", "🔊 Ethan"),
+            soraniMatchStep([
+                ["A a", "ا"],
+                ["B b", "ب"],
+                ["C c", "ج"],
+                ["Ç ç", "چ"],
+                ["D d", "د"],
+                ["E e", "ە"],
+                ["Ê ê", "ێ"],
+                ["F f", "ف"]
+            ]),
+            soraniMatchStep([
+                ["G g", "گ"],
+                ["H h", "هه"],
+                ["I i", "ئ"],
+                ["Î î", "ی"],
+                ["J j", "ژ"],
+                ["K k", "ک"],
+                ["L l", "ل"],
+                ["M m", "م"]
+            ]),
+            soraniMatchStep([
+                ["N n", "ن"],
+                ["O o", "ۆ"],
+                ["P p", "پ"],
+                ["Q q", "ق"],
+                ["R r", "ر"]
+            ]),
             nextStep("Game One A • Part 1 complete"),
             imageStep("şîr", [
                 imgOpt("Coffee", "coffee"),
@@ -1519,8 +1502,8 @@ const partEmojis = ["🐈", "🐕", "🐇", "🦜", "🦆", "🍎"];
 
 const partSections = {
     0: [
-        { id:"a-part-1", label:"Part 1", detail:"Kurmanji letters and example names", start:0, end:9 },
-        { id:"a-part-2", label:"Part 2", detail:"Milk, coffee, hello, and matching", start:10, end:19 }
+        { id:"a-part-1", label:"Part 1", detail:"Kurmanji and Sorani letters", start:0, end:3 },
+        { id:"a-part-2", label:"Part 2", detail:"Milk, coffee, hello, and matching", start:4, end:13 }
     ],
     1: [
         { id:"b-part-1", label:"Part 1", detail:"Drinks, food, and welcome words", start:0, end:11 },
@@ -1719,6 +1702,19 @@ function letterMatchStep(pairs, instruction){
         rightSide:"second",
         leftSpeakMap:kurmanjiLetterSounds,
         rightSpeakValues:true
+    };
+}
+
+function soraniMatchStep(pairs){
+    return {
+        type:"match",
+        instruction:"🎯 Match the letters | Tîpan li hev bîne!",
+        prompt:"",
+        pairs:pairs,
+        leftHeading:"Kurmanji",
+        rightHeading:"Sorani",
+        leftSide:"first",
+        rightSide:"second"
     };
 }
 

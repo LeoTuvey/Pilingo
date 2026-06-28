@@ -913,7 +913,7 @@ const gameParts = [
                 ["E", "Emma"],
                 ["Ê", "April"],
                 ["F", "Frank"]
-            ], "🎯 Match the Kurmanji letters | Tîpên Kurmancî li hev bîne!", "english"),
+            ], "🎯 Match the Kurmanji letters | Tîpên Kurmancî li hev bîne!", "kurmanji"),
             spokenMatchStep([
                 ["G", "Gary"],
                 ["H", "Harry"],
@@ -923,7 +923,7 @@ const gameParts = [
                 ["K", "Kate"],
                 ["L", "Lucy"],
                 ["M", "Michael"]
-            ], "🎯 Match the Kurmanji letters | Tîpên Kurmancî li hev bîne!", "english"),
+            ], "🎯 Match the Kurmanji letters | Tîpên Kurmancî li hev bîne!", "kurmanji"),
             spokenMatchStep([
                 ["N", "Nancy"],
                 ["O", "Oliver"],
@@ -933,7 +933,7 @@ const gameParts = [
                 ["S", "Sarah"],
                 ["Ş", "Sharon"],
                 ["T", "Thomas"]
-            ], "🎯 Match the Kurmanji letters | Tîpên Kurmancî li hev bîne!", "english"),
+            ], "🎯 Match the Kurmanji letters | Tîpên Kurmancî li hev bîne!", "kurmanji"),
             spokenMatchStep([
                 ["U", "Uma"],
                 ["Û", "Uma"],
@@ -942,7 +942,7 @@ const gameParts = [
                 ["X", "Xalid"],
                 ["Y", "Yusuf"],
                 ["Z", "Zoe"]
-            ], "🎯 Match the Kurmanji letters | Tîpên Kurmancî li hev bîne!", "english"),
+            ], "🎯 Match the Kurmanji letters | Tîpên Kurmancî li hev bîne!", "kurmanji"),
             hearStep("Adam", ["A", "E", "Ê", "I"], "A", "🎧 Hear the name and choose the letter | Navê bibihîze û tîpa rast hilbijêre!", "🔊 Adam"),
             hearStep("Charlie", ["C", "Ç", "Ş", "J"], "Ç", "🎧 Hear the name and choose the letter | Navê bibihîze û tîpa rast hilbijêre!", "🔊 Charlie"),
             hearStep("Jacques", ["J", "X", "Ş", "Ç"], "J", "🎧 Hear the name and choose the letter | Navê bibihîze û tîpa rast hilbijêre!", "🔊 Jacques"),
@@ -2325,7 +2325,7 @@ function renderMatchStep(step){
             text:pair[1],
             key:index,
             id:"ku-" + index,
-            spoken:step.speakSide === "kurmanji" ? pair[1] : ""
+            spoken:step.speakSide === "kurmanji" ? pair[0] : ""
         });
     });
 

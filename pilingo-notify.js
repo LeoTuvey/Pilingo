@@ -317,33 +317,59 @@ const PilingoNotify = {
     });
     const leader = students[0] || null;
     const competition = this.buildCompetitionState(students, currentIndex, leader);
-
-    const topThree = students.slice(0, 3);
-    const rest = students.slice(3, 10);
-    const podiumClasses = ["first", "second", "third"];
+    const currentRank = currentIndex >= 0 ? currentIndex + 1 : null;
+    const league = this.getLeagueTheme(students, currentRank);
+    const topCount = Math.min(3, students.length);
+    const dangerCount = students.length > 5 ? Math.min(2, students.length - topCount) : 0;
+    const currentStudent = currentIndex >= 0 ? students[currentIndex] : null;
+    const standings = students.slice(0, 10);
 
     list.innerHTML = `
-      <div class="leader-item">
-        <strong>${escapeHtml(competition.title)}</strong>
-        <span>${escapeHtml(competition.body)}</span>
+      <div class="league-hero ${escapeHtml(league.slug)}">
+        <div class="league-badge">${escapeHtml(league.icon)} ${escapeHtml(league.name)}</div>
+        <div class="league-title">${escapeHtml(competition.title)}</div>
+        <div class="league-body">${escapeHtml(competition.body)}</div>
+        <div class="league-rules">
+          <span class="league-rule promote">Top ${topCount} go up</span>
+          <span class="league-rule safe">Middle stay safe</span>
+          ${dangerCount ? `<span class="league-rule danger">Bottom ${dangerCount} go down</span>` : ""}
+        </div>
       </div>
-      <div class="leader-section-label">League Leaders</div>
-      <div class="podium-grid">
-        ${topThree.map((student, index) => `
-          <div class="podium-card ${podiumClasses[index] || ""}">
-            <div class="podium-rank">#${index + 1}</div>
-            <div class="podium-name">${escapeHtml(student.name || "Student")}</div>
-            <div class="podium-meta">XP ${student.xp || 0}<br>Grade ${Math.round(student.averageGrade || 0)}%<br>Sections ${student.completedSections || 0}</div>
-          </div>
-        `).join("")}
+      <div class="league-summary-card">
+        <div class="league-summary-label">Your place</div>
+        <div class="league-summary-rank">${currentRank ? `#${currentRank}` : "-"}</div>
+        <div class="league-summary-name">${escapeHtml(currentStudent?.name || current?.name || "Student")}</div>
+        <div class="league-summary-meta">
+          XP ${currentStudent?.xp || 0} • Grade ${Math.round(currentStudent?.averageGrade || 0)}% • Sections ${currentStudent?.completedSections || 0}
+        </div>
       </div>
-      <div class="leader-section-label">Full Table</div>
-    ` + rest.map((student, index) => `
-      <div class="leader-item">
-        <strong>#${index + 4} ${escapeHtml(student.name || "Student")}</strong>
-        <span>XP ${student.xp || 0} • Grade ${Math.round(student.averageGrade || 0)}% • Sections ${student.completedSections || 0}</span>
+      <div class="leader-section-label">League Standings</div>
+      <div class="league-standings">
+        ${standings.map((student, index) => {
+          const rank = index + 1;
+          const isCurrent = rank === currentRank;
+          const zoneClass = rank <= topCount
+            ? "promotion"
+            : (dangerCount && rank > standings.length - dangerCount ? "danger" : "safe");
+          const zoneLabel = rank <= topCount
+            ? "Promote"
+            : (dangerCount && rank > standings.length - dangerCount ? "Drop zone" : "Safe");
+
+          return `
+            <div class="league-row ${zoneClass} ${isCurrent ? "current" : ""}">
+              <div class="league-rank-wrap">
+                <div class="league-rank">#${rank}</div>
+                <div class="league-zone-tag">${zoneLabel}</div>
+              </div>
+              <div class="league-student">
+                <strong>${escapeHtml(student.name || "Student")}${isCurrent ? ' <span class="league-you">YOU</span>' : ""}</strong>
+                <span>XP ${student.xp || 0} • Grade ${Math.round(student.averageGrade || 0)}% • Sections ${student.completedSections || 0}</span>
+              </div>
+            </div>
+          `;
+        }).join("")}
       </div>
-    `).join("");
+    `;
 
     this.maybeShowCompetitionNotification(competition);
   },
@@ -481,6 +507,31 @@ const PilingoNotify = {
         : (currentRank && previousRank && currentRank > previousRank
           ? `${leaderName} passed you in the ranking.`
           : "")
+    };
+  },
+
+  getLeagueTheme(students, currentRank){
+    const topXp = Number(students?.[0]?.xp || 0);
+    const tiers = [
+      { min: 2000, name: "Diamond League", icon: "💎", slug: "diamond" },
+      { min: 1200, name: "Obsidian League", icon: "🖤", slug: "obsidian" },
+      { min: 700, name: "Pearl League", icon: "🤍", slug: "pearl" },
+      { min: 350, name: "Emerald League", icon: "💚", slug: "emerald" },
+      { min: 150, name: "Gold League", icon: "🥇", slug: "gold" },
+      { min: 50, name: "Silver League", icon: "🥈", slug: "silver" },
+      { min: 0, name: "Bronze League", icon: "🥉", slug: "bronze" }
+    ];
+
+    const tier = tiers.find((item) => topXp >= item.min) || tiers[tiers.length - 1];
+    const suffix = currentRank === 1
+      ? "You are leading this league."
+      : currentRank
+        ? `You are fighting from #${currentRank}.`
+        : "Join the race and climb.";
+
+    return {
+      ...tier,
+      message: suffix
     };
   },
 

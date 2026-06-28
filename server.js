@@ -773,12 +773,45 @@ function getLeaderboard() {
 function getSocialSnapshot(viewerEmail) {
   const accounts = readAccounts();
   const leaderboard = getLeaderboard();
+  const accountByEmail = new Map();
   const statsByEmail = new Map();
   const followersByEmail = new Map();
   const followingByEmail = new Map();
+  const knownStudents = new Map();
+
+  const rememberKnownStudent = (studentLike) => {
+    const email = normalizeEmail(studentLike?.email || studentLike?.studentEmail);
+    const phone = String(studentLike?.phone || studentLike?.studentPhone || "").trim();
+    const name = String(studentLike?.name || studentLike?.studentName || "").trim();
+    const key = email || phone || name.toLowerCase();
+    if (!key) return null;
+
+    const current = knownStudents.get(key) || {
+      id: studentLike?.id || "",
+      name: name || "Student",
+      email,
+      phone
+    };
+
+    current.id = current.id || studentLike?.id || "";
+    current.name = current.name || name || "Student";
+    current.email = current.email || email;
+    current.phone = current.phone || phone;
+    knownStudents.set(key, current);
+    return current;
+  };
+
+  accounts.forEach((account) => {
+    const normalized = normalizeAccountRecord(account);
+    if (normalized.email) {
+      accountByEmail.set(normalized.email, normalized);
+    }
+    rememberKnownStudent(normalized);
+  });
 
   leaderboard.forEach((student, index) => {
     const key = normalizeEmail(student?.email);
+    rememberKnownStudent(student);
     if (!key) return;
     statsByEmail.set(key, {
       rank: index + 1,
@@ -804,16 +837,18 @@ function getSocialSnapshot(viewerEmail) {
     });
   });
 
-  const students = accounts.map((account) => {
-    const email = normalizeEmail(account?.email);
+  const students = Array.from(knownStudents.values()).map((student) => {
+    const email = normalizeEmail(student?.email);
     const followers = Array.from(new Set(followersByEmail.get(email) || []));
     const following = Array.from(new Set(followingByEmail.get(email) || []));
     const stats = statsByEmail.get(email) || {};
+    const account = accountByEmail.get(email) || null;
     return {
-      id: account.id,
-      name: account.name,
+      id: student.id || account?.id || "",
+      name: student.name || account?.name || "Student",
       email,
-      phone: account.phone || "",
+      phone: student.phone || account?.phone || "",
+      hasAccount: !!account,
       followersCount: followers.length,
       followingCount: following.length,
       followers,

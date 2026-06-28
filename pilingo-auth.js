@@ -7,6 +7,7 @@ const PilingoAuth = {
   loginEndpoint: "/api/auth/login",
   requestResetEndpoint: "/api/auth/request-reset",
   resetPasswordEndpoint: "/api/auth/reset-password",
+  updateProfileEndpoint: "/api/profile/update",
 
   loadAccount(){
     try {
@@ -102,7 +103,16 @@ const PilingoAuth = {
       phone,
       password,
       location,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      avatarType: "emoji",
+      avatarValue: "🐯",
+      bio: "",
+      statusMessage: "Ready to learn",
+      settings: {
+        profileVisibility: "public",
+        studyReminders: true,
+        soundEffects: true
+      }
     };
 
     accounts.push(account);
@@ -113,7 +123,12 @@ const PilingoAuth = {
       email: account.email,
       phone: account.phone,
       location: account.location,
-      createdAt: account.createdAt
+      createdAt: account.createdAt,
+      avatarType: account.avatarType,
+      avatarValue: account.avatarValue,
+      bio: account.bio,
+      statusMessage: account.statusMessage,
+      settings: account.settings
     });
   },
 
@@ -136,7 +151,16 @@ const PilingoAuth = {
       email: account.email,
       phone: account.phone,
       location: account.location || "",
-      createdAt: account.createdAt
+      createdAt: account.createdAt,
+      avatarType: account.avatarType || "emoji",
+      avatarValue: account.avatarValue || "🐯",
+      bio: account.bio || "",
+      statusMessage: account.statusMessage || "",
+      settings: account.settings || {
+        profileVisibility: "public",
+        studyReminders: true,
+        soundEffects: true
+      }
     });
   },
 
@@ -197,7 +221,16 @@ const PilingoAuth = {
       email: accounts[index].email,
       phone: accounts[index].phone,
       location: accounts[index].location || "",
-      createdAt: accounts[index].createdAt
+      createdAt: accounts[index].createdAt,
+      avatarType: accounts[index].avatarType || "emoji",
+      avatarValue: accounts[index].avatarValue || "🐯",
+      bio: accounts[index].bio || "",
+      statusMessage: accounts[index].statusMessage || "",
+      settings: accounts[index].settings || {
+        profileVisibility: "public",
+        studyReminders: true,
+        soundEffects: true
+      }
     });
   },
 
@@ -362,6 +395,52 @@ const PilingoAuth = {
       newPassword: String(newPassword || "").trim()
     };
     const dataOut = await this.postJson(this.resetPasswordEndpoint, payload);
+    return this.saveAccount(dataOut.account);
+  },
+
+  async updateProfile(data){
+    const current = this.loadAccount();
+    if(!current?.email){
+      throw new Error("Please log in first.");
+    }
+
+    const payload = {
+      email: String(current.email || "").trim().toLowerCase(),
+      name: String(data?.name ?? current.name ?? "").trim(),
+      avatarType: data?.avatarType === "image" ? "image" : "emoji",
+      avatarValue: String(data?.avatarValue ?? current.avatarValue ?? "🐯").trim(),
+      bio: String(data?.bio ?? current.bio ?? "").trim(),
+      statusMessage: String(data?.statusMessage ?? current.statusMessage ?? "").trim(),
+      settings: data?.settings || current.settings || {}
+    };
+
+    if(this.shouldUseLocalMode()){
+      const accounts = this.loadLocalAccounts();
+      const index = accounts.findIndex((item) => String(item.email || "").trim().toLowerCase() === payload.email);
+      if(index < 0){
+        throw new Error("No account was found for this email.");
+      }
+      accounts[index] = {
+        ...accounts[index],
+        name: payload.name || accounts[index].name,
+        avatarType: payload.avatarType,
+        avatarValue: payload.avatarValue || "🐯",
+        bio: payload.bio,
+        statusMessage: payload.statusMessage,
+        settings: {
+          profileVisibility: payload.settings?.profileVisibility === "private" ? "private" : "public",
+          studyReminders: payload.settings?.studyReminders !== false,
+          soundEffects: payload.settings?.soundEffects !== false
+        }
+      };
+      this.saveLocalAccounts(accounts);
+      return this.saveAccount({
+        ...current,
+        ...accounts[index]
+      });
+    }
+
+    const dataOut = await this.postJson(this.updateProfileEndpoint, payload);
     return this.saveAccount(dataOut.account);
   },
 

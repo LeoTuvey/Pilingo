@@ -263,6 +263,20 @@ const server = http.createServer(async (req, res) => {
     }
   }
 
+  if (req.method === "POST" && parsed.pathname === "/api/profile/update") {
+    try {
+      const body = await readBody(req);
+      const payload = JSON.parse(body || "{}");
+      const account = updateStudentProfile(payload || {});
+      if (!account) {
+        return sendJson(res, 400, { ok: false, error: "Could not update this profile." });
+      }
+      return sendJson(res, 200, { ok: true, account: publicAccount(account) });
+    } catch (error) {
+      return sendJson(res, 400, { ok: false, error: "Invalid profile update request" });
+    }
+  }
+
   if (req.method !== "GET") {
     return sendJson(res, 405, { ok: false, error: "Method not allowed" });
   }
@@ -500,6 +514,11 @@ function publicAccount(account) {
     phone: account.phone,
     location: account.location || "",
     createdAt: account.createdAt,
+    avatarType: account.avatarType || "emoji",
+    avatarValue: account.avatarValue || "🐯",
+    bio: account.bio || "",
+    statusMessage: account.statusMessage || "",
+    settings: normalizeStudentSettings(account.settings || {}),
     following: Array.isArray(account?.following) ? account.following.slice() : [],
     blocked: Array.isArray(account?.blocked) ? account.blocked.slice() : [],
     isOwner,
@@ -527,6 +546,11 @@ function registerAccount(payload) {
     password,
     location,
     createdAt: new Date().toISOString(),
+    avatarType: "emoji",
+    avatarValue: "🐯",
+    bio: "",
+    statusMessage: "Ready to learn",
+    settings: normalizeStudentSettings({}),
     following: [],
     blocked: []
   };
@@ -575,8 +599,21 @@ function normalizeAccountRecord(account) {
     email: normalizeEmail(account?.email),
     phone: String(account?.phone || "").trim(),
     location: String(account?.location || "").trim(),
+    avatarType: account?.avatarType === "image" ? "image" : "emoji",
+    avatarValue: String(account?.avatarValue || "🐯").trim() || "🐯",
+    bio: String(account?.bio || "").trim(),
+    statusMessage: String(account?.statusMessage || "").trim(),
+    settings: normalizeStudentSettings(account?.settings || {}),
     following: Array.from(new Set(following)),
     blocked: Array.from(new Set(blocked))
+  };
+}
+
+function normalizeStudentSettings(settings) {
+  return {
+    profileVisibility: String(settings?.profileVisibility || "public") === "private" ? "private" : "public",
+    studyReminders: settings?.studyReminders !== false,
+    soundEffects: settings?.soundEffects !== false
   };
 }
 
@@ -698,6 +735,36 @@ function updateBlockState(payload) {
   writeAccounts(accounts);
 
   return { ok: true, viewerEmail, targetEmail };
+}
+
+function updateStudentProfile(payload) {
+  const email = normalizeEmail(payload?.email);
+  if (!email) return null;
+
+  const accounts = readAccounts();
+  const index = accounts.findIndex((account) => normalizeEmail(account?.email) === email);
+  if (index < 0) return null;
+
+  const current = normalizeAccountRecord(accounts[index]);
+  const avatarType = payload?.avatarType === "image" ? "image" : "emoji";
+  const avatarValue = String(payload?.avatarValue || current.avatarValue || "🐯").trim() || "🐯";
+  const bio = String(payload?.bio || "").trim().slice(0, 180);
+  const statusMessage = String(payload?.statusMessage || "").trim().slice(0, 120);
+  const settings = normalizeStudentSettings(payload?.settings || current.settings || {});
+  const name = String(payload?.name || current.name || "").trim();
+
+  accounts[index] = {
+    ...current,
+    name: name || current.name,
+    avatarType,
+    avatarValue,
+    bio,
+    statusMessage,
+    settings
+  };
+
+  writeAccounts(accounts);
+  return accounts[index];
 }
 
 async function createPasswordReset(payload) {
@@ -948,6 +1015,11 @@ function getSocialSnapshot(viewerEmail) {
       email,
       phone: student.phone || account?.phone || "",
       hasAccount: !!account,
+      avatarType: account?.avatarType || "emoji",
+      avatarValue: account?.avatarValue || "🐯",
+      bio: account?.bio || "",
+      statusMessage: account?.statusMessage || "",
+      settings: normalizeStudentSettings(account?.settings || {}),
       followersCount: followers.length,
       followingCount: following.length,
       followers,
@@ -1014,8 +1086,8 @@ function getStudentProfile(viewerEmail, targetEmail) {
       : target.isBlocked
         ? "You blocked this student."
         : target.isFollowing
-          ? "You are following this student."
-          : "You can follow this student."
+        ? "You are following this student."
+        : "You can follow this student."
   };
 }
 

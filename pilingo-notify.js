@@ -2,6 +2,7 @@ const PilingoNotify = {
   endpoint: "/api/track",
   listEndpoint: "/api/notifications",
   leaderboardEndpoint: "/api/leaderboard",
+  ownerStudentsEndpoint: "/api/owner/students",
   statsEndpoint: "/api/student-stats",
   pollTimer: null,
   lastSeenEventId: null,
@@ -117,6 +118,22 @@ const PilingoNotify = {
     }
   },
 
+  async fetchOwnerStudents(){
+    if(!this.canUseServer() || !this.canViewOwnerNotifications()) return [];
+
+    try {
+      const response = await fetch(this.ownerStudentsEndpoint, {
+        cache:"no-store",
+        headers: this.ownerHeaders()
+      });
+      if(!response.ok) return [];
+      const data = await response.json();
+      return Array.isArray(data.students) ? data.students : [];
+    } catch(error) {
+      return [];
+    }
+  },
+
   async renderInto(listId, statusId){
     const list = document.getElementById(listId);
     const status = document.getElementById(statusId);
@@ -178,7 +195,8 @@ const PilingoNotify = {
     }
 
     const visibleEvents = this.selectVisibleEvents(events);
-    this.renderLiveStudents(events, liveList, status);
+    const ownerStudents = await this.fetchOwnerStudents();
+    this.renderLiveStudents(events, ownerStudents, liveList, status);
 
     const finalEvents = visibleEvents.length
       ? visibleEvents
@@ -212,12 +230,13 @@ const PilingoNotify = {
     this.maybeShowBrowserNotification(finalEvents[0] || events[0]);
   },
 
-  renderLiveStudents(events, liveList, status){
+  renderLiveStudents(events, ownerStudents, liveList, status){
     if(!liveList) return;
 
     const now = Date.now();
     const liveStudents = [];
     const recentStudents = [];
+    const registeredStudents = [];
     const seen = new Set();
 
     for(const event of events){
@@ -247,19 +266,45 @@ const PilingoNotify = {
       if(liveStudents.length >= 4 && recentStudents.length >= 4) break;
     }
 
+    for(const student of ownerStudents || []){
+      const email = String(student?.email || "").trim();
+      const phone = String(student?.phone || "").trim();
+      const name = String(student?.name || "").trim();
+      const key = (email || phone || name).toLowerCase();
+      if(!key || key === "unknown student" || seen.has(key)) continue;
+      seen.add(key);
+
+      registeredStudents.push({
+        name: name || "Student",
+        email: email || "No email",
+        phone: phone || "No phone",
+        action: String(student?.latestAction || "Created account"),
+        at: String(student?.lastSeenAt || student?.createdAt || ""),
+        isNew: !!student?.createdAt && (!student?.lastSeenAt || student.lastSeenAt === student.createdAt)
+      });
+
+      if(registeredStudents.length >= 6) break;
+    }
+
     if(status) {
       if(liveStudents.length) {
         status.innerText = `Live now: ${liveStudents.length}`;
       } else if(recentStudents.length) {
         status.innerText = `Recent students: ${recentStudents.length}`;
+      } else if(registeredStudents.length) {
+        status.innerText = `Students: ${registeredStudents.length}`;
       }
     }
 
-    const studentsToShow = liveStudents.length ? liveStudents : recentStudents.slice(0, 4);
-    const title = liveStudents.length ? "Live now" : "Recently seen";
+    const studentsToShow = liveStudents.length
+      ? liveStudents
+      : (recentStudents.length ? recentStudents.slice(0, 4) : registeredStudents.slice(0, 6));
+    const title = liveStudents.length ? "Live now" : (recentStudents.length ? "Recently seen" : "Registered students");
     const detail = liveStudents.length
       ? "Students active in the app right now."
-      : "No one is live right now. These students used the app recently.";
+      : (recentStudents.length
+        ? "No one is live right now. These students used the app recently."
+        : "These student accounts are already registered in Pilingo.");
 
     if(!studentsToShow.length) {
       liveList.innerHTML = `
@@ -281,7 +326,7 @@ const PilingoNotify = {
       <div class="live-student-card">
         <strong>${escapeHtml(student.name)}</strong>
         <span>${escapeHtml(student.email)} • ${escapeHtml(student.phone)}</span>
-        <span>Latest: ${escapeHtml(student.action)}</span>
+        <span>${student.isNew ? "New student" : "Latest"}: ${escapeHtml(student.action)}</span>
         <span>${formatWhen(student.at)}</span>
       </div>
     `).join("");

@@ -65,6 +65,19 @@ const server = http.createServer(async (req, res) => {
     });
   }
 
+  if (req.method === "GET" && parsed.pathname === "/api/owner/students") {
+    if (!hasOwnerAccess(req)) {
+      return sendJson(res, 403, {
+        ok: false,
+        error: "Owner access only"
+      });
+    }
+    return sendJson(res, 200, {
+      ok: true,
+      students: getOwnerStudentRoster()
+    });
+  }
+
   if (req.method === "GET" && parsed.pathname === "/api/leaderboard") {
     return sendJson(res, 200, {
       ok: true,
@@ -889,6 +902,90 @@ function getSocialSnapshot(viewerEmail) {
     suggestedStudents,
     students
   };
+}
+
+function getOwnerStudentRoster() {
+  const students = new Map();
+  const leaderboard = getLeaderboard();
+  const leaderboardByEmail = new Map();
+
+  const rememberStudent = (studentLike) => {
+    const email = normalizeEmail(studentLike?.email || studentLike?.studentEmail);
+    const phone = String(studentLike?.phone || studentLike?.studentPhone || "").trim();
+    const name = String(studentLike?.name || studentLike?.studentName || "").trim();
+    const location = String(studentLike?.location || studentLike?.studentLocation || "").trim();
+    const key = email || phone || name.toLowerCase();
+    if (!key) return null;
+
+    const current = students.get(key) || {
+      id: studentLike?.id || "",
+      name: name || "Student",
+      email,
+      phone,
+      location,
+      createdAt: studentLike?.createdAt || "",
+      lastSeenAt: "",
+      latestAction: "",
+      xp: 0,
+      averageGrade: 0,
+      completedSections: 0,
+      rank: 0
+    };
+
+    current.id = current.id || studentLike?.id || "";
+    current.name = current.name || name || "Student";
+    current.email = current.email || email;
+    current.phone = current.phone || phone;
+    current.location = current.location || location;
+    current.createdAt = current.createdAt || studentLike?.createdAt || "";
+    students.set(key, current);
+    return current;
+  };
+
+  leaderboard.forEach((student, index) => {
+    const email = normalizeEmail(student?.email);
+    if (email) {
+      leaderboardByEmail.set(email, { ...student, rank: index + 1 });
+    }
+    const current = rememberStudent(student);
+    if (!current) return;
+    current.rank = index + 1;
+    current.xp = safeNumber(student?.xp, current.xp);
+    current.averageGrade = safeNumber(student?.averageGrade, current.averageGrade);
+    current.completedSections = safeNumber(student?.completedSections, current.completedSections);
+  });
+
+  readAccounts().forEach((account) => {
+    const current = rememberStudent(account);
+    if (!current) return;
+    current.createdAt = current.createdAt || account.createdAt || "";
+    const fromBoard = leaderboardByEmail.get(normalizeEmail(account.email));
+    if (fromBoard) {
+      current.rank = current.rank || fromBoard.rank || 0;
+      current.xp = Math.max(current.xp, safeNumber(fromBoard.xp, 0));
+      current.averageGrade = Math.max(current.averageGrade, safeNumber(fromBoard.averageGrade, 0));
+      current.completedSections = Math.max(current.completedSections, safeNumber(fromBoard.completedSections, 0));
+    }
+  });
+
+  readEvents().forEach((event) => {
+    const current = rememberStudent(event);
+    if (!current) return;
+    const createdAt = String(event?.createdAt || "");
+    if (!current.lastSeenAt || new Date(createdAt).getTime() > new Date(current.lastSeenAt).getTime()) {
+      current.lastSeenAt = createdAt;
+      current.latestAction = String(event?.label || event?.type || "Activity");
+      current.location = current.location || String(event?.studentLocation || "").trim();
+    }
+  });
+
+  return Array.from(students.values())
+    .sort((a, b) => {
+      const aSeen = new Date(a.lastSeenAt || a.createdAt || 0).getTime();
+      const bSeen = new Date(b.lastSeenAt || b.createdAt || 0).getTime();
+      return bSeen - aSeen || String(a.name || "").localeCompare(String(b.name || ""));
+    })
+    .slice(0, 50);
 }
 
 function leaderboardScore(student) {

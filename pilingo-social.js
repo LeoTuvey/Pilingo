@@ -194,22 +194,22 @@ const PilingoSocial = {
 
     const current = snapshot.currentStudent;
     summary.innerHTML = `
-      <div class="social-stat">
+      <button class="social-stat social-stat-button" type="button" onclick="jumpToSocialSection('following')">
         Following
         <span>${Number(current.followingCount || 0)}</span>
-      </div>
-      <div class="social-stat">
+      </button>
+      <button class="social-stat social-stat-button" type="button" onclick="jumpToSocialSection('followers')">
         Followers
         <span>${Number(current.followersCount || 0)}</span>
-      </div>
-      <div class="social-stat">
+      </button>
+      <button class="social-stat social-stat-button" type="button" onclick="jumpToSocialSection('requests')">
         Requests
         <span>${Number((snapshot.requestStudents || []).length)}</span>
-      </div>
-      <div class="social-stat">
+      </button>
+      <button class="social-stat social-stat-button" type="button" onclick="jumpToSocialSection('rank')">
         Rank
         <span>${current.rank ? `#${current.rank}` : "-"}</span>
-      </div>
+      </button>
     `;
 
     requestsList.innerHTML = this.renderStudentList(
@@ -422,6 +422,28 @@ const PilingoSocial = {
     `;
   },
 
+  jumpToSection(section){
+    const targetMap = {
+      requests: "socialRequestsList",
+      sent: "socialOutgoingList",
+      following: "socialFollowingList",
+      followers: "socialFollowersList",
+      discover: "socialDiscoverList",
+      rank: "leaderList"
+    };
+
+    const targetId = targetMap[section];
+    const element = targetId ? document.getElementById(targetId) : null;
+    if(!element) return;
+
+    element.scrollIntoView({ behavior:"smooth", block:"center" });
+    element.classList.remove("social-panel-focus");
+    window.requestAnimationFrame(() => {
+      element.classList.add("social-panel-focus");
+      window.setTimeout(() => element.classList.remove("social-panel-focus"), 1200);
+    });
+  },
+
   startPolling(){
     if(this.pollTimer) clearInterval(this.pollTimer);
     this.render();
@@ -469,6 +491,10 @@ async function toggleProfileFollow(targetEmail, shouldFollow){
   await toggleStudentFollow(targetEmail, shouldFollow);
 }
 
+function jumpToSocialSection(section){
+  PilingoSocial.jumpToSection(section);
+}
+
 async function respondToFollowRequest(targetEmail, action){
   try {
     if(action === "accept"){
@@ -502,6 +528,7 @@ async function toggleProfileBlock(targetEmail, shouldBlock){
 window.PilingoSocial = PilingoSocial;
 window.openStudentProfile = openStudentProfile;
 window.closeStudentProfile = closeStudentProfile;
+window.jumpToSocialSection = jumpToSocialSection;
 window.toggleStudentFollow = toggleStudentFollow;
 window.toggleProfileFollow = toggleProfileFollow;
 window.respondToFollowRequest = respondToFollowRequest;

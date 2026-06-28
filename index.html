@@ -1351,6 +1351,134 @@ button:active{
   gap:14px;
 }
 
+.social-card{
+  background:linear-gradient(180deg, #fffdf7 0%, #fff6dc 100%);
+  border:2px solid #efd27a;
+  border-radius:28px;
+  padding:20px;
+  box-shadow:0 10px 0 rgba(216,176,71,0.18), 0 18px 28px rgba(135,101,16,0.12);
+}
+
+.social-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:10px;
+}
+
+.social-note{
+  margin:0 0 14px;
+  font-size:13px;
+  line-height:1.5;
+  color:#88651e;
+  font-weight:800;
+}
+
+.social-summary{
+  display:grid;
+  grid-template-columns:repeat(3, minmax(0, 1fr));
+  gap:10px;
+  margin-bottom:14px;
+}
+
+.social-stat{
+  background:linear-gradient(180deg, #ffffff 0%, #fff7e8 100%);
+  border:2px solid #f1dfb4;
+  border-radius:20px;
+  padding:14px 10px;
+  text-align:center;
+  font-size:13px;
+  font-weight:900;
+  color:#7a5f20;
+}
+
+.social-stat span{
+  display:block;
+  margin-top:6px;
+  font-size:24px;
+  color:#5e4a17;
+}
+
+.social-columns{
+  display:grid;
+  gap:12px;
+}
+
+.social-panel{
+  background:rgba(255,255,255,0.68);
+  border:1px solid rgba(233,199,110,0.7);
+  border-radius:22px;
+  padding:14px;
+}
+
+.social-section-title{
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  color:#9c6f00;
+  margin-bottom:10px;
+}
+
+.social-student-card{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 14px;
+  border-radius:18px;
+  background:linear-gradient(180deg, #ffffff 0%, #fff8ea 100%);
+  border:1px solid rgba(239,215,150,0.8);
+}
+
+.social-student-card + .social-student-card{
+  margin-top:10px;
+}
+
+.social-student-card.compact{
+  justify-content:flex-start;
+}
+
+.social-student-main{
+  min-width:0;
+}
+
+.social-student-main strong{
+  display:block;
+  font-size:15px;
+  color:#55410d;
+}
+
+.social-student-main span{
+  display:block;
+  margin-top:4px;
+  font-size:12px;
+  color:#8a6a22;
+  line-height:1.4;
+}
+
+.social-follow-button{
+  width:auto;
+  min-width:110px;
+  margin-top:0;
+  padding:11px 16px;
+  border-radius:999px;
+  border:2px solid #4a8e15;
+  box-shadow:0 4px 0 #4a8e15;
+  font-size:14px;
+}
+
+.social-empty{
+  padding:12px 14px;
+  border-radius:16px;
+  background:rgba(255,255,255,0.74);
+  color:#8a6a22;
+  font-size:13px;
+  font-weight:800;
+  line-height:1.5;
+}
+
 .mini-note{
   margin-top:14px;
   font-size:14px;
@@ -1589,6 +1717,22 @@ button:active{
         </div>
       </div>
 
+      <div id="socialCard" class="social-card" hidden>
+        <div class="social-top">
+          <strong>👥 Learner Circle</strong>
+          <span class="notify-status">Follow learners</span>
+        </div>
+        <div class="social-note">Students can follow each other here, just like in Duolingo, and build a learning circle.</div>
+        <div id="socialSummary" class="social-summary">
+          <div class="social-empty">Loading your circle...</div>
+        </div>
+        <div class="social-columns">
+          <div id="socialFollowingList" class="social-panel"></div>
+          <div id="socialFollowersList" class="social-panel"></div>
+          <div id="socialDiscoverList" class="social-panel"></div>
+        </div>
+      </div>
+
       <div id="ownerNotifyCard" class="notify-card">
         <div class="notify-top">
           <strong>🔔 Student Notifications</strong>
@@ -1672,6 +1816,7 @@ button:active{
 <script src="engine-core.js"></script>
 <script src="pilingo-auth.js?v=8"></script>
 <script src="pilingo-notify.js?v=8"></script>
+<script src="pilingo-social.js?v=1"></script>
 <script src="app-ui.js"></script>
 <script src="app-state.js"></script>
 <script src="app-polish.js"></script>
@@ -2065,6 +2210,7 @@ function updateAccountUI(){
     if(welcomeName) welcomeName.innerText = account?.name || "Learner";
     if(logoutButton) logoutButton.hidden = false;
     updateOwnerOnlyPanels();
+    window.PilingoSocial?.startPolling?.();
     hideAccountGate();
     return;
   }
@@ -2072,6 +2218,8 @@ function updateAccountUI(){
   if(accountBar) accountBar.hidden = true;
   if(welcomeChip) welcomeChip.hidden = true;
   if(logoutButton) logoutButton.hidden = true;
+  const socialCard = document.getElementById("socialCard");
+  if(socialCard) socialCard.hidden = true;
   updateOwnerOnlyPanels();
   showAccountGate();
 }
@@ -2233,6 +2381,9 @@ if(window.PilingoNotify){
     PilingoNotify.startPolling("notifyList", "notifyStatus");
   }
   PilingoNotify.startLeaderboardPolling("leaderList");
+}
+if(window.PilingoSocial){
+  PilingoSocial.startPolling();
 }
 startStudyReminderWatcher();
 document.addEventListener("visibilitychange", () => {

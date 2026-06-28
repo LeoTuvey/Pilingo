@@ -72,6 +72,14 @@ const server = http.createServer(async (req, res) => {
     });
   }
 
+  if (req.method === "GET" && parsed.pathname === "/api/social") {
+    const viewerEmail = normalizeEmail(parsed.searchParams.get("viewerEmail") || "");
+    return sendJson(res, 200, {
+      ok: true,
+      social: getSocialSnapshot(viewerEmail)
+    });
+  }
+
   if (req.method === "POST" && parsed.pathname === "/api/track") {
     try {
       const body = await readBody(req);
@@ -123,6 +131,23 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, 200, { ok: true, student });
     } catch (error) {
       return sendJson(res, 400, { ok: false, error: "Invalid student stats body" });
+    }
+  }
+
+  if (req.method === "POST" && parsed.pathname === "/api/social/follow") {
+    try {
+      const body = await readBody(req);
+      const payload = JSON.parse(body || "{}");
+      const result = updateFollowState(payload || {});
+      if (!result.ok) {
+        return sendJson(res, 400, { ok: false, error: result.error || "Could not update follow status." });
+      }
+      return sendJson(res, 200, {
+        ok: true,
+        social: getSocialSnapshot(result.viewerEmail)
+      });
+    } catch (error) {
+      return sendJson(res, 400, { ok: false, error: "Invalid follow request" });
     }
   }
 
@@ -273,14 +298,16 @@ function writeStudentStats(students) {
 
 function readAccounts() {
   try {
-    return JSON.parse(fs.readFileSync(ACCOUNTS_FILE, "utf8"));
+    const accounts = JSON.parse(fs.readFileSync(ACCOUNTS_FILE, "utf8"));
+    return Array.isArray(accounts) ? accounts.map(normalizeAccountRecord) : [];
   } catch (error) {
     return [];
   }
 }
 
 function writeAccounts(accounts) {
-  fs.writeFileSync(ACCOUNTS_FILE, JSON.stringify(accounts, null, 2), "utf8");
+  const normalized = Array.isArray(accounts) ? accounts.map(normalizeAccountRecord) : [];
+  fs.writeFileSync(ACCOUNTS_FILE, JSON.stringify(normalized, null, 2), "utf8");
 }
 
 function readPasswordResets() {
@@ -433,6 +460,7 @@ function publicAccount(account) {
     phone: account.phone,
     location: account.location || "",
     createdAt: account.createdAt,
+    following: Array.isArray(account?.following) ? account.following.slice() : [],
     isOwner,
     ownerPanelToken: isOwner ? OWNER_PANEL_TOKEN : ""
   };
@@ -457,7 +485,8 @@ function registerAccount(payload) {
     phone,
     password,
     location,
-    createdAt: new Date().toISOString()
+    createdAt: new Date().toISOString(),
+    following: []
   };
   accounts.push(account);
   writeAccounts(accounts);
@@ -478,13 +507,31 @@ function registerAccount(payload) {
 }
 
 function findAccountByEmail(email) {
-  const normalizedEmail = String(email || "").trim().toLowerCase();
+  const normalizedEmail = normalizeEmail(email);
   if (!normalizedEmail) return null;
 
   const accounts = readAccounts();
   return accounts.find((account) =>
     String(account.email || "").trim().toLowerCase() === normalizedEmail
   ) || null;
+}
+
+function normalizeEmail(value) {
+  return String(value || "").trim().toLowerCase();
+}
+
+function normalizeAccountRecord(account) {
+  const following = Array.isArray(account?.following)
+    ? account.following.map((email) => normalizeEmail(email)).filter(Boolean)
+    : [];
+
+  return {
+    ...account,
+    email: normalizeEmail(account?.email),
+    phone: String(account?.phone || "").trim(),
+    location: String(account?.location || "").trim(),
+    following: Array.from(new Set(following))
+  };
 }
 
 function loginAccount(payload) {
@@ -518,6 +565,45 @@ function isOwnerEmail(email) {
 function hasOwnerAccess(req) {
   const token = String(req.headers["x-pilingo-owner-token"] || "").trim();
   return !!(token && token === OWNER_PANEL_TOKEN);
+}
+
+function updateFollowState(payload) {
+  const viewerEmail = normalizeEmail(payload?.viewerEmail);
+  const targetEmail = normalizeEmail(payload?.targetEmail);
+  const shouldFollow = payload?.follow !== false;
+
+  if (!viewerEmail || !targetEmail) {
+    return { ok: false, error: "Both students need an email address." };
+  }
+
+  if (viewerEmail === targetEmail) {
+    return { ok: false, error: "Students cannot follow themselves." };
+  }
+
+  const accounts = readAccounts();
+  const viewerIndex = accounts.findIndex((account) => normalizeEmail(account?.email) === viewerEmail);
+  const targetIndex = accounts.findIndex((account) => normalizeEmail(account?.email) === targetEmail);
+
+  if (viewerIndex < 0 || targetIndex < 0) {
+    return { ok: false, error: "Both students need real accounts before following." };
+  }
+
+  const viewer = normalizeAccountRecord(accounts[viewerIndex]);
+  const nextFollowing = new Set(viewer.following || []);
+
+  if (shouldFollow) {
+    nextFollowing.add(targetEmail);
+  } else {
+    nextFollowing.delete(targetEmail);
+  }
+
+  accounts[viewerIndex] = {
+    ...viewer,
+    following: Array.from(nextFollowing)
+  };
+  writeAccounts(accounts);
+
+  return { ok: true, viewerEmail };
 }
 
 async function createPasswordReset(payload) {
@@ -682,6 +768,92 @@ function getLeaderboard() {
       a.name.localeCompare(b.name)
     )
     .slice(0, 20);
+}
+
+function getSocialSnapshot(viewerEmail) {
+  const accounts = readAccounts();
+  const leaderboard = getLeaderboard();
+  const statsByEmail = new Map();
+  const followersByEmail = new Map();
+  const followingByEmail = new Map();
+
+  leaderboard.forEach((student, index) => {
+    const key = normalizeEmail(student?.email);
+    if (!key) return;
+    statsByEmail.set(key, {
+      rank: index + 1,
+      xp: safeNumber(student?.xp, 0),
+      level: safeNumber(student?.level, 0),
+      streak: safeNumber(student?.streak, 0),
+      completedSections: safeNumber(student?.completedSections, 0),
+      averageGrade: safeNumber(student?.averageGrade, 0)
+    });
+  });
+
+  accounts.forEach((account) => {
+    const accountEmail = normalizeEmail(account?.email);
+    if (!accountEmail) return;
+    const following = Array.isArray(account?.following) ? account.following : [];
+    followingByEmail.set(accountEmail, Array.from(new Set(following.map(normalizeEmail).filter(Boolean))));
+    following.forEach((followedEmail) => {
+      const followed = normalizeEmail(followedEmail);
+      if (!followed) return;
+      const currentFollowers = followersByEmail.get(followed) || [];
+      currentFollowers.push(accountEmail);
+      followersByEmail.set(followed, currentFollowers);
+    });
+  });
+
+  const students = accounts.map((account) => {
+    const email = normalizeEmail(account?.email);
+    const followers = Array.from(new Set(followersByEmail.get(email) || []));
+    const following = Array.from(new Set(followingByEmail.get(email) || []));
+    const stats = statsByEmail.get(email) || {};
+    return {
+      id: account.id,
+      name: account.name,
+      email,
+      phone: account.phone || "",
+      followersCount: followers.length,
+      followingCount: following.length,
+      followers,
+      following,
+      isCurrentStudent: email === viewerEmail,
+      isFollowing: !!(viewerEmail && viewerEmail !== email && (followingByEmail.get(viewerEmail) || []).includes(email)),
+      rank: safeNumber(stats.rank, 0),
+      xp: safeNumber(stats.xp, 0),
+      level: safeNumber(stats.level, 0),
+      streak: safeNumber(stats.streak, 0),
+      completedSections: safeNumber(stats.completedSections, 0),
+      averageGrade: safeNumber(stats.averageGrade, 0)
+    };
+  }).sort((a, b) => {
+    if (a.isCurrentStudent) return -1;
+    if (b.isCurrentStudent) return 1;
+    if (b.xp !== a.xp) return b.xp - a.xp;
+    if (b.averageGrade !== a.averageGrade) return b.averageGrade - a.averageGrade;
+    return String(a.name || "").localeCompare(String(b.name || ""));
+  });
+
+  const currentStudent = students.find((student) => student.isCurrentStudent) || null;
+  const followingStudents = currentStudent
+    ? students.filter((student) => currentStudent.following.includes(student.email))
+    : [];
+  const followerStudents = currentStudent
+    ? students.filter((student) => currentStudent.followers.includes(student.email))
+    : [];
+  const suggestedStudents = students.filter((student) =>
+    !student.isCurrentStudent &&
+    !(currentStudent?.following || []).includes(student.email)
+  ).slice(0, 8);
+
+  return {
+    currentStudent,
+    followingStudents,
+    followerStudents,
+    suggestedStudents,
+    students
+  };
 }
 
 function leaderboardScore(student) {

@@ -283,10 +283,8 @@ const PilingoAuth = {
     let lastError = null;
 
     for(const origin of origins){
-      let response;
-
       try {
-        response = await fetch(new URL(url, origin).toString(), {
+        const response = await fetch(new URL(url, origin).toString(), {
           method:"POST",
           headers:{ "Content-Type":"application/json" },
           cache:"no-store",
@@ -295,10 +293,15 @@ const PilingoAuth = {
 
         const data = await response.json().catch(() => ({}));
         if(!response.ok || !data.ok){
-          throw new Error(data.error || `Request failed (${response.status || "unknown"}).`);
+          throw Object.assign(new Error(data.error || `Request failed (${response.status || "unknown"}).`), {
+            pilingoHttpError: true
+          });
         }
         return data;
       } catch(error) {
+        if(error?.pilingoHttpError){
+          throw error;
+        }
         lastError = error;
 
         try {

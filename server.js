@@ -539,15 +539,30 @@ function resetPassword(payload) {
 
 function getLeaderboard() {
   const merged = new Map();
+  const normalizeName = (value) => String(value || "").trim().toLowerCase();
   const rememberStudent = (studentLike) => {
     const email = String(studentLike.email || studentLike.studentEmail || "").trim().toLowerCase();
     const phone = String(studentLike.phone || studentLike.studentPhone || "").trim();
     const name = String(studentLike.name || studentLike.studentName || "Unknown student").trim();
     const location = String(studentLike.location || studentLike.studentLocation || "").trim();
-    const key = email || phone || name.toLowerCase();
-    if (!key || name.toLowerCase() === "unknown student") return null;
+    const nameKey = normalizeName(name);
+    const preferredKey = email || phone || nameKey;
+    if (!preferredKey || nameKey === "unknown student") return null;
 
-    const current = merged.get(key);
+    let current = null;
+    let currentKey = "";
+
+    for (const [key, value] of merged.entries()) {
+      const sameEmail = !!(email && value.email === email);
+      const samePhone = !!(phone && value.phone === phone);
+      const sameName = !!(nameKey && normalizeName(value.name) === nameKey);
+      if (sameEmail || samePhone || sameName) {
+        current = value;
+        currentKey = key;
+        break;
+      }
+    }
+
     if (!current) {
       const createdAt = studentLike.createdAt || studentLike.updatedAt || new Date().toISOString();
       const base = {
@@ -565,7 +580,7 @@ function getLeaderboard() {
         lessonsFinished: 0,
         updatedAt: createdAt
       };
-      merged.set(key, base);
+      merged.set(preferredKey, base);
       return base;
     }
 
@@ -576,6 +591,12 @@ function getLeaderboard() {
     current.updatedAt = current.updatedAt > (studentLike.updatedAt || studentLike.createdAt || current.updatedAt)
       ? current.updatedAt
       : (studentLike.updatedAt || studentLike.createdAt || current.updatedAt);
+
+    if (currentKey && currentKey !== preferredKey && (email || phone)) {
+      merged.delete(currentKey);
+      merged.set(preferredKey, current);
+    }
+
     return current;
   };
 

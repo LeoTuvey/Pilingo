@@ -423,6 +423,69 @@ body.account-gate-open{
   color:#7d6630;
 }
 
+.notify-section-label,
+.leader-section-label{
+  display:inline-flex;
+  align-items:center;
+  padding:6px 12px;
+  border-radius:999px;
+  margin:10px 0 8px;
+  font-size:11px;
+  font-weight:1000;
+  letter-spacing:0.04em;
+  text-transform:uppercase;
+}
+
+.notify-section-label{
+  background:#fff4cf;
+  color:#9a6c00;
+  border:2px solid #efd28b;
+}
+
+.leader-section-label{
+  background:#e5f4ff;
+  color:#2470ac;
+  border:2px solid #a9d8ff;
+}
+
+.live-student-card{
+  position:relative;
+  overflow:hidden;
+  padding:14px 15px;
+  border-radius:20px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(255,248,223,0.94) 100%);
+  border:2px solid rgba(240,210,122,0.95);
+  box-shadow:0 8px 18px rgba(122,83,0,0.08);
+}
+
+.live-student-card::after{
+  content:"";
+  position:absolute;
+  top:12px;
+  right:12px;
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:#58cc02;
+  box-shadow:0 0 0 5px rgba(88,204,2,0.18);
+}
+
+.live-student-card strong,
+.live-student-card span{
+  display:block;
+}
+
+.live-student-card strong{
+  font-size:14px;
+  color:#253044;
+}
+
+.live-student-card span{
+  margin-top:4px;
+  font-size:12px;
+  color:#7d6630;
+}
+
 .leaderboard-card{
   margin-top:18px;
   padding:18px;
@@ -467,6 +530,64 @@ body.account-gate-open{
 .leader-item strong{
   font-size:14px;
   color:#253044;
+}
+
+.podium-grid{
+  display:grid;
+  grid-template-columns:repeat(3, minmax(0, 1fr));
+  gap:10px;
+  margin-bottom:12px;
+}
+
+.podium-card{
+  padding:14px 12px;
+  border-radius:20px;
+  text-align:center;
+  background:rgba(255,255,255,0.92);
+  border:2px solid rgba(169,216,255,0.95);
+  box-shadow:0 8px 18px rgba(42,95,146,0.08);
+}
+
+.podium-card.first{
+  background:linear-gradient(180deg, #fff9da 0%, #ffe89e 100%);
+  border-color:#f2cf62;
+}
+
+.podium-card.second{
+  background:linear-gradient(180deg, #f4f8fc 0%, #dfeaf7 100%);
+  border-color:#bfd4e7;
+}
+
+.podium-card.third{
+  background:linear-gradient(180deg, #fff0e0 0%, #ffd1a8 100%);
+  border-color:#efb16f;
+}
+
+.podium-rank{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:42px;
+  padding:6px 10px;
+  border-radius:999px;
+  margin-bottom:8px;
+  font-size:11px;
+  font-weight:1000;
+  background:#ffffff;
+  color:#28537d;
+}
+
+.podium-name{
+  font-size:14px;
+  font-weight:1000;
+  color:#253044;
+}
+
+.podium-meta{
+  margin-top:6px;
+  font-size:12px;
+  color:#5b7286;
+  line-height:1.45;
 }
 
 .leader-item span{

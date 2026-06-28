@@ -272,13 +272,14 @@ const PilingoNotify = {
     }
 
     liveList.innerHTML = `
+      <div class="notify-section-label">${title}</div>
       <div class="notify-item">
         <strong>${title}</strong>
         <span>${detail}</span>
       </div>
     ` + studentsToShow.map((student) => `
-      <div class="notify-item">
-        <strong>${escapeHtml(student.name)} • ${title}</strong>
+      <div class="live-student-card">
+        <strong>${escapeHtml(student.name)}</strong>
         <span>${escapeHtml(student.email)} • ${escapeHtml(student.phone)}</span>
         <span>Latest: ${escapeHtml(student.action)}</span>
         <span>${formatWhen(student.at)}</span>
@@ -317,14 +318,29 @@ const PilingoNotify = {
     const leader = students[0] || null;
     const competition = this.buildCompetitionState(students, currentIndex, leader);
 
+    const topThree = students.slice(0, 3);
+    const rest = students.slice(3, 10);
+    const podiumClasses = ["first", "second", "third"];
+
     list.innerHTML = `
       <div class="leader-item">
         <strong>${escapeHtml(competition.title)}</strong>
         <span>${escapeHtml(competition.body)}</span>
       </div>
-    ` + students.slice(0, 10).map((student, index) => `
+      <div class="leader-section-label">League Leaders</div>
+      <div class="podium-grid">
+        ${topThree.map((student, index) => `
+          <div class="podium-card ${podiumClasses[index] || ""}">
+            <div class="podium-rank">#${index + 1}</div>
+            <div class="podium-name">${escapeHtml(student.name || "Student")}</div>
+            <div class="podium-meta">XP ${student.xp || 0}<br>Grade ${Math.round(student.averageGrade || 0)}%<br>Sections ${student.completedSections || 0}</div>
+          </div>
+        `).join("")}
+      </div>
+      <div class="leader-section-label">Full Table</div>
+    ` + rest.map((student, index) => `
       <div class="leader-item">
-        <strong>#${index + 1} ${escapeHtml(student.name || "Student")}</strong>
+        <strong>#${index + 4} ${escapeHtml(student.name || "Student")}</strong>
         <span>XP ${student.xp || 0} • Grade ${Math.round(student.averageGrade || 0)}% • Sections ${student.completedSections || 0}</span>
       </div>
     `).join("");

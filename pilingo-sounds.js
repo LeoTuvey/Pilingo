@@ -231,8 +231,45 @@ const PilingoAudio = (() => {
     if(!wanted) return getYoungEnglishFemaleVoice();
 
     const voices = window.speechSynthesis.getVoices();
+    const femaleHints = [
+      "female",
+      "woman",
+      "girl",
+      "ava",
+      "allison",
+      "anna",
+      "samantha",
+      "serena",
+      "salli",
+      "karen",
+      "victoria",
+      "zira",
+      "monica",
+      "alice",
+      "tessa",
+      "susan",
+      "helena",
+      "sofia",
+      "saara"
+    ];
+
+    const matchesFemale = (voice) => {
+      const name = String(voice?.name || "").toLowerCase();
+      return femaleHints.some((hint) => name.includes(hint));
+    };
+
+    const exactFemale = voices.find((voice) =>
+      String(voice.lang || "").toLowerCase() === wanted && matchesFemale(voice)
+    );
+    if(exactFemale) return exactFemale;
+
     const exact = voices.find((voice) => String(voice.lang || "").toLowerCase() === wanted);
     if(exact) return exact;
+
+    const familyFemale = voices.find((voice) =>
+      String(voice.lang || "").toLowerCase().startsWith(wanted.split("-")[0]) && matchesFemale(voice)
+    );
+    if(familyFemale) return familyFemale;
 
     const family = voices.find((voice) => String(voice.lang || "").toLowerCase().startsWith(wanted.split("-")[0]));
     return family || getYoungEnglishFemaleVoice();

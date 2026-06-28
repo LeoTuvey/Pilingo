@@ -539,48 +539,75 @@ function resetPassword(payload) {
 
 function getLeaderboard() {
   const merged = new Map();
+  const rememberStudent = (studentLike) => {
+    const email = String(studentLike.email || studentLike.studentEmail || "").trim().toLowerCase();
+    const phone = String(studentLike.phone || studentLike.studentPhone || "").trim();
+    const name = String(studentLike.name || studentLike.studentName || "Unknown student").trim();
+    const location = String(studentLike.location || studentLike.studentLocation || "").trim();
+    const key = email || phone || name.toLowerCase();
+    if (!key || name.toLowerCase() === "unknown student") return null;
+
+    const current = merged.get(key);
+    if (!current) {
+      const createdAt = studentLike.createdAt || studentLike.updatedAt || new Date().toISOString();
+      const base = {
+        id: studentLike.id || `${Date.now()}-${Math.random().toString(16).slice(2, 8)}`,
+        name,
+        email,
+        phone,
+        location,
+        xp: 0,
+        level: 0,
+        streak: 0,
+        completedSections: 0,
+        averageGrade: 0,
+        bestGrade: 0,
+        lessonsFinished: 0,
+        updatedAt: createdAt
+      };
+      merged.set(key, base);
+      return base;
+    }
+
+    current.name = current.name || name;
+    current.email = current.email || email;
+    current.phone = current.phone || phone;
+    current.location = current.location || location;
+    current.updatedAt = current.updatedAt > (studentLike.updatedAt || studentLike.createdAt || current.updatedAt)
+      ? current.updatedAt
+      : (studentLike.updatedAt || studentLike.createdAt || current.updatedAt);
+    return current;
+  };
 
   readAccounts().forEach((account) => {
-    const email = String(account.email || "").trim().toLowerCase();
-    const phone = String(account.phone || "").trim();
-    const name = String(account.name || "Unknown student").trim();
-    const key = email || phone || name.toLowerCase();
-    if (!key || merged.has(key)) return;
+    rememberStudent(account);
+  });
 
-    merged.set(key, {
-      id: account.id || `${Date.now()}-${Math.random().toString(16).slice(2, 8)}`,
-      name,
-      email,
-      phone,
-      location: String(account.location || "").trim(),
-      xp: 0,
-      level: 0,
-      streak: 0,
-      completedSections: 0,
-      averageGrade: 0,
-      bestGrade: 0,
-      lessonsFinished: 0,
-      updatedAt: account.createdAt || new Date().toISOString()
+  readEvents().forEach((event) => {
+    if (!event) return;
+    const hasIdentity = String(event.studentEmail || "").trim() || String(event.studentPhone || "").trim();
+    const hasNamedStudent = String(event.studentName || "").trim() && String(event.studentName || "").trim().toLowerCase() !== "unknown student";
+    if (!hasIdentity && !hasNamedStudent) return;
+    rememberStudent({
+      studentName: event.studentName,
+      studentEmail: event.studentEmail,
+      studentPhone: event.studentPhone,
+      studentLocation: event.studentLocation,
+      createdAt: event.createdAt,
+      updatedAt: event.createdAt
     });
   });
 
   readStudentStats().forEach((student) => {
-    const email = String(student.email || "").trim().toLowerCase();
-    const phone = String(student.phone || "").trim();
-    const name = String(student.name || "Unknown student").trim();
-    const key = email || phone || name.toLowerCase();
-    const current = merged.get(key);
+    const current = rememberStudent(student);
+    if (!current) return;
 
-    if (!current) {
-      merged.set(key, { ...student });
-      return;
-    }
-
+    const key = current.email || current.phone || current.name.toLowerCase();
     merged.set(key, {
       ...current,
-      name: current.name || name,
-      email: current.email || email,
-      phone: current.phone || phone,
+      name: current.name || String(student.name || "Unknown student").trim(),
+      email: current.email || String(student.email || "").trim().toLowerCase(),
+      phone: current.phone || String(student.phone || "").trim(),
       location: current.location || student.location || "",
       xp: Math.max(safeNumber(current.xp, 0), safeNumber(student.xp, 0)),
       level: Math.max(safeNumber(current.level, 0), safeNumber(student.level, 0)),

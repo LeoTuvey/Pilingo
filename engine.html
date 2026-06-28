@@ -88,58 +88,6 @@ h1{
   box-shadow:0 6px 0 #dbb35c;
 }
 
-.gradeboard{
-  max-width:460px;
-  margin:0 auto 22px;
-  padding:16px;
-  border-radius:24px;
-  background:linear-gradient(180deg, #fff8de 0%, #f6e2ab 100%);
-  border:3px solid #ecd07a;
-  box-shadow:0 8px 0 #d6b25d, 0 16px 24px rgba(122,83,0,0.12);
-  text-align:left;
-}
-
-.gradeboard h2{
-  margin:0 0 8px;
-  font-size:20px;
-  color:#7d5605;
-}
-
-.gradeboard p{
-  margin:0 0 12px;
-  font-size:14px;
-  color:#7f6630;
-  line-height:1.4;
-}
-
-.grade-list{
-  display:grid;
-  gap:10px;
-}
-
-.grade-item{
-  padding:12px 14px;
-  border-radius:18px;
-  background:rgba(255,255,255,0.84);
-  border:2px solid rgba(236,208,122,0.9);
-}
-
-.grade-item strong,
-.grade-item span{
-  display:block;
-}
-
-.grade-item strong{
-  font-size:15px;
-  color:#253044;
-}
-
-.grade-item span{
-  margin-top:4px;
-  font-size:13px;
-  color:#7b6636;
-}
-
 .path{
   max-width:460px;
   margin:auto;
@@ -339,17 +287,6 @@ h1{
   <div class="course-label">Kurmanji to English</div>
 </div>
 
-<section class="gradeboard">
-  <h2>📘 Student Grades</h2>
-  <p>Finished section grades from Game 1 are saved here so you can review progress and encourage students.</p>
-  <div id="gradeList" class="grade-list">
-    <div class="grade-item">
-      <strong>No grades yet</strong>
-      <span>Grades will appear here after students finish a section.</span>
-    </div>
-  </div>
-</section>
-
 <div class="path">
   <div class="line"></div>
   <div id="owlGuide">🐯</div>
@@ -460,42 +397,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return 100;
   }
 
-  function loadGrades(){
-    try {
-      const saved = JSON.parse(localStorage.getItem("pilingo_game1_grades") || "{}");
-      return saved && typeof saved === "object" ? Object.values(saved) : [];
-    } catch(error) {
-      return [];
-    }
-  }
-
-  function renderGrades(){
-    const list = document.getElementById("gradeList");
-    if(!list) return;
-
-    const grades = loadGrades()
-      .sort((a, b) => new Date(b.updatedAt || 0) - new Date(a.updatedAt || 0))
-      .slice(0, 8);
-
-    if(!grades.length) {
-      list.innerHTML = `
-        <div class="grade-item">
-          <strong>No grades yet</strong>
-          <span>Grades will appear here after students finish a section.</span>
-        </div>
-      `;
-      return;
-    }
-
-    list.innerHTML = grades.map((grade) => `
-      <div class="grade-item">
-        <strong>${grade.label || "Game One section"}</strong>
-        <span>Latest grade: ${grade.latestLetter || "-"} (${grade.latestPercent || 0}%)</span>
-        <span>Best grade: ${grade.bestLetter || "-"} (${grade.bestPercent || 0}%) • Attempts: ${grade.attempts || 1}</span>
-      </div>
-    `).join("");
-  }
-
   function render(){
 
     let html = "";
@@ -591,7 +492,6 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   render();
-  renderGrades();
 
 });
 

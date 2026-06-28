@@ -170,7 +170,27 @@ const PilingoNotify = {
 
     const visibleEvents = this.selectVisibleEvents(events);
 
-    list.innerHTML = visibleEvents.map((event) => `
+    const finalEvents = visibleEvents.length
+      ? visibleEvents
+      : events.filter((event) => {
+          const name = String(event?.studentName || "").trim().toLowerCase();
+          const email = String(event?.studentEmail || "").trim();
+          const phone = String(event?.studentPhone || "").trim();
+          return !!(email || phone || (name && name !== "unknown student"));
+        }).slice(0, 4);
+
+    if(!finalEvents.length) {
+      list.innerHTML = `
+        <div class="notify-item">
+          <strong>Student activity is live</strong>
+          <span>New logins, new accounts, and lesson activity will appear here.</span>
+        </div>
+      `;
+      this.maybeShowBrowserNotification(events[0]);
+      return;
+    }
+
+    list.innerHTML = finalEvents.map((event) => `
       <div class="notify-item">
         <strong>${escapeHtml(event.studentName || "Student")} • ${escapeHtml(this.displayLabel(event))}</strong>
         <span>${escapeHtml(event.studentEmail || "No email")} • ${escapeHtml(event.studentPhone || "No phone")}</span>
@@ -179,7 +199,7 @@ const PilingoNotify = {
       </div>
     `).join("");
 
-    this.maybeShowBrowserNotification(visibleEvents[0] || events[0]);
+    this.maybeShowBrowserNotification(finalEvents[0] || events[0]);
   },
 
   startPolling(listId, statusId){

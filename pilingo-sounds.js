@@ -224,15 +224,29 @@ const PilingoAudio = (() => {
       null;
   }
 
-  function speak(text){
+  function getVoiceForLang(preferredLang){
+    if(!window.speechSynthesis) return null;
+
+    const wanted = String(preferredLang || "").toLowerCase().trim();
+    if(!wanted) return getYoungEnglishFemaleVoice();
+
+    const voices = window.speechSynthesis.getVoices();
+    const exact = voices.find((voice) => String(voice.lang || "").toLowerCase() === wanted);
+    if(exact) return exact;
+
+    const family = voices.find((voice) => String(voice.lang || "").toLowerCase().startsWith(wanted.split("-")[0]));
+    return family || getYoungEnglishFemaleVoice();
+  }
+
+  function speak(text, options){
     if(!window.speechSynthesis || !text) return;
 
     const utterance = new SpeechSynthesisUtterance(text);
-    const voice = getYoungEnglishFemaleVoice();
+    const voice = getVoiceForLang(options?.lang);
     utterance.rate = 0.92;
     utterance.pitch = 1.32;
     utterance.volume = 1;
-    utterance.lang = voice?.lang || "en-US";
+    utterance.lang = options?.lang || voice?.lang || "en-US";
     if(voice) utterance.voice = voice;
 
     window.speechSynthesis.cancel();
@@ -251,7 +265,8 @@ const PilingoAudio = (() => {
     playWoodpeckerAlarm,
     playPartAnimal,
     speak,
-    getYoungEnglishFemaleVoice
+    getYoungEnglishFemaleVoice,
+    getVoiceForLang
   };
 })();
 

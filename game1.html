@@ -996,14 +996,14 @@ const gameParts = [
                 ["T", "Tina"]
             ], "🎧 Match the letter with the name | Tîpê bi nav re li hev bîne!", "english"),
             spokenMatchStep([
-                ["U", "Uma"],
-                ["Û", "Uma"],
+                ["U", "Ugo"],
+                ["Û", "Yrsa"],
                 ["V", "Victoria"],
                 ["W", "William"],
                 ["X", "Xalid"],
                 ["Y", "Yusif"],
                 ["Z", "Zoe"]
-            ], "🎧 Match the letter with the name | Tîpê bi nav re li hev bîne!", "english"),
+            ], "🎧 Match the letter with the name | Tîpê bi nav re li hev bîne!", "english", null, { "Yrsa":"fi-FI" }),
             nextStep("Game One A • Part 1 complete"),
             imageStep("şîr", [
                 imgOpt("Coffee", "coffee"),
@@ -1719,13 +1719,15 @@ function matchStep(pairs, instruction){
     };
 }
 
-function spokenMatchStep(pairs, instruction, speakSide){
+function spokenMatchStep(pairs, instruction, speakSide, rightSpeakMap, rightSpeakLangMap){
     return {
         type:"match",
         instruction:instruction || "Tap the match pairs! | Li ser cotên wekhev bitikîne!",
         prompt:"",
         pairs:pairs,
-        speakSide:speakSide || "english"
+        speakSide:speakSide || "english",
+        rightSpeakMap:rightSpeakMap || null,
+        rightSpeakLangMap:rightSpeakLangMap || null
     };
 }
 
@@ -1806,6 +1808,10 @@ function playSound(type){
 
 function speak(text){
     PilingoAudio.speak(text);
+}
+
+function speakWithLang(text, lang){
+    PilingoAudio.speak(text, { lang:lang || "" });
 }
 
 function escapeHtml(value){
@@ -2406,13 +2412,15 @@ function renderMatchStep(step){
             text:rightText,
             key:index,
             id:"en-" + index,
-            spoken:step.rightSpeakMap?.[rightText] || (step.rightSpeakValues ? rightText : "") || (step.speakSide === "english" ? pair[1] : "")
+            spoken:step.rightSpeakMap?.[rightText] || (step.rightSpeakValues ? rightText : "") || (step.speakSide === "english" ? pair[1] : ""),
+            spokenLang:step.rightSpeakLangMap?.[rightText] || ""
         });
         kurmanjiCards.push({
             text:leftText,
             key:index,
             id:"ku-" + index,
-            spoken:step.leftSpeakMap?.[leftText] || (step.speakSide === "kurmanji" ? pair[0] : "")
+            spoken:step.leftSpeakMap?.[leftText] || (step.speakSide === "kurmanji" ? pair[0] : ""),
+            spokenLang:step.leftSpeakLangMap?.[leftText] || ""
         });
     });
 
@@ -2424,7 +2432,7 @@ function renderMatchStep(step){
             <div class="match-column">
                 <div class="match-heading">${escapeHtml(step.leftHeading || "Kurmanji")}</div>
                 ${kurmanjiCards.map((card) => `
-                    <button class="secondary" id="match-${card.id}" onclick="${card.spoken ? `speakAndSelectMatch('${card.id}', ${card.key}, '${escapeHtml(card.spoken)}')` : `selectMatch('${card.id}', ${card.key})`}">
+                    <button class="secondary" id="match-${card.id}" onclick="${card.spoken ? `speakAndSelectMatch('${card.id}', ${card.key}, '${escapeHtml(card.spoken)}', '${escapeHtml(card.spokenLang || "")}')` : `selectMatch('${card.id}', ${card.key})`}">
                         ${card.spoken ? "🔊 " : ""}${escapeHtml(card.text)}
                     </button>
                 `).join("")}
@@ -2432,7 +2440,7 @@ function renderMatchStep(step){
             <div class="match-column">
                 <div class="match-heading">${escapeHtml(step.rightHeading || "English")}</div>
                 ${englishCards.map((card) => `
-                    <button class="secondary" id="match-${card.id}" onclick="${card.spoken ? `speakAndSelectMatch('${card.id}', ${card.key}, '${escapeHtml(card.spoken)}')` : `selectMatch('${card.id}', ${card.key})`}">
+                    <button class="secondary" id="match-${card.id}" onclick="${card.spoken ? `speakAndSelectMatch('${card.id}', ${card.key}, '${escapeHtml(card.spoken)}', '${escapeHtml(card.spokenLang || "")}')` : `selectMatch('${card.id}', ${card.key})`}">
                         ${card.spoken ? "🔊 " : ""}${escapeHtml(card.text)}
                     </button>
                 `).join("")}
@@ -2505,8 +2513,12 @@ function selectAudioMatch(buttonIndex, key, spoken){
     selectMatch(buttonIndex, key);
 }
 
-function speakAndSelectMatch(buttonIndex, key, spoken){
-    speak(spoken);
+function speakAndSelectMatch(buttonIndex, key, spoken, lang){
+    if(lang){
+        speakWithLang(spoken, lang);
+    } else {
+        speak(spoken);
+    }
     selectMatch(buttonIndex, key);
 }
 

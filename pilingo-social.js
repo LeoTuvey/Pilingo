@@ -2,6 +2,7 @@ const PilingoSocial = {
   endpoint: "/api/social",
   profileEndpoint: "/api/social/profile",
   followEndpoint: "/api/social/follow",
+  requestEndpoint: "/api/social/request",
   blockEndpoint: "/api/social/block",
   pollTimer: null,
   lastSnapshot: null,
@@ -76,6 +77,20 @@ const PilingoSocial = {
     return data.social || null;
   },
 
+  async setRequest(targetEmail, action){
+    const viewerEmail = this.currentEmail();
+    if(!viewerEmail || !targetEmail) return null;
+    const data = await this.postAction(this.requestEndpoint, {
+      viewerEmail,
+      targetEmail,
+      action
+    });
+    return {
+      social: data.social || null,
+      profile: data.profile || null
+    };
+  },
+
   async setBlock(targetEmail, block){
     const viewerEmail = this.currentEmail();
     if(!viewerEmail || !targetEmail) return null;
@@ -92,7 +107,7 @@ const PilingoSocial = {
 
   async follow(targetEmail){
     const snapshot = await this.setFollow(targetEmail, true);
-    window.PilingoNotify?.track?.("student_follow", "Started following", { source:"social", targetEmail });
+    window.PilingoNotify?.track?.("student_follow_request", "Sent follow request", { source:"social", targetEmail });
     return snapshot;
   },
 
@@ -114,14 +129,34 @@ const PilingoSocial = {
     return result;
   },
 
+  async acceptRequest(targetEmail){
+    const result = await this.setRequest(targetEmail, "accept");
+    window.PilingoNotify?.track?.("student_follow_accept", "Accepted follow request", { source:"social", targetEmail });
+    return result;
+  },
+
+  async declineRequest(targetEmail){
+    const result = await this.setRequest(targetEmail, "decline");
+    window.PilingoNotify?.track?.("student_follow_decline", "Declined follow request", { source:"social", targetEmail });
+    return result;
+  },
+
+  async cancelRequest(targetEmail){
+    const result = await this.setRequest(targetEmail, "cancel");
+    window.PilingoNotify?.track?.("student_follow_cancel", "Canceled follow request", { source:"social", targetEmail });
+    return result;
+  },
+
   async render(){
     const card = document.getElementById("socialCard");
     const summary = document.getElementById("socialSummary");
+    const requestsList = document.getElementById("socialRequestsList");
+    const outgoingList = document.getElementById("socialOutgoingList");
     const followingList = document.getElementById("socialFollowingList");
     const followersList = document.getElementById("socialFollowersList");
     const discoverList = document.getElementById("socialDiscoverList");
 
-    if(!card || !summary || !followingList || !followersList || !discoverList) return;
+    if(!card || !summary || !requestsList || !outgoingList || !followingList || !followersList || !discoverList) return;
 
     const account = this.currentAccount();
     if(!account?.email){
@@ -133,6 +168,8 @@ const PilingoSocial = {
 
     if(!this.canUseServer()){
       summary.innerHTML = `<div class="social-empty">Profiles work on the live Pilingo app with the server turned on.</div>`;
+      requestsList.innerHTML = "";
+      outgoingList.innerHTML = "";
       followingList.innerHTML = "";
       followersList.innerHTML = "";
       discoverList.innerHTML = "";
@@ -147,6 +184,8 @@ const PilingoSocial = {
 
     if(!snapshot?.currentStudent){
       summary.innerHTML = `<div class="social-empty">Your learner circle will appear here after the app finds your account.</div>`;
+      requestsList.innerHTML = "";
+      outgoingList.innerHTML = "";
       followingList.innerHTML = "";
       followersList.innerHTML = "";
       discoverList.innerHTML = "";
@@ -164,10 +203,26 @@ const PilingoSocial = {
         <span>${Number(current.followersCount || 0)}</span>
       </div>
       <div class="social-stat">
+        Requests
+        <span>${Number((snapshot.requestStudents || []).length)}</span>
+      </div>
+      <div class="social-stat">
         Rank
         <span>${current.rank ? `#${current.rank}` : "-"}</span>
       </div>
     `;
+
+    requestsList.innerHTML = this.renderStudentList(
+      "Follow requests",
+      snapshot.requestStudents,
+      "When someone asks to follow you, they will appear here."
+    );
+
+    outgoingList.innerHTML = this.renderStudentList(
+      "Sent requests",
+      snapshot.outgoingRequestStudents,
+      "Students you asked to follow will appear here until they answer."
+    );
 
     followingList.innerHTML = this.renderStudentList(
       "Following",
@@ -200,7 +255,7 @@ const PilingoSocial = {
       <div class="social-section-title">${escapeHtml(title)}</div>
       ${students.map((student) => `
         <button class="social-student-card ${student.isCurrentStudent ? "self" : ""}" type="button" onclick="openStudentProfile('${escapeAttr(student.email)}')">
-          <div class="social-avatar">${this.avatarLetters(student.name)}</div>
+          ${this.avatarMarkup(student, "social-avatar")}
           <div class="social-student-main">
             <strong>${escapeHtml(student.name || "Student")}${student.isCurrentStudent ? ' <span class="social-you-tag">YOU</span>' : ""}</strong>
             <span>${this.rankLine(student)}</span>
@@ -220,6 +275,17 @@ const PilingoSocial = {
       .join("") || "S";
   },
 
+  avatarMarkup(student, className){
+    const avatarType = student?.avatarType === "image" ? "image" : "emoji";
+    const avatarValue = String(student?.avatarValue || "").trim();
+
+    if(avatarType === "image" && avatarValue){
+      return `<img class="${escapeAttr(className || "social-avatar")}" src="${escapeAttr(avatarValue)}" alt="${escapeAttr(student?.name || "Student")}">`;
+    }
+
+    return `<div class="${escapeAttr(className || "social-avatar")}">${escapeHtml(avatarValue || this.avatarLetters(student?.name))}</div>`;
+  },
+
   rankLine(student){
     const rank = student?.rank ? `#${student.rank}` : "Unranked";
     const xp = `XP ${Number(student?.xp || 0)}`;
@@ -230,6 +296,8 @@ const PilingoSocial = {
   statusLine(student){
     if(student?.blockedYou) return "This student blocked you";
     if(student?.isBlocked) return "You blocked this student";
+    if(student?.hasPendingRequestFrom) return "Asked to follow you";
+    if(student?.hasPendingRequestTo) return "Follow request sent";
     if(student?.isFollowing) return `Following • ${Number(student?.followersCount || 0)} followers`;
     return `${Number(student?.followersCount || 0)} followers • ${Number(student?.followingCount || 0)} following`;
   },
@@ -264,10 +332,35 @@ const PilingoSocial = {
       ? ""
       : profile.blockedYou
         ? `<div class="social-empty">This student blocked you, so you cannot follow them right now.</div>`
+        : profile.hasPendingRequestFrom
+          ? `
+            <div class="student-profile-actions">
+              <button class="social-follow-button" type="button" onclick="respondToFollowRequest('${escapeAttr(profile.email)}', 'accept')">
+                Accept request
+              </button>
+              <button class="secondary-button" type="button" onclick="respondToFollowRequest('${escapeAttr(profile.email)}', 'decline')">
+                Decline
+              </button>
+              <button class="social-block-button" type="button" onclick="toggleProfileBlock('${escapeAttr(profile.email)}', true)">
+                Block
+              </button>
+            </div>
+          `
+        : profile.hasPendingRequestTo
+          ? `
+            <div class="student-profile-actions">
+              <button class="secondary-button" type="button" onclick="respondToFollowRequest('${escapeAttr(profile.email)}', 'cancel')">
+                Cancel request
+              </button>
+              <button class="social-block-button" type="button" onclick="toggleProfileBlock('${escapeAttr(profile.email)}', true)">
+                Block
+              </button>
+            </div>
+          `
         : `
           <div class="student-profile-actions">
             <button class="social-follow-button" type="button" onclick="toggleProfileFollow('${escapeAttr(profile.email)}', ${profile.isFollowing ? "false" : "true"})">
-              ${profile.isFollowing ? "Unfollow" : "Follow"}
+              ${profile.isFollowing ? "Unfollow" : "Send request"}
             </button>
             <button class="social-block-button" type="button" onclick="toggleProfileBlock('${escapeAttr(profile.email)}', ${profile.isBlocked ? "false" : "true"})">
               ${profile.isBlocked ? "Unblock" : "Block"}
@@ -277,7 +370,7 @@ const PilingoSocial = {
 
     return `
       <div class="student-profile-head">
-        <div class="student-profile-avatar">${this.avatarLetters(profile.name)}</div>
+        ${this.avatarMarkup(profile, "student-profile-avatar")}
         <div class="student-profile-titles">
           <h3>${escapeHtml(profile.name || "Student")}</h3>
           <p>${escapeHtml(profile.profileStatus || "")}</p>
@@ -296,7 +389,36 @@ const PilingoSocial = {
         <div><strong>Phone</strong><span>${escapeHtml(profile.phone || "No phone")}</span></div>
         <div><strong>Status</strong><span>${escapeHtml(this.statusLine(profile))}</span></div>
       </div>
+      ${this.renderProfileConnections("Followers", profile.followerStudents, "No followers yet.")}
+      ${this.renderProfileConnections("Following", profile.followingStudents, "Not following anyone yet.")}
+      ${profile.isCurrentStudent ? this.renderProfileConnections("Waiting requests", profile.pendingRequestStudents, "No pending requests.") : ""}
+      ${profile.isCurrentStudent ? this.renderProfileConnections("Sent requests", profile.sentRequestStudents, "No sent requests.") : ""}
       ${actionButton}
+    `;
+  },
+
+  renderProfileConnections(title, students, emptyMessage){
+    if(!Array.isArray(students) || !students.length){
+      return `
+        <div class="student-profile-connections">
+          <strong>${escapeHtml(title)}</strong>
+          <div class="social-empty">${escapeHtml(emptyMessage)}</div>
+        </div>
+      `;
+    }
+
+    return `
+      <div class="student-profile-connections">
+        <strong>${escapeHtml(title)}</strong>
+        <div class="student-profile-people">
+          ${students.map((student) => `
+            <button class="student-mini-card" type="button" onclick="openStudentProfile('${escapeAttr(student.email)}')">
+              ${this.avatarMarkup(student, "student-mini-avatar")}
+              <span>${escapeHtml(student.name || "Student")}</span>
+            </button>
+          `).join("")}
+        </div>
+      </div>
     `;
   },
 
@@ -347,6 +469,22 @@ async function toggleProfileFollow(targetEmail, shouldFollow){
   await toggleStudentFollow(targetEmail, shouldFollow);
 }
 
+async function respondToFollowRequest(targetEmail, action){
+  try {
+    if(action === "accept"){
+      await PilingoSocial.acceptRequest(targetEmail);
+    } else if(action === "decline"){
+      await PilingoSocial.declineRequest(targetEmail);
+    } else {
+      await PilingoSocial.cancelRequest(targetEmail);
+    }
+    await PilingoSocial.render();
+    await PilingoSocial.openProfile(targetEmail);
+  } catch(error) {
+    alert(error?.message || "Could not update this follow request.");
+  }
+}
+
 async function toggleProfileBlock(targetEmail, shouldBlock){
   try {
     if(shouldBlock){
@@ -366,4 +504,5 @@ window.openStudentProfile = openStudentProfile;
 window.closeStudentProfile = closeStudentProfile;
 window.toggleStudentFollow = toggleStudentFollow;
 window.toggleProfileFollow = toggleProfileFollow;
+window.respondToFollowRequest = respondToFollowRequest;
 window.toggleProfileBlock = toggleProfileBlock;

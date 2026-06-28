@@ -168,36 +168,18 @@ const PilingoNotify = {
       return;
     }
 
-    const uniqueEvents = [];
+    const visibleEvents = this.selectVisibleEvents(events);
 
-    for(const event of events){
-      const signature = [
-        event.studentEmail || event.studentName || "student",
-        event.studentPhone || "",
-        event.label || event.type || "activity",
-        event.page || ""
-      ].join("|");
-      const createdAt = new Date(event.createdAt || 0).getTime();
-      const alreadyShown = uniqueEvents.some((item) => {
-        const sameSignature = item.signature === signature;
-        const sameWindow = Math.abs(item.createdAt - createdAt) < 15000;
-        return sameSignature && sameWindow;
-      });
-      if(alreadyShown) continue;
-      uniqueEvents.push({ signature, createdAt, event });
-      if(uniqueEvents.length >= 8) break;
-    }
-
-    list.innerHTML = uniqueEvents.map(({ event }) => `
+    list.innerHTML = visibleEvents.map((event) => `
       <div class="notify-item">
-        <strong>${escapeHtml(event.studentName || "Student")} • ${escapeHtml(event.label || event.type || "Activity")}</strong>
+        <strong>${escapeHtml(event.studentName || "Student")} • ${escapeHtml(this.displayLabel(event))}</strong>
         <span>${escapeHtml(event.studentEmail || "No email")} • ${escapeHtml(event.studentPhone || "No phone")}</span>
         <span>${escapeHtml(event.studentLocation || "Location unavailable")}</span>
         <span>${escapeHtml(event.page || "")} • ${formatWhen(event.createdAt)}</span>
       </div>
     `).join("");
 
-    this.maybeShowBrowserNotification(uniqueEvents[0]?.event || events[0]);
+    this.maybeShowBrowserNotification(visibleEvents[0] || events[0]);
   },
 
   startPolling(listId, statusId){
@@ -273,10 +255,62 @@ const PilingoNotify = {
 
     if(Notification.permission === "granted") {
       new Notification("Pilingo student activity", {
-        body: `${event.studentName || "Student"} • ${event.label || event.type || "Activity"}`
+        body: `${event.studentName || "Student"} • ${this.displayLabel(event)}`
       });
       return;
     }
+  },
+  selectVisibleEvents(events){
+    const uniqueEvents = [];
+    const meaningfulStudents = new Set();
+
+    for(const event of events){
+      const type = String(event?.type || "").trim();
+      const label = String(event?.label || "").trim();
+      const page = String(event?.page || "").trim();
+      const email = String(event?.studentEmail || "").trim().toLowerCase();
+      const phone = String(event?.studentPhone || "").trim();
+      const name = String(event?.studentName || "").trim();
+      const studentKey = email || phone || name.toLowerCase();
+      const createdAt = new Date(event?.createdAt || 0).getTime();
+      const isUnknown = !email && !phone && (!name || name.toLowerCase() === "unknown student");
+      const isHomeOpen = type === "page_open" && page === "index.html";
+      const isAccountCreated = type === "account_created";
+      const isLogin = type === "account_login";
+      const isLessonOpen = type === "page_open" && page !== "index.html";
+      const isLearningStart = type === "learning_started";
+      const isImportant = isAccountCreated || isLogin || isLessonOpen || isLearningStart;
+
+      if(isUnknown && isHomeOpen) continue;
+      if(isHomeOpen && studentKey && meaningfulStudents.has(studentKey)) continue;
+
+      const signature = [
+        studentKey || "student",
+        type || "activity",
+        label || "",
+        page || ""
+      ].join("|");
+      const alreadyShown = uniqueEvents.some((item) => {
+        const sameSignature = item.signature === signature;
+        const sameWindow = Math.abs(item.createdAt - createdAt) < 30000;
+        return sameSignature && sameWindow;
+      });
+      if(alreadyShown) continue;
+
+      uniqueEvents.push({ signature, createdAt, event });
+      if(studentKey && isImportant) meaningfulStudents.add(studentKey);
+      if(uniqueEvents.length >= 8) break;
+    }
+
+    return uniqueEvents.map((item) => item.event);
+  },
+  displayLabel(event){
+    const type = String(event?.type || "").trim();
+    if(type === "account_created") return "New student account";
+    if(type === "account_login") return "Logged in";
+    if(type === "account_logout") return "Logged out";
+    if(type === "learning_started") return "Started learning";
+    return String(event?.label || event?.type || "Activity");
   },
   buildCompetitionState(students, currentIndex, leader){
     const stateKey = "pilingo_competition_state_v1";

@@ -120,6 +120,7 @@ const PilingoNotify = {
   async renderInto(listId, statusId){
     const list = document.getElementById(listId);
     const status = document.getElementById(statusId);
+    const liveList = document.getElementById("notifyLive");
     if(!list) return;
 
     if(!this.canViewOwnerNotifications()){
@@ -159,6 +160,14 @@ const PilingoNotify = {
     }
 
     if(!events.length) {
+      if(liveList) {
+        liveList.innerHTML = `
+          <div class="notify-item">
+            <strong>No students live right now</strong>
+            <span>Students who are active in the app will appear here with their email.</span>
+          </div>
+        `;
+      }
       list.innerHTML = `
         <div class="notify-item">
           <strong>No student activity yet</strong>
@@ -169,6 +178,7 @@ const PilingoNotify = {
     }
 
     const visibleEvents = this.selectVisibleEvents(events);
+    this.renderLiveStudents(events, liveList, status);
 
     const finalEvents = visibleEvents.length
       ? visibleEvents
@@ -200,6 +210,60 @@ const PilingoNotify = {
     `).join("");
 
     this.maybeShowBrowserNotification(finalEvents[0] || events[0]);
+  },
+
+  renderLiveStudents(events, liveList, status){
+    if(!liveList) return;
+
+    const now = Date.now();
+    const liveStudents = [];
+    const seen = new Set();
+
+    for(const event of events){
+      const createdAt = new Date(event?.createdAt || 0).getTime();
+      if(!createdAt || now - createdAt > 5 * 60 * 1000) continue;
+
+      const email = String(event?.studentEmail || "").trim();
+      const phone = String(event?.studentPhone || "").trim();
+      const name = String(event?.studentName || "").trim();
+      const key = (email || phone || name).toLowerCase();
+      if(!key || key === "unknown student") continue;
+      if(seen.has(key)) continue;
+      seen.add(key);
+
+      liveStudents.push({
+        name: name || "Student",
+        email: email || "No email",
+        phone: phone || "No phone",
+        action: this.displayLabel(event),
+        at: event?.createdAt || ""
+      });
+
+      if(liveStudents.length >= 4) break;
+    }
+
+    if(status) {
+      status.innerText = liveStudents.length ? `Live now: ${liveStudents.length}` : status.innerText;
+    }
+
+    if(!liveStudents.length) {
+      liveList.innerHTML = `
+        <div class="notify-item">
+          <strong>No students live right now</strong>
+          <span>Students who are active in the app will appear here with their email.</span>
+        </div>
+      `;
+      return;
+    }
+
+    liveList.innerHTML = liveStudents.map((student) => `
+      <div class="notify-item">
+        <strong>${escapeHtml(student.name)} • Live now</strong>
+        <span>${escapeHtml(student.email)} • ${escapeHtml(student.phone)}</span>
+        <span>Latest: ${escapeHtml(student.action)}</span>
+        <span>${formatWhen(student.at)}</span>
+      </div>
+    `).join("");
   },
 
   startPolling(listId, statusId){

@@ -217,12 +217,11 @@ const PilingoNotify = {
 
     const now = Date.now();
     const liveStudents = [];
+    const recentStudents = [];
     const seen = new Set();
 
     for(const event of events){
       const createdAt = new Date(event?.createdAt || 0).getTime();
-      if(!createdAt || now - createdAt > 5 * 60 * 1000) continue;
-
       const email = String(event?.studentEmail || "").trim();
       const phone = String(event?.studentPhone || "").trim();
       const name = String(event?.studentName || "").trim();
@@ -231,34 +230,55 @@ const PilingoNotify = {
       if(seen.has(key)) continue;
       seen.add(key);
 
-      liveStudents.push({
+      const studentCard = {
         name: name || "Student",
         email: email || "No email",
         phone: phone || "No phone",
         action: this.displayLabel(event),
         at: event?.createdAt || ""
-      });
+      };
 
-      if(liveStudents.length >= 4) break;
+      if(createdAt && now - createdAt <= 15 * 60 * 1000) {
+        liveStudents.push(studentCard);
+      } else if(createdAt && now - createdAt <= 24 * 60 * 60 * 1000) {
+        recentStudents.push(studentCard);
+      }
+
+      if(liveStudents.length >= 4 && recentStudents.length >= 4) break;
     }
 
     if(status) {
-      status.innerText = liveStudents.length ? `Live now: ${liveStudents.length}` : status.innerText;
+      if(liveStudents.length) {
+        status.innerText = `Live now: ${liveStudents.length}`;
+      } else if(recentStudents.length) {
+        status.innerText = `Recent students: ${recentStudents.length}`;
+      }
     }
 
-    if(!liveStudents.length) {
+    const studentsToShow = liveStudents.length ? liveStudents : recentStudents.slice(0, 4);
+    const title = liveStudents.length ? "Live now" : "Recently seen";
+    const detail = liveStudents.length
+      ? "Students active in the app right now."
+      : "No one is live right now. These students used the app recently.";
+
+    if(!studentsToShow.length) {
       liveList.innerHTML = `
         <div class="notify-item">
           <strong>No students live right now</strong>
-          <span>Students who are active in the app will appear here with their email.</span>
+          <span>Students who use the app with their email will appear here.</span>
         </div>
       `;
       return;
     }
 
-    liveList.innerHTML = liveStudents.map((student) => `
+    liveList.innerHTML = `
       <div class="notify-item">
-        <strong>${escapeHtml(student.name)} • Live now</strong>
+        <strong>${title}</strong>
+        <span>${detail}</span>
+      </div>
+    ` + studentsToShow.map((student) => `
+      <div class="notify-item">
+        <strong>${escapeHtml(student.name)} • ${title}</strong>
         <span>${escapeHtml(student.email)} • ${escapeHtml(student.phone)}</span>
         <span>Latest: ${escapeHtml(student.action)}</span>
         <span>${formatWhen(student.at)}</span>

@@ -1603,24 +1603,25 @@ button:active{
 .social-student-card{
   display:flex;
   align-items:center;
-  justify-content:space-between;
+  justify-content:flex-start;
   gap:12px;
   padding:12px 14px;
   border-radius:18px;
   background:linear-gradient(180deg, #ffffff 0%, #fff8ea 100%);
   border:1px solid rgba(239,215,150,0.8);
+  width:100%;
+  margin-top:0;
+  box-shadow:0 5px 0 rgba(231,197,114,0.34);
+  text-align:left;
 }
 
 .social-student-card + .social-student-card{
   margin-top:10px;
 }
 
-.social-student-card.compact{
-  justify-content:flex-start;
-}
-
 .social-student-main{
   min-width:0;
+  flex:1;
 }
 
 .social-student-main strong{
@@ -1648,6 +1649,19 @@ button:active{
   font-size:14px;
 }
 
+.social-block-button{
+  width:auto;
+  min-width:110px;
+  margin-top:0;
+  padding:11px 16px;
+  border-radius:999px;
+  border:2px solid #ad3156;
+  background:linear-gradient(180deg, #ff90b0 0%, #f05984 100%);
+  color:#fff;
+  box-shadow:0 4px 0 #ad3156;
+  font-size:14px;
+}
+
 .social-empty{
   padding:12px 14px;
   border-radius:16px;
@@ -1656,6 +1670,171 @@ button:active{
   font-size:13px;
   font-weight:800;
   line-height:1.5;
+}
+
+.social-avatar,
+.student-profile-avatar{
+  width:52px;
+  height:52px;
+  border-radius:50%;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(180deg, #7de43a 0%, #58cc02 100%);
+  color:#ffffff;
+  font-size:18px;
+  font-weight:1000;
+  box-shadow:0 6px 0 rgba(62,140,8,0.42);
+  flex:none;
+}
+
+.social-you-tag{
+  display:inline-flex;
+  align-items:center;
+  margin-left:8px;
+  padding:3px 8px;
+  border-radius:999px;
+  background:#58cc02;
+  color:#fff;
+  font-size:10px;
+  font-weight:1000;
+  letter-spacing:0.04em;
+  vertical-align:middle;
+}
+
+.student-profile-modal{
+  position:fixed;
+  inset:0;
+  z-index:120;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:rgba(24,32,50,0.58);
+  backdrop-filter:blur(6px);
+}
+
+.student-profile-modal[hidden]{
+  display:none;
+}
+
+.student-profile-card{
+  width:min(560px, calc(100vw - 24px));
+  max-height:calc(100vh - 40px);
+  overflow:auto;
+  border-radius:30px;
+  background:linear-gradient(180deg, #fffef9 0%, #fff5da 100%);
+  border:3px solid #f0d27a;
+  box-shadow:0 20px 40px rgba(75,54,8,0.24);
+  padding:22px;
+}
+
+.student-profile-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:14px;
+}
+
+.student-profile-close{
+  width:auto;
+  min-width:72px;
+  margin-top:0;
+  padding:10px 14px;
+  border-radius:999px;
+}
+
+.student-profile-head{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  margin-bottom:16px;
+}
+
+.student-profile-titles h3{
+  margin:0;
+  font-size:24px;
+  color:#3a2d08;
+}
+
+.student-profile-titles p{
+  margin:6px 0 0;
+  font-size:14px;
+  color:#7e6320;
+  font-weight:800;
+}
+
+.student-profile-grid{
+  display:grid;
+  grid-template-columns:repeat(3, minmax(0, 1fr));
+  gap:10px;
+  margin-bottom:16px;
+}
+
+.student-profile-stat{
+  padding:14px 12px;
+  border-radius:20px;
+  background:rgba(255,255,255,0.88);
+  border:2px solid rgba(240,210,122,0.8);
+  text-align:center;
+}
+
+.student-profile-stat strong,
+.student-profile-stat span{
+  display:block;
+}
+
+.student-profile-stat strong{
+  font-size:12px;
+  color:#8d6c14;
+  text-transform:uppercase;
+  letter-spacing:0.05em;
+}
+
+.student-profile-stat span{
+  margin-top:6px;
+  font-size:24px;
+  font-weight:1000;
+  color:#3b2f0c;
+}
+
+.student-profile-meta{
+  display:grid;
+  gap:10px;
+  margin-bottom:16px;
+}
+
+.student-profile-meta div{
+  padding:12px 14px;
+  border-radius:18px;
+  background:rgba(255,255,255,0.76);
+  border:1px solid rgba(240,210,122,0.74);
+}
+
+.student-profile-meta strong,
+.student-profile-meta span{
+  display:block;
+}
+
+.student-profile-meta strong{
+  font-size:12px;
+  color:#8d6c14;
+  text-transform:uppercase;
+  letter-spacing:0.05em;
+}
+
+.student-profile-meta span{
+  margin-top:4px;
+  font-size:14px;
+  color:#4d3c14;
+  font-weight:800;
+}
+
+.student-profile-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
 }
 
 .mini-note{
@@ -1901,7 +2080,7 @@ button:active{
           <strong>👥 Learner Circle</strong>
           <span class="notify-status">Follow learners</span>
         </div>
-        <div class="social-note">Students can follow each other here, just like in Duolingo, and build a learning circle.</div>
+        <div class="social-note">Tap any student to open the full profile, follow, unfollow, block, and see their learning status like Duolingo.</div>
         <div id="socialSummary" class="social-summary">
           <div class="social-empty">Loading your circle...</div>
         </div>
@@ -1909,6 +2088,18 @@ button:active{
           <div id="socialFollowingList" class="social-panel"></div>
           <div id="socialFollowersList" class="social-panel"></div>
           <div id="socialDiscoverList" class="social-panel"></div>
+        </div>
+      </div>
+
+      <div id="studentProfileModal" class="student-profile-modal" hidden>
+        <div class="student-profile-card">
+          <div class="student-profile-top">
+            <strong>👤 Student Profile</strong>
+            <button class="secondary-button student-profile-close" type="button" onclick="closeStudentProfile()">Close</button>
+          </div>
+          <div id="studentProfileBody" class="student-profile-body">
+            <div class="social-empty">Loading profile...</div>
+          </div>
         </div>
       </div>
 

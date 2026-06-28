@@ -93,6 +93,15 @@ const server = http.createServer(async (req, res) => {
     });
   }
 
+  if (req.method === "GET" && parsed.pathname === "/api/social/profile") {
+    const viewerEmail = normalizeEmail(parsed.searchParams.get("viewerEmail") || "");
+    const targetEmail = normalizeEmail(parsed.searchParams.get("targetEmail") || "");
+    return sendJson(res, 200, {
+      ok: true,
+      profile: getStudentProfile(viewerEmail, targetEmail)
+    });
+  }
+
   if (req.method === "POST" && parsed.pathname === "/api/track") {
     try {
       const body = await readBody(req);
@@ -161,6 +170,24 @@ const server = http.createServer(async (req, res) => {
       });
     } catch (error) {
       return sendJson(res, 400, { ok: false, error: "Invalid follow request" });
+    }
+  }
+
+  if (req.method === "POST" && parsed.pathname === "/api/social/block") {
+    try {
+      const body = await readBody(req);
+      const payload = JSON.parse(body || "{}");
+      const result = updateBlockState(payload || {});
+      if (!result.ok) {
+        return sendJson(res, 400, { ok: false, error: result.error || "Could not update block status." });
+      }
+      return sendJson(res, 200, {
+        ok: true,
+        social: getSocialSnapshot(result.viewerEmail),
+        profile: getStudentProfile(result.viewerEmail, result.targetEmail)
+      });
+    } catch (error) {
+      return sendJson(res, 400, { ok: false, error: "Invalid block request" });
     }
   }
 
@@ -474,6 +501,7 @@ function publicAccount(account) {
     location: account.location || "",
     createdAt: account.createdAt,
     following: Array.isArray(account?.following) ? account.following.slice() : [],
+    blocked: Array.isArray(account?.blocked) ? account.blocked.slice() : [],
     isOwner,
     ownerPanelToken: isOwner ? OWNER_PANEL_TOKEN : ""
   };
@@ -499,7 +527,8 @@ function registerAccount(payload) {
     password,
     location,
     createdAt: new Date().toISOString(),
-    following: []
+    following: [],
+    blocked: []
   };
   accounts.push(account);
   writeAccounts(accounts);
@@ -537,13 +566,17 @@ function normalizeAccountRecord(account) {
   const following = Array.isArray(account?.following)
     ? account.following.map((email) => normalizeEmail(email)).filter(Boolean)
     : [];
+  const blocked = Array.isArray(account?.blocked)
+    ? account.blocked.map((email) => normalizeEmail(email)).filter(Boolean)
+    : [];
 
   return {
     ...account,
     email: normalizeEmail(account?.email),
     phone: String(account?.phone || "").trim(),
     location: String(account?.location || "").trim(),
-    following: Array.from(new Set(following))
+    following: Array.from(new Set(following)),
+    blocked: Array.from(new Set(blocked))
   };
 }
 
@@ -602,9 +635,15 @@ function updateFollowState(payload) {
   }
 
   const viewer = normalizeAccountRecord(accounts[viewerIndex]);
+  const target = normalizeAccountRecord(accounts[targetIndex]);
   const nextFollowing = new Set(viewer.following || []);
+  const viewerBlocked = new Set(viewer.blocked || []);
+  const targetBlocked = new Set(target.blocked || []);
 
   if (shouldFollow) {
+    if (viewerBlocked.has(targetEmail) || targetBlocked.has(viewerEmail)) {
+      return { ok: false, error: "This student cannot be followed right now." };
+    }
     nextFollowing.add(targetEmail);
   } else {
     nextFollowing.delete(targetEmail);
@@ -617,6 +656,48 @@ function updateFollowState(payload) {
   writeAccounts(accounts);
 
   return { ok: true, viewerEmail };
+}
+
+function updateBlockState(payload) {
+  const viewerEmail = normalizeEmail(payload?.viewerEmail);
+  const targetEmail = normalizeEmail(payload?.targetEmail);
+  const shouldBlock = payload?.block !== false;
+
+  if (!viewerEmail || !targetEmail) {
+    return { ok: false, error: "Both students need an email address." };
+  }
+
+  if (viewerEmail === targetEmail) {
+    return { ok: false, error: "Students cannot block themselves." };
+  }
+
+  const accounts = readAccounts();
+  const viewerIndex = accounts.findIndex((account) => normalizeEmail(account?.email) === viewerEmail);
+  const targetIndex = accounts.findIndex((account) => normalizeEmail(account?.email) === targetEmail);
+
+  if (viewerIndex < 0 || targetIndex < 0) {
+    return { ok: false, error: "Both students need real accounts before blocking." };
+  }
+
+  const viewer = normalizeAccountRecord(accounts[viewerIndex]);
+  const nextBlocked = new Set(viewer.blocked || []);
+  const nextFollowing = new Set(viewer.following || []);
+
+  if (shouldBlock) {
+    nextBlocked.add(targetEmail);
+    nextFollowing.delete(targetEmail);
+  } else {
+    nextBlocked.delete(targetEmail);
+  }
+
+  accounts[viewerIndex] = {
+    ...viewer,
+    blocked: Array.from(nextBlocked),
+    following: Array.from(nextFollowing)
+  };
+  writeAccounts(accounts);
+
+  return { ok: true, viewerEmail, targetEmail };
 }
 
 async function createPasswordReset(payload) {
@@ -790,6 +871,7 @@ function getSocialSnapshot(viewerEmail) {
   const statsByEmail = new Map();
   const followersByEmail = new Map();
   const followingByEmail = new Map();
+  const blockedByEmail = new Map();
   const knownStudents = new Map();
 
   const rememberKnownStudent = (studentLike) => {
@@ -840,7 +922,9 @@ function getSocialSnapshot(viewerEmail) {
     const accountEmail = normalizeEmail(account?.email);
     if (!accountEmail) return;
     const following = Array.isArray(account?.following) ? account.following : [];
+    const blocked = Array.isArray(account?.blocked) ? account.blocked : [];
     followingByEmail.set(accountEmail, Array.from(new Set(following.map(normalizeEmail).filter(Boolean))));
+    blockedByEmail.set(accountEmail, Array.from(new Set(blocked.map(normalizeEmail).filter(Boolean))));
     following.forEach((followedEmail) => {
       const followed = normalizeEmail(followedEmail);
       if (!followed) return;
@@ -854,6 +938,8 @@ function getSocialSnapshot(viewerEmail) {
     const email = normalizeEmail(student?.email);
     const followers = Array.from(new Set(followersByEmail.get(email) || []));
     const following = Array.from(new Set(followingByEmail.get(email) || []));
+    const viewerBlocked = Array.from(new Set(blockedByEmail.get(viewerEmail) || []));
+    const blockedByStudent = Array.from(new Set(blockedByEmail.get(email) || []));
     const stats = statsByEmail.get(email) || {};
     const account = accountByEmail.get(email) || null;
     return {
@@ -866,8 +952,11 @@ function getSocialSnapshot(viewerEmail) {
       followingCount: following.length,
       followers,
       following,
+      blocked: Array.from(new Set(blockedByEmail.get(email) || [])),
       isCurrentStudent: email === viewerEmail,
       isFollowing: !!(viewerEmail && viewerEmail !== email && (followingByEmail.get(viewerEmail) || []).includes(email)),
+      isBlocked: !!(viewerEmail && viewerEmail !== email && viewerBlocked.includes(email)),
+      blockedYou: !!(viewerEmail && viewerEmail !== email && blockedByStudent.includes(viewerEmail)),
       rank: safeNumber(stats.rank, 0),
       xp: safeNumber(stats.xp, 0),
       level: safeNumber(stats.level, 0),
@@ -884,15 +973,18 @@ function getSocialSnapshot(viewerEmail) {
   });
 
   const currentStudent = students.find((student) => student.isCurrentStudent) || null;
+  const currentBlocked = currentStudent?.blocked || [];
   const followingStudents = currentStudent
-    ? students.filter((student) => currentStudent.following.includes(student.email))
+    ? students.filter((student) => currentStudent.following.includes(student.email) && !student.blockedYou)
     : [];
   const followerStudents = currentStudent
-    ? students.filter((student) => currentStudent.followers.includes(student.email))
+    ? students.filter((student) => currentStudent.followers.includes(student.email) && !currentBlocked.includes(student.email))
     : [];
   const suggestedStudents = students.filter((student) =>
     !student.isCurrentStudent &&
-    !(currentStudent?.following || []).includes(student.email)
+    !(currentStudent?.following || []).includes(student.email) &&
+    !(currentBlocked || []).includes(student.email) &&
+    !student.blockedYou
   ).slice(0, 8);
 
   return {
@@ -901,6 +993,29 @@ function getSocialSnapshot(viewerEmail) {
     followerStudents,
     suggestedStudents,
     students
+  };
+}
+
+function getStudentProfile(viewerEmail, targetEmail) {
+  const snapshot = getSocialSnapshot(viewerEmail);
+  const target = (snapshot.students || []).find((student) => normalizeEmail(student?.email) === targetEmail) || null;
+  if (!target) return null;
+
+  const current = snapshot.currentStudent || null;
+  const currentBlocked = current?.blocked || [];
+
+  return {
+    ...target,
+    canFollow: !target.isCurrentStudent && !target.isBlocked && !target.blockedYou,
+    canBlock: !target.isCurrentStudent,
+    visibleToViewer: !currentBlocked.includes(target.email),
+    profileStatus: target.blockedYou
+      ? "This student blocked you."
+      : target.isBlocked
+        ? "You blocked this student."
+        : target.isFollowing
+          ? "You are following this student."
+          : "You can follow this student."
   };
 }
 

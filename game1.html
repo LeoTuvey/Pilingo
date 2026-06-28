@@ -1810,8 +1810,8 @@ function speak(text){
     PilingoAudio.speak(text);
 }
 
-function speakWithLang(text, lang){
-    PilingoAudio.speak(text, { lang:lang || "" });
+function speakWithLang(text, lang, preferFemale){
+    PilingoAudio.speak(text, { lang:lang || "", preferFemale:!!preferFemale });
 }
 
 function escapeHtml(value){
@@ -2515,7 +2515,7 @@ function selectAudioMatch(buttonIndex, key, spoken){
 
 function speakAndSelectMatch(buttonIndex, key, spoken, lang){
     if(lang){
-        speakWithLang(spoken, lang);
+        speakWithLang(spoken, lang, spoken === "Yrsa");
     } else {
         speak(spoken);
     }

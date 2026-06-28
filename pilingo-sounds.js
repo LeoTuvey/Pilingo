@@ -224,10 +224,11 @@ const PilingoAudio = (() => {
       null;
   }
 
-  function getVoiceForLang(preferredLang){
+  function getVoiceForLang(preferredLang, options){
     if(!window.speechSynthesis) return null;
 
     const wanted = String(preferredLang || "").toLowerCase().trim();
+    const preferFemale = options?.preferFemale === true;
     if(!wanted) return getYoungEnglishFemaleVoice();
 
     const voices = window.speechSynthesis.getVoices();
@@ -263,13 +264,17 @@ const PilingoAudio = (() => {
     );
     if(exactFemale) return exactFemale;
 
-    const exact = voices.find((voice) => String(voice.lang || "").toLowerCase() === wanted);
-    if(exact) return exact;
-
     const familyFemale = voices.find((voice) =>
       String(voice.lang || "").toLowerCase().startsWith(wanted.split("-")[0]) && matchesFemale(voice)
     );
     if(familyFemale) return familyFemale;
+
+    if(preferFemale) {
+      return getYoungEnglishFemaleVoice();
+    }
+
+    const exact = voices.find((voice) => String(voice.lang || "").toLowerCase() === wanted);
+    if(exact) return exact;
 
     const family = voices.find((voice) => String(voice.lang || "").toLowerCase().startsWith(wanted.split("-")[0]));
     return family || getYoungEnglishFemaleVoice();
@@ -279,7 +284,7 @@ const PilingoAudio = (() => {
     if(!window.speechSynthesis || !text) return;
 
     const utterance = new SpeechSynthesisUtterance(text);
-    const voice = getVoiceForLang(options?.lang);
+    const voice = getVoiceForLang(options?.lang, options);
     utterance.rate = 0.92;
     utterance.pitch = 1.32;
     utterance.volume = 1;

@@ -92,6 +92,21 @@ const server = http.createServer(async (req, res) => {
       const events = readEvents();
       events.push(event);
       writeEvents(events.slice(-400));
+      if (isNamedStudentEvent(event)) {
+        upsertStudentStats({
+          studentName: event.studentName,
+          studentEmail: event.studentEmail,
+          studentPhone: event.studentPhone,
+          studentLocation: event.studentLocation,
+          xp: 0,
+          level: 0,
+          streak: 0,
+          completedSections: 0,
+          averageGrade: 0,
+          bestGrade: 0,
+          lessonsFinished: 0
+        });
+      }
       sendNotifications(event).catch(() => {});
 
       return sendJson(res, 200, { ok: true, event });
@@ -363,10 +378,16 @@ function upsertStudentStats(payload) {
   const phone = String(payload.studentPhone || "").trim();
   const location = String(payload.studentLocation || "").trim();
   const students = readStudentStats();
-  const key = email || phone || name.toLowerCase();
+  const normalizedName = name.toLowerCase();
   const existingIndex = students.findIndex((student) => {
-    const studentKey = String(student.email || student.phone || student.name || "").trim().toLowerCase();
-    return studentKey === key;
+    const studentEmail = String(student.email || "").trim().toLowerCase();
+    const studentPhone = String(student.phone || "").trim();
+    const studentName = String(student.name || "").trim().toLowerCase();
+    return (
+      (!!email && studentEmail === email) ||
+      (!!phone && studentPhone === phone) ||
+      (!!normalizedName && normalizedName !== "unknown student" && studentName === normalizedName)
+    );
   });
   const existing = existingIndex >= 0 ? students[existingIndex] : null;
 
@@ -394,6 +415,13 @@ function upsertStudentStats(payload) {
 
   writeStudentStats(students);
   return merged;
+}
+
+function isNamedStudentEvent(event) {
+  const email = String(event?.studentEmail || "").trim().toLowerCase();
+  const phone = String(event?.studentPhone || "").trim();
+  const name = String(event?.studentName || "").trim().toLowerCase();
+  return !!(email || phone || (name && name !== "unknown student"));
 }
 
 function publicAccount(account) {

@@ -1005,31 +1005,38 @@ const gameParts = [
                 ["Z", "Zoe"]
             ], "🎧 Match the letter with the name | Tîpê bi nav re li hev bîne!", "english", null, { "Yrsa":"fi-FI" }),
             nextStep("Game One A • Part 1A complete"),
-            vocabVoiceMatchStep([
-                ["father", "bab(bav)"],
-                ["mother", "daik(dê)"],
-                ["son", "kur"],
-                ["daughter", "kiç(keç)"],
-                ["brother", "bira"],
-                ["sister", "xwişk"]
+            familyEmojiMatchStep([
+                ["father", "👨 bab(bav)"],
+                ["mother", "👩 daik(dê)"],
+                ["son", "👦 kur (law)"],
+                ["daughter", "👧 kiç(keç)"],
+                ["brother", "👨 bira"],
+                ["sister", "👩 xwişk"]
             ]),
-            vocabVoiceMatchStep([
-                ["husband", "mêr"],
-                ["wife", "jin"],
-                ["family", "malbat"],
-                ["grandfather", "bapîr"],
-                ["grandmother", "dapîr"],
-                { english:"uncle", kurmanji:"mam", group:"uncle" },
-                { english:"uncle", kurmanji:"xal", group:"uncle" }
+            familyEmojiMatchStep([
+                ["husband", "👨 mêr"],
+                ["wife", "👩 jin"],
+                ["family", "👨‍👩‍👧‍👦 malbat"],
+                ["grandfather", "👴 bapîr"],
+                ["grandmother", "👵 dapîr"],
+                { english:"Uncle", kurmanji:"👨‍🦳 mam", group:"uncle" },
+                { english:"Uncle", kurmanji:"👨‍🦳 xal", group:"uncle" }
             ]),
-            vocabVoiceMatchStep([
-                { english:"aunt", kurmanji:"met", group:"aunt" },
-                { english:"aunt", kurmanji:"xalet", group:"aunt" },
-                ["child", "zarok"],
-                ["baby", "bebok(bebek)"],
-                ["boy", "law"],
-                ["friend", "heval"],
-                ["relative", "xizim"]
+            familyEmojiMatchStep([
+                { english:"aunt", kurmanji:"👩 met", group:"aunt" },
+                { english:"aunt", kurmanji:"👩 xalet", group:"aunt" },
+                ["child", "👶 zarok"],
+                ["baby", "👶 bebok(bebek)"],
+                ["boy", "👨‍👦 law"],
+                ["friend", "❤️ heval"],
+                ["relative", "👥 xizim"]
+            ]),
+            familyEmojiMatchStep([
+                ["a girl", "👧 kiçek(keçek)"],
+                ["a woman", "👧 Jinek"],
+                ["2 women", "👧👩2 Jin"],
+                ["a man", "👨‍🦳 Mêrek(mirovek)"],
+                ["2 men", "👨‍🦳👴2 Mêr (2 mirov)"]
             ]),
             movingSentenceChoiceStep("Ez ", "bab", " im. (Ez babek im.)", "I am a ________.", ["mother", "father", "brother", "sister"], "father"),
             movingSentenceChoiceStep("Ez ", "dayik", " im. (Ez dayek im.)", "I am a ________.", ["mother", "father", "wife", "daughter"], "mother"),
@@ -1621,9 +1628,9 @@ const partEmojis = ["🐈", "🐕", "🐇", "🦜", "🦆", "🍎"];
 const partSections = {
     0: [
         { id:"a-part-1a", label:"Part 1A", detail:"Kurmanji, Sorani, and international letter names", start:0, end:7 },
-        { id:"a-part-1b", label:"Part 1B", detail:"Family members", start:8, end:46 },
-        { id:"a-part-1c", label:"Part 1C", detail:"Family sentence translation", start:47, end:63 },
-        { id:"a-part-2", label:"Part 2", detail:"Milk, coffee, hello, and matching", start:64, end:73 }
+        { id:"a-part-1b", label:"Part 1B", detail:"Family members", start:8, end:47 },
+        { id:"a-part-1c", label:"Part 1C", detail:"Family sentence translation", start:48, end:64 },
+        { id:"a-part-2", label:"Part 2", detail:"Milk, coffee, hello, and matching", start:65, end:74 }
     ],
     1: [
         { id:"b-part-1", label:"Part 1", detail:"Drinks, food, and welcome words", start:0, end:11 },
@@ -1904,6 +1911,20 @@ function vocabVoiceMatchStep(pairs, leftSpeakMap){
         pairs:pairs,
         leftHeading:"Kurmanji",
         rightHeading:"English",
+        leftSide:"second",
+        rightSide:"first",
+        rightSpeakValues:true
+    };
+}
+
+function familyEmojiMatchStep(pairs){
+    return {
+        type:"match",
+        instruction:"👨‍👩‍👧‍👦 👨‍👩‍👧‍👦 Family Members",
+        prompt:"",
+        pairs:pairs,
+        leftHeading:"Kurmanji",
+        rightHeading:"🇬🇧 English",
         leftSide:"second",
         rightSide:"first",
         rightSpeakValues:true

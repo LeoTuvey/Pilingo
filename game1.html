@@ -2494,31 +2494,22 @@ function showSectionSelect(index, message){
         mode:"section-select",
         partIndex:index
     });
-    const groups = groupedSections(index);
     document.getElementById("activity").innerHTML = `
         <div class="section-select">
-            ${groups.map((group) => {
-                const first = group.sections[0];
-                const last = group.sections[group.sections.length - 1];
-                const unlocked = isSectionUnlocked(index, first.sectionIndex);
-                const complete = group.sections.every(({ sectionIndex }) => isSectionComplete(index, sectionIndex));
-                const record = gradebook[last.section.id];
-                const detail = showGroupedSection(group)
-                    ? `${group.sections.length} quizzes`
-                    : first.section.detail;
-                const openAction = showGroupedSection(group)
-                    ? `showQuizGroupSelect(${index}, ${JSON.stringify(group.label)})`
-                    : `startSection(${index}, ${first.sectionIndex})`;
+            ${sections.map((section, sectionIndex) => {
+                const unlocked = isSectionUnlocked(index, sectionIndex);
+                const complete = isSectionComplete(index, sectionIndex);
+                const record = gradebook[section.id];
                 return `
                     <button
                         class="section-card ${unlocked ? "" : "locked"}"
-                        onclick="${unlocked ? openAction : ""}"
+                        onclick="${unlocked ? `startSection(${index}, ${sectionIndex})` : ""}"
                         ${unlocked ? "" : "disabled"}
                     >
-                        <strong>${escapeHtml(group.label)} ${complete ? "✓" : ""}</strong>
-                        <span>${escapeHtml(detail)}</span>
+                        <strong>${escapeHtml(section.label)} ${complete ? "✓" : ""}</strong>
+                        <span>${escapeHtml(section.detail)}</span>
                         <span class="section-grade">${escapeHtml(gradeSummaryText(record))}</span>
-                        <span>${unlocked ? (complete ? "Open again" : (showGroupedSection(group) ? "Open quizzes" : "Start section")) : "Finish the previous section first"}</span>
+                        <span>${unlocked ? (complete ? "Open again" : "Start section") : "Finish the previous section first"}</span>
                     </button>
                 `;
             }).join("")}
@@ -3063,14 +3054,8 @@ function completeStep(){
 
         if(sectionIndex < sections.length - 1) {
             const percent = currentGradePercent();
-            const currentLabel = sectionGroupLabel(sections[sectionIndex]);
-            const nextLabel = sectionGroupLabel(sections[sectionIndex + 1]);
             const message = "❤️ +1 heart • " + sections[sectionIndex + 1].label + " is now unlocked • Grade " + gradeLetter(percent) + " " + percent + "%";
-            if(currentLabel === nextLabel && currentLabel) {
-                showQuizGroupSelect(partIndex, currentLabel, message);
-            } else {
-                showSectionSelect(partIndex, message);
-            }
+            showSectionSelect(partIndex, message);
             return;
         }
     }

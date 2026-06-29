@@ -2722,11 +2722,18 @@ function renderAudioMatchStep(step){
 function renderTypeStep(step){
     document.getElementById("activity").innerHTML = `
         ${step.spoken ? `<button class="speaker" onclick="speak('${escapeHtml(step.spoken)}')" aria-label="Play sound">🔊</button>` : ""}
-        <input class="type-answer" id="typedAnswer" type="text" autocomplete="off" autocapitalize="none" placeholder="Type in English">
-        <button onclick="checkTyped(this)">Check</button>
+        <input class="type-answer" id="typedAnswer" type="text" autocomplete="off" autocapitalize="none" placeholder="Type in English" onkeydown="handleTypedAnswerKey(event)">
+        <button id="typedCheckButton" onclick="checkTyped(this)">Check</button>
     `;
 
     if(step.spoken) setTimeout(() => speak(step.spoken), 250);
+}
+
+function handleTypedAnswerKey(event){
+    if(!event || event.key !== "Enter") return;
+    event.preventDefault();
+    const button = document.getElementById("typedCheckButton");
+    if(button) checkTyped(button);
 }
 
 function shuffleCards(cards, salt){

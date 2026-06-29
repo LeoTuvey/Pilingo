@@ -2439,7 +2439,7 @@ function showQuizGroupSelect(index, groupLabel, message){
     document.getElementById("feedback").innerText = "";
     showIdleGrade("Choose a quiz to see its live grade");
     saveResumeState({
-        mode:"quiz-group-select",
+        mode:"section-select",
         partIndex:index,
         groupLabel:groupLabel
     });
@@ -3200,9 +3200,8 @@ function resumeLastPosition(){
 
     if(saved.mode === "quiz-group-select") {
         const savedPart = Number(saved.partIndex);
-        const groupLabel = String(saved.groupLabel || "");
-        if(Number.isInteger(savedPart) && gameParts[savedPart] && groupLabel) {
-            showQuizGroupSelect(savedPart, groupLabel, "Continue where you stopped");
+        if(Number.isInteger(savedPart) && gameParts[savedPart]) {
+            showSectionSelect(savedPart, "Continue where you stopped");
             return;
         }
     }

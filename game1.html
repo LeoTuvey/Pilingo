@@ -1005,55 +1005,6 @@ const gameParts = [
                 ["Z", "Zoe"]
             ], "🎧 Match the letter with the name | Tîpê bi nav re li hev bîne!", "english", null, { "Yrsa":"fi-FI" }),
             nextStep("Game One A • Part 1 complete"),
-            vocabVoiceMatchStep([
-                ["father", "bab(bav)"],
-                ["mother", "daik(dê)"],
-                ["son", "kur"],
-                ["daughter", "kiç(keç)"],
-                ["brother", "bira"],
-                ["sister", "xwişk"]
-            ], {
-                "bab(bav)":"bav",
-                "daik(dê)":"dê",
-                "kur":"kur",
-                "kiç(keç)":"keç",
-                "bira":"bira",
-                "xwişk":"xwişk"
-            }),
-            vocabVoiceMatchStep([
-                ["husband", "mêr"],
-                ["wife", "jin"],
-                ["family", "malbat"],
-                ["grandfather", "bapîr"],
-                ["grandmother", "dapîr"],
-                ["uncle", "mam"],
-                ["uncle", "xal"]
-            ], {
-                "mêr":"mêr",
-                "jin":"jin",
-                "malbat":"malbat",
-                "bapîr":"bapîr",
-                "dapîr":"dapîr",
-                "mam":"mam",
-                "xal":"xal"
-            }),
-            vocabVoiceMatchStep([
-                ["aunt", "met"],
-                ["aunt", "xalet"],
-                ["child", "zarok"],
-                ["baby", "bebok(bebek)"],
-                ["boy", "law"],
-                ["friend", "heval"],
-                ["relative", "xizim"]
-            ], {
-                "met":"met",
-                "xalet":"xalet",
-                "zarok":"zarok",
-                "bebok(bebek)":"bebek",
-                "law":"law",
-                "heval":"heval",
-                "xizim":"xizim"
-            }),
             imageStep("şîr", [
                 imgOpt("Coffee", "coffee"),
                 imgOpt("Water", "water"),
@@ -1084,6 +1035,32 @@ const gameParts = [
     {
         title:"Game One; B",
         steps:[
+            vocabVoiceMatchStep([
+                ["father", "bab(bav)"],
+                ["mother", "daik(dê)"],
+                ["son", "kur"],
+                ["daughter", "kiç(keç)"],
+                ["brother", "bira"],
+                ["sister", "xwişk"]
+            ]),
+            vocabVoiceMatchStep([
+                ["husband", "mêr"],
+                ["wife", "jin"],
+                ["family", "malbat"],
+                ["grandfather", "bapîr"],
+                ["grandmother", "dapîr"],
+                { english:"uncle", kurmanji:"mam", group:"uncle" },
+                { english:"uncle", kurmanji:"xal", group:"uncle" }
+            ]),
+            vocabVoiceMatchStep([
+                { english:"aunt", kurmanji:"met", group:"aunt" },
+                { english:"aunt", kurmanji:"xalet", group:"aunt" },
+                ["child", "zarok"],
+                ["baby", "bebok(bebek)"],
+                ["boy", "law"],
+                ["friend", "heval"],
+                ["relative", "xizim"]
+            ]),
             imageStep("AV", [
                 imgOpt("Bread", "bread"),
                 imgOpt("Milk", "milk"),
@@ -1591,13 +1568,13 @@ const partEmojis = ["🐈", "🐕", "🐇", "🦜", "🦆", "🍎"];
 const partSections = {
     0: [
         { id:"a-part-1", label:"Part 1", detail:"Kurmanji, Sorani, and international letter names", start:0, end:7 },
-        { id:"a-part-2", label:"Part 2", detail:"Family members, milk, coffee, hello, and matching", start:8, end:20 }
+        { id:"a-part-2", label:"Part 2", detail:"Milk, coffee, hello, and matching", start:8, end:17 }
     ],
     1: [
-        { id:"b-part-1", label:"Part 1", detail:"Drinks, food, and welcome words", start:0, end:11 },
-        { id:"b-part-2", label:"Part 2", detail:"Phrases, listening, and matching", start:12, end:23 },
-        { id:"b-part-3", label:"Part 3", detail:"Yes, no, and review practice", start:24, end:35 },
-        { id:"b-part-4", label:"Part 4", detail:"Final review and sentence building", start:36, end:46 }
+        { id:"b-part-1", label:"Part 1", detail:"Family members, drinks, food, and welcome words", start:0, end:14 },
+        { id:"b-part-2", label:"Part 2", detail:"Phrases, listening, and matching", start:15, end:26 },
+        { id:"b-part-3", label:"Part 3", detail:"Yes, no, and review practice", start:27, end:38 },
+        { id:"b-part-4", label:"Part 4", detail:"Final review and sentence building", start:39, end:49 }
     ],
     2: [
         { id:"c-part-1", label:"Part 1", detail:"Intro sentences and audio practice", start:0, end:14 },
@@ -1818,7 +1795,6 @@ function vocabVoiceMatchStep(pairs, leftSpeakMap){
         rightHeading:"English",
         leftSide:"second",
         rightSide:"first",
-        leftSpeakMap:leftSpeakMap || {},
         rightSpeakValues:true
     };
 }
@@ -2469,21 +2445,26 @@ function renderMatchStep(step){
     const englishCards = [];
 
     step.pairs.forEach((pair, index) => {
-        const leftText = step.leftSide === "second" ? pair[1] : pair[0];
-        const rightText = step.rightSide === "first" ? pair[0] : pair[1];
+        const englishValue = Array.isArray(pair) ? pair[0] : pair.english;
+        const kurmanjiValue = Array.isArray(pair) ? pair[1] : pair.kurmanji;
+        const matchGroup = Array.isArray(pair) ? index : (pair.group || index);
+        const leftText = step.leftSide === "second" ? kurmanjiValue : englishValue;
+        const rightText = step.rightSide === "first" ? englishValue : kurmanjiValue;
 
         englishCards.push({
             text:rightText,
             key:index,
+            group:matchGroup,
             id:"en-" + index,
-            spoken:step.rightSpeakMap?.[rightText] || (step.rightSpeakValues ? rightText : "") || (step.speakSide === "english" ? pair[1] : ""),
+            spoken:step.rightSpeakMap?.[rightText] || (step.rightSpeakValues ? rightText : "") || (step.speakSide === "english" ? kurmanjiValue : ""),
             spokenLang:step.rightSpeakLangMap?.[rightText] || ""
         });
         kurmanjiCards.push({
             text:leftText,
             key:index,
+            group:matchGroup,
             id:"ku-" + index,
-            spoken:step.leftSpeakMap?.[leftText] || (step.speakSide === "kurmanji" ? pair[0] : ""),
+            spoken:step.leftSpeakMap?.[leftText] || (step.speakSide === "kurmanji" ? englishValue : ""),
             spokenLang:step.leftSpeakLangMap?.[leftText] || ""
         });
     });
@@ -2496,7 +2477,7 @@ function renderMatchStep(step){
             <div class="match-column">
                 <div class="match-heading">${escapeHtml(step.leftHeading || "Kurmanji")}</div>
                 ${kurmanjiCards.map((card) => `
-                    <button class="secondary" id="match-${card.id}" onclick="${card.spoken ? `speakAndSelectMatch('${card.id}', ${card.key}, '${escapeHtml(card.spoken)}', '${escapeHtml(card.spokenLang || "")}')` : `selectMatch('${card.id}', ${card.key})`}">
+                    <button class="secondary" id="match-${card.id}" onclick="${card.spoken ? `speakAndSelectMatch('${card.id}', ${card.group}, '${escapeHtml(card.spoken)}', '${escapeHtml(card.spokenLang || "")}')` : `selectMatch('${card.id}', ${card.group})`}">
                         ${card.spoken ? "🔊 " : ""}${escapeHtml(card.text)}
                     </button>
                 `).join("")}
@@ -2504,7 +2485,7 @@ function renderMatchStep(step){
             <div class="match-column">
                 <div class="match-heading">${escapeHtml(step.rightHeading || "English")}</div>
                 ${englishCards.map((card) => `
-                    <button class="secondary" id="match-${card.id}" onclick="${card.spoken ? `speakAndSelectMatch('${card.id}', ${card.key}, '${escapeHtml(card.spoken)}', '${escapeHtml(card.spokenLang || "")}')` : `selectMatch('${card.id}', ${card.key})`}">
+                    <button class="secondary" id="match-${card.id}" onclick="${card.spoken ? `speakAndSelectMatch('${card.id}', ${card.group}, '${escapeHtml(card.spoken)}', '${escapeHtml(card.spokenLang || "")}')` : `selectMatch('${card.id}', ${card.group})`}">
                         ${card.spoken ? "🔊 " : ""}${escapeHtml(card.text)}
                     </button>
                 `).join("")}
@@ -2699,7 +2680,7 @@ function checkTyped(button){
 }
 
 function selectMatch(buttonIndex, key){
-    if(matchedKeys.includes(key)) return;
+    if(matchedKeys.includes(buttonIndex)) return;
 
     const button = document.getElementById("match-" + buttonIndex);
     if(!button) return;
@@ -2716,14 +2697,14 @@ function selectMatch(buttonIndex, key){
     const firstButton = document.getElementById("match-" + selectedMatch.buttonIndex);
 
     if(selectedMatch.key === key) {
-        matchedKeys.push(key);
+        matchedKeys.push(buttonIndex, selectedMatch.buttonIndex);
         button.classList.add("correct");
         if(firstButton) firstButton.classList.add("correct");
         button.disabled = true;
         if(firstButton) firstButton.disabled = true;
         selectedMatch = null;
 
-        if(matchedKeys.length === currentStep().pairs.length) {
+        if(matchedKeys.length === currentStep().pairs.length * 2) {
             markCorrect();
         }
         return;

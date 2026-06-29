@@ -1861,7 +1861,13 @@ function escapeHtml(value){
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;");
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+}
+
+function matchKeyLiteral(value){
+    if(typeof value === "number") return String(value);
+    return "'" + String(value).replace(/\\/g, "\\\\").replace(/'/g, "\\'") + "'";
 }
 
 function currentStep(){
@@ -2481,7 +2487,7 @@ function renderMatchStep(step){
             <div class="match-column">
                 <div class="match-heading">${escapeHtml(step.leftHeading || "Kurmanji")}</div>
                 ${kurmanjiCards.map((card) => `
-                    <button class="secondary" id="match-${card.id}" onclick="${card.spoken ? `speakAndSelectMatch('${card.id}', '${card.side}', ${JSON.stringify(card.group)}, '${escapeHtml(card.spoken)}', '${escapeHtml(card.spokenLang || "")}')` : `selectMatch('${card.id}', '${card.side}', ${JSON.stringify(card.group)})`}">
+                    <button class="secondary" id="match-${card.id}" onclick="${card.spoken ? `speakAndSelectMatch('${card.id}', '${card.side}', ${matchKeyLiteral(card.group)}, '${escapeHtml(card.spoken)}', '${escapeHtml(card.spokenLang || "")}')` : `selectMatch('${card.id}', '${card.side}', ${matchKeyLiteral(card.group)})`}">
                         ${card.spoken ? "🔊 " : ""}${escapeHtml(card.text)}
                     </button>
                 `).join("")}
@@ -2489,7 +2495,7 @@ function renderMatchStep(step){
             <div class="match-column">
                 <div class="match-heading">${escapeHtml(step.rightHeading || "English")}</div>
                 ${englishCards.map((card) => `
-                    <button class="secondary" id="match-${card.id}" onclick="${card.spoken ? `speakAndSelectMatch('${card.id}', '${card.side}', ${JSON.stringify(card.group)}, '${escapeHtml(card.spoken)}', '${escapeHtml(card.spokenLang || "")}')` : `selectMatch('${card.id}', '${card.side}', ${JSON.stringify(card.group)})`}">
+                    <button class="secondary" id="match-${card.id}" onclick="${card.spoken ? `speakAndSelectMatch('${card.id}', '${card.side}', ${matchKeyLiteral(card.group)}, '${escapeHtml(card.spoken)}', '${escapeHtml(card.spokenLang || "")}')` : `selectMatch('${card.id}', '${card.side}', ${matchKeyLiteral(card.group)})`}">
                         ${card.spoken ? "🔊 " : ""}${escapeHtml(card.text)}
                     </button>
                 `).join("")}

@@ -1005,6 +1005,55 @@ const gameParts = [
                 ["Z", "Zoe"]
             ], "🎧 Match the letter with the name | Tîpê bi nav re li hev bîne!", "english", null, { "Yrsa":"fi-FI" }),
             nextStep("Game One A • Part 1 complete"),
+            vocabVoiceMatchStep([
+                ["father", "bab(bav)"],
+                ["mother", "daik(dê)"],
+                ["son", "kur"],
+                ["daughter", "kiç(keç)"],
+                ["brother", "bira"],
+                ["sister", "xwişk"]
+            ], {
+                "bab(bav)":"bav",
+                "daik(dê)":"dê",
+                "kur":"kur",
+                "kiç(keç)":"keç",
+                "bira":"bira",
+                "xwişk":"xwişk"
+            }),
+            vocabVoiceMatchStep([
+                ["husband", "mêr"],
+                ["wife", "jin"],
+                ["family", "malbat"],
+                ["grandfather", "bapîr"],
+                ["grandmother", "dapîr"],
+                ["uncle", "mam"],
+                ["uncle", "xal"]
+            ], {
+                "mêr":"mêr",
+                "jin":"jin",
+                "malbat":"malbat",
+                "bapîr":"bapîr",
+                "dapîr":"dapîr",
+                "mam":"mam",
+                "xal":"xal"
+            }),
+            vocabVoiceMatchStep([
+                ["aunt", "met"],
+                ["aunt", "xalet"],
+                ["child", "zarok"],
+                ["baby", "bebok(bebek)"],
+                ["boy", "law"],
+                ["friend", "heval"],
+                ["relative", "xizim"]
+            ], {
+                "met":"met",
+                "xalet":"xalet",
+                "zarok":"zarok",
+                "bebok(bebek)":"bebek",
+                "law":"law",
+                "heval":"heval",
+                "xizim":"xizim"
+            }),
             imageStep("şîr", [
                 imgOpt("Coffee", "coffee"),
                 imgOpt("Water", "water"),
@@ -1542,7 +1591,7 @@ const partEmojis = ["🐈", "🐕", "🐇", "🦜", "🦆", "🍎"];
 const partSections = {
     0: [
         { id:"a-part-1", label:"Part 1", detail:"Kurmanji, Sorani, and international letter names", start:0, end:7 },
-        { id:"a-part-2", label:"Part 2", detail:"Milk, coffee, hello, and matching", start:8, end:17 }
+        { id:"a-part-2", label:"Part 2", detail:"Family members, milk, coffee, hello, and matching", start:8, end:20 }
     ],
     1: [
         { id:"b-part-1", label:"Part 1", detail:"Drinks, food, and welcome words", start:0, end:11 },
@@ -1756,6 +1805,21 @@ function soraniMatchStep(pairs){
         rightHeading:"Sorani",
         leftSide:"first",
         rightSide:"second"
+    };
+}
+
+function vocabVoiceMatchStep(pairs, leftSpeakMap){
+    return {
+        type:"match",
+        instruction:"👨‍👩‍👧‍👦 Family Members | Endamên malbatê li hev bîne!",
+        prompt:"",
+        pairs:pairs,
+        leftHeading:"Kurmanji",
+        rightHeading:"English",
+        leftSide:"second",
+        rightSide:"first",
+        leftSpeakMap:leftSpeakMap || {},
+        rightSpeakValues:true
     };
 }
 

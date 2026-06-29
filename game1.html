@@ -1067,29 +1067,29 @@ const gameParts = [
             voiceTypeStep("Child", "child"),
             voiceTypeStep("Baby", "baby"),
             nextStep("Game One A • Part 1B complete"),
-            buildStep("Translate the sentence", "Ez bav im. (Ez bavek im.)", ["am", "father", "I", "a", "mother"], ["I", "am", "a", "father"]),
-            buildStep("Translate the sentence", "Ez bab im. (Ez babek im.)", ["am", "father", "I", "a", "mother"], ["I", "am", "a", "father"]),
-            buildStep("Translate the sentence", "Ez dayik im. (Ez dayikek im.)", ["I", "father", "am", "mother", "a"], ["I", "am", "a", "mother"]),
-            buildStep("Translate the sentence", "Ez law im. (Ez lawek im.)", ["boy", "am", "daughter", "I", "a"], ["I", "am", "a", "boy"]),
-            buildStep("Translate the sentence", "Ez keç im. (Ez keçek im.)", ["I", "am", "girl", "son", "a"], ["I", "am", "a", "girl"]),
-            buildStep("Translate the sentence", "Ez kur im. (Ez kurek im.)", ["daughter", "I", "am", "boy", "a"], ["I", "am", "a", "boy"]),
-            buildStep("Translate the sentence", "Ez keç im. (Ez keçek im.)", ["I", "daughter", "am", "brother", "a"], ["I", "am", "a", "daughter"]),
-            buildStep("Translate the sentence", "Ez kiç im. (Ez kiçek im.)", ["I", "daughter", "am", "brother", "a"], ["I", "am", "a", "daughter"]),
-            buildStep("Translate the sentence", "Ez jin im. (Ez jinek im.)", ["I", "man", "am", "woman", "a"], ["I", "am", "a", "woman"]),
-            buildStep("Translate the sentence", "I am a father.", ["Ez", "bav", "im", "dayik", "law"], ["Ez", "bav", "im"]),
-            buildStep("Translate the sentence", "I am a mother.", ["Ez", "dayik", "im", "bav", "keç"], ["Ez", "dayik", "im"]),
-            buildStep("Translate the sentence", "I am a boy.", ["Ez", "law", "im", "kur", "dayik"], ["Ez", "law", "im"]),
-            buildStepMulti("Translate the sentence", "I am a girl.", ["Ez", "keç", "im", "law", "bav", "kiç"], [["Ez", "keç", "im"], ["Ez", "kiç", "im"]]),
-            buildStep("Translate the sentence", "I am a son.", ["Ez", "kur", "im", "law", "dayik"], ["Ez", "kur", "im"]),
-            buildStepMulti("Translate the sentence", "I am a daughter.", ["Ez", "keç", "im", "kur", "bav", "kiç"], [["Ez", "keç", "im"], ["Ez", "kiç", "im"]]),
-            buildStep("Translate the sentence", "I am a woman.", ["Ez", "jin", "im", "mêr", "law"], ["Ez", "jin", "im"]),
-            buildStep("Complete the sentence", "_____ _____ a father.\n_____ bab _____. (Ez babek im.)", ["I", "am", "Ez", "im"], ["I", "am", "Ez", "im"]),
-            buildStep("Complete the sentence", "_____ _____ a mother.\n_____ dayik _____. (Ez dayikek im.)", ["I", "am", "Ez", "im"], ["I", "am", "Ez", "im"]),
-            buildStep("Complete the sentence", "_____ _____ a boy.\n_____ law _____. (Ez lawek im.)", ["I", "am", "Ez", "im"], ["I", "am", "Ez", "im"]),
-            buildStep("Complete the sentence", "_____ _____ a girl.\n_____ keç _____. (Ez keçek im.)", ["I", "am", "Ez", "im"], ["I", "am", "Ez", "im"]),
-            buildStep("Complete the sentence", "_____ _____ a boy.\n_____ kur _____. (Ez kurek im.)", ["I", "am", "Ez", "im"], ["I", "am", "Ez", "im"]),
-            buildStep("Complete the sentence", "_____ _____ a daughter.\n_____ kiç _____. (Ez kiçek im.)", ["I", "am", "Ez", "im"], ["I", "am", "Ez", "im"]),
-            buildStep("Complete the sentence", "_____ _____ a woman.\n_____ jin _____. (Ez jinek im.)", ["I", "am", "Ez", "im"], ["I", "am", "Ez", "im"]),
+            rawBuildStep("Translate the sentence\t\tWergera vê hevokê bike.", "Ez bav im. (Ez bavek im.)\n____________", ["am", "father", "I", "a", "mother"], ["I", "am", "a", "father"]),
+            rawBuildStep("Translate the sentence", "Ez bab im. (Ez babek im.)\n____________", ["am", "father", "I", "a", "mother"], ["I", "am", "a", "father"]),
+            rawBuildStep("Translate the sentence", "Ez dayik im. (Ez dayikek im.)\n____________", ["I", "father", "am", "mother", "a"], ["I", "am", "a", "mother"]),
+            rawBuildStep("Translate the sentence", "Ez law im. (Ez lawek im.)\n____________", ["boy", "am", "daughter", "I", "a"], ["I", "am", "a", "boy"]),
+            rawBuildStep("Translate the sentence", "Ez keç im. (Ez keçek im.)\n____________", ["I", "am", "girl", "son", "a"], ["I", "am", "a", "girl"]),
+            rawBuildStep("Translate the sentence", "Ez kur im. (Ez kurek im.)\n____________", ["daughter", "I", "am", "boy", "a"], ["I", "am", "a", "boy"]),
+            rawBuildStep("Translate the sentence", "Ez keç im. (Ez keçek im.)\n____________", ["I", "daughter", "am", "brother", "a"], ["I", "am", "a", "daughter"]),
+            rawBuildStep("Translate the sentence", "Ez kiç im. (Ez kiçek im.)\n____________", ["I", "daughter", "am", "brother", "a"], ["I", "am", "a", "daughter"]),
+            rawBuildStep("Translate the sentence", "Ez jin im. (Ez jinek im.)\n____________", ["I", "man", "am", "woman", "a"], ["I", "am", "a", "woman"]),
+            rawBuildStep("Wergera vê hevokê bike.\nTranslate the sentence", "I am a father.", ["Ez", "bav", "im", "dayik", "law"], ["Ez", "bav", "im"]),
+            rawBuildStep("Wergera vê hevokê bike.\nTranslate the sentence", "I am a mother.", ["Ez", "dayik", "im", "bav", "keç"], ["Ez", "dayik", "im"]),
+            rawBuildStep("Wergera vê hevokê bike.\nTranslate the sentence", "I am a boy.", ["Ez", "law", "im", "kur", "dayik"], ["Ez", "law", "im"]),
+            rawBuildStepMulti("Wergera vê hevokê bike.\nTranslate the sentence", "I am a girl.\n(If your dialect uses kiç, you can also accept: Ez kiç im. (Ez kiçek im.))", ["Ez", "keç", "im", "law", "bav", "kiç"], [["Ez", "keç", "im"], ["Ez", "kiç", "im"]]),
+            rawBuildStep("Wergera vê hevokê bike.\nTranslate the sentence", "I am a son.", ["Ez", "kur", "im", "law", "dayik"], ["Ez", "kur", "im"]),
+            rawBuildStepMulti("Wergera vê hevokê bike.\nTranslate the sentence", "I am a daughter.\n(Or in dialects that use kiç: Ez kiç im. (Ez kiçek im.))", ["Ez", "keç", "im", "kur", "bav", "kiç"], [["Ez", "keç", "im"], ["Ez", "kiç", "im"]]),
+            rawBuildStep("Wergera vê hevokê bike.\nTranslate the sentence", "I am a woman.", ["Ez", "jin", "im", "mêr", "law"], ["Ez", "jin", "im"]),
+            rawBuildStep("Drag the missing words into place! Peyvên winda bikişîne cihê wan.", "_____ _____ a father.\n_____ bab _____. (Ez babek im.)", ["I", "am", "Ez", "im"], ["I", "am", "Ez", "im"]),
+            rawBuildStep("Fill in the missing words", "_____ _____ a mother.\n_____ dayik _____. (Ez dayikek im.)", ["I", "am", "Ez", "im"], ["I", "am", "Ez", "im"]),
+            rawBuildStep("Fill in the missing words", "_____ _____ a boy.\n_____ law _____. (Ez lawek im.)", ["I", "am", "Ez", "im"], ["I", "am", "Ez", "im"]),
+            rawBuildStep("Fill in the missing words", "_____ _____ a girl.\n_____ keç _____.(Ez keçek im.)", ["I", "am", "Ez", "im"], ["I", "am", "Ez", "im"]),
+            rawBuildStep("Fill in the missing words", "_____ _____ a boy.\n_____ kur _____. (Ez kurek im.)", ["I", "am", "Ez", "im"], ["I", "am", "Ez", "im"]),
+            rawBuildStep("Fill in the missing words", "_____ _____ a daughter.\n_____ kiç _____.(Ez kiçek im.)", ["I", "am", "Ez", "im"], ["I", "am", "Ez", "im"]),
+            rawBuildStep("Fill in the missing words", "_____ _____ a woman.\n_____ jin _____.(Ez jinek im.)", ["I", "am", "Ez", "im"], ["I", "am", "Ez", "im"]),
             nextStep("Game One A • Part 1C complete"),
             imageStep("şîr", [
                 imgOpt("Coffee", "coffee"),
@@ -1828,6 +1828,26 @@ function buildStepMulti(instruction, prompt, options, answers){
     return {
         type:"build",
         instruction:instruction + helper,
+        prompt:prompt,
+        options:options,
+        answer:answers
+    };
+}
+
+function rawBuildStep(instruction, prompt, options, answer){
+    return {
+        type:"build",
+        instruction:instruction,
+        prompt:prompt,
+        options:options,
+        answer:answer
+    };
+}
+
+function rawBuildStepMulti(instruction, prompt, options, answers){
+    return {
+        type:"build",
+        instruction:instruction,
         prompt:prompt,
         options:options,
         answer:answers

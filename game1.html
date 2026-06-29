@@ -938,6 +938,33 @@ const gameParts = [
     {
         title:"Game One; A",
         steps:[
+            vocabVoiceMatchStep([
+                ["father", "bab(bav)"],
+                ["mother", "daik(dê)"],
+                ["son", "kur"],
+                ["daughter", "kiç(keç)"],
+                ["brother", "bira"],
+                ["sister", "xwişk"]
+            ]),
+            vocabVoiceMatchStep([
+                ["husband", "mêr"],
+                ["wife", "jin"],
+                ["family", "malbat"],
+                ["grandfather", "bapîr"],
+                ["grandmother", "dapîr"],
+                { english:"uncle", kurmanji:"mam", group:"uncle" },
+                { english:"uncle", kurmanji:"xal", group:"uncle" }
+            ]),
+            vocabVoiceMatchStep([
+                { english:"aunt", kurmanji:"met", group:"aunt" },
+                { english:"aunt", kurmanji:"xalet", group:"aunt" },
+                ["child", "zarok"],
+                ["baby", "bebok(bebek)"],
+                ["boy", "law"],
+                ["friend", "heval"],
+                ["relative", "xizim"]
+            ]),
+            nextStep("Game One A • Part 1A complete"),
             soraniMatchStep([
                 ["A a", "ا"],
                 ["B b", "ب"],
@@ -1004,7 +1031,7 @@ const gameParts = [
                 ["Y", "Yusif"],
                 ["Z", "Zoe"]
             ], "🎧 Match the letter with the name | Tîpê bi nav re li hev bîne!", "english", null, { "Yrsa":"fi-FI" }),
-            nextStep("Game One A • Part 1 complete"),
+            nextStep("Game One A • Part 1B complete"),
             imageStep("şîr", [
                 imgOpt("Coffee", "coffee"),
                 imgOpt("Water", "water"),
@@ -1035,32 +1062,6 @@ const gameParts = [
     {
         title:"Game One; B",
         steps:[
-            vocabVoiceMatchStep([
-                ["father", "bab(bav)"],
-                ["mother", "daik(dê)"],
-                ["son", "kur"],
-                ["daughter", "kiç(keç)"],
-                ["brother", "bira"],
-                ["sister", "xwişk"]
-            ]),
-            vocabVoiceMatchStep([
-                ["husband", "mêr"],
-                ["wife", "jin"],
-                ["family", "malbat"],
-                ["grandfather", "bapîr"],
-                ["grandmother", "dapîr"],
-                { english:"uncle", kurmanji:"mam", group:"uncle" },
-                { english:"uncle", kurmanji:"xal", group:"uncle" }
-            ]),
-            vocabVoiceMatchStep([
-                { english:"aunt", kurmanji:"met", group:"aunt" },
-                { english:"aunt", kurmanji:"xalet", group:"aunt" },
-                ["child", "zarok"],
-                ["baby", "bebok(bebek)"],
-                ["boy", "law"],
-                ["friend", "heval"],
-                ["relative", "xizim"]
-            ]),
             imageStep("AV", [
                 imgOpt("Bread", "bread"),
                 imgOpt("Milk", "milk"),
@@ -1567,14 +1568,15 @@ const partEmojis = ["🐈", "🐕", "🐇", "🦜", "🦆", "🍎"];
 
 const partSections = {
     0: [
-        { id:"a-part-1", label:"Part 1", detail:"Kurmanji, Sorani, and international letter names", start:0, end:7 },
-        { id:"a-part-2", label:"Part 2", detail:"Milk, coffee, hello, and matching", start:8, end:17 }
+        { id:"a-part-1a", label:"Part 1A", detail:"Family members", start:0, end:3 },
+        { id:"a-part-1b", label:"Part 1B", detail:"Kurmanji, Sorani, and international letter names", start:4, end:11 },
+        { id:"a-part-2", label:"Part 2", detail:"Milk, coffee, hello, and matching", start:12, end:21 }
     ],
     1: [
-        { id:"b-part-1", label:"Part 1", detail:"Family members, drinks, food, and welcome words", start:0, end:14 },
-        { id:"b-part-2", label:"Part 2", detail:"Phrases, listening, and matching", start:15, end:26 },
-        { id:"b-part-3", label:"Part 3", detail:"Yes, no, and review practice", start:27, end:38 },
-        { id:"b-part-4", label:"Part 4", detail:"Final review and sentence building", start:39, end:49 }
+        { id:"b-part-1", label:"Part 1", detail:"Drinks, food, and welcome words", start:0, end:11 },
+        { id:"b-part-2", label:"Part 2", detail:"Phrases, listening, and matching", start:12, end:23 },
+        { id:"b-part-3", label:"Part 3", detail:"Yes, no, and review practice", start:24, end:35 },
+        { id:"b-part-4", label:"Part 4", detail:"Final review and sentence building", start:36, end:46 }
     ],
     2: [
         { id:"c-part-1", label:"Part 1", detail:"Intro sentences and audio practice", start:0, end:14 },

@@ -1076,6 +1076,13 @@ const gameParts = [
             rawBuildStep("Translate the sentence", "Ez keç im. (Ez keçek im.)\n____________", ["I", "daughter", "am", "brother", "a"], ["I", "am", "a", "daughter"]),
             rawBuildStep("Translate the sentence", "Ez kiç im. (Ez kiçek im.)\n____________", ["I", "daughter", "am", "brother", "a"], ["I", "am", "a", "daughter"]),
             rawBuildStep("Translate the sentence", "Ez jin im. (Ez jinek im.)\n____________", ["I", "man", "am", "woman", "a"], ["I", "am", "a", "woman"]),
+            rawBuildStep("Wergera vê hevokê bike.\nTranslate the sentence", "I am a father.\n………………….. .", ["Ez", "bav", "im", "dayik", "law"], ["Ez", "bav", "im"]),
+            rawBuildStep("Wergera vê hevokê bike.\nTranslate the sentence", "I am a mother.\n………………. .", ["Ez", "dayik", "im", "bav", "keç"], ["Ez", "dayik", "im"]),
+            rawBuildStep("Wergera vê hevokê bike.\nTranslate the sentence", "I am a boy.\n……………… .", ["Ez", "law", "im", "kur", "dayik"], ["Ez", "law", "im"]),
+            rawBuildStep("Wergera vê hevokê bike.\nTranslate the sentence", "I am a girl.\n……………. .", ["Ez", "keç", "im", "law", "bav"], ["Ez", "keç", "im"]),
+            rawBuildStep("Wergera vê hevokê bike.\nTranslate the sentence", "I am a son.\n……………. .", ["Ez", "kur", "im", "law", "dayik"], ["Ez", "kur", "im"]),
+            rawBuildStep("Wergera vê hevokê bike.\nTranslate the sentence", "I am a daughter.\n…………… .", ["Ez", "keç", "im", "kur", "bav"], ["Ez", "keç", "im"]),
+            rawBuildStep("Wergera vê hevokê bike.\nTranslate the sentence", "I am a woman.\n…………… .", ["Ez", "jin", "im", "mêr", "law"], ["Ez", "jin", "im"]),
             nextStep("Game One A • Part 1C complete"),
             imageStep("şîr", [
                 imgOpt("Coffee", "coffee"),
@@ -1615,8 +1622,8 @@ const partSections = {
     0: [
         { id:"a-part-1a", label:"Part 1A", detail:"Kurmanji, Sorani, and international letter names", start:0, end:7 },
         { id:"a-part-1b", label:"Part 1B", detail:"Family members", start:8, end:46 },
-        { id:"a-part-1c", label:"Part 1C", detail:"Family sentence translation", start:47, end:56 },
-        { id:"a-part-2", label:"Part 2", detail:"Milk, coffee, hello, and matching", start:57, end:66 }
+        { id:"a-part-1c", label:"Part 1C", detail:"Family sentence translation", start:47, end:63 },
+        { id:"a-part-2", label:"Part 2", detail:"Milk, coffee, hello, and matching", start:64, end:73 }
     ],
     1: [
         { id:"b-part-1", label:"Part 1", detail:"Drinks, food, and welcome words", start:0, end:11 },

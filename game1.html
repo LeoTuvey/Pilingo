@@ -2069,36 +2069,6 @@ function saveGradebook(){
     localStorage.setItem("pilingo_game1_grades", JSON.stringify(gradebook));
 }
 
-function currentStudentResumeKey(){
-    const email = String(window.PilingoAuth?.loadAccount?.()?.email || "").trim().toLowerCase();
-    return "pilingo_game1_resume_" + (email || "guest");
-}
-
-function loadResumeState(){
-    try {
-        const saved = JSON.parse(localStorage.getItem(currentStudentResumeKey()) || "null");
-        return saved && typeof saved === "object" ? saved : null;
-    } catch(error) {
-        return null;
-    }
-}
-
-function saveResumeState(state){
-    localStorage.setItem(currentStudentResumeKey(), JSON.stringify(state || null));
-}
-
-function clearResumeState(){
-    localStorage.removeItem(currentStudentResumeKey());
-}
-
-function saveStepResume(){
-    saveResumeState({
-        mode:"step",
-        partIndex:partIndex,
-        stepIndex:stepIndex
-    });
-}
-
 function sectionsForPart(index){
     return partSections[index] || [];
 }
@@ -2401,10 +2371,6 @@ function showSectionSelect(index, message){
     document.getElementById("image").removeAttribute("src");
     document.getElementById("feedback").innerText = "";
     showIdleGrade("Choose a section to see its live grade");
-    saveResumeState({
-        mode:"section-select",
-        partIndex:index
-    });
     document.getElementById("activity").innerHTML = `
         <div class="section-select">
             ${sections.map((section, sectionIndex) => {
@@ -2448,9 +2414,6 @@ function showPartSelect(){
     document.getElementById("image").removeAttribute("src");
     document.getElementById("feedback").innerText = "";
     showIdleGrade("Choose a part to begin grading");
-    saveResumeState({
-        mode:"part-select"
-    });
     document.getElementById("activity").innerHTML = `
         <div class="part-selector">
             ${partGroups.map((group, groupIndex) => `
@@ -2497,7 +2460,6 @@ function load(){
     const part = gameParts[partIndex];
     const step = currentStep();
     ensureGradeState();
-    saveStepResume();
 
     selectedWords = [];
     matchedKeys = [];
@@ -2722,18 +2684,11 @@ function renderAudioMatchStep(step){
 function renderTypeStep(step){
     document.getElementById("activity").innerHTML = `
         ${step.spoken ? `<button class="speaker" onclick="speak('${escapeHtml(step.spoken)}')" aria-label="Play sound">🔊</button>` : ""}
-        <input class="type-answer" id="typedAnswer" type="text" autocomplete="off" autocapitalize="none" placeholder="Type in English" onkeydown="handleTypedAnswerKey(event)">
-        <button id="typedCheckButton" onclick="checkTyped(this)">Check</button>
+        <input class="type-answer" id="typedAnswer" type="text" autocomplete="off" autocapitalize="none" placeholder="Type in English">
+        <button onclick="checkTyped(this)">Check</button>
     `;
 
     if(step.spoken) setTimeout(() => speak(step.spoken), 250);
-}
-
-function handleTypedAnswerKey(event){
-    if(!event || event.key !== "Enter") return;
-    event.preventDefault();
-    const button = document.getElementById("typedCheckButton");
-    if(button) checkTyped(button);
 }
 
 function shuffleCards(cards, salt){
@@ -2987,10 +2942,6 @@ function completeStep(){
 
 function showPartComplete(completedIndex){
     PilingoAudio.playLessonComplete();
-    saveResumeState({
-        mode:"part-complete",
-        partIndex:completedIndex
-    });
 
     const openPart = nextOpenPart();
     const isAllDone = allPartsComplete();
@@ -3021,7 +2972,6 @@ function showPartComplete(completedIndex){
 
 function finish(){
     PilingoAudio.playLessonComplete();
-  clearResumeState();
   showLessonComplete();
   PilingoAudio.speak("Great job! You finished this lesson.");
 
@@ -3059,52 +3009,7 @@ function gameOver(){
     </div>`;
 }
 
-function resumeLastPosition(){
-    const saved = loadResumeState();
-    if(!saved || typeof saved !== "object") {
-        showPartSelect();
-        return;
-    }
-
-    if(saved.mode === "step") {
-        const savedPart = Number(saved.partIndex);
-        const savedStep = Number(saved.stepIndex);
-        if(
-            Number.isInteger(savedPart) &&
-            Number.isInteger(savedStep) &&
-            gameParts[savedPart] &&
-            savedStep >= 0 &&
-            savedStep < gameParts[savedPart].steps.length
-        ) {
-            partIndex = savedPart;
-            stepIndex = savedStep;
-            hearts = Engine.getHearts();
-            gradeState = null;
-            load();
-            return;
-        }
-    }
-
-    if(saved.mode === "section-select") {
-        const savedPart = Number(saved.partIndex);
-        if(Number.isInteger(savedPart) && gameParts[savedPart]) {
-            showSectionSelect(savedPart, "Continue where you stopped");
-            return;
-        }
-    }
-
-    if(saved.mode === "part-complete") {
-        const savedPart = Number(saved.partIndex);
-        if(Number.isInteger(savedPart) && gameParts[savedPart]) {
-            showPartComplete(savedPart);
-            return;
-        }
-    }
-
-    showPartSelect();
-}
-
-resumeLastPosition();
+showPartSelect();
 </script>
 </body>
 </html>

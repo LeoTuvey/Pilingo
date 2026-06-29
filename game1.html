@@ -1031,6 +1031,41 @@ const gameParts = [
                 ["friend", "heval"],
                 ["relative", "xizim"]
             ]),
+            movingSentenceChoiceStep("Ez ", "bab", " im. (Ez babek im.)", "I am a ________.", ["mother", "father", "brother", "sister"], "father"),
+            movingSentenceChoiceStep("Ez ", "dayik", " im. (Ez dayek im.)", "I am a ________.", ["mother", "father", "wife", "daughter"], "mother"),
+            movingSentenceChoiceStep("Ez ", "kur", " im. (Ez kurek im.)", "I am a ________.", ["father", "brother", "son", "husband"], "son"),
+            movingSentenceChoiceStep("Ez ", "kiç", " im. (Ez keçek im.)", "I am a ________.", ["son", "mother", "wife", "daughter"], "daughter"),
+            movingEnglishSentenceChoiceStep("I am a ", "father", ".", ["mother", "bab(bav)", "brother", "sister"], "bab(bav)"),
+            movingEnglishSentenceChoiceStep("I am a ", "mother", ".", ["daik (dî)", "sister", "Jin", "Kiç (Keç)"], "daik (dî)"),
+            movingEnglishSentenceChoiceStep("I am a ", "son", ".", ["kur (law)", "Father", "Jin", "Kiç (Keç)"], "kur (law)"),
+            movingEnglishSentenceChoiceStep("I am a ", "daughter", ".", ["Kiç (Keç)", "Father", "Jin", "kur (law)"], "Kiç (Keç)"),
+            typeStep("✍️ Write in English", "Bab (Bav)\nType the English word.", "father"),
+            typeStep("✍️ Write in English", "Daik (Dî)\nType the English word.", "mother"),
+            typeStep("✍️ Write in English", "Bira\nType the English word.", "brother"),
+            typeStep("✍️ Write in English", "Xwişk\nType the English word.", "sister"),
+            typeStep("✍️ Write in English", "Kur\nType the English word.", "son"),
+            typeStep("✍️ Write in English", "Kiç (Keç)\nType the English word.", "daughter"),
+            typeStep("✍️ Write in English", "Mêr\nType the English word.", "husband"),
+            typeStep("✍️ Write in English", "Jin\nType the English word.", "wife"),
+            typeStep("✍️ Write in English", "Malbat\nType the English word.", "family"),
+            typeStep("✍️ Write in English", "Zarok\nType the English word.", "child"),
+            typeStep("✍️ Write in English", "Bebok (Bebek)\nType the English word.", "baby"),
+            typeStep("✍️ Write in English", "Law\nType the English word.", "boy"),
+            typeStep("✍️ Write in English", "Bapîr\nType the English word.", "grandfather"),
+            typeStep("✍️ Write in English", "Dapîr\nType the English word.", "grandmother"),
+            typeStep("✍️ Write in English", "Xizim\nType the English word.", "relative"),
+            typeStep("✍️ Write in English", "Heval\nType the English word.", "friend"),
+            voiceTypeStep("Father", "father"),
+            voiceTypeStep("Mother", "mother"),
+            voiceTypeStep("Brother", "brother"),
+            voiceTypeStep("Sister", "sister"),
+            voiceTypeStep("Son", "son"),
+            voiceTypeStep("Daughter", "daughter"),
+            voiceTypeStep("Boy", "boy"),
+            voiceTypeStep("Husband", "husband"),
+            voiceTypeStep("Wife", "wife"),
+            voiceTypeStep("Child", "child"),
+            voiceTypeStep("Baby", "baby"),
             nextStep("Game One A • Part 1B complete"),
             imageStep("şîr", [
                 imgOpt("Coffee", "coffee"),
@@ -1569,8 +1604,8 @@ const partEmojis = ["🐈", "🐕", "🐇", "🦜", "🦆", "🍎"];
 const partSections = {
     0: [
         { id:"a-part-1a", label:"Part 1A", detail:"Kurmanji, Sorani, and international letter names", start:0, end:7 },
-        { id:"a-part-1b", label:"Part 1B", detail:"Family members", start:8, end:11 },
-        { id:"a-part-2", label:"Part 2", detail:"Milk, coffee, hello, and matching", start:12, end:21 }
+        { id:"a-part-1b", label:"Part 1B", detail:"Family members", start:8, end:46 },
+        { id:"a-part-2", label:"Part 2", detail:"Milk, coffee, hello, and matching", start:47, end:56 }
     ],
     1: [
         { id:"b-part-1", label:"Part 1", detail:"Drinks, food, and welcome words", start:0, end:11 },
@@ -1702,6 +1737,28 @@ function movingKurdishEndingChoiceStep(kurdishBase, kurdishEnding, englishPrompt
     };
 }
 
+function movingSentenceChoiceStep(prefix, movingWord, suffix, englishPrompt, options, answer){
+    return {
+        type:"choice",
+        instruction:"🎯 Fill in the Missing English Word | Peyva Îngilîzî ya winda temam bike!",
+        prompt:prefix + movingWord + suffix + "\n" + englishPrompt,
+        promptHtml:`${escapeHtml(prefix)}<span class="moving-demo-word">${escapeHtml(movingWord)}</span>${escapeHtml(suffix)}<br>${escapeHtml(englishPrompt)}`,
+        options:options,
+        answer:answer
+    };
+}
+
+function movingEnglishSentenceChoiceStep(prefix, movingWord, suffix, options, answer){
+    return {
+        type:"choice",
+        instruction:"🎯 Fill in the Missing Kurmanji Word | Peyva Kurdî ya winda temam bike!",
+        prompt:prefix + movingWord + suffix,
+        promptHtml:`${escapeHtml(prefix)}<span class="moving-demo-word">${escapeHtml(movingWord)}</span>${escapeHtml(suffix)}`,
+        options:options,
+        answer:answer
+    };
+}
+
 function hearStep(spoken, options, answer, instruction, prompt){
     return {
         type:"hear",
@@ -1815,6 +1872,16 @@ function typeStep(instruction, prompt, answer){
         type:"type",
         instruction:instruction + " | vê hevokê binivîse",
         prompt:prompt,
+        answer:answer
+    };
+}
+
+function voiceTypeStep(spoken, answer){
+    return {
+        type:"type",
+        instruction:"🔊 Voice | ✍️ Type the English word",
+        prompt:"",
+        spoken:spoken,
         answer:answer
     };
 }
@@ -2540,9 +2607,12 @@ function renderAudioMatchStep(step){
 
 function renderTypeStep(step){
     document.getElementById("activity").innerHTML = `
+        ${step.spoken ? `<button class="speaker" onclick="speak('${escapeHtml(step.spoken)}')" aria-label="Play sound">🔊</button>` : ""}
         <input class="type-answer" id="typedAnswer" type="text" autocomplete="off" autocapitalize="none" placeholder="Type in English">
         <button onclick="checkTyped(this)">Check</button>
     `;
+
+    if(step.spoken) setTimeout(() => speak(step.spoken), 250);
 }
 
 function shuffleCards(cards, salt){

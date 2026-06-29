@@ -1035,10 +1035,10 @@ const gameParts = [
             movingSentenceChoiceStep("Ez ", "dayik", " im. (Ez dayek im.)", "I am a ________.", ["mother", "father", "wife", "daughter"], "mother"),
             movingSentenceChoiceStep("Ez ", "kur", " im. (Ez kurek im.)", "I am a ________.", ["father", "brother", "son", "husband"], "son"),
             movingSentenceChoiceStep("Ez ", "kiç", " im. (Ez keçek im.)", "I am a ________.", ["son", "mother", "wife", "daughter"], "daughter"),
-            movingEnglishSentenceChoiceStep("I am a ", "father", ".", ["mother", "bab(bav)", "brother", "sister"], "bab(bav)"),
-            movingEnglishSentenceChoiceStep("I am a ", "mother", ".", ["daik (dî)", "sister", "Jin", "Kiç (Keç)"], "daik (dî)"),
-            movingEnglishSentenceChoiceStep("I am a ", "son", ".", ["kur (law)", "Father", "Jin", "Kiç (Keç)"], "kur (law)"),
-            movingEnglishSentenceChoiceStep("I am a ", "daughter", ".", ["Kiç (Keç)", "Father", "Jin", "kur (law)"], "Kiç (Keç)"),
+            movingEnglishSentenceChoiceStep("I am a ", "father", ".", ["daik (dî)", "bab(bav)", "kur (law)", "Kiç (Keç)"], "bab(bav)"),
+            movingEnglishSentenceChoiceStep("I am a ", "mother", ".", ["daik (dî)", "kur (law)", "Jin", "Kiç (Keç)"], "daik (dî)"),
+            movingEnglishSentenceChoiceStep("I am a ", "son", ".", ["kur (law)", "Bab (bav)", "Jin", "Kiç (Keç)"], "kur (law)"),
+            movingEnglishSentenceChoiceStep("I am a ", "daughter", ".", ["Kiç (Keç)", "Bab (bav)", "Jin", "kur (law)"], "Kiç (Keç)"),
             typeStep("✍️ Write in English", "Bab (Bav)\nType the English word.", "father"),
             typeStep("✍️ Write in English", "Daik (Dî)\nType the English word.", "mother"),
             typeStep("✍️ Write in English", "Bira\nType the English word.", "brother"),
@@ -1050,7 +1050,7 @@ const gameParts = [
             typeStep("✍️ Write in English", "Malbat\nType the English word.", "family"),
             typeStep("✍️ Write in English", "Zarok\nType the English word.", "child"),
             typeStep("✍️ Write in English", "Bebok (Bebek)\nType the English word.", "baby"),
-            typeStep("✍️ Write in English", "Law\nType the English word.", "boy"),
+            typeStep("✍️ Write in English", "Law\nType the English word.", ["boy (son)", "boy", "son"]),
             typeStep("✍️ Write in English", "Bapîr\nType the English word.", "grandfather"),
             typeStep("✍️ Write in English", "Dapîr\nType the English word.", "grandmother"),
             typeStep("✍️ Write in English", "Xizim\nType the English word.", "relative"),
@@ -2749,7 +2749,7 @@ function checkTyped(button){
     const input = document.getElementById("typedAnswer");
     const value = input ? input.value : "";
 
-    if(normalize(value) === normalize(step.answer)){
+    if(answersForStep(step).some(answer => normalize(value) === normalize(answer))){
         showButtonResult(button, "correct");
         markCorrect();
         return;

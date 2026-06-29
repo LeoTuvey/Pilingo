@@ -636,77 +636,33 @@ button.wrong{
 
 .section-select{
     display:grid;
-    gap:18px;
-    width:min(100%, 560px);
-    margin:16px auto 0;
+    gap:16px;
+    width:96%;
+    margin:14px auto 0;
 }
 
 .section-card{
     width:100%;
     margin:0;
     text-align:left;
-    padding:20px 22px;
-    border-radius:30px;
-    min-height:132px;
+    padding:18px 20px;
+    border-radius:24px;
+    min-height:120px;
     background:
-        radial-gradient(circle at 16% 18%, rgba(255,255,255,0.98), rgba(255,255,255,0.3) 24%, transparent 30%),
-        linear-gradient(180deg, #fffefb 0%, #fff3d2 100%);
-    border:2px solid #efcf8b;
-    box-shadow:0 8px 0 #e7c985, 0 18px 30px rgba(160,109,13,0.12);
+        radial-gradient(circle at 16% 18%, rgba(255,255,255,0.95), rgba(255,255,255,0.22) 26%, transparent 30%),
+        linear-gradient(180deg, #fffdf7 0%, #fff4dd 100%);
+    border:2px solid #f0d7a2;
+    box-shadow:0 7px 0 #e7c985, 0 14px 24px rgba(160,109,13,0.1);
     display:flex;
     flex-direction:column;
     justify-content:center;
     transition:transform 0.14s ease, box-shadow 0.14s ease, border-color 0.14s ease;
-    position:relative;
-    overflow:hidden;
 }
 
 .section-card:hover{
     transform:translateY(-2px);
-    border-color:#d8b365;
-    box-shadow:0 10px 0 #e7c985, 0 22px 34px rgba(160,109,13,0.16);
-}
-
-.section-card::before{
-    content:"";
-    position:absolute;
-    inset:0;
-    background:linear-gradient(120deg, rgba(255,255,255,0.24), transparent 38%);
-    pointer-events:none;
-}
-
-.section-card-top{
-    display:flex;
-    align-items:flex-start;
-    gap:14px;
-}
-
-.section-badge{
-    flex:0 0 68px;
-    width:68px;
-    height:68px;
-    border-radius:50%;
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    background:
-        radial-gradient(circle at 30% 26%, rgba(255,255,255,0.96), rgba(255,255,255,0.34) 28%, transparent 34%),
-        linear-gradient(180deg, #7be41d 0%, #58cc02 100%);
-    border:3px solid rgba(255,255,255,0.96);
-    box-shadow:0 6px 0 #46a302, 0 12px 18px rgba(70,163,2,0.22);
-    font-size:30px;
-}
-
-.section-card.locked .section-badge{
-    background:
-        radial-gradient(circle at 30% 26%, rgba(255,255,255,0.9), rgba(255,255,255,0.26) 28%, transparent 34%),
-        linear-gradient(180deg, #d9e0eb 0%, #bcc7d8 100%);
-    box-shadow:0 6px 0 #a8b4c7, 0 10px 14px rgba(128,142,164,0.18);
-}
-
-.section-main{
-    min-width:0;
-    flex:1;
+    border-color:#d5b16a;
+    box-shadow:0 9px 0 #e7c985, 0 18px 28px rgba(160,109,13,0.14);
 }
 
 .section-card strong,
@@ -716,7 +672,7 @@ button.wrong{
 
 .section-card strong{
     font-size:20px;
-    margin-bottom:8px;
+    margin-bottom:7px;
     color:#53411f;
 }
 
@@ -730,35 +686,7 @@ button.wrong{
     font-size:13px !important;
     font-weight:900;
     color:#a06d0d !important;
-    margin-top:8px;
-}
-
-.section-footer{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:12px;
-    margin-top:14px;
-}
-
-.section-status-pill{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    min-height:34px;
-    padding:8px 14px;
-    border-radius:999px;
-    background:rgba(88,204,2,0.12);
-    color:#368b00 !important;
-    font-size:12px !important;
-    font-weight:900;
-    letter-spacing:0.04em;
-    text-transform:uppercase;
-}
-
-.section-card.locked .section-status-pill{
-    background:rgba(147,160,180,0.16);
-    color:#7e8ba1 !important;
+    margin-top:4px;
 }
 
 .section-card.locked{
@@ -777,10 +705,6 @@ button.wrong{
 .section-card.locked span,
 .section-card.locked strong{
     color:#93a0b4;
-}
-
-.section-card.locked .section-grade{
-    color:#7e8ba1 !important;
 }
 
 .image-options{
@@ -2477,25 +2401,16 @@ function showSectionSelect(index, message){
                 const unlocked = isSectionUnlocked(index, sectionIndex);
                 const complete = isSectionComplete(index, sectionIndex);
                 const record = gradebook[section.id];
-                const status = unlocked ? (complete ? "Open again" : "Start section") : "Locked";
                 return `
                     <button
                         class="section-card ${unlocked ? "" : "locked"}"
                         onclick="${unlocked ? `startSection(${index}, ${sectionIndex})` : ""}"
                         ${unlocked ? "" : "disabled"}
                     >
-                        <div class="section-card-top">
-                            <span class="section-badge" aria-hidden="true">${escapeHtml(sectionBadge(section))}</span>
-                            <div class="section-main">
-                                <strong>${escapeHtml(section.label)} ${complete ? "✓" : ""}</strong>
-                                <span>${escapeHtml(section.detail)}</span>
-                                <span class="section-grade">${escapeHtml(gradeSummaryText(record))}</span>
-                            </div>
-                        </div>
-                        <div class="section-footer">
-                            <span>${unlocked ? (complete ? "Review this section any time." : "Finish this section to unlock the next one.") : "Finish the previous section first."}</span>
-                            <span class="section-status-pill">${escapeHtml(status)}</span>
-                        </div>
+                        <strong>${escapeHtml(section.label)} ${complete ? "✓" : ""}</strong>
+                        <span>${escapeHtml(section.detail)}</span>
+                        <span class="section-grade">${escapeHtml(gradeSummaryText(record))}</span>
+                        <span>${unlocked ? (complete ? "Open again" : "Start section") : "Finish the previous section first"}</span>
                     </button>
                 `;
             }).join("")}
@@ -2553,18 +2468,6 @@ function showPartSelect(){
             `).join("")}
         </div>
     `;
-}
-
-function sectionBadge(section){
-    const label = String(section?.label || "").toLowerCase();
-    const detail = String(section?.detail || "").toLowerCase();
-    const text = label + " " + detail;
-
-    if(text.includes("1a") || text.includes("letter")) return "🔠";
-    if(text.includes("1b") || text.includes("family")) return "👨‍👩‍👧‍👦";
-    if(text.includes("1c") || text.includes("sentence")) return "📝";
-    if(text.includes("part 2") || text.includes("milk") || text.includes("coffee")) return "🥛";
-    return "⭐";
 }
 
 function partOrbitStyle(index, total){

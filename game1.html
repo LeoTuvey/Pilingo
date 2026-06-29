@@ -1053,14 +1053,14 @@ const gameParts = [
             typeStep("✍️ Write in English", "Daik (Dî)\nType the English word.", "mother"),
             typeStep("✍️ Write in English", "Bira\nType the English word.", "brother"),
             typeStep("✍️ Write in English", "Xwişk\nType the English word.", "sister"),
-            typeStep("✍️ Write in English", "Kur\nType the English word.", "son"),
-            typeStep("✍️ Write in English", "Kiç (Keç)\nType the English word.", "daughter"),
+            typeStep("✍️ Write in English", "Kur\nType the English word.", "boy"),
+            typeStep("✍️ Write in English", "Kiç (Keç)\nType the English word.", "girl"),
             typeStep("✍️ Write in English", "Mêr\nType the English word.", "husband"),
             typeStep("✍️ Write in English", "Jin\nType the English word.", "wife"),
             typeStep("✍️ Write in English", "Malbat\nType the English word.", "family"),
-            typeStep("✍️ Write in English", "Zarok\nType the English word.", "child"),
+            typeStep("✍️ Write in English", "Zarokek\nType the English word.", "a child"),
             typeStep("✍️ Write in English", "Bebok (Bebek)\nType the English word.", "baby"),
-            typeStep("✍️ Write in English", "Law\nType the English word.", ["boy (son)", "boy", "son"]),
+            typeStep("✍️ Write in English", "Law\nType the English word.", "boy"),
             typeStep("✍️ Write in English", "Bapîr\nType the English word.", "grandfather"),
             typeStep("✍️ Write in English", "Dapîr\nType the English word.", "grandmother"),
             typeStep("✍️ Write in English", "Xizim\nType the English word.", "relative"),
@@ -2834,6 +2834,8 @@ function checkTyped(button){
         return;
     }
 
+    document.getElementById("feedback").innerText =
+        "Correct answer: " + answersForStep(step).join(" / ");
     showButtonResult(button, "wrong");
     markWrong();
 }

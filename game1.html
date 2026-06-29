@@ -1631,12 +1631,9 @@ const partEmojis = ["🐈", "🐕", "🐇", "🦜", "🦆", "🍎"];
 const partSections = {
     0: [
         { id:"a-part-1a", label:"Part 1A", detail:"Kurmanji, Sorani, and international letter names", start:0, end:7 },
-        { id:"a-part-1b-1", label:"Part 1B • Quiz 1", detail:"Family members with emojis", start:8, end:11 },
-        { id:"a-part-1b-2", label:"Part 1B • Quiz 2", detail:"Missing English and Kurmanji words", start:12, end:19 },
-        { id:"a-part-1b-3", label:"Part 1B • Quiz 3", detail:"Write the family words in English", start:20, end:35 },
-        { id:"a-part-1b-4", label:"Part 1B • Quiz 4", detail:"Listen and type the English family words", start:36, end:46 },
-        { id:"a-part-1c", label:"Part 1C", detail:"Family sentence translation", start:47, end:63 },
-        { id:"a-part-2", label:"Part 2", detail:"Milk, coffee, hello, and matching", start:64, end:73 }
+        { id:"a-part-1b", label:"Part 1B", detail:"Family members", start:8, end:47 },
+        { id:"a-part-1c", label:"Part 1C", detail:"Family sentence translation", start:48, end:64 },
+        { id:"a-part-2", label:"Part 2", detail:"Milk, coffee, hello, and matching", start:65, end:74 }
     ],
     1: [
         { id:"b-part-1", label:"Part 1", detail:"Drinks, food, and welcome words", start:0, end:11 },
@@ -2110,40 +2107,6 @@ function sectionKey(index){
     return String(index);
 }
 
-function sectionGroupLabel(section){
-    const label = String(section?.label || "");
-    const quizMarker = " • Quiz ";
-    if(label.includes(quizMarker)) return label.split(quizMarker)[0];
-    return label;
-}
-
-function groupedSections(index){
-    const sections = sectionsForPart(index);
-    const groups = [];
-
-    sections.forEach((section, sectionIndex) => {
-        const label = sectionGroupLabel(section);
-        const lastGroup = groups[groups.length - 1];
-
-        if(lastGroup && lastGroup.label === label) {
-            lastGroup.sections.push({ section, sectionIndex });
-            return;
-        }
-
-        groups.push({
-            id:section.id,
-            label,
-            sections:[{ section, sectionIndex }]
-        });
-    });
-
-    return groups;
-}
-
-function showGroupedSection(group){
-    return group && Array.isArray(group.sections) && group.sections.length > 1;
-}
-
 function isSectionComplete(index, sectionIndex){
     const sections = sectionsForPart(index);
     const section = sections[sectionIndex];
@@ -2415,58 +2378,6 @@ function startSection(index, sectionIndex){
     load();
 }
 
-function showQuizGroupSelect(index, groupLabel, message){
-    const group = groupedSections(index).find(item => item.label === groupLabel);
-    if(!group) {
-        showSectionSelect(index, message);
-        return;
-    }
-
-    partIndex = index;
-    selectedWords = [];
-    matchedKeys = [];
-    selectedMatch = null;
-
-    renderHearts();
-    document.getElementById("menuButton").style.display = "none";
-    document.getElementById("bar").style.width = "0%";
-    document.getElementById("partLabel").innerText = "Kurmanji to English";
-    document.getElementById("instruction").innerText = message || "Choose a quiz to study";
-    document.getElementById("question").innerText = groupLabel;
-    document.getElementById("question").classList.remove("rich-prompt");
-    document.getElementById("image").style.display = "none";
-    document.getElementById("image").removeAttribute("src");
-    document.getElementById("feedback").innerText = "";
-    showIdleGrade("Choose a quiz to see its live grade");
-    saveResumeState({
-        mode:"section-select",
-        partIndex:index,
-        groupLabel:groupLabel
-    });
-    document.getElementById("activity").innerHTML = `
-        <div class="section-select">
-            ${group.sections.map(({ section, sectionIndex }) => {
-                const unlocked = isSectionUnlocked(index, sectionIndex);
-                const complete = isSectionComplete(index, sectionIndex);
-                const record = gradebook[section.id];
-                return `
-                    <button
-                        class="section-card ${unlocked ? "" : "locked"}"
-                        onclick="${unlocked ? `startSection(${index}, ${sectionIndex})` : ""}"
-                        ${unlocked ? "" : "disabled"}
-                    >
-                        <strong>${escapeHtml(section.label)} ${complete ? "✓" : ""}</strong>
-                        <span>${escapeHtml(section.detail)}</span>
-                        <span class="section-grade">${escapeHtml(gradeSummaryText(record))}</span>
-                        <span>${unlocked ? (complete ? "Open again" : "Start quiz") : "Finish the previous quiz first"}</span>
-                    </button>
-                `;
-            }).join("")}
-            <button class="secondary" onclick="showSectionSelect(${index})">Back to sections</button>
-        </div>
-    `;
-}
-
 function showSectionSelect(index, message){
     const sections = sectionsForPart(index);
     if(!sections.length) {
@@ -2494,31 +2405,22 @@ function showSectionSelect(index, message){
         mode:"section-select",
         partIndex:index
     });
-    const groups = groupedSections(index);
     document.getElementById("activity").innerHTML = `
         <div class="section-select">
-            ${groups.map((group) => {
-                const first = group.sections[0];
-                const last = group.sections[group.sections.length - 1];
-                const unlocked = isSectionUnlocked(index, first.sectionIndex);
-                const complete = group.sections.every(({ sectionIndex }) => isSectionComplete(index, sectionIndex));
-                const record = gradebook[last.section.id];
-                const detail = showGroupedSection(group)
-                    ? `${group.sections.length} quizzes`
-                    : first.section.detail;
-                const openAction = showGroupedSection(group)
-                    ? `showQuizGroupSelect(${index}, ${JSON.stringify(group.label)})`
-                    : `startSection(${index}, ${first.sectionIndex})`;
+            ${sections.map((section, sectionIndex) => {
+                const unlocked = isSectionUnlocked(index, sectionIndex);
+                const complete = isSectionComplete(index, sectionIndex);
+                const record = gradebook[section.id];
                 return `
                     <button
                         class="section-card ${unlocked ? "" : "locked"}"
-                        onclick="${unlocked ? openAction : ""}"
+                        onclick="${unlocked ? `startSection(${index}, ${sectionIndex})` : ""}"
                         ${unlocked ? "" : "disabled"}
                     >
-                        <strong>${escapeHtml(group.label)} ${complete ? "✓" : ""}</strong>
-                        <span>${escapeHtml(detail)}</span>
+                        <strong>${escapeHtml(section.label)} ${complete ? "✓" : ""}</strong>
+                        <span>${escapeHtml(section.detail)}</span>
                         <span class="section-grade">${escapeHtml(gradeSummaryText(record))}</span>
-                        <span>${unlocked ? (complete ? "Open again" : (showGroupedSection(group) ? "Open quizzes" : "Start section")) : "Finish the previous section first"}</span>
+                        <span>${unlocked ? (complete ? "Open again" : "Start section") : "Finish the previous section first"}</span>
                     </button>
                 `;
             }).join("")}
@@ -3063,14 +2965,7 @@ function completeStep(){
 
         if(sectionIndex < sections.length - 1) {
             const percent = currentGradePercent();
-            const message = "❤️ +1 heart • " + sections[sectionIndex + 1].label + " is now unlocked • Grade " + gradeLetter(percent) + " " + percent + "%";
-            const currentLabel = sectionGroupLabel(sections[sectionIndex]);
-            const nextLabel = sectionGroupLabel(sections[sectionIndex + 1]);
-            if(currentLabel === nextLabel && currentLabel) {
-                showQuizGroupSelect(partIndex, currentLabel, message);
-            } else {
-                showSectionSelect(partIndex, message);
-            }
+            showSectionSelect(partIndex, "❤️ +1 heart • " + sections[sectionIndex + 1].label + " is now unlocked • Grade " + gradeLetter(percent) + " " + percent + "%");
             return;
         }
     }
@@ -3191,14 +3086,6 @@ function resumeLastPosition(){
     }
 
     if(saved.mode === "section-select") {
-        const savedPart = Number(saved.partIndex);
-        if(Number.isInteger(savedPart) && gameParts[savedPart]) {
-            showSectionSelect(savedPart, "Continue where you stopped");
-            return;
-        }
-    }
-
-    if(saved.mode === "quiz-group-select") {
         const savedPart = Number(saved.partIndex);
         if(Number.isInteger(savedPart) && gameParts[savedPart]) {
             showSectionSelect(savedPart, "Continue where you stopped");

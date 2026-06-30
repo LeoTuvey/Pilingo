@@ -3107,6 +3107,31 @@ function gradeSummaryText(record){
     return "Latest " + record.latestLetter + " (" + record.latestPercent + "%) • Best " + record.bestLetter + " (" + record.bestPercent + "%)";
 }
 
+function starsForPercent(percent){
+    const score = Number(percent) || 0;
+    if(score >= 95) return "⭐️⭐️⭐️";
+    if(score >= 80) return "⭐️⭐️";
+    if(score >= 60) return "⭐️";
+    return "";
+}
+
+function lessonCompletionBadge(lessonId){
+    const record = gradebook[lessonId];
+    if(!record) return "✅✅";
+
+    const stars = starsForPercent(record.bestPercent);
+    return stars || "✅✅";
+}
+
+function lessonCompletionNote(lessonId){
+    const record = gradebook[lessonId];
+    if(!record) return "Passed";
+
+    const stars = starsForPercent(record.bestPercent);
+    const grade = `${record.bestLetter} (${record.bestPercent}%)`;
+    return stars ? `${stars} • ${grade}` : `✅✅ • ${grade}`;
+}
+
 function leaderboardSummary(){
     const records = Object.values(gradebook || {});
     const count = records.length;
@@ -3222,10 +3247,10 @@ function showLessonSelect(index, sectionIndex, message){
             </div>
             ${lessons.map((lesson, lessonIndex) => `
                 <button class="section-card" onclick="startLesson(${index}, ${sectionIndex}, ${lessonIndex})">
-                    <strong>${escapeHtml(lesson.label)} ${isLessonComplete(index, sectionIndex, lesson.id) ? "✓" : ""}</strong>
+                    <strong>${escapeHtml(lesson.label)} ${isLessonComplete(index, sectionIndex, lesson.id) ? lessonCompletionBadge(lesson.id) : ""}</strong>
                     <span>${escapeHtml(lesson.detail)}</span>
                     <span class="section-grade">${escapeHtml(section.label + " • " + lesson.label)}</span>
-                    <span>${isLessonComplete(index, sectionIndex, lesson.id) ? "Open again" : "Start lesson"}</span>
+                    <span>${isLessonComplete(index, sectionIndex, lesson.id) ? lessonCompletionNote(lesson.id) : "Start lesson"}</span>
                 </button>
             `).join("")}
             <button class="secondary" onclick="showSectionSelect(${index})">Back to sections</button>
@@ -3270,10 +3295,10 @@ function showSectionSelect(index, message){
                         onclick="${unlocked ? `showLessonSelect(${index}, ${sectionIndex})` : ""}"
                         ${unlocked ? "" : "disabled"}
                     >
-                        <strong>${escapeHtml(section.label)} ${complete ? "✓" : ""}</strong>
+                        <strong>${escapeHtml(section.label)} ${complete ? "✅✅" : ""}</strong>
                         <span>${escapeHtml(section.detail)}</span>
                         <span class="section-grade">${escapeHtml(progress.completed + "/" + progress.total + " lesson groups passed")}</span>
-                        <span>${unlocked ? (complete ? "Open lessons again" : "Open this section") : "Finish the previous section first"}</span>
+                        <span>${unlocked ? (complete ? "✅ Completed • Open lessons again" : "Open this section") : "Finish the previous section first"}</span>
                     </button>
                 `;
             }).join("")}

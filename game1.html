@@ -1167,6 +1167,7 @@ button.wrong{
 let hearts = Engine.getHearts();
 let partIndex = 0;
 let stepIndex = 0;
+let activeLesson = null;
 let selectedWords = [];
 let matchedKeys = [];
 let selectedMatch = null;
@@ -1903,53 +1904,319 @@ const gameParts = [
 ];
 
 const partDescriptions = [
-    "Basics: hello, milk, coffee, and",
-    "Food, drinks, yes/no, and listening",
-    "Sentences, audio matches, and apple meanings",
-    "Book, ball, and house meanings",
-    "👤 Person Lesson",
-    "🍎 Sentence challenge with colors"
+    "Alphabet, family, and first sentences",
+    "Daily words, phrases, and review",
+    "Listening, intro sentences, and apples",
+    "Objects: book, ball, and house",
+    "People, animals, and everyday nouns",
+    "Sentence challenge with this, that, and colors"
 ];
 
 const partEmojis = ["🐈", "🐕", "🐇", "🦜", "🦆", "🍎"];
+const partDisplayNames = [
+    "A • Foundations",
+    "B • Daily Essentials",
+    "C • Apple Basics",
+    "D • Object Lessons",
+    "E • People and Animals",
+    "F • Sentence Builder"
+];
 
 const partSections = {
     0: [
-        { id:"a-part-1a", label:"Part 1A", detail:"Kurmanji, Sorani, and international letter names", start:0, end:7 },
-        { id:"a-part-1b", label:"Part 1B", detail:"Family members", start:8, end:47 },
-        { id:"a-part-1c", label:"Part 1C", detail:"Family sentence translation", start:48, end:64 },
-        { id:"a-part-2", label:"Part 2", detail:"Milk, coffee, hello, and matching", start:65, end:74 }
+        {
+            id:"a-part-1a",
+            label:"Part 1A",
+            detail:"Alphabet, Sorani script, and letter sounds",
+            start:0,
+            end:7,
+            lessons:[
+                { id:"a-part-1a-lesson-1", label:"Lesson 1", detail:"Kurmanji letters and Sorani matching", start:0, end:0 },
+                { id:"a-part-1a-lesson-2", label:"Lesson 2", detail:"Letter sounds and example names", start:1, end:7 }
+            ]
+        },
+        {
+            id:"a-part-1b",
+            label:"Part 1B",
+            detail:"Family words and basic family practice",
+            start:8,
+            end:47,
+            lessons:[
+                { id:"a-part-1b-lesson-1", label:"Lesson 1", detail:"Family member matching", start:8, end:8 },
+                { id:"a-part-1b-lesson-2", label:"Lesson 2", detail:"Meaning and missing-word practice", start:9, end:23 },
+                { id:"a-part-1b-lesson-3", label:"Lesson 3", detail:"Write the family words in English", start:24, end:39 },
+                { id:"a-part-1b-lesson-4", label:"Lesson 4", detail:"Listening and typing review", start:40, end:47 }
+            ]
+        },
+        {
+            id:"a-part-1c",
+            label:"Part 1C",
+            detail:"Family sentence translation and sentence building",
+            start:48,
+            end:64,
+            lessons:[
+                { id:"a-part-1c-lesson-1", label:"Lesson 1", detail:"Translate Kurmanji family sentences into English", start:48, end:56 },
+                { id:"a-part-1c-lesson-2", label:"Lesson 2", detail:"Translate English family sentences into Kurmanji", start:57, end:64 }
+            ]
+        },
+        {
+            id:"a-part-2",
+            label:"Part 2",
+            detail:"Milk, coffee, greetings, and basic matching",
+            start:65,
+            end:74,
+            lessons:[
+                { id:"a-part-2-lesson-1", label:"Lesson 1", detail:"Core everyday words", start:65, end:69 },
+                { id:"a-part-2-lesson-2", label:"Lesson 2", detail:"Matching and review", start:70, end:74 }
+            ]
+        }
     ],
     1: [
-        { id:"b-part-1", label:"Part 1", detail:"Drinks, food, and welcome words", start:0, end:11 },
-        { id:"b-part-2", label:"Part 2", detail:"Phrases, listening, and matching", start:12, end:23 },
-        { id:"b-part-3", label:"Part 3", detail:"Yes, no, and review practice", start:24, end:35 },
-        { id:"b-part-4", label:"Part 4", detail:"Final review and sentence building", start:36, end:46 }
+        {
+            id:"b-part-1",
+            label:"Part 1",
+            detail:"Drinks, food, and welcome words",
+            start:0,
+            end:11,
+            lessons:[
+                { id:"b-part-1-lesson-1", label:"Lesson 1", detail:"Daily food and drink words", start:0, end:5 },
+                { id:"b-part-1-lesson-2", label:"Lesson 2", detail:"Meaning and review practice", start:6, end:11 }
+            ]
+        },
+        {
+            id:"b-part-2",
+            label:"Part 2",
+            detail:"Phrases, listening, and matching",
+            start:12,
+            end:23,
+            lessons:[
+                { id:"b-part-2-lesson-1", label:"Lesson 1", detail:"Simple phrases", start:12, end:17 },
+                { id:"b-part-2-lesson-2", label:"Lesson 2", detail:"Listening and matching", start:18, end:23 }
+            ]
+        },
+        {
+            id:"b-part-3",
+            label:"Part 3",
+            detail:"Yes, no, and review practice",
+            start:24,
+            end:35,
+            lessons:[
+                { id:"b-part-3-lesson-1", label:"Lesson 1", detail:"Yes and no basics", start:24, end:29 },
+                { id:"b-part-3-lesson-2", label:"Lesson 2", detail:"Short review quiz", start:30, end:35 }
+            ]
+        },
+        {
+            id:"b-part-4",
+            label:"Part 4",
+            detail:"Final review and sentence building",
+            start:36,
+            end:46,
+            lessons:[
+                { id:"b-part-4-lesson-1", label:"Lesson 1", detail:"Final meaning review", start:36, end:41 },
+                { id:"b-part-4-lesson-2", label:"Lesson 2", detail:"Sentence building and wrap-up", start:42, end:46 }
+            ]
+        }
     ],
     2: [
-        { id:"c-part-1", label:"Part 1", detail:"Intro sentences and audio practice", start:0, end:14 },
-        { id:"c-part-2", label:"Part 2", detail:"Apple meanings and missing words", start:15, end:27 }
+        {
+            id:"c-part-1",
+            label:"Part 1",
+            detail:"Intro sentences and audio practice",
+            start:0,
+            end:14,
+            lessons:[
+                { id:"c-part-1-lesson-1", label:"Lesson 1", detail:"Intro sentence meanings", start:0, end:7 },
+                { id:"c-part-1-lesson-2", label:"Lesson 2", detail:"Audio and sentence practice", start:8, end:14 }
+            ]
+        },
+        {
+            id:"c-part-2",
+            label:"Part 2",
+            detail:"Apple meanings and missing words",
+            start:15,
+            end:27,
+            lessons:[
+                { id:"c-part-2-lesson-1", label:"Lesson 1", detail:"Apple sentence meanings", start:15, end:21 },
+                { id:"c-part-2-lesson-2", label:"Lesson 2", detail:"Missing-word practice", start:22, end:27 }
+            ]
+        }
     ],
     3: [
-        { id:"d-part-1", label:"Part 1", detail:"Book lesson", start:0, end:12 },
-        { id:"d-part-2", label:"Part 2", detail:"Ball lesson", start:13, end:25 },
-        { id:"d-part-3", label:"Part 3", detail:"House lesson", start:26, end:38 }
+        {
+            id:"d-part-1",
+            label:"Part 1",
+            detail:"Book lesson",
+            start:0,
+            end:12,
+            lessons:[
+                { id:"d-part-1-lesson-1", label:"Lesson 1", detail:"Book vocabulary", start:0, end:6 },
+                { id:"d-part-1-lesson-2", label:"Lesson 2", detail:"Book sentence review", start:7, end:12 }
+            ]
+        },
+        {
+            id:"d-part-2",
+            label:"Part 2",
+            detail:"Ball lesson",
+            start:13,
+            end:25,
+            lessons:[
+                { id:"d-part-2-lesson-1", label:"Lesson 1", detail:"Ball vocabulary", start:13, end:19 },
+                { id:"d-part-2-lesson-2", label:"Lesson 2", detail:"Ball sentence review", start:20, end:25 }
+            ]
+        },
+        {
+            id:"d-part-3",
+            label:"Part 3",
+            detail:"House lesson",
+            start:26,
+            end:38,
+            lessons:[
+                { id:"d-part-3-lesson-1", label:"Lesson 1", detail:"House vocabulary", start:26, end:32 },
+                { id:"d-part-3-lesson-2", label:"Lesson 2", detail:"House sentence review", start:33, end:38 }
+            ]
+        }
     ],
     4: [
-        { id:"e-part-1", label:"Part 1", detail:"Person lesson", start:0, end:12 },
-        { id:"e-part-2", label:"Part 2", detail:"Kes lesson", start:13, end:25 },
-        { id:"e-part-3", label:"Part 3", detail:"Man lesson", start:26, end:38 },
-        { id:"e-part-4", label:"Part 4", detail:"Woman lesson", start:39, end:51 },
-        { id:"e-part-5", label:"Part 5", detail:"Boy lesson", start:52, end:64 },
-        { id:"e-part-6", label:"Part 6", detail:"Girl lesson", start:65, end:77 },
-        { id:"e-part-7", label:"Part 7", detail:"Cat lesson", start:78, end:90 },
-        { id:"e-part-8", label:"Part 8", detail:"Dog lesson", start:91, end:103 }
+        {
+            id:"e-part-1",
+            label:"Part 1",
+            detail:"Person lesson",
+            start:0,
+            end:12,
+            lessons:[
+                { id:"e-part-1-lesson-1", label:"Lesson 1", detail:"Meaning practice", start:0, end:6 },
+                { id:"e-part-1-lesson-2", label:"Lesson 2", detail:"Missing-word review", start:7, end:12 }
+            ]
+        },
+        {
+            id:"e-part-2",
+            label:"Part 2",
+            detail:"Kes lesson",
+            start:13,
+            end:25,
+            lessons:[
+                { id:"e-part-2-lesson-1", label:"Lesson 1", detail:"Meaning practice", start:13, end:19 },
+                { id:"e-part-2-lesson-2", label:"Lesson 2", detail:"Missing-word review", start:20, end:25 }
+            ]
+        },
+        {
+            id:"e-part-3",
+            label:"Part 3",
+            detail:"Man lesson",
+            start:26,
+            end:38,
+            lessons:[
+                { id:"e-part-3-lesson-1", label:"Lesson 1", detail:"Meaning practice", start:26, end:32 },
+                { id:"e-part-3-lesson-2", label:"Lesson 2", detail:"Missing-word review", start:33, end:38 }
+            ]
+        },
+        {
+            id:"e-part-4",
+            label:"Part 4",
+            detail:"Woman lesson",
+            start:39,
+            end:51,
+            lessons:[
+                { id:"e-part-4-lesson-1", label:"Lesson 1", detail:"Meaning practice", start:39, end:45 },
+                { id:"e-part-4-lesson-2", label:"Lesson 2", detail:"Missing-word review", start:46, end:51 }
+            ]
+        },
+        {
+            id:"e-part-5",
+            label:"Part 5",
+            detail:"Boy lesson",
+            start:52,
+            end:64,
+            lessons:[
+                { id:"e-part-5-lesson-1", label:"Lesson 1", detail:"Meaning practice", start:52, end:58 },
+                { id:"e-part-5-lesson-2", label:"Lesson 2", detail:"Missing-word review", start:59, end:64 }
+            ]
+        },
+        {
+            id:"e-part-6",
+            label:"Part 6",
+            detail:"Girl lesson",
+            start:65,
+            end:77,
+            lessons:[
+                { id:"e-part-6-lesson-1", label:"Lesson 1", detail:"Meaning practice", start:65, end:71 },
+                { id:"e-part-6-lesson-2", label:"Lesson 2", detail:"Missing-word review", start:72, end:77 }
+            ]
+        },
+        {
+            id:"e-part-7",
+            label:"Part 7",
+            detail:"Cat lesson",
+            start:78,
+            end:90,
+            lessons:[
+                { id:"e-part-7-lesson-1", label:"Lesson 1", detail:"Meaning practice", start:78, end:84 },
+                { id:"e-part-7-lesson-2", label:"Lesson 2", detail:"Missing-word review", start:85, end:90 }
+            ]
+        },
+        {
+            id:"e-part-8",
+            label:"Part 8",
+            detail:"Dog lesson",
+            start:91,
+            end:103,
+            lessons:[
+                { id:"e-part-8-lesson-1", label:"Lesson 1", detail:"Meaning practice", start:91, end:97 },
+                { id:"e-part-8-lesson-2", label:"Lesson 2", detail:"Missing-word review", start:98, end:103 }
+            ]
+        }
     ],
     5: [
-        { id:"f-part-1", label:"Part 1", detail:"This, that, these, and those", start:0, end:26 },
-        { id:"f-part-2a", label:"Part 2A", detail:"Apple colors quiz practice", start:27, end:76 },
-        { id:"f-part-2b", label:"Part 2B", detail:"Apple sentence pair matching and listening", start:77, end:92 },
-        { id:"f-part-3", label:"Part 3", detail:"Apple colors and sentence practice", start:93, end:gameParts[5].steps.length - 1 }
+        {
+            id:"f-part-1",
+            label:"Part 1",
+            detail:"This, that, these, and those",
+            start:0,
+            end:26,
+            lessons:[
+                { id:"f-part-1-lesson-1", label:"Lesson 1", detail:"Ev and Ew basics", start:0, end:4 },
+                { id:"f-part-1-lesson-2", label:"Lesson 2", detail:"This, that, these, and those in English", start:5, end:9 },
+                { id:"f-part-1-lesson-3", label:"Lesson 3", detail:"Kurmanji noun forms", start:10, end:17 },
+                { id:"f-part-1-lesson-4", label:"Lesson 4", detail:"Apple and apples review", start:18, end:26 }
+            ]
+        },
+        {
+            id:"f-part-2a",
+            label:"Part 2A",
+            detail:"Apple colors quiz practice",
+            start:27,
+            end:76,
+            lessons:[
+                { id:"f-part-2a-lesson-1", label:"Lesson 1", detail:"This, that, these, and those with colors", start:27, end:31 },
+                { id:"f-part-2a-lesson-2", label:"Lesson 2", detail:"Ev and Ew with color sentences", start:32, end:36 },
+                { id:"f-part-2a-lesson-3", label:"Lesson 3", detail:"Is and are endings", start:37, end:41 },
+                { id:"f-part-2a-lesson-4", label:"Lesson 4", detail:"English is and are review", start:42, end:46 },
+                { id:"f-part-2a-lesson-5", label:"Lesson 5", detail:"True or false sentence check", start:47, end:76 }
+            ]
+        },
+        {
+            id:"f-part-2b",
+            label:"Part 2B",
+            detail:"Apple sentence pair matching and listening",
+            start:77,
+            end:92,
+            lessons:[
+                { id:"f-part-2b-lesson-1", label:"Lesson 1", detail:"Pair matching", start:77, end:85 },
+                { id:"f-part-2b-lesson-2", label:"Lesson 2", detail:"Listening challenge", start:86, end:92 }
+            ]
+        },
+        {
+            id:"f-part-3",
+            label:"Part 3",
+            detail:"Apple colors and sentence practice",
+            start:93,
+            end:gameParts[5].steps.length - 1,
+            lessons:[
+                { id:"f-part-3-lesson-1", label:"Lesson 1", detail:"Match the meaning", start:93, end:100 },
+                { id:"f-part-3-lesson-2", label:"Lesson 2", detail:"Fill in the missing word", start:101, end:106 },
+                { id:"f-part-3-lesson-3", label:"Lesson 3", detail:"Boss level review", start:107, end:gameParts[5].steps.length - 1 }
+            ]
+        }
     ]
 };
 
@@ -2380,18 +2647,60 @@ function lessonStoreKey(index, sectionIndex){
     return section ? section.id : "";
 }
 
-function lessonStepsForSection(index, sectionIndex){
+function lessonsForSection(index, sectionIndex){
     const section = sectionsForPart(index)[sectionIndex];
-    const steps = [];
-    if(!section) return steps;
+    if(!section) return [];
+    if(Array.isArray(section.lessons) && section.lessons.length) return section.lessons;
 
-    for(let i = section.start; i <= section.end; i++) {
+    return [{
+        id:section.id + "-lesson-1",
+        label:"Lesson 1",
+        detail:section.detail,
+        start:section.start,
+        end:section.end
+    }];
+}
+
+function gradableStepsInRange(index, start, end){
+    const steps = [];
+    for(let i = start; i <= end; i++) {
         if(isGradableStep(gameParts[index].steps[i])) {
             steps.push(i);
         }
     }
-
     return steps;
+}
+
+function lessonProgressIds(index, sectionIndex){
+    const lessons = lessonsForSection(index, sectionIndex);
+    if(!lessons.length) return [];
+
+    if(isLegacySectionComplete(index, sectionIndex)) {
+        return lessons.map(lesson => lesson.id);
+    }
+
+    const saved = completedLessons[lessonStoreKey(index, sectionIndex)];
+    if(!Array.isArray(saved) || !saved.length) return [];
+
+    const savedIds = saved.filter(value => typeof value === "string");
+    const savedSteps = saved.filter(value => typeof value === "number");
+    const lessonIds = [];
+
+    lessons.forEach((lesson) => {
+        if(savedIds.includes(lesson.id)) {
+            lessonIds.push(lesson.id);
+            return;
+        }
+
+        if(savedSteps.length) {
+            const gradableSteps = gradableStepsInRange(index, lesson.start, lesson.end);
+            if(gradableSteps.length && gradableSteps.every(step => savedSteps.includes(step))) {
+                lessonIds.push(lesson.id);
+            }
+        }
+    });
+
+    return lessonIds;
 }
 
 function isLegacySectionComplete(index, sectionIndex){
@@ -2402,32 +2711,28 @@ function isLegacySectionComplete(index, sectionIndex){
 }
 
 function completedLessonSteps(index, sectionIndex){
-    if(isLegacySectionComplete(index, sectionIndex)) {
-        return lessonStepsForSection(index, sectionIndex);
-    }
-
-    const saved = completedLessons[lessonStoreKey(index, sectionIndex)];
-    return Array.isArray(saved) ? saved : [];
+    const lessonIds = lessonProgressIds(index, sectionIndex);
+    return lessonIds;
 }
 
 function sectionLessonProgress(index, sectionIndex){
-    const total = lessonStepsForSection(index, sectionIndex).length;
+    const total = lessonsForSection(index, sectionIndex).length;
     const completed = Math.min(completedLessonSteps(index, sectionIndex).length, total);
     return { completed:completed, total:total };
 }
 
-function isLessonComplete(index, sectionIndex, stepNumber){
-    return completedLessonSteps(index, sectionIndex).includes(stepNumber);
+function isLessonComplete(index, sectionIndex, lessonId){
+    return completedLessonSteps(index, sectionIndex).includes(lessonId);
 }
 
-function markLessonComplete(index, sectionIndex, stepNumber){
+function markLessonComplete(index, sectionIndex, lessonId){
     const key = lessonStoreKey(index, sectionIndex);
     if(!key) return;
 
-    const saved = completedLessonSteps(index, sectionIndex);
-    if(saved.includes(stepNumber)) return;
+    const saved = lessonProgressIds(index, sectionIndex);
+    if(saved.includes(lessonId)) return;
 
-    completedLessons[key] = [...saved, stepNumber].sort((a, b) => a - b);
+    completedLessons[key] = [...saved, lessonId];
     saveCompletedLessons();
 }
 
@@ -2448,7 +2753,7 @@ function markSectionComplete(index, sectionIndex){
     const section = sections[sectionIndex];
     if(!section) return;
 
-    completedLessons[section.id] = [...lessonStepsForSection(index, sectionIndex)];
+    completedLessons[section.id] = lessonsForSection(index, sectionIndex).map(lesson => lesson.id);
     saveCompletedLessons();
 
     const key = sectionKey(index);
@@ -2486,12 +2791,22 @@ function currentScope(){
     const sections = sectionsForPart(partIndex);
     const sectionIndex = currentSectionIndex();
 
+    if(activeLesson) {
+        return {
+            kind:"lesson",
+            id:activeLesson.id,
+            label:activeLesson.scopeLabel,
+            start:activeLesson.start,
+            end:activeLesson.end
+        };
+    }
+
     if(sections.length && sectionIndex >= 0) {
         const section = sections[sectionIndex];
         return {
             kind:"section",
             id:section.id,
-            label:gameParts[partIndex].title + " • " + section.label,
+            label:displayPartTitle(partIndex) + " • " + section.label,
             start:section.start,
             end:section.end
         };
@@ -2500,7 +2815,7 @@ function currentScope(){
     return {
         kind:"part",
         id:"game1-part-" + partIndex,
-        label:gameParts[partIndex].title,
+        label:displayPartTitle(partIndex),
         start:0,
         end:gameParts[partIndex].steps.length - 1
     };
@@ -2584,7 +2899,7 @@ function showIdleGrade(message){
 
     value.innerText = "Ready";
     score.innerText = message || "Start a section to begin grading";
-    note.innerText = "Grades are saved when a section is finished.";
+    note.innerText = "Grades are saved when a lesson group is finished.";
 }
 
 function registerCorrectForGrade(){
@@ -2678,6 +2993,7 @@ function allPartsComplete(){
 }
 
 function startPart(index){
+    activeLesson = null;
     if(sectionsForPart(index).length) {
         showSectionSelect(index);
         return;
@@ -2691,23 +3007,6 @@ function startPart(index){
     load();
 }
 
-function lessonTitleForStep(index, stepNumber){
-    const step = gameParts[index].steps[stepNumber];
-    if(!step) return "Lesson";
-
-    const prompt = String(step.prompt || "").split("\n")[0].trim();
-    if(prompt) return prompt.length > 54 ? prompt.slice(0, 51) + "..." : prompt;
-
-    const instruction = String(step.instruction || "").split("|")[0].trim();
-    return instruction || "Lesson";
-}
-
-function lessonDetailForStep(index, stepNumber, order){
-    const step = gameParts[index].steps[stepNumber];
-    const instruction = String((step?.instruction || "")).split("|")[0].trim();
-    return `Lesson ${order}${instruction ? " • " + instruction : ""}`;
-}
-
 function startSection(index, sectionIndex){
     const sections = sectionsForPart(index);
     const section = sections[sectionIndex];
@@ -2716,15 +3015,20 @@ function startSection(index, sectionIndex){
     showLessonSelect(index, sectionIndex);
 }
 
-function startLesson(index, sectionIndex, stepNumber){
+function startLesson(index, sectionIndex, lessonIndex){
     const sections = sectionsForPart(index);
     const section = sections[sectionIndex];
+    const lesson = lessonsForSection(index, sectionIndex)[lessonIndex];
     if(!section || !isSectionUnlocked(index, sectionIndex)) return;
-    if(stepNumber < section.start || stepNumber > section.end) return;
-    if(!isGradableStep(gameParts[index].steps[stepNumber])) return;
+    if(!lesson) return;
 
     partIndex = index;
-    stepIndex = stepNumber;
+    stepIndex = lesson.start;
+    activeLesson = {
+        ...lesson,
+        sectionIndex:sectionIndex,
+        scopeLabel:displayPartTitle(index) + " • " + section.label + " • " + lesson.label
+    };
     hearts = Engine.getHearts();
     gradeState = null;
     PilingoAudio.playPartAnimal(index);
@@ -2739,10 +3043,11 @@ function showLessonSelect(index, sectionIndex, message){
         return;
     }
 
-    const lessons = lessonStepsForSection(index, sectionIndex);
+    const lessons = lessonsForSection(index, sectionIndex);
     const progress = sectionLessonProgress(index, sectionIndex);
 
     partIndex = index;
+    activeLesson = null;
     selectedWords = [];
     matchedKeys = [];
     selectedMatch = null;
@@ -2752,25 +3057,25 @@ function showLessonSelect(index, sectionIndex, message){
     document.getElementById("bar").style.width = progress.total ? ((progress.completed / progress.total) * 100) + "%" : "0%";
     document.getElementById("partLabel").innerText = "Kurmanji to English";
     document.getElementById("instruction").innerText = message || "Choose any lesson in this section";
-    document.getElementById("question").innerText = gameParts[index].title + " • " + section.label;
+    document.getElementById("question").innerText = displayPartTitle(index) + " • " + section.label;
     document.getElementById("question").classList.remove("rich-prompt");
     document.getElementById("image").style.display = "none";
     document.getElementById("image").removeAttribute("src");
     document.getElementById("feedback").innerText = "";
-    showIdleGrade(`${progress.completed}/${progress.total} lessons passed in this section`);
+    showIdleGrade(`${progress.completed}/${progress.total} lesson groups passed in this section`);
     document.getElementById("activity").innerHTML = `
         <div class="section-select">
             <div class="section-progress-banner">
                 <strong>${escapeHtml(section.label)}</strong>
                 <span>${escapeHtml(section.detail)}</span>
-                <span class="section-grade">${progress.completed}/${progress.total} lessons completed</span>
+                <span class="section-grade">${progress.completed}/${progress.total} lesson groups completed</span>
             </div>
-            ${lessons.map((stepNumber, lessonIndex) => `
-                <button class="section-card" onclick="startLesson(${index}, ${sectionIndex}, ${stepNumber})">
-                    <strong>Lesson ${lessonIndex + 1} ${isLessonComplete(index, sectionIndex, stepNumber) ? "✓" : ""}</strong>
-                    <span>${escapeHtml(lessonTitleForStep(index, stepNumber))}</span>
-                    <span class="section-grade">${escapeHtml(lessonDetailForStep(index, stepNumber, lessonIndex + 1))}</span>
-                    <span>${isLessonComplete(index, sectionIndex, stepNumber) ? "Open again" : "Start lesson"}</span>
+            ${lessons.map((lesson, lessonIndex) => `
+                <button class="section-card" onclick="startLesson(${index}, ${sectionIndex}, ${lessonIndex})">
+                    <strong>${escapeHtml(lesson.label)} ${isLessonComplete(index, sectionIndex, lesson.id) ? "✓" : ""}</strong>
+                    <span>${escapeHtml(lesson.detail)}</span>
+                    <span class="section-grade">${escapeHtml(section.label + " • " + lesson.label)}</span>
+                    <span>${isLessonComplete(index, sectionIndex, lesson.id) ? "Open again" : "Start lesson"}</span>
                 </button>
             `).join("")}
             <button class="secondary" onclick="showSectionSelect(${index})">Back to sections</button>
@@ -2786,6 +3091,7 @@ function showSectionSelect(index, message){
     }
 
     partIndex = index;
+    activeLesson = null;
     selectedWords = [];
     matchedKeys = [];
     selectedMatch = null;
@@ -2795,7 +3101,7 @@ function showSectionSelect(index, message){
     document.getElementById("bar").style.width = "0%";
     document.getElementById("partLabel").innerText = "Kurmanji to English";
     document.getElementById("instruction").innerText = message || "Choose a section to study";
-    document.getElementById("question").innerText = gameParts[index].title;
+    document.getElementById("question").innerText = displayPartTitle(index);
     document.getElementById("question").classList.remove("rich-prompt");
     document.getElementById("image").style.display = "none";
     document.getElementById("image").removeAttribute("src");
@@ -2815,7 +3121,7 @@ function showSectionSelect(index, message){
                     >
                         <strong>${escapeHtml(section.label)} ${complete ? "✓" : ""}</strong>
                         <span>${escapeHtml(section.detail)}</span>
-                        <span class="section-grade">${escapeHtml(progress.completed + "/" + progress.total + " lessons passed")}</span>
+                        <span class="section-grade">${escapeHtml(progress.completed + "/" + progress.total + " lesson groups passed")}</span>
                         <span>${unlocked ? (complete ? "Open lessons again" : "Open this section") : "Finish the previous section first"}</span>
                     </button>
                 `;
@@ -2829,6 +3135,7 @@ function showPartSelect(){
     selectedWords = [];
     matchedKeys = [];
     selectedMatch = null;
+    activeLesson = null;
     const partGroups = [];
     for(let i = 0; i < gameParts.length; i += 5) {
         partGroups.push(gameParts.slice(i, i + 5));
@@ -2870,7 +3177,7 @@ function showPartSelect(){
                                         <span class="part-animal" style="animation-delay:${(actualIndex * 0.18).toFixed(2)}s">${partEmojis[actualIndex] || "🦉"}</span>
                                     </span>
                                     <span class="part-copy">
-                                        <span class="part-name">${escapeHtml(part.title)}</span>
+                                        <span class="part-name">${escapeHtml(displayPartTitle(actualIndex))}</span>
                                         <span class="part-detail">${escapeHtml(partDescriptions[actualIndex] || "Practice section")}</span>
                                     </span>
                                     <span class="part-status">${completedParts.includes(actualIndex) ? "✓ Done" : "Start"}</span>
@@ -2887,6 +3194,10 @@ function showPartSelect(){
 function partCode(title){
     const match = String(title || "").match(/Game One;\s*([A-Z])/i);
     return match ? match[1].toUpperCase() : "P";
+}
+
+function displayPartTitle(index){
+    return partDisplayNames[index] || gameParts[index]?.title || "Part";
 }
 
 function partOrbitStyle(index, total){
@@ -2918,7 +3229,7 @@ function load(){
         document.getElementById("menuButton").onclick = () => sectionsForPart(partIndex).length ? showSectionSelect(partIndex) : showPartSelect();
     }
     document.getElementById("partLabel").innerText =
-        "Kurmanji to English\nPart " + (partIndex + 1) + " of " + gameParts.length + " • " + part.title;
+        "Kurmanji to English\nPart " + (partIndex + 1) + " of " + gameParts.length + " • " + displayPartTitle(partIndex);
     document.getElementById("instruction").innerText = step.instruction || "";
     const questionEl = document.getElementById("question");
     questionEl.classList.toggle("rich-prompt", Boolean(step.promptHtml));
@@ -3359,21 +3670,27 @@ function markWrong(){
 function completeStep(){
     const sections = sectionsForPart(partIndex);
     const sectionIndex = currentSectionIndex();
-    if(sections.length && sectionIndex >= 0) {
+    if(activeLesson && sections.length && sectionIndex >= 0) {
         const wasComplete = isSectionComplete(partIndex, sectionIndex);
-        if(isGradableStep(currentStep())) {
-            markLessonComplete(partIndex, sectionIndex, stepIndex);
+        if(stepIndex < activeLesson.end) {
+            stepIndex++;
+            load();
+            return;
         }
 
+        markLessonComplete(partIndex, sectionIndex, activeLesson.id);
+        saveCurrentGradeRecord();
         const nowComplete = isSectionComplete(partIndex, sectionIndex);
+        const nextSection = sections[sectionIndex + 1];
+        activeLesson = null;
 
         if(nowComplete && !wasComplete) {
             markSectionComplete(partIndex, sectionIndex);
             hearts = window.Engine?.addHeart ? Engine.addHeart(1) : Math.min(5, hearts + 1);
             renderHearts();
 
-            if(sectionIndex < sections.length - 1) {
-                showSectionSelect(partIndex, "❤️ +1 heart • " + sections[sectionIndex + 1].label + " is now unlocked");
+            if(nextSection) {
+                showSectionSelect(partIndex, "❤️ +1 heart • " + nextSection.label + " is now unlocked");
                 return;
             }
 
@@ -3412,7 +3729,7 @@ function showPartComplete(completedIndex){
     document.getElementById("bar").style.width = "100%";
     document.getElementById("partLabel").innerText = "Kurmanji to English";
     document.getElementById("instruction").innerText = "Part complete";
-    document.getElementById("question").innerText = gameParts[completedIndex].title;
+    document.getElementById("question").innerText = displayPartTitle(completedIndex);
     document.getElementById("image").style.display = "none";
     document.getElementById("image").removeAttribute("src");
     document.getElementById("feedback").innerText = "✅ Great job!";

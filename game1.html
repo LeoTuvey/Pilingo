@@ -13,6 +13,26 @@
 <title>Kurmanji to English: Game One</title>
 
 <style>
+:root{
+    --page-glow-a:rgba(255,218,69,0.26);
+    --page-glow-b:rgba(112,193,255,0.20);
+    --page-top:#e9f7ff;
+    --page-mid:#f7fbf2;
+    --page-bottom:#fff7df;
+    --card-fill:#ffffff;
+    --card-border:#e5edf5;
+    --card-shadow:rgba(37,48,68,0.14);
+    --card-topbar-start:#58cc02;
+    --card-topbar-mid:#1cb0f6;
+    --card-topbar-end:#ffb020;
+    --part-shell-top:#081b3f;
+    --part-shell-mid:#11346a;
+    --part-shell-bottom:#0b2044;
+    --part-star-a:rgba(255,255,255,0.96);
+    --part-star-b:rgba(150,220,255,0.7);
+    --part-halo:rgba(255,224,155,0.05);
+}
+
 *{
     box-sizing:border-box;
 }
@@ -20,25 +40,28 @@
 body{
     font-family:Inter,Arial,sans-serif;
     background:
-        radial-gradient(circle at top left, rgba(255,218,69,0.26), transparent 34%),
-        linear-gradient(180deg, #e9f7ff 0%, #f7fbf2 48%, #fff7df 100%);
+        radial-gradient(circle at top left, var(--page-glow-a), transparent 34%),
+        radial-gradient(circle at 86% 14%, var(--page-glow-b), transparent 28%),
+        linear-gradient(180deg, var(--page-top) 0%, var(--page-mid) 48%, var(--page-bottom) 100%);
     text-align:center;
     margin:0;
     padding:22px;
     color:#253044;
     min-height:100vh;
+    transition:background 0.35s ease;
 }
 
 .card{
-    background:white;
+    background:linear-gradient(180deg, rgba(255,255,255,0.99) 0%, var(--card-fill) 100%);
     max-width:620px;
     margin:auto;
     padding:22px;
-    border:2px solid #e5edf5;
-    border-radius:8px;
-    box-shadow:0 16px 34px rgba(37,48,68,0.14);
+    border:2px solid var(--card-border);
+    border-radius:34px;
+    box-shadow:0 20px 40px var(--card-shadow);
     position:relative;
     overflow:hidden;
+    transition:border-color 0.35s ease, box-shadow 0.35s ease, background 0.35s ease;
 }
 
 .card::before{
@@ -46,7 +69,19 @@ body{
     position:absolute;
     inset:0 0 auto;
     height:6px;
-    background:linear-gradient(90deg, #58cc02, #1cb0f6, #ffb020);
+    background:linear-gradient(90deg, var(--card-topbar-start), var(--card-topbar-mid), var(--card-topbar-end));
+}
+
+.card::after{
+    content:"";
+    position:absolute;
+    right:-42px;
+    bottom:-78px;
+    width:180px;
+    height:180px;
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(255,255,255,0.46), rgba(255,255,255,0));
+    pointer-events:none;
 }
 
 #hearts{
@@ -234,7 +269,7 @@ button{
     padding:15px 16px;
     font-size:16px;
     border:2px solid #d6e3ef;
-    border-radius:8px;
+    border-radius:20px;
     background:white;
     color:#253044;
     cursor:pointer;
@@ -303,21 +338,23 @@ button.wrong{
 
 .part-menu{
     position:relative;
-    width:min(100%, 640px);
-    height:640px;
+    width:min(100%, 700px);
+    aspect-ratio:1 / 1;
+    height:auto;
     margin:20px auto 14px;
-    border-radius:42px;
+    border-radius:50%;
     background:
         radial-gradient(circle at 16% 16%, rgba(255,255,255,0.96), rgba(255,255,255,0) 18%),
         radial-gradient(circle at 84% 14%, rgba(255,255,255,0.84), rgba(255,255,255,0) 16%),
         radial-gradient(circle at 22% 78%, rgba(118,205,255,0.26), rgba(118,205,255,0) 22%),
         radial-gradient(circle at 74% 76%, rgba(255,212,121,0.28), rgba(255,212,121,0) 24%),
         conic-gradient(from 210deg at 50% 50%, rgba(255,255,255,0) 0deg, rgba(246,214,119,0.14) 34deg, rgba(255,255,255,0) 70deg, rgba(112,185,255,0.18) 155deg, rgba(255,255,255,0) 230deg, rgba(255,220,150,0.18) 300deg, rgba(255,255,255,0) 360deg),
-        linear-gradient(180deg, #04132c 0%, #0b2550 32%, #144175 68%, #0d2040 100%);
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,0.08) 0 32%, rgba(255,255,255,0) 64%),
+        linear-gradient(180deg, var(--part-shell-top) 0%, var(--part-shell-mid) 44%, var(--part-shell-bottom) 100%);
     box-shadow:
-        inset 0 -16px 0 rgba(7,22,49,0.34),
-        0 22px 44px rgba(14,35,65,0.32);
-    border:3px solid rgba(255,255,255,0.34);
+        inset 0 -22px 0 rgba(7,22,49,0.28),
+        0 28px 56px rgba(14,35,65,0.26);
+    border:4px solid rgba(255,255,255,0.42);
     overflow:hidden;
 }
 
@@ -350,13 +387,13 @@ button.wrong{
 }
 
 .part-menu::before{
-    width:540px;
-    height:540px;
+    width:76%;
+    height:76%;
     border:2px solid rgba(255,255,255,0.12);
     box-shadow:
         0 0 0 28px rgba(255,255,255,0.05),
         0 0 0 86px rgba(255,255,255,0.04),
-        0 0 0 146px rgba(255,224,155,0.05);
+        0 0 0 146px var(--part-halo);
     background:
         radial-gradient(circle at center, rgba(255,255,255,0) 57%, rgba(255,255,255,0.15) 57.5%, rgba(255,255,255,0) 59.5%),
         radial-gradient(circle at center, rgba(255,255,255,0) 69%, rgba(255,230,170,0.12) 69.5%, rgba(255,255,255,0) 71.5%);
@@ -364,17 +401,17 @@ button.wrong{
 }
 
 .part-menu::after{
-    width:620px;
-    height:620px;
+    width:92%;
+    height:92%;
     background:
-        radial-gradient(circle at 18% 20%, rgba(255,255,255,0.9) 0 1px, transparent 2px),
+        radial-gradient(circle at 18% 20%, var(--part-star-a) 0 1px, transparent 2px),
         radial-gradient(circle at 76% 16%, rgba(255,255,255,0.76) 0 1.5px, transparent 2.5px),
         radial-gradient(circle at 82% 34%, rgba(255,255,255,0.95) 0 1px, transparent 2px),
         radial-gradient(circle at 20% 68%, rgba(255,255,255,0.9) 0 1px, transparent 2px),
         radial-gradient(circle at 72% 74%, rgba(255,255,255,0.8) 0 1.5px, transparent 2.5px),
         radial-gradient(circle at 40% 10%, rgba(255,255,255,0.72) 0 1px, transparent 2px),
         radial-gradient(circle at 35% 76%, rgba(255,236,172,0.76) 0 1px, transparent 2px),
-        radial-gradient(circle at 62% 56%, rgba(150,220,255,0.7) 0 1px, transparent 2px);
+        radial-gradient(circle at 62% 56%, var(--part-star-b) 0 1px, transparent 2px);
     opacity:0.95;
     animation:starFieldPulse 5.8s ease-in-out infinite;
 }
@@ -383,8 +420,8 @@ button.wrong{
     position:absolute;
     left:50%;
     top:50%;
-    width:224px;
-    height:224px;
+    width:232px;
+    height:232px;
     transform:translate(-50%, -50%);
     border-radius:50%;
     background:
@@ -392,9 +429,9 @@ button.wrong{
         radial-gradient(circle at 44% 42%, #63f1ff 0%, #2cbbe1 26%, #1c7bc3 55%, #103d78 72%, #0b214c 100%);
     box-shadow:
         inset -18px -28px 0 rgba(7,55,110,0.28),
-        0 0 0 12px rgba(99,210,255,0.1),
-        0 20px 0 rgba(11,60,109,0.52),
-        0 30px 48px rgba(8,29,56,0.38);
+        0 0 0 14px rgba(99,210,255,0.08),
+        0 20px 0 rgba(11,60,109,0.48),
+        0 30px 48px rgba(8,29,56,0.32);
     display:flex;
     flex-direction:column;
     align-items:center;
@@ -882,7 +919,7 @@ button.wrong{
     margin:0;
     text-align:left;
     padding:18px 20px;
-    border-radius:24px;
+    border-radius:30px;
     min-height:120px;
     background:
         radial-gradient(circle at 16% 18%, rgba(255,255,255,0.95), rgba(255,255,255,0.22) 26%, transparent 30%),
@@ -1059,8 +1096,9 @@ button.wrong{
         gap:14px;
         width:100%;
         height:auto;
+        aspect-ratio:auto;
         padding:18px 12px 14px;
-        border-radius:30px;
+        border-radius:34px;
     }
     .part-menu::before,
     .part-menu::after,
@@ -1920,6 +1958,117 @@ const partDisplayNames = [
     "D • Object Lessons",
     "E • People and Animals",
     "F • Sentence Builder"
+];
+
+const partThemes = [
+    {
+        pageGlowA:"rgba(255,210,105,0.32)",
+        pageGlowB:"rgba(128,214,255,0.22)",
+        pageTop:"#fff7dc",
+        pageMid:"#fffdf2",
+        pageBottom:"#e5f6ff",
+        cardFill:"#fffdf7",
+        cardBorder:"#ecd7a0",
+        cardShadow:"rgba(165,118,24,0.16)",
+        topbarStart:"#f9b233",
+        topbarMid:"#58cc02",
+        topbarEnd:"#1cb0f6",
+        shellTop:"#08254f",
+        shellMid:"#154987",
+        shellBottom:"#0d2144",
+        starB:"rgba(121,221,255,0.76)",
+        halo:"rgba(255,220,120,0.07)"
+    },
+    {
+        pageGlowA:"rgba(255,177,120,0.30)",
+        pageGlowB:"rgba(255,130,160,0.18)",
+        pageTop:"#fff2e7",
+        pageMid:"#fff8ef",
+        pageBottom:"#ffe2cf",
+        cardFill:"#fff8f1",
+        cardBorder:"#f2c7a2",
+        cardShadow:"rgba(180,102,48,0.16)",
+        topbarStart:"#ff9d42",
+        topbarMid:"#ff6f61",
+        topbarEnd:"#ffd166",
+        shellTop:"#3a1229",
+        shellMid:"#7b2f5a",
+        shellBottom:"#41142f",
+        starB:"rgba(255,182,201,0.72)",
+        halo:"rgba(255,196,132,0.08)"
+    },
+    {
+        pageGlowA:"rgba(109,226,255,0.26)",
+        pageGlowB:"rgba(142,255,198,0.18)",
+        pageTop:"#eafcff",
+        pageMid:"#f4fffd",
+        pageBottom:"#dff8ff",
+        cardFill:"#f8ffff",
+        cardBorder:"#bfe9ef",
+        cardShadow:"rgba(56,129,151,0.16)",
+        topbarStart:"#1cb0f6",
+        topbarMid:"#2dd4bf",
+        topbarEnd:"#7ae582",
+        shellTop:"#05293a",
+        shellMid:"#0f5973",
+        shellBottom:"#0d3245",
+        starB:"rgba(130,248,220,0.72)",
+        halo:"rgba(131,216,255,0.08)"
+    },
+    {
+        pageGlowA:"rgba(255,170,188,0.26)",
+        pageGlowB:"rgba(255,218,125,0.20)",
+        pageTop:"#fff1f5",
+        pageMid:"#fff9fb",
+        pageBottom:"#ffe6ef",
+        cardFill:"#fff9fb",
+        cardBorder:"#f0c7d6",
+        cardShadow:"rgba(177,91,125,0.16)",
+        topbarStart:"#ff7aa2",
+        topbarMid:"#ffb347",
+        topbarEnd:"#ffd166",
+        shellTop:"#341736",
+        shellMid:"#6f2d73",
+        shellBottom:"#361738",
+        starB:"rgba(255,197,120,0.72)",
+        halo:"rgba(255,192,214,0.08)"
+    },
+    {
+        pageGlowA:"rgba(205,170,255,0.28)",
+        pageGlowB:"rgba(142,201,255,0.18)",
+        pageTop:"#f4ecff",
+        pageMid:"#fcf8ff",
+        pageBottom:"#eee3ff",
+        cardFill:"#fbf8ff",
+        cardBorder:"#d9c7f2",
+        cardShadow:"rgba(110,77,166,0.16)",
+        topbarStart:"#8c6fcb",
+        topbarMid:"#c084fc",
+        topbarEnd:"#60a5fa",
+        shellTop:"#23153f",
+        shellMid:"#50338f",
+        shellBottom:"#261642",
+        starB:"rgba(171,205,255,0.76)",
+        halo:"rgba(212,184,255,0.08)"
+    },
+    {
+        pageGlowA:"rgba(255,212,108,0.28)",
+        pageGlowB:"rgba(122,233,172,0.18)",
+        pageTop:"#fff6df",
+        pageMid:"#fffdf4",
+        pageBottom:"#f8edc8",
+        cardFill:"#fffdf7",
+        cardBorder:"#edd79d",
+        cardShadow:"rgba(165,130,36,0.16)",
+        topbarStart:"#58cc02",
+        topbarMid:"#ffb020",
+        topbarEnd:"#ffe066",
+        shellTop:"#2a3017",
+        shellMid:"#4e6a21",
+        shellBottom:"#243013",
+        starB:"rgba(166,255,199,0.74)",
+        halo:"rgba(255,220,140,0.08)"
+    }
 ];
 
 const partSections = {
@@ -3047,6 +3196,7 @@ function showLessonSelect(index, sectionIndex, message){
     const progress = sectionLessonProgress(index, sectionIndex);
 
     partIndex = index;
+    applyPageTheme(index);
     activeLesson = null;
     selectedWords = [];
     matchedKeys = [];
@@ -3091,6 +3241,7 @@ function showSectionSelect(index, message){
     }
 
     partIndex = index;
+    applyPageTheme(index);
     activeLesson = null;
     selectedWords = [];
     matchedKeys = [];
@@ -3132,6 +3283,7 @@ function showSectionSelect(index, message){
 }
 
 function showPartSelect(){
+    applyPageTheme(0);
     selectedWords = [];
     matchedKeys = [];
     selectedMatch = null;
@@ -3200,6 +3352,45 @@ function displayPartTitle(index){
     return partDisplayNames[index] || gameParts[index]?.title || "Part";
 }
 
+function applyPageTheme(index){
+    const root = document.documentElement;
+    const theme = partThemes[index] || {
+        pageGlowA:"rgba(255,218,69,0.26)",
+        pageGlowB:"rgba(112,193,255,0.20)",
+        pageTop:"#e9f7ff",
+        pageMid:"#f7fbf2",
+        pageBottom:"#fff7df",
+        cardFill:"#ffffff",
+        cardBorder:"#e5edf5",
+        cardShadow:"rgba(37,48,68,0.14)",
+        topbarStart:"#58cc02",
+        topbarMid:"#1cb0f6",
+        topbarEnd:"#ffb020",
+        shellTop:"#081b3f",
+        shellMid:"#11346a",
+        shellBottom:"#0b2044",
+        starB:"rgba(150,220,255,0.7)",
+        halo:"rgba(255,224,155,0.05)"
+    };
+
+    root.style.setProperty("--page-glow-a", theme.pageGlowA);
+    root.style.setProperty("--page-glow-b", theme.pageGlowB);
+    root.style.setProperty("--page-top", theme.pageTop);
+    root.style.setProperty("--page-mid", theme.pageMid);
+    root.style.setProperty("--page-bottom", theme.pageBottom);
+    root.style.setProperty("--card-fill", theme.cardFill);
+    root.style.setProperty("--card-border", theme.cardBorder);
+    root.style.setProperty("--card-shadow", theme.cardShadow);
+    root.style.setProperty("--card-topbar-start", theme.topbarStart);
+    root.style.setProperty("--card-topbar-mid", theme.topbarMid);
+    root.style.setProperty("--card-topbar-end", theme.topbarEnd);
+    root.style.setProperty("--part-shell-top", theme.shellTop);
+    root.style.setProperty("--part-shell-mid", theme.shellMid);
+    root.style.setProperty("--part-shell-bottom", theme.shellBottom);
+    root.style.setProperty("--part-star-b", theme.starB);
+    root.style.setProperty("--part-halo", theme.halo);
+}
+
 function partOrbitStyle(index, total){
     const radius = total <= 3 ? 188 : 208;
     const startAngle = -90;
@@ -3213,6 +3404,7 @@ function load(){
     const part = gameParts[partIndex];
     const step = currentStep();
     ensureGradeState();
+    applyPageTheme(partIndex);
 
     selectedWords = [];
     matchedKeys = [];
@@ -3720,6 +3912,7 @@ function completeStep(){
 
 function showPartComplete(completedIndex){
     PilingoAudio.playLessonComplete();
+    applyPageTheme(completedIndex);
 
     const openPart = nextOpenPart();
     const isAllDone = allPartsComplete();

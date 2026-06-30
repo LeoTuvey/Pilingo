@@ -1212,6 +1212,7 @@ let selectedMatch = null;
 let completedParts = loadCompletedParts();
 let completedSections = loadCompletedSections();
 let completedLessons = loadCompletedLessons();
+let lessonStatuses = loadLessonStatuses();
 let gradebook = loadGradebook();
 let gradeState = null;
 
@@ -2770,6 +2771,19 @@ function saveCompletedLessons(){
     localStorage.setItem("pilingo_game1_completed_lessons", JSON.stringify(completedLessons));
 }
 
+function loadLessonStatuses(){
+    try {
+        const saved = JSON.parse(localStorage.getItem("pilingo_game1_lesson_statuses") || "{}");
+        return saved && typeof saved === "object" ? saved : {};
+    } catch(error) {
+        return {};
+    }
+}
+
+function saveLessonStatuses(){
+    localStorage.setItem("pilingo_game1_lesson_statuses", JSON.stringify(lessonStatuses));
+}
+
 function loadGradebook(){
     try {
         const saved = JSON.parse(localStorage.getItem("pilingo_game1_grades") || "{}");
@@ -2883,6 +2897,8 @@ function markLessonComplete(index, sectionIndex, lessonId){
 
     completedLessons[key] = [...saved, lessonId];
     saveCompletedLessons();
+    lessonStatuses[lessonId] = "passed";
+    saveLessonStatuses();
 }
 
 function isSectionComplete(index, sectionIndex){
@@ -2904,6 +2920,10 @@ function markSectionComplete(index, sectionIndex){
 
     completedLessons[section.id] = lessonsForSection(index, sectionIndex).map(lesson => lesson.id);
     saveCompletedLessons();
+    lessonsForSection(index, sectionIndex).forEach((lesson) => {
+        lessonStatuses[lesson.id] = "passed";
+    });
+    saveLessonStatuses();
 
     const key = sectionKey(index);
     const saved = completedSections[key] || [];
@@ -3116,20 +3136,21 @@ function starsForPercent(percent){
 }
 
 function lessonCompletionBadge(lessonId){
-    const record = gradebook[lessonId];
-    if(!record) return "✅✅";
-
-    const stars = starsForPercent(record.bestPercent);
-    return stars || "✅✅";
+    if(lessonStatuses[lessonId] === "failed") return "❌";
+    if(lessonStatuses[lessonId] === "passed") return "✅";
+    return "";
 }
 
 function lessonCompletionNote(lessonId){
+    if(lessonStatuses[lessonId] === "failed") return "Failed";
+    if(lessonStatuses[lessonId] === "passed") return "Completed";
+
     const record = gradebook[lessonId];
-    if(!record) return "Passed";
+    if(!record) return "Start lesson";
 
     const stars = starsForPercent(record.bestPercent);
     const grade = `${record.bestLetter} (${record.bestPercent}%)`;
-    return stars ? `${stars} • ${grade}` : `✅✅ • ${grade}`;
+    return stars ? `${stars} • ${grade}` : grade;
 }
 
 function leaderboardSummary(){
@@ -3247,10 +3268,10 @@ function showLessonSelect(index, sectionIndex, message){
             </div>
             ${lessons.map((lesson, lessonIndex) => `
                 <button class="section-card" onclick="startLesson(${index}, ${sectionIndex}, ${lessonIndex})">
-                    <strong>${escapeHtml(lesson.label)} ${isLessonComplete(index, sectionIndex, lesson.id) ? lessonCompletionBadge(lesson.id) : ""}</strong>
+                    <strong>${escapeHtml(lesson.label)} ${lessonCompletionBadge(lesson.id)}</strong>
                     <span>${escapeHtml(lesson.detail)}</span>
                     <span class="section-grade">${escapeHtml(section.label + " • " + lesson.label)}</span>
-                    <span>${isLessonComplete(index, sectionIndex, lesson.id) ? lessonCompletionNote(lesson.id) : "Start lesson"}</span>
+                    <span>${lessonCompletionNote(lesson.id)}</span>
                 </button>
             `).join("")}
             <button class="secondary" onclick="showSectionSelect(${index})">Back to sections</button>
@@ -3997,6 +4018,10 @@ function showLessonComplete(){
 }
 
 function gameOver(){
+    if(activeLesson?.id) {
+        lessonStatuses[activeLesson.id] = "failed";
+        saveLessonStatuses();
+    }
     document.body.innerHTML = `
     <div class="card">
         <h1>💔</h1>

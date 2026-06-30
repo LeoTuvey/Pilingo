@@ -338,23 +338,23 @@ button.wrong{
 
 .part-menu{
     position:relative;
-    width:min(100%, 700px);
-    aspect-ratio:1 / 1;
-    height:auto;
+    width:min(100%, 760px);
     margin:20px auto 14px;
-    border-radius:46% 46% 52% 52% / 38% 38% 62% 62%;
+    padding:22px;
+    border-radius:38px;
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    gap:18px;
     background:
         radial-gradient(circle at 16% 16%, rgba(255,255,255,0.96), rgba(255,255,255,0) 18%),
         radial-gradient(circle at 84% 14%, rgba(255,255,255,0.84), rgba(255,255,255,0) 16%),
         radial-gradient(circle at 22% 78%, var(--menu-glow-a, rgba(118,205,255,0.26)), rgba(118,205,255,0) 22%),
         radial-gradient(circle at 74% 76%, var(--menu-glow-b, rgba(255,212,121,0.28)), rgba(255,212,121,0) 24%),
-        conic-gradient(from 210deg at 50% 50%, rgba(255,255,255,0) 0deg, var(--menu-ribbon-a, rgba(246,214,119,0.14)) 34deg, rgba(255,255,255,0) 70deg, var(--menu-ribbon-b, rgba(112,185,255,0.18)) 155deg, rgba(255,255,255,0) 230deg, var(--menu-ribbon-c, rgba(255,220,150,0.18)) 300deg, rgba(255,255,255,0) 360deg),
-        radial-gradient(circle at 50% 50%, rgba(255,255,255,0.08) 0 32%, rgba(255,255,255,0) 64%),
         linear-gradient(180deg, var(--menu-top, #ffe59c) 0%, var(--menu-mid, #ffd166) 44%, var(--menu-bottom, #f4b740) 100%);
     box-shadow:
-        inset 0 -22px 0 var(--menu-inset, rgba(173,113,17,0.18)),
-        0 28px 56px var(--menu-shadow, rgba(157,112,14,0.24));
-    border:4px solid var(--menu-border, rgba(255,255,255,0.58));
+        inset 0 -16px 0 var(--menu-inset, rgba(173,113,17,0.14)),
+        0 20px 40px var(--menu-shadow, rgba(157,112,14,0.18));
+    border:3px solid var(--menu-border, rgba(255,255,255,0.58));
     overflow:hidden;
 }
 
@@ -380,153 +380,127 @@ button.wrong{
 .part-menu::after{
     content:"";
     position:absolute;
-    inset:50%;
-    transform:translate(-50%, -50%);
-    border-radius:50%;
     pointer-events:none;
 }
 
 .part-menu::before{
-    width:76%;
-    height:76%;
-    border:2px solid rgba(255,255,255,0.12);
-    box-shadow:
-        0 0 0 28px rgba(255,255,255,0.05),
-        0 0 0 86px rgba(255,255,255,0.04),
-        0 0 0 146px var(--part-halo);
-    background:
-        radial-gradient(circle at center, rgba(255,255,255,0) 57%, rgba(255,255,255,0.15) 57.5%, rgba(255,255,255,0) 59.5%),
-        radial-gradient(circle at center, rgba(255,255,255,0) 69%, rgba(255,230,170,0.12) 69.5%, rgba(255,255,255,0) 71.5%);
-    animation:milkyWaySpin 24s linear infinite;
+    inset:18px;
+    border-radius:30px;
+    border:2px dashed rgba(255,255,255,0.28);
+    opacity:0.7;
 }
 
 .part-menu::after{
-    width:92%;
-    height:92%;
-    background:
-        radial-gradient(circle at 18% 20%, var(--part-star-a) 0 1px, transparent 2px),
-        radial-gradient(circle at 76% 16%, rgba(255,255,255,0.76) 0 1.5px, transparent 2.5px),
-        radial-gradient(circle at 82% 34%, rgba(255,255,255,0.95) 0 1px, transparent 2px),
-        radial-gradient(circle at 20% 68%, rgba(255,255,255,0.9) 0 1px, transparent 2px),
-        radial-gradient(circle at 72% 74%, rgba(255,255,255,0.8) 0 1.5px, transparent 2.5px),
-        radial-gradient(circle at 40% 10%, rgba(255,255,255,0.72) 0 1px, transparent 2px),
-        radial-gradient(circle at 35% 76%, rgba(255,236,172,0.76) 0 1px, transparent 2px),
-        radial-gradient(circle at 62% 56%, var(--part-star-b) 0 1px, transparent 2px);
-    opacity:0.95;
-    animation:starFieldPulse 5.8s ease-in-out infinite;
+    right:-26px;
+    bottom:-34px;
+    width:150px;
+    height:150px;
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(255,255,255,0.34), rgba(255,255,255,0));
+    pointer-events:none;
 }
 
 .part-menu-core{
-    position:absolute;
-    left:50%;
-    top:50%;
-    width:232px;
-    height:232px;
-    transform:translate(-50%, -50%);
-    border-radius:48% 48% 54% 54% / 40% 40% 60% 60%;
+    position:relative;
+    left:auto;
+    top:auto;
+    width:100%;
+    min-height:152px;
+    transform:none;
+    grid-column:1 / -1;
+    border-radius:32px;
     background:
-        radial-gradient(circle at 34% 28%, rgba(255,255,255,0.88), rgba(255,255,255,0) 22%),
-        radial-gradient(circle at 44% 42%, #63f1ff 0%, #2cbbe1 26%, #1c7bc3 55%, #103d78 72%, #0b214c 100%);
+        radial-gradient(circle at 18% 22%, rgba(255,255,255,0.95), rgba(255,255,255,0.18) 22%, transparent 26%),
+        linear-gradient(180deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.08) 100%);
     box-shadow:
-        inset -18px -28px 0 rgba(7,55,110,0.28),
-        0 0 0 14px rgba(99,210,255,0.08),
-        0 20px 0 rgba(11,60,109,0.48),
-        0 30px 48px rgba(8,29,56,0.32);
+        inset 0 -10px 0 rgba(255,255,255,0.12),
+        0 10px 24px rgba(110,79,15,0.14);
     display:flex;
     flex-direction:column;
     align-items:center;
     justify-content:center;
-    color:white;
-    border:5px solid rgba(233,247,255,0.95);
+    color:#5b4212;
+    border:2px solid rgba(255,255,255,0.55);
     overflow:hidden;
-    animation:worldGlow 4.4s ease-in-out infinite;
 }
 
 .part-menu-core::before,
 .part-menu-core::after{
     content:"";
     position:absolute;
-    border-radius:50%;
-    background:#59c63e;
-    opacity:0.95;
+    border-radius:50% 50% 54% 54% / 38% 38% 62% 62%;
+    background:rgba(255,255,255,0.2);
 }
 
 .part-menu-core::before{
-    width:122px;
-    height:88px;
-    left:12px;
-    top:80px;
-    border-radius:56% 44% 60% 40%;
-    transform:rotate(-16deg);
-    box-shadow:78px -58px 0 -22px #74de66;
+    width:126px;
+    height:92px;
+    left:18px;
+    top:18px;
+    transform:rotate(-12deg);
 }
 
 .part-menu-core::after{
-    width:76px;
-    height:58px;
+    width:88px;
+    height:62px;
     right:26px;
-    top:52px;
-    border-radius:58% 42% 55% 45%;
-    transform:rotate(24deg);
+    bottom:18px;
+    transform:rotate(18deg);
 }
 
 .part-menu-core strong{
     position:relative;
     z-index:1;
-    font-size:42px;
+    font-size:38px;
     line-height:1;
-    text-shadow:0 8px 18px rgba(9,29,63,0.36);
+    text-shadow:none;
 }
 
 .part-menu-core span{
     position:relative;
     z-index:1;
     margin-top:6px;
-    font-size:15px;
+    font-size:14px;
     font-weight:900;
     letter-spacing:0.1em;
     text-transform:uppercase;
-    text-shadow:0 2px 8px rgba(9,29,63,0.36);
+    text-shadow:none;
 }
 
 .part-choice{
-    position:absolute;
-    left:50%;
-    top:50%;
-    width:150px;
-    min-height:160px;
+    position:relative;
+    left:auto;
+    top:auto;
+    width:100%;
+    min-height:184px;
     margin:0;
-    transform:translate(-50%, -50%) rotate(var(--orbit-angle)) translateY(calc(var(--orbit-radius) * -1));
+    transform:none !important;
     display:flex;
     flex-direction:column;
     align-items:center;
     justify-content:flex-start;
     text-align:center;
-    background:transparent;
-    border:none;
-    box-shadow:none;
-    padding:0;
-    overflow:visible;
-    animation:orbitDrift var(--orbit-duration, 10s) ease-in-out infinite;
-    animation-delay:var(--orbit-delay, 0s);
+    background:
+        radial-gradient(circle at 24% 18%, rgba(255,255,255,0.96), rgba(255,255,255,0.22) 24%, transparent 28%),
+        linear-gradient(180deg, rgba(255,252,239,0.98) 0%, rgba(255,244,217,0.98) 100%);
+    border:2px solid rgba(255,255,255,0.82);
+    box-shadow:
+        inset 0 -10px 0 rgba(220,179,88,0.12),
+        0 10px 0 rgba(204,156,55,0.46),
+        0 18px 24px rgba(124,91,17,0.14);
+    padding:14px 12px 16px;
+    overflow:hidden;
+    border-radius:44% 44% 50% 50% / 34% 34% 62% 62%;
+    animation:none;
 }
 
 .part-choice:hover{
-    filter:brightness(1.06);
+    filter:none;
+    transform:translateY(-3px) !important;
 }
 
 .part-choice::before{
-    content:"";
-    position:absolute;
-    left:50%;
-    top:50%;
-    width:2px;
-    height:138px;
-    transform:translate(-50%, -12px);
-    transform-origin:center bottom;
-    background:linear-gradient(180deg, rgba(255,245,196,0.56), rgba(255,255,255,0));
-    opacity:0.52;
-    pointer-events:none;
+    display:none;
 }
 
 .part-badge{
@@ -603,101 +577,6 @@ button.wrong{
     animation-name:animalHop;
 }
 
-.part-extra-list{
-    display:grid;
-    gap:14px;
-    width:min(100%, 560px);
-    margin:18px auto 0;
-}
-
-.part-extra-title{
-    margin:6px auto 4px;
-    font-size:14px;
-    font-weight:900;
-    letter-spacing:0.08em;
-    text-transform:uppercase;
-    color:#9a6b07;
-}
-
-.part-extra-choice{
-    width:100%;
-    margin:0;
-    padding:16px 18px;
-    border-radius:28px;
-    border:2px solid #f1d9a4;
-    background:
-        radial-gradient(circle at 18% 22%, rgba(255,255,255,0.95), rgba(255,255,255,0.35) 26%, transparent 30%),
-        linear-gradient(180deg, #fff8e7 0%, #fff1ce 100%);
-    box-shadow:
-        inset 0 -8px 0 rgba(228,192,110,0.18),
-        0 8px 0 rgba(234,206,146,0.85),
-        0 16px 24px rgba(153,112,17,0.12);
-    display:flex;
-    align-items:center;
-    gap:14px;
-    text-align:left;
-}
-
-.part-extra-choice:hover{
-    background:
-        radial-gradient(circle at 18% 22%, rgba(255,255,255,0.98), rgba(255,255,255,0.4) 26%, transparent 30%),
-        linear-gradient(180deg, #fffaf0 0%, #fff4d9 100%);
-}
-
-.part-extra-badge{
-    flex:0 0 88px;
-    width:88px;
-    height:88px;
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    border-radius:50%;
-    background:
-        radial-gradient(circle at 30% 28%, rgba(255,255,255,0.96), rgba(255,255,255,0.36) 28%, transparent 34%),
-        linear-gradient(180deg, #ffefc8 0%, #ffd97a 100%);
-    border:3px solid rgba(255,255,255,0.94);
-    box-shadow:
-        inset 0 -8px 0 rgba(209,162,41,0.18),
-        0 7px 0 rgba(228,186,77,0.82),
-        0 14px 20px rgba(153,112,17,0.15);
-    font-size:46px;
-}
-
-.part-extra-copy{
-    display:flex;
-    flex-direction:column;
-    gap:6px;
-    min-width:0;
-}
-
-.part-extra-name{
-    font-size:18px;
-    font-weight:900;
-    color:#65461b;
-}
-
-.part-extra-detail{
-    font-size:13px;
-    font-weight:700;
-    color:#8e6b35;
-}
-
-.part-extra-status{
-    margin-left:auto;
-    align-self:center;
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    min-width:84px;
-    padding:8px 12px;
-    border-radius:999px;
-    background:#58cc02;
-    color:#fff;
-    font-size:13px;
-    font-weight:900;
-    box-shadow:0 4px 0 #46a302;
-}
-
 @keyframes animalBob{
     0%, 100%{ transform:translateY(0) rotate(0deg) scale(1); }
     25%{ transform:translateY(-3px) rotate(-4deg) scale(1.03); }
@@ -725,33 +604,6 @@ button.wrong{
     to{ transform:rotate(360deg); }
 }
 
-@keyframes milkyWaySpin{
-    from{ transform:translate(-50%, -50%) rotate(0deg); }
-    to{ transform:translate(-50%, -50%) rotate(360deg); }
-}
-
-@keyframes starFieldPulse{
-    0%, 100%{ opacity:0.72; }
-    50%{ opacity:1; }
-}
-
-@keyframes worldGlow{
-    0%, 100%{ box-shadow:inset -18px -28px 0 rgba(7,55,110,0.28), 0 0 0 12px rgba(99,210,255,0.1), 0 20px 0 rgba(11,60,109,0.52), 0 30px 48px rgba(8,29,56,0.38); }
-    50%{ box-shadow:inset -18px -28px 0 rgba(7,55,110,0.26), 0 0 0 18px rgba(99,210,255,0.16), 0 20px 0 rgba(11,60,109,0.52), 0 30px 52px rgba(8,29,56,0.44); }
-}
-
-@keyframes orbitDrift{
-    0%{
-        transform:translate(-50%, -50%) rotate(calc(var(--orbit-angle) - 4deg)) translateY(calc(var(--orbit-radius) * -1));
-    }
-    50%{
-        transform:translate(-50%, -50%) rotate(calc(var(--orbit-angle) + 5deg)) translateY(calc(var(--orbit-radius) * -1));
-    }
-    100%{
-        transform:translate(-50%, -50%) rotate(calc(var(--orbit-angle) - 4deg)) translateY(calc(var(--orbit-radius) * -1));
-    }
-}
-
 @keyframes planetSpin{
     from{ transform:rotate(0deg); }
     to{ transform:rotate(360deg); }
@@ -761,37 +613,37 @@ button.wrong{
     display:flex;
     flex-direction:column;
     gap:5px;
-    margin-top:10px;
+    margin-top:12px;
     width:100%;
-    padding:8px 0 0;
+    padding:4px 2px 0;
 }
 
 .part-name{
-    color:#ffffff;
-    font-size:14px;
+    color:#644717;
+    font-size:18px;
     font-weight:900;
-    line-height:1.15;
-    text-shadow:0 4px 12px rgba(6,21,48,0.42);
+    line-height:1.2;
+    text-shadow:none;
 }
 
 .part-detail{
-    color:rgba(241,247,255,0.94);
-    font-size:11px;
+    color:#83612a;
+    font-size:13px;
     font-weight:700;
-    line-height:1.25;
-    text-shadow:0 4px 12px rgba(6,21,48,0.34);
+    line-height:1.35;
+    text-shadow:none;
 }
 
 .part-status{
-    color:#7b3f00;
-    font-size:11px;
+    color:#fff;
+    font-size:12px;
     font-weight:900;
-    margin-top:6px;
-    padding:6px 12px;
+    margin-top:10px;
+    padding:7px 12px;
     border-radius:999px;
-    background:#fff4d6;
-    border:2px solid #ffd46e;
-    box-shadow:0 4px 0 #efbd47;
+    background:#58cc02;
+    border:2px solid #46a302;
+    box-shadow:0 4px 0 #46a302;
 }
 
 .part-letter{
@@ -813,25 +665,19 @@ button.wrong{
 }
 
 .part-menu-glow{
-    position:absolute;
-    inset:auto 50% 26px;
-    width:360px;
-    height:76px;
-    transform:translateX(-50%);
-    border-radius:50%;
-    background:radial-gradient(circle, rgba(255,222,136,0.52) 0%, rgba(255,222,136,0.12) 48%, transparent 72%);
-    filter:blur(10px);
-    pointer-events:none;
+    display:none;
 }
 
 .part-menu-banner{
-    position:absolute;
-    left:28px;
-    top:26px;
+    position:relative;
+    left:auto;
+    top:auto;
+    grid-column:1 / -1;
     z-index:1;
     text-align:left;
-    color:#fff;
-    max-width:250px;
+    color:#6d4b12;
+    max-width:none;
+    padding:2px 4px 0;
 }
 
 .part-menu-banner strong{
@@ -846,7 +692,7 @@ button.wrong{
     margin-top:6px;
     font-size:13px;
     line-height:1.35;
-    color:rgba(231,243,255,0.88);
+    color:#8a6630;
 }
 
 .section-progress-banner{
@@ -3397,13 +3243,10 @@ function showPartSelect(){
                 <div class="part-cluster">
                     ${groupIndex > 0 ? `<div class="part-cluster-title">More Lessons</div>` : ""}
                     <div class="part-menu" style="${partMenuThemeStyle(groupIndex)}">
-                        ${groupIndex === 0 ? `
-                            <div class="part-menu-banner">
-                                <strong>Milky Way Path</strong>
-                                <span>Every Game One part circles the world here. Tap any star and begin your path.</span>
-                            </div>
-                            <div class="part-menu-glow" aria-hidden="true"></div>
-                        ` : ""}
+                        <div class="part-menu-banner">
+                            <strong>${groupIndex === 0 ? "Choose a Part" : `Choose More Parts`}</strong>
+                            <span>${groupIndex === 0 ? "Start anywhere in Game One. Each part below opens real grouped lessons that are easier to study." : "More Game One parts are here. Tap any one and continue learning."}</span>
+                        </div>
                         <div class="part-menu-core">
                             <strong>${groupIndex === 0 ? "🌍" : "📘"}</strong>
                             <span>${groupIndex === 0 ? "Game One" : `Page ${groupIndex + 1}`}</span>
@@ -3411,7 +3254,7 @@ function showPartSelect(){
                         ${group.map((part, index) => {
                             const actualIndex = (groupIndex * 5) + index;
                             return `
-                                <button class="part-choice" style="${partOrbitStyle(index, group.length)}" onclick="startPart(${actualIndex})">
+                                <button class="part-choice" onclick="startPart(${actualIndex})">
                                     <span class="part-badge" aria-hidden="true">
                                         <span class="part-letter">${escapeHtml(partCode(part.title))}</span>
                                         <span class="part-animal" style="animation-delay:${(actualIndex * 0.18).toFixed(2)}s">${partEmojis[actualIndex] || "🦉"}</span>

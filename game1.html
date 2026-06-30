@@ -342,19 +342,19 @@ button.wrong{
     aspect-ratio:1 / 1;
     height:auto;
     margin:20px auto 14px;
-    border-radius:50%;
+    border-radius:46% 46% 52% 52% / 38% 38% 62% 62%;
     background:
         radial-gradient(circle at 16% 16%, rgba(255,255,255,0.96), rgba(255,255,255,0) 18%),
         radial-gradient(circle at 84% 14%, rgba(255,255,255,0.84), rgba(255,255,255,0) 16%),
-        radial-gradient(circle at 22% 78%, rgba(118,205,255,0.26), rgba(118,205,255,0) 22%),
-        radial-gradient(circle at 74% 76%, rgba(255,212,121,0.28), rgba(255,212,121,0) 24%),
-        conic-gradient(from 210deg at 50% 50%, rgba(255,255,255,0) 0deg, rgba(246,214,119,0.14) 34deg, rgba(255,255,255,0) 70deg, rgba(112,185,255,0.18) 155deg, rgba(255,255,255,0) 230deg, rgba(255,220,150,0.18) 300deg, rgba(255,255,255,0) 360deg),
+        radial-gradient(circle at 22% 78%, var(--menu-glow-a, rgba(118,205,255,0.26)), rgba(118,205,255,0) 22%),
+        radial-gradient(circle at 74% 76%, var(--menu-glow-b, rgba(255,212,121,0.28)), rgba(255,212,121,0) 24%),
+        conic-gradient(from 210deg at 50% 50%, rgba(255,255,255,0) 0deg, var(--menu-ribbon-a, rgba(246,214,119,0.14)) 34deg, rgba(255,255,255,0) 70deg, var(--menu-ribbon-b, rgba(112,185,255,0.18)) 155deg, rgba(255,255,255,0) 230deg, var(--menu-ribbon-c, rgba(255,220,150,0.18)) 300deg, rgba(255,255,255,0) 360deg),
         radial-gradient(circle at 50% 50%, rgba(255,255,255,0.08) 0 32%, rgba(255,255,255,0) 64%),
-        linear-gradient(180deg, var(--part-shell-top) 0%, var(--part-shell-mid) 44%, var(--part-shell-bottom) 100%);
+        linear-gradient(180deg, var(--menu-top, #ffe59c) 0%, var(--menu-mid, #ffd166) 44%, var(--menu-bottom, #f4b740) 100%);
     box-shadow:
-        inset 0 -22px 0 rgba(7,22,49,0.28),
-        0 28px 56px rgba(14,35,65,0.26);
-    border:4px solid rgba(255,255,255,0.42);
+        inset 0 -22px 0 var(--menu-inset, rgba(173,113,17,0.18)),
+        0 28px 56px var(--menu-shadow, rgba(157,112,14,0.24));
+    border:4px solid var(--menu-border, rgba(255,255,255,0.58));
     overflow:hidden;
 }
 
@@ -423,7 +423,7 @@ button.wrong{
     width:232px;
     height:232px;
     transform:translate(-50%, -50%);
-    border-radius:50%;
+    border-radius:48% 48% 54% 54% / 40% 40% 60% 60%;
     background:
         radial-gradient(circle at 34% 28%, rgba(255,255,255,0.88), rgba(255,255,255,0) 22%),
         radial-gradient(circle at 44% 42%, #63f1ff 0%, #2cbbe1 26%, #1c7bc3 55%, #103d78 72%, #0b214c 100%);
@@ -1961,6 +1961,48 @@ const partDisplayNames = [
     "F • Sentence Builder"
 ];
 
+const partMenuThemes = [
+    {
+        top:"#fff4a6",
+        mid:"#ffd75c",
+        bottom:"#f5b52f",
+        glowA:"rgba(255,255,255,0.42)",
+        glowB:"rgba(255,199,64,0.34)",
+        ribbonA:"rgba(255,235,161,0.24)",
+        ribbonB:"rgba(255,190,64,0.18)",
+        ribbonC:"rgba(255,255,255,0.14)",
+        inset:"rgba(171,117,18,0.18)",
+        shadow:"rgba(165,118,24,0.24)",
+        border:"rgba(255,252,225,0.72)"
+    },
+    {
+        top:"#ffe1d7",
+        mid:"#ffbfa9",
+        bottom:"#ff8e7f",
+        glowA:"rgba(255,255,255,0.36)",
+        glowB:"rgba(255,165,196,0.28)",
+        ribbonA:"rgba(255,228,179,0.18)",
+        ribbonB:"rgba(255,146,146,0.18)",
+        ribbonC:"rgba(255,255,255,0.12)",
+        inset:"rgba(177,88,76,0.18)",
+        shadow:"rgba(182,96,84,0.22)",
+        border:"rgba(255,240,236,0.72)"
+    },
+    {
+        top:"#dffcf0",
+        mid:"#9be7c6",
+        bottom:"#56c3b0",
+        glowA:"rgba(255,255,255,0.34)",
+        glowB:"rgba(121,225,255,0.24)",
+        ribbonA:"rgba(230,255,196,0.18)",
+        ribbonB:"rgba(102,214,191,0.18)",
+        ribbonC:"rgba(255,255,255,0.10)",
+        inset:"rgba(48,128,109,0.16)",
+        shadow:"rgba(42,120,101,0.22)",
+        border:"rgba(236,255,247,0.68)"
+    }
+];
+
 const partThemes = [
     {
         pageGlowA:"rgba(255,210,105,0.32)",
@@ -3354,7 +3396,7 @@ function showPartSelect(){
             ${partGroups.map((group, groupIndex) => `
                 <div class="part-cluster">
                     ${groupIndex > 0 ? `<div class="part-cluster-title">More Lessons</div>` : ""}
-                    <div class="part-menu">
+                    <div class="part-menu" style="${partMenuThemeStyle(groupIndex)}">
                         ${groupIndex === 0 ? `
                             <div class="part-menu-banner">
                                 <strong>Milky Way Path</strong>
@@ -3444,6 +3486,25 @@ function partOrbitStyle(index, total){
     const duration = (8.8 + (index * 0.65)).toFixed(2);
     const delay = (index * -0.55).toFixed(2);
     return `--orbit-angle:${angle.toFixed(2)}deg; --orbit-radius:${radius.toFixed(1)}px; --orbit-duration:${duration}s; --orbit-delay:${delay}s;`;
+}
+
+function partMenuThemeStyle(groupIndex){
+    const theme = partMenuThemes[groupIndex] || partMenuThemes[groupIndex % partMenuThemes.length];
+    if(!theme) return "";
+
+    return [
+        `--menu-top:${theme.top}`,
+        `--menu-mid:${theme.mid}`,
+        `--menu-bottom:${theme.bottom}`,
+        `--menu-glow-a:${theme.glowA}`,
+        `--menu-glow-b:${theme.glowB}`,
+        `--menu-ribbon-a:${theme.ribbonA}`,
+        `--menu-ribbon-b:${theme.ribbonB}`,
+        `--menu-ribbon-c:${theme.ribbonC}`,
+        `--menu-inset:${theme.inset}`,
+        `--menu-shadow:${theme.shadow}`,
+        `--menu-border:${theme.border}`
+    ].join("; ");
 }
 
 function load(){

@@ -303,23 +303,26 @@ button.wrong{
 
 .part-menu{
     position:relative;
-    width:min(100%, 520px);
-    height:520px;
-    margin:20px auto 8px;
-    border-radius:46% 46% 50% 50% / 42% 42% 58% 58%;
+    width:min(100%, 640px);
+    height:640px;
+    margin:20px auto 14px;
+    border-radius:42px;
     background:
-        radial-gradient(circle at 34% 24%, rgba(255,255,255,0.9), rgba(255,255,255,0.18) 24%, transparent 28%),
-        radial-gradient(circle at center, rgba(255,227,186,0.34) 0%, rgba(255,227,186,0.34) 24%, rgba(248,238,219,0.28) 25%, rgba(248,238,219,0.28) 48%, transparent 49%),
-        radial-gradient(circle at center, rgba(37,48,68,0.05) 0%, transparent 68%),
-        linear-gradient(180deg, #fffdf7 0%, #f8efdf 100%);
+        radial-gradient(circle at 16% 16%, rgba(255,255,255,0.96), rgba(255,255,255,0) 18%),
+        radial-gradient(circle at 84% 14%, rgba(255,255,255,0.84), rgba(255,255,255,0) 16%),
+        radial-gradient(circle at 22% 78%, rgba(118,205,255,0.26), rgba(118,205,255,0) 22%),
+        radial-gradient(circle at 74% 76%, rgba(255,212,121,0.28), rgba(255,212,121,0) 24%),
+        conic-gradient(from 210deg at 50% 50%, rgba(255,255,255,0) 0deg, rgba(246,214,119,0.14) 34deg, rgba(255,255,255,0) 70deg, rgba(112,185,255,0.18) 155deg, rgba(255,255,255,0) 230deg, rgba(255,220,150,0.18) 300deg, rgba(255,255,255,0) 360deg),
+        linear-gradient(180deg, #04132c 0%, #0b2550 32%, #144175 68%, #0d2040 100%);
     box-shadow:
-        inset 0 -12px 0 rgba(224,207,176,0.45),
-        0 16px 28px rgba(122,83,0,0.1);
-    border:3px solid rgba(255,255,255,0.9);
+        inset 0 -16px 0 rgba(7,22,49,0.34),
+        0 22px 44px rgba(14,35,65,0.32);
+    border:3px solid rgba(255,255,255,0.34);
+    overflow:hidden;
 }
 
 .part-selector{
-    width:min(100%, 560px);
+    width:min(100%, 640px);
     margin:0 auto;
 }
 
@@ -328,55 +331,135 @@ button.wrong{
 }
 
 .part-cluster-title{
-    margin:4px auto 0;
+    margin:8px auto 4px;
     font-size:13px;
     font-weight:900;
     letter-spacing:0.08em;
     text-transform:uppercase;
-    color:#9a6b07;
+    color:#9d6c06;
+}
+
+.part-menu::before,
+.part-menu::after{
+    content:"";
+    position:absolute;
+    inset:50%;
+    transform:translate(-50%, -50%);
+    border-radius:50%;
+    pointer-events:none;
+}
+
+.part-menu::before{
+    width:540px;
+    height:540px;
+    border:2px solid rgba(255,255,255,0.12);
+    box-shadow:
+        0 0 0 28px rgba(255,255,255,0.05),
+        0 0 0 86px rgba(255,255,255,0.04),
+        0 0 0 146px rgba(255,224,155,0.05);
+    background:
+        radial-gradient(circle at center, rgba(255,255,255,0) 57%, rgba(255,255,255,0.15) 57.5%, rgba(255,255,255,0) 59.5%),
+        radial-gradient(circle at center, rgba(255,255,255,0) 69%, rgba(255,230,170,0.12) 69.5%, rgba(255,255,255,0) 71.5%);
+    animation:milkyWaySpin 24s linear infinite;
+}
+
+.part-menu::after{
+    width:620px;
+    height:620px;
+    background:
+        radial-gradient(circle at 18% 20%, rgba(255,255,255,0.9) 0 1px, transparent 2px),
+        radial-gradient(circle at 76% 16%, rgba(255,255,255,0.76) 0 1.5px, transparent 2.5px),
+        radial-gradient(circle at 82% 34%, rgba(255,255,255,0.95) 0 1px, transparent 2px),
+        radial-gradient(circle at 20% 68%, rgba(255,255,255,0.9) 0 1px, transparent 2px),
+        radial-gradient(circle at 72% 74%, rgba(255,255,255,0.8) 0 1.5px, transparent 2.5px),
+        radial-gradient(circle at 40% 10%, rgba(255,255,255,0.72) 0 1px, transparent 2px),
+        radial-gradient(circle at 35% 76%, rgba(255,236,172,0.76) 0 1px, transparent 2px),
+        radial-gradient(circle at 62% 56%, rgba(150,220,255,0.7) 0 1px, transparent 2px);
+    opacity:0.95;
+    animation:starFieldPulse 5.8s ease-in-out infinite;
 }
 
 .part-menu-core{
     position:absolute;
     left:50%;
     top:50%;
-    width:150px;
-    height:150px;
+    width:224px;
+    height:224px;
     transform:translate(-50%, -50%);
     border-radius:50%;
     background:
-        radial-gradient(circle at 32% 28%, rgba(255,255,255,0.95), rgba(255,255,255,0.3) 36%, transparent 40%),
-        linear-gradient(180deg, #7be41d 0%, #58cc02 58%, #4aad02 100%);
-    box-shadow:0 10px 0 #46a302, 0 20px 32px rgba(70,163,2,0.24);
+        radial-gradient(circle at 34% 28%, rgba(255,255,255,0.88), rgba(255,255,255,0) 22%),
+        radial-gradient(circle at 44% 42%, #63f1ff 0%, #2cbbe1 26%, #1c7bc3 55%, #103d78 72%, #0b214c 100%);
+    box-shadow:
+        inset -18px -28px 0 rgba(7,55,110,0.28),
+        0 0 0 12px rgba(99,210,255,0.1),
+        0 20px 0 rgba(11,60,109,0.52),
+        0 30px 48px rgba(8,29,56,0.38);
     display:flex;
     flex-direction:column;
     align-items:center;
     justify-content:center;
     color:white;
-    border:4px solid rgba(255,255,255,0.92);
+    border:5px solid rgba(233,247,255,0.95);
+    overflow:hidden;
+    animation:worldGlow 4.4s ease-in-out infinite;
+}
+
+.part-menu-core::before,
+.part-menu-core::after{
+    content:"";
+    position:absolute;
+    border-radius:50%;
+    background:#59c63e;
+    opacity:0.95;
+}
+
+.part-menu-core::before{
+    width:122px;
+    height:88px;
+    left:12px;
+    top:80px;
+    border-radius:56% 44% 60% 40%;
+    transform:rotate(-16deg);
+    box-shadow:78px -58px 0 -22px #74de66;
+}
+
+.part-menu-core::after{
+    width:76px;
+    height:58px;
+    right:26px;
+    top:52px;
+    border-radius:58% 42% 55% 45%;
+    transform:rotate(24deg);
 }
 
 .part-menu-core strong{
-    font-size:24px;
+    position:relative;
+    z-index:1;
+    font-size:42px;
     line-height:1;
+    text-shadow:0 8px 18px rgba(9,29,63,0.36);
 }
 
 .part-menu-core span{
+    position:relative;
+    z-index:1;
     margin-top:6px;
-    font-size:13px;
+    font-size:15px;
     font-weight:900;
-    letter-spacing:0.04em;
+    letter-spacing:0.1em;
     text-transform:uppercase;
+    text-shadow:0 2px 8px rgba(9,29,63,0.36);
 }
 
 .part-choice{
     position:absolute;
     left:50%;
     top:50%;
-    width:124px;
-    min-height:124px;
+    width:150px;
+    min-height:160px;
     margin:0;
-    transform:translate(calc(-50% + var(--orbit-x)), calc(-50% + var(--orbit-y)));
+    transform:translate(-50%, -50%) rotate(var(--orbit-angle)) translateY(calc(var(--orbit-radius) * -1));
     display:flex;
     flex-direction:column;
     align-items:center;
@@ -387,55 +470,85 @@ button.wrong{
     box-shadow:none;
     padding:0;
     overflow:visible;
+    animation:orbitDrift var(--orbit-duration, 10s) ease-in-out infinite;
+    animation-delay:var(--orbit-delay, 0s);
 }
 
 .part-choice:hover{
-    transform:translate(calc(-50% + var(--orbit-x)), calc(-50% + var(--orbit-y) - 4px)) scale(1.03);
+    filter:brightness(1.06);
+}
+
+.part-choice::before{
+    content:"";
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:2px;
+    height:138px;
+    transform:translate(-50%, -12px);
+    transform-origin:center bottom;
+    background:linear-gradient(180deg, rgba(255,245,196,0.56), rgba(255,255,255,0));
+    opacity:0.52;
+    pointer-events:none;
 }
 
 .part-badge{
     display:inline-flex;
     position:relative;
-    width:94px;
-    height:94px;
-    align-items:center;
+    width:118px;
+    height:118px;
+    align-items:flex-start;
     justify-content:center;
-    border-radius:46% 46% 52% 52% / 42% 42% 58% 58%;
+    border-radius:50%;
     background:
-        radial-gradient(circle at 28% 24%, rgba(255,255,255,0.98), rgba(255,255,255,0.3) 30%, transparent 34%),
-        radial-gradient(circle at 50% 38%, #fffefb 0%, #f8efe0 60%, #efdfc3 100%);
+        radial-gradient(circle at 28% 20%, rgba(255,255,255,0.98), rgba(255,255,255,0.16) 28%, transparent 32%),
+        radial-gradient(circle at 52% 54%, rgba(255,243,197,0.78), rgba(255,243,197,0.06) 34%, transparent 42%),
+        linear-gradient(180deg, #fff0bf 0%, #ffd15d 40%, #ffa63a 100%);
     color:#6f5840;
     font-weight:900;
-    font-size:50px;
+    font-size:52px;
     box-shadow:
-        inset 0 -8px 0 rgba(175,145,104,0.16),
-        0 8px 0 rgba(214,197,168,0.85),
-        0 12px 18px rgba(122,83,0,0.14);
-    border:3px solid rgba(255,255,255,0.92);
+        inset 0 -10px 0 rgba(176,113,17,0.2),
+        0 0 18px rgba(255,219,110,0.28),
+        0 10px 0 rgba(197,119,21,0.82),
+        0 18px 26px rgba(14,35,65,0.22);
+    border:4px solid rgba(255,255,255,0.92);
     text-shadow:0 2px 0 rgba(255,255,255,0.35);
     overflow:hidden;
+    animation:planetSpin 8.8s linear infinite;
 }
 
 .part-choice:hover .part-badge{
     box-shadow:
-        inset 0 -8px 0 rgba(175,145,104,0.16),
-        0 10px 0 rgba(214,197,168,0.85),
-        0 18px 22px rgba(122,83,0,0.18);
+        inset 0 -10px 0 rgba(176,113,17,0.22),
+        0 0 24px rgba(255,226,126,0.36),
+        0 12px 0 rgba(197,119,21,0.82),
+        0 22px 30px rgba(14,35,65,0.28);
 }
 
 .part-badge::before{
     content:"";
     position:absolute;
-    inset:5px;
-    border-radius:46% 46% 52% 52% / 42% 42% 58% 58%;
-    background:radial-gradient(circle at 30% 25%, rgba(255,255,255,0.7), transparent 40%);
+    inset:7px;
+    border-radius:50%;
+    background:radial-gradient(circle at 32% 22%, rgba(255,255,255,0.72), transparent 38%);
     pointer-events:none;
+}
+
+.part-badge::after{
+    content:"";
+    position:absolute;
+    inset:-16px;
+    border-radius:50%;
+    border:2px solid rgba(255,244,206,0.3);
+    animation:orbitHalo 4.2s linear infinite;
 }
 
 .part-animal{
     position:relative;
     z-index:1;
     display:inline-block;
+    margin-top:18px;
     filter:drop-shadow(0 5px 5px rgba(122,83,0,0.18));
     transform-origin:center bottom;
     animation:animalBob 2.8s ease-in-out infinite;
@@ -570,39 +683,162 @@ button.wrong{
     78%{ transform:translateY(0) scale(0.99); }
 }
 
+@keyframes orbitHalo{
+    from{ transform:rotate(0deg); }
+    to{ transform:rotate(360deg); }
+}
+
+@keyframes milkyWaySpin{
+    from{ transform:translate(-50%, -50%) rotate(0deg); }
+    to{ transform:translate(-50%, -50%) rotate(360deg); }
+}
+
+@keyframes starFieldPulse{
+    0%, 100%{ opacity:0.72; }
+    50%{ opacity:1; }
+}
+
+@keyframes worldGlow{
+    0%, 100%{ box-shadow:inset -18px -28px 0 rgba(7,55,110,0.28), 0 0 0 12px rgba(99,210,255,0.1), 0 20px 0 rgba(11,60,109,0.52), 0 30px 48px rgba(8,29,56,0.38); }
+    50%{ box-shadow:inset -18px -28px 0 rgba(7,55,110,0.26), 0 0 0 18px rgba(99,210,255,0.16), 0 20px 0 rgba(11,60,109,0.52), 0 30px 52px rgba(8,29,56,0.44); }
+}
+
+@keyframes orbitDrift{
+    0%{
+        transform:translate(-50%, -50%) rotate(calc(var(--orbit-angle) - 4deg)) translateY(calc(var(--orbit-radius) * -1));
+    }
+    50%{
+        transform:translate(-50%, -50%) rotate(calc(var(--orbit-angle) + 5deg)) translateY(calc(var(--orbit-radius) * -1));
+    }
+    100%{
+        transform:translate(-50%, -50%) rotate(calc(var(--orbit-angle) - 4deg)) translateY(calc(var(--orbit-radius) * -1));
+    }
+}
+
+@keyframes planetSpin{
+    from{ transform:rotate(0deg); }
+    to{ transform:rotate(360deg); }
+}
+
 .part-copy{
     display:flex;
     flex-direction:column;
-    gap:4px;
-    margin-top:8px;
+    gap:5px;
+    margin-top:10px;
     width:100%;
-    padding:6px 2px 0;
+    padding:8px 0 0;
 }
 
 .part-name{
-    color:#253044;
-    font-size:13px;
+    color:#ffffff;
+    font-size:14px;
     font-weight:900;
     line-height:1.15;
+    text-shadow:0 4px 12px rgba(6,21,48,0.42);
 }
 
 .part-detail{
-    color:#7f6d58;
+    color:rgba(241,247,255,0.94);
     font-size:11px;
     font-weight:700;
     line-height:1.25;
+    text-shadow:0 4px 12px rgba(6,21,48,0.34);
 }
 
 .part-status{
-    color:#58a700;
+    color:#7b3f00;
     font-size:11px;
     font-weight:900;
-    margin-top:4px;
-    padding:5px 10px;
+    margin-top:6px;
+    padding:6px 12px;
     border-radius:999px;
-    background:#fff;
-    border:2px solid #e9dcc5;
-    box-shadow:0 4px 0 #eadfca;
+    background:#fff4d6;
+    border:2px solid #ffd46e;
+    box-shadow:0 4px 0 #efbd47;
+}
+
+.part-letter{
+    position:absolute;
+    top:10px;
+    right:10px;
+    z-index:2;
+    width:28px;
+    height:28px;
+    border-radius:50%;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    background:#ffffff;
+    color:#0f4680;
+    font-size:13px;
+    font-weight:1000;
+    box-shadow:0 4px 10px rgba(12,38,73,0.22);
+}
+
+.part-menu-glow{
+    position:absolute;
+    inset:auto 50% 26px;
+    width:360px;
+    height:76px;
+    transform:translateX(-50%);
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(255,222,136,0.52) 0%, rgba(255,222,136,0.12) 48%, transparent 72%);
+    filter:blur(10px);
+    pointer-events:none;
+}
+
+.part-menu-banner{
+    position:absolute;
+    left:28px;
+    top:26px;
+    z-index:1;
+    text-align:left;
+    color:#fff;
+    max-width:250px;
+}
+
+.part-menu-banner strong{
+    display:block;
+    font-size:24px;
+    font-weight:1000;
+    letter-spacing:0.03em;
+}
+
+.part-menu-banner span{
+    display:block;
+    margin-top:6px;
+    font-size:13px;
+    line-height:1.35;
+    color:rgba(231,243,255,0.88);
+}
+
+.section-progress-banner{
+    width:100%;
+    padding:16px 18px;
+    border-radius:26px;
+    background:
+        radial-gradient(circle at 18% 20%, rgba(255,255,255,0.95), rgba(255,255,255,0.26) 28%, transparent 34%),
+        linear-gradient(180deg, #fff8e4 0%, #fff0c8 100%);
+    border:2px solid #efd08d;
+    box-shadow:0 7px 0 #e5c57e, 0 16px 26px rgba(160,109,13,0.12);
+    text-align:left;
+}
+
+.section-progress-banner strong,
+.section-progress-banner span{
+    display:block;
+}
+
+.section-progress-banner strong{
+    font-size:20px;
+    color:#533e17;
+    margin-bottom:6px;
+}
+
+.section-progress-banner span{
+    color:#7a6336;
+    font-size:14px;
+    line-height:1.4;
 }
 
 .part-complete-actions{
@@ -823,6 +1059,22 @@ button.wrong{
         gap:14px;
         width:100%;
         height:auto;
+        padding:18px 12px 14px;
+        border-radius:30px;
+    }
+    .part-menu::before,
+    .part-menu::after,
+    .part-menu-glow{
+        display:none;
+    }
+    .part-menu-banner{
+        position:relative;
+        left:auto;
+        top:auto;
+        max-width:none;
+        grid-column:1 / -1;
+        text-align:center;
+        margin-bottom:2px;
     }
     .part-menu-core{
         position:relative;
@@ -830,7 +1082,7 @@ button.wrong{
         top:auto;
         transform:none;
         width:100%;
-        height:110px;
+        height:132px;
         grid-column:1 / -1;
         margin-bottom:4px;
     }
@@ -839,8 +1091,16 @@ button.wrong{
         left:auto;
         top:auto;
         width:100%;
-        min-height:0;
+        min-height:168px;
         transform:none !important;
+        animation:none;
+    }
+    .part-choice::before{
+        display:none;
+    }
+    .part-badge{
+        width:100px;
+        height:100px;
     }
     .part-copy{
         padding:8px 4px 0;
@@ -912,6 +1172,7 @@ let matchedKeys = [];
 let selectedMatch = null;
 let completedParts = loadCompletedParts();
 let completedSections = loadCompletedSections();
+let completedLessons = loadCompletedLessons();
 let gradebook = loadGradebook();
 let gradeState = null;
 
@@ -1107,16 +1368,16 @@ const gameParts = [
             rawBuildStep("Translate the sentence", "Ez law im. (Ez lawek im.)\n____________", ["boy", "am", "daughter", "I", "a"], ["I", "am", "a", "boy"]),
             rawBuildStep("Translate the sentence", "Ez keç im. (Ez keçek im.)\n____________", ["I", "am", "girl", "son", "a"], ["I", "am", "a", "girl"]),
             rawBuildStep("Translate the sentence", "Ez kur im. (Ez kurek im.)\n____________", ["daughter", "I", "am", "boy", "a"], ["I", "am", "a", "boy"]),
-            rawBuildStep("Translate the sentence", "Ez keç im. (Ez keçek im.)\n____________", ["I", "daughter", "am", "brother", "a"], ["I", "am", "a", "daughter"]),
-            rawBuildStep("Translate the sentence", "Ez kiç im. (Ez kiçek im.)\n____________", ["I", "daughter", "am", "brother", "a"], ["I", "am", "a", "daughter"]),
+            rawBuildStep("Translate the sentence", "Ez keç im. (Ez keçek im.)\n____________", ["I", "girl", "am", "brother", "a"], ["I", "am", "a", "girl"]),
+            rawBuildStep("Translate the sentence", "Ez kiç im. (Ez kiçek im.)\n____________", ["I", "girl", "am", "brother", "a"], ["I", "am", "a", "girl"]),
             rawBuildStep("Translate the sentence", "Ez jin im. (Ez jinek im.)\n____________", ["I", "man", "am", "woman", "a"], ["I", "am", "a", "woman"]),
             rawBuildStep("Wergera vê hevokê bike.\nTranslate the sentence", "I am a father.\n………………….. .", ["Ez", "bav", "im", "dayik", "law"], ["Ez", "bav", "im"]),
             rawBuildStep("Wergera vê hevokê bike.\nTranslate the sentence", "I am a mother.\n………………. .", ["Ez", "dayik", "im", "bav", "keç"], ["Ez", "dayik", "im"]),
-            rawBuildStep("Wergera vê hevokê bike.\nTranslate the sentence", "I am a boy.\n……………… .", ["Ez", "law", "im", "kur", "dayik"], ["Ez", "law", "im"]),
+            rawBuildStep("Wergera vê hevokê bike.\nTranslate the sentence", "I am a boy.\n……………… .", ["Ez", "law", "im", "dayik", "keç"], ["Ez", "law", "im"]),
             rawBuildStep("Wergera vê hevokê bike.\nTranslate the sentence", "I am a girl.\n……………. .", ["Ez", "keç", "im", "law", "bav"], ["Ez", "keç", "im"]),
-            rawBuildStep("Wergera vê hevokê bike.\nTranslate the sentence", "I am a son.\n……………. .", ["Ez", "kur", "im", "law", "dayik"], ["Ez", "kur", "im"]),
-            rawBuildStep("Wergera vê hevokê bike.\nTranslate the sentence", "I am a daughter.\n…………… .", ["Ez", "keç", "im", "kur", "bav"], ["Ez", "keç", "im"]),
-            rawBuildStep("Wergera vê hevokê bike.\nTranslate the sentence", "I am a woman.\n…………… .", ["Ez", "jin", "im", "mêr", "law"], ["Ez", "jin", "im"]),
+            rawBuildStep("Wergera vê hevokê bike.\nTranslate the sentence", "I am a boy.\n……………. .", ["Ez", "kur", "im", "dayik", "keç"], ["Ez", "kur", "im"]),
+            rawBuildStep("Wergera vê hevokê bike.\nTranslate the sentence", "I am a girl.\n…………… .", ["Ez", "keç", "im", "kur", "bav"], ["Ez", "keç", "im"]),
+            rawBuildStep("Wergera vê hevokê bike.\nTranslate the sentence", "I am a woman.\n…………… .", ["jin", "im", "mêr", "Ez", "law"], ["Ez", "jin", "im"]),
             nextStep("Game One A • Part 1C complete"),
             imageStep("şîr", [
                 imgOpt("Coffee", "coffee"),
@@ -2080,6 +2341,19 @@ function saveCompletedSections(){
     localStorage.setItem("pilingo_game1_completed_sections", JSON.stringify(completedSections));
 }
 
+function loadCompletedLessons(){
+    try {
+        const saved = JSON.parse(localStorage.getItem("pilingo_game1_completed_lessons") || "{}");
+        return saved && typeof saved === "object" ? saved : {};
+    } catch(error) {
+        return {};
+    }
+}
+
+function saveCompletedLessons(){
+    localStorage.setItem("pilingo_game1_completed_lessons", JSON.stringify(completedLessons));
+}
+
 function loadGradebook(){
     try {
         const saved = JSON.parse(localStorage.getItem("pilingo_game1_grades") || "{}");
@@ -2101,12 +2375,67 @@ function sectionKey(index){
     return String(index);
 }
 
-function isSectionComplete(index, sectionIndex){
-    const sections = sectionsForPart(index);
-    const section = sections[sectionIndex];
+function lessonStoreKey(index, sectionIndex){
+    const section = sectionsForPart(index)[sectionIndex];
+    return section ? section.id : "";
+}
+
+function lessonStepsForSection(index, sectionIndex){
+    const section = sectionsForPart(index)[sectionIndex];
+    const steps = [];
+    if(!section) return steps;
+
+    for(let i = section.start; i <= section.end; i++) {
+        if(isGradableStep(gameParts[index].steps[i])) {
+            steps.push(i);
+        }
+    }
+
+    return steps;
+}
+
+function isLegacySectionComplete(index, sectionIndex){
+    const section = sectionsForPart(index)[sectionIndex];
     if(!section) return false;
 
     return (completedSections[sectionKey(index)] || []).includes(section.id);
+}
+
+function completedLessonSteps(index, sectionIndex){
+    if(isLegacySectionComplete(index, sectionIndex)) {
+        return lessonStepsForSection(index, sectionIndex);
+    }
+
+    const saved = completedLessons[lessonStoreKey(index, sectionIndex)];
+    return Array.isArray(saved) ? saved : [];
+}
+
+function sectionLessonProgress(index, sectionIndex){
+    const total = lessonStepsForSection(index, sectionIndex).length;
+    const completed = Math.min(completedLessonSteps(index, sectionIndex).length, total);
+    return { completed:completed, total:total };
+}
+
+function isLessonComplete(index, sectionIndex, stepNumber){
+    return completedLessonSteps(index, sectionIndex).includes(stepNumber);
+}
+
+function markLessonComplete(index, sectionIndex, stepNumber){
+    const key = lessonStoreKey(index, sectionIndex);
+    if(!key) return;
+
+    const saved = completedLessonSteps(index, sectionIndex);
+    if(saved.includes(stepNumber)) return;
+
+    completedLessons[key] = [...saved, stepNumber].sort((a, b) => a - b);
+    saveCompletedLessons();
+}
+
+function isSectionComplete(index, sectionIndex){
+    if(isLegacySectionComplete(index, sectionIndex)) return true;
+
+    const progress = sectionLessonProgress(index, sectionIndex);
+    return progress.total > 0 && progress.completed >= progress.total;
 }
 
 function isSectionUnlocked(index, sectionIndex){
@@ -2118,6 +2447,9 @@ function markSectionComplete(index, sectionIndex){
     const sections = sectionsForPart(index);
     const section = sections[sectionIndex];
     if(!section) return;
+
+    completedLessons[section.id] = [...lessonStepsForSection(index, sectionIndex)];
+    saveCompletedLessons();
 
     const key = sectionKey(index);
     const saved = completedSections[key] || [];
@@ -2359,17 +2691,91 @@ function startPart(index){
     load();
 }
 
+function lessonTitleForStep(index, stepNumber){
+    const step = gameParts[index].steps[stepNumber];
+    if(!step) return "Lesson";
+
+    const prompt = String(step.prompt || "").split("\n")[0].trim();
+    if(prompt) return prompt.length > 54 ? prompt.slice(0, 51) + "..." : prompt;
+
+    const instruction = String(step.instruction || "").split("|")[0].trim();
+    return instruction || "Lesson";
+}
+
+function lessonDetailForStep(index, stepNumber, order){
+    const step = gameParts[index].steps[stepNumber];
+    const instruction = String((step?.instruction || "")).split("|")[0].trim();
+    return `Lesson ${order}${instruction ? " • " + instruction : ""}`;
+}
+
 function startSection(index, sectionIndex){
     const sections = sectionsForPart(index);
     const section = sections[sectionIndex];
     if(!section || !isSectionUnlocked(index, sectionIndex)) return;
 
+    showLessonSelect(index, sectionIndex);
+}
+
+function startLesson(index, sectionIndex, stepNumber){
+    const sections = sectionsForPart(index);
+    const section = sections[sectionIndex];
+    if(!section || !isSectionUnlocked(index, sectionIndex)) return;
+    if(stepNumber < section.start || stepNumber > section.end) return;
+    if(!isGradableStep(gameParts[index].steps[stepNumber])) return;
+
     partIndex = index;
-    stepIndex = section.start;
+    stepIndex = stepNumber;
     hearts = Engine.getHearts();
     gradeState = null;
     PilingoAudio.playPartAnimal(index);
     load();
+}
+
+function showLessonSelect(index, sectionIndex, message){
+    const sections = sectionsForPart(index);
+    const section = sections[sectionIndex];
+    if(!section) {
+        showSectionSelect(index);
+        return;
+    }
+
+    const lessons = lessonStepsForSection(index, sectionIndex);
+    const progress = sectionLessonProgress(index, sectionIndex);
+
+    partIndex = index;
+    selectedWords = [];
+    matchedKeys = [];
+    selectedMatch = null;
+
+    renderHearts();
+    document.getElementById("menuButton").style.display = "none";
+    document.getElementById("bar").style.width = progress.total ? ((progress.completed / progress.total) * 100) + "%" : "0%";
+    document.getElementById("partLabel").innerText = "Kurmanji to English";
+    document.getElementById("instruction").innerText = message || "Choose any lesson in this section";
+    document.getElementById("question").innerText = gameParts[index].title + " • " + section.label;
+    document.getElementById("question").classList.remove("rich-prompt");
+    document.getElementById("image").style.display = "none";
+    document.getElementById("image").removeAttribute("src");
+    document.getElementById("feedback").innerText = "";
+    showIdleGrade(`${progress.completed}/${progress.total} lessons passed in this section`);
+    document.getElementById("activity").innerHTML = `
+        <div class="section-select">
+            <div class="section-progress-banner">
+                <strong>${escapeHtml(section.label)}</strong>
+                <span>${escapeHtml(section.detail)}</span>
+                <span class="section-grade">${progress.completed}/${progress.total} lessons completed</span>
+            </div>
+            ${lessons.map((stepNumber, lessonIndex) => `
+                <button class="section-card" onclick="startLesson(${index}, ${sectionIndex}, ${stepNumber})">
+                    <strong>Lesson ${lessonIndex + 1} ${isLessonComplete(index, sectionIndex, stepNumber) ? "✓" : ""}</strong>
+                    <span>${escapeHtml(lessonTitleForStep(index, stepNumber))}</span>
+                    <span class="section-grade">${escapeHtml(lessonDetailForStep(index, stepNumber, lessonIndex + 1))}</span>
+                    <span>${isLessonComplete(index, sectionIndex, stepNumber) ? "Open again" : "Start lesson"}</span>
+                </button>
+            `).join("")}
+            <button class="secondary" onclick="showSectionSelect(${index})">Back to sections</button>
+        </div>
+    `;
 }
 
 function showSectionSelect(index, message){
@@ -2400,17 +2806,17 @@ function showSectionSelect(index, message){
             ${sections.map((section, sectionIndex) => {
                 const unlocked = isSectionUnlocked(index, sectionIndex);
                 const complete = isSectionComplete(index, sectionIndex);
-                const record = gradebook[section.id];
+                const progress = sectionLessonProgress(index, sectionIndex);
                 return `
                     <button
                         class="section-card ${unlocked ? "" : "locked"}"
-                        onclick="${unlocked ? `startSection(${index}, ${sectionIndex})` : ""}"
+                        onclick="${unlocked ? `showLessonSelect(${index}, ${sectionIndex})` : ""}"
                         ${unlocked ? "" : "disabled"}
                     >
                         <strong>${escapeHtml(section.label)} ${complete ? "✓" : ""}</strong>
                         <span>${escapeHtml(section.detail)}</span>
-                        <span class="section-grade">${escapeHtml(gradeSummaryText(record))}</span>
-                        <span>${unlocked ? (complete ? "Open again" : "Start section") : "Finish the previous section first"}</span>
+                        <span class="section-grade">${escapeHtml(progress.completed + "/" + progress.total + " lessons passed")}</span>
+                        <span>${unlocked ? (complete ? "Open lessons again" : "Open this section") : "Finish the previous section first"}</span>
                     </button>
                 `;
             }).join("")}
@@ -2444,8 +2850,15 @@ function showPartSelect(){
                 <div class="part-cluster">
                     ${groupIndex > 0 ? `<div class="part-cluster-title">More Lessons</div>` : ""}
                     <div class="part-menu">
+                        ${groupIndex === 0 ? `
+                            <div class="part-menu-banner">
+                                <strong>Milky Way Path</strong>
+                                <span>Every Game One part circles the world here. Tap any star and begin your path.</span>
+                            </div>
+                            <div class="part-menu-glow" aria-hidden="true"></div>
+                        ` : ""}
                         <div class="part-menu-core">
-                            <strong>${groupIndex === 0 ? "🐯" : "📘"}</strong>
+                            <strong>${groupIndex === 0 ? "🌍" : "📘"}</strong>
                             <span>${groupIndex === 0 ? "Game One" : `Page ${groupIndex + 1}`}</span>
                         </div>
                         ${group.map((part, index) => {
@@ -2453,6 +2866,7 @@ function showPartSelect(){
                             return `
                                 <button class="part-choice" style="${partOrbitStyle(index, group.length)}" onclick="startPart(${actualIndex})">
                                     <span class="part-badge" aria-hidden="true">
+                                        <span class="part-letter">${escapeHtml(partCode(part.title))}</span>
                                         <span class="part-animal" style="animation-delay:${(actualIndex * 0.18).toFixed(2)}s">${partEmojis[actualIndex] || "🦉"}</span>
                                     </span>
                                     <span class="part-copy">
@@ -2470,14 +2884,18 @@ function showPartSelect(){
     `;
 }
 
+function partCode(title){
+    const match = String(title || "").match(/Game One;\s*([A-Z])/i);
+    return match ? match[1].toUpperCase() : "P";
+}
+
 function partOrbitStyle(index, total){
-    const radius = 172;
+    const radius = total <= 3 ? 188 : 208;
     const startAngle = -90;
     const angle = ((360 / total) * index) + startAngle;
-    const radians = angle * (Math.PI / 180);
-    const x = Math.cos(radians) * radius;
-    const y = Math.sin(radians) * radius;
-    return `--orbit-x:${x.toFixed(1)}px; --orbit-y:${y.toFixed(1)}px;`;
+    const duration = (8.8 + (index * 0.65)).toFixed(2);
+    const delay = (index * -0.55).toFixed(2);
+    return `--orbit-angle:${angle.toFixed(2)}deg; --orbit-radius:${radius.toFixed(1)}px; --orbit-duration:${duration}s; --orbit-delay:${delay}s;`;
 }
 
 function load(){
@@ -2492,8 +2910,13 @@ function load(){
     renderHearts();
     updateProgress();
     document.getElementById("menuButton").style.display = "block";
-    document.getElementById("menuButton").innerText = sectionsForPart(partIndex).length ? "← Sections" : "← Parts";
-    document.getElementById("menuButton").onclick = () => sectionsForPart(partIndex).length ? showSectionSelect(partIndex) : showPartSelect();
+    if(sectionsForPart(partIndex).length && currentSectionIndex() >= 0) {
+        document.getElementById("menuButton").innerText = "← Lessons";
+        document.getElementById("menuButton").onclick = () => showLessonSelect(partIndex, currentSectionIndex());
+    } else {
+        document.getElementById("menuButton").innerText = sectionsForPart(partIndex).length ? "← Sections" : "← Parts";
+        document.getElementById("menuButton").onclick = () => sectionsForPart(partIndex).length ? showSectionSelect(partIndex) : showPartSelect();
+    }
     document.getElementById("partLabel").innerText =
         "Kurmanji to English\nPart " + (partIndex + 1) + " of " + gameParts.length + " • " + part.title;
     document.getElementById("instruction").innerText = step.instruction || "";
@@ -2936,17 +3359,31 @@ function markWrong(){
 function completeStep(){
     const sections = sectionsForPart(partIndex);
     const sectionIndex = currentSectionIndex();
-    if(sections.length && sectionIndex >= 0 && stepIndex === sections[sectionIndex].end) {
-        saveCurrentGradeRecord();
-        markSectionComplete(partIndex, sectionIndex);
-        hearts = window.Engine?.addHeart ? Engine.addHeart(1) : Math.min(5, hearts + 1);
-        renderHearts();
+    if(sections.length && sectionIndex >= 0) {
+        const wasComplete = isSectionComplete(partIndex, sectionIndex);
+        if(isGradableStep(currentStep())) {
+            markLessonComplete(partIndex, sectionIndex, stepIndex);
+        }
 
-        if(sectionIndex < sections.length - 1) {
-            const percent = currentGradePercent();
-            showSectionSelect(partIndex, "❤️ +1 heart • " + sections[sectionIndex + 1].label + " is now unlocked • Grade " + gradeLetter(percent) + " " + percent + "%");
+        const nowComplete = isSectionComplete(partIndex, sectionIndex);
+
+        if(nowComplete && !wasComplete) {
+            markSectionComplete(partIndex, sectionIndex);
+            hearts = window.Engine?.addHeart ? Engine.addHeart(1) : Math.min(5, hearts + 1);
+            renderHearts();
+
+            if(sectionIndex < sections.length - 1) {
+                showSectionSelect(partIndex, "❤️ +1 heart • " + sections[sectionIndex + 1].label + " is now unlocked");
+                return;
+            }
+
+            markPartComplete(partIndex);
+            showPartComplete(partIndex);
             return;
         }
+
+        showLessonSelect(partIndex, sectionIndex, "✅ Lesson passed. You can open any other lesson in this section.");
+        return;
     }
 
     stepIndex++;

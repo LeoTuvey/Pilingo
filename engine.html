@@ -10,492 +10,919 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="pilingo-icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="pilingo-icon-192.png">
-<title>🐯 Pilingo Path</title>
-
+<title>Pilingo A1 Map</title>
 <style>
 *{
   box-sizing:border-box;
 }
 
+:root{
+  --green:#58cc02;
+  --green-dark:#46a302;
+  --ink:#24324a;
+  --soft-ink:#5a6880;
+  --card:#ffffff;
+  --line:#f4d878;
+  --shadow:0 18px 40px rgba(39,59,99,0.12);
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
 body{
-  font-family:Inter,Arial,sans-serif;
   margin:0;
-  padding:26px 18px 36px;
-  text-align:center;
-  background:
-    radial-gradient(circle at top left, rgba(255,214,102,0.48), transparent 30%),
-    linear-gradient(180deg, #fffdf6 0%, #fbf4de 44%, #f2deaf 100%);
-  color:#253044;
   min-height:100vh;
+  font-family:"Trebuchet MS","Avenir Next",Arial,sans-serif;
+  color:var(--ink);
+  background:
+    radial-gradient(circle at top, rgba(255,247,176,0.95) 0%, rgba(255,247,176,0.58) 18%, rgba(255,247,176,0) 40%),
+    linear-gradient(180deg, #fffdf2 0%, #fff5c7 26%, #ffeab4 54%, #ffdca0 100%);
 }
 
-.top-actions{
-  max-width:460px;
-  margin:0 auto 12px;
+button{
+  font:inherit;
+}
+
+.shell{
+  width:min(980px, calc(100% - 28px));
+  margin:0 auto;
+  padding:20px 0 48px;
+}
+
+.topbar{
   display:flex;
-  justify-content:flex-start;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin-bottom:18px;
 }
 
-.back-button{
-  width:auto;
-  padding:12px 16px;
+.back-button,
+.owner-button{
   border:none;
-  border-radius:16px;
-  background:linear-gradient(180deg, #fffaf0 0%, #ffe7b0 100%);
-  color:#9b6b10;
+  border-radius:999px;
+  padding:14px 18px;
   font-size:15px;
   font-weight:900;
   cursor:pointer;
-  box-shadow:0 4px 0 #dcb25b;
+  box-shadow:0 6px 0 rgba(31,49,77,0.12);
 }
 
-.back-button:hover{
-  transform:translateY(-1px);
+.back-button{
+  color:#7b5610;
+  background:linear-gradient(180deg, #fff8e6 0%, #ffd97a 100%);
 }
 
-h1{
-  margin:4px 0 14px;
-  font-size:30px;
-  letter-spacing:0;
+.owner-button{
+  color:#ffffff;
+  background:linear-gradient(180deg, #67d51f 0%, #58cc02 100%);
 }
 
-#xp{
-  position:fixed;
-  top:15px;
-  right:15px;
-  background:white;
-  color:#58a700;
-  border:2px solid #d7f2c3;
-  box-shadow:0 4px 0 #d7f2c3;
-  padding:10px 14px;
-  border-radius:999px;
-  font-weight:900;
-  z-index:10;
-}
-
-.course-panel{
-  max-width:460px;
-  margin:0 auto 24px;
-}
-
-.course-label{
-  padding:14px;
-  border:2px solid #e1c27a;
-  border-radius:999px;
-  background:linear-gradient(180deg, #fff7da 0%, #f4d98f 100%);
-  font-size:16px;
-  font-weight:900;
-  box-shadow:0 6px 0 #dbb35c;
-}
-
-.path{
-  max-width:460px;
-  margin:auto;
+.hero{
   position:relative;
-  padding:10px 0 6px;
-}
-
-.line{
-  position:absolute;
-  left:50%;
-  top:0;
-  width:8px;
-  height:100%;
-  background:linear-gradient(180deg, #efd79a 0%, #d8b35c 100%);
-  border-radius:999px;
-  transform:translateX(-50%);
-  pointer-events:none;
-}
-
-#owlGuide{
-  position:absolute;
-  left:50%;
-  transform:translate(-50%,0);
-  width:52px;
-  height:52px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:31px;
-  color:white;
-  background:#ffb020;
-  border:3px solid white;
-  border-radius:50%;
-  box-shadow:0 5px 0 rgba(37,48,68,0.16);
-  transition:0.6s ease;
-  z-index:5;
-  pointer-events:none;
-}
-
-.node{
-  width:min(236px, 78vw);
-  min-height:150px;
-  margin:28px auto;
-  padding:18px 18px 20px;
-  border-radius:45% 45% 48% 48% / 36% 36% 58% 58%;
-  background:
-    radial-gradient(circle at 30% 24%, rgba(255,255,255,0.96), rgba(255,255,255,0.22) 28%, transparent 30%),
-    linear-gradient(180deg, var(--egg-top, #fff8df) 0%, var(--egg-bottom, #efcf7c) 100%);
-  border:3px solid rgba(255,248,222,0.96);
-  box-shadow:0 10px 0 var(--egg-shadow, #d7ae56), 0 18px 28px rgba(122,83,0,0.18);
-  cursor:pointer;
-  transition:transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
-  position:relative;
-  z-index:2;
-  font-weight:900;
   overflow:hidden;
+  border-radius:36px;
+  padding:26px 22px 24px;
+  background:
+    radial-gradient(circle at 16% 18%, rgba(255,255,255,0.95), rgba(255,255,255,0) 26%),
+    radial-gradient(circle at 82% 14%, rgba(255,255,255,0.8), rgba(255,255,255,0) 22%),
+    linear-gradient(135deg, #ffe060 0%, #ffd243 24%, #7bd32d 64%, #58cc02 100%);
+  box-shadow:0 24px 50px rgba(100,137,27,0.18);
 }
 
-.node:nth-child(odd){
-  transform:translateX(-54px);
-}
-
-.node:nth-child(even){
-  transform:translateX(54px);
-}
-
-.node:hover{
-  box-shadow:0 8px 0 var(--egg-hover-shadow, #cfa145), 0 18px 30px rgba(122,83,0,0.22);
-  border-color:#fff4ce;
-}
-
-.node:nth-child(odd):hover{
-  transform:translateX(-54px) translateY(-2px);
-}
-
-.node:nth-child(even):hover{
-  transform:translateX(54px) translateY(-2px);
-}
-
-.locked{
-  opacity:0.55;
-  pointer-events:none;
-  filter:grayscale(0.35);
-}
-
-.lock-badge{
+.hero::after{
+  content:"";
   position:absolute;
-  top:12px;
-  right:12px;
-  width:34px;
-  height:34px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  inset:auto -60px -100px auto;
+  width:220px;
+  height:220px;
   border-radius:50%;
-  background:rgba(37,48,68,0.82);
-  color:#fff;
-  font-size:18px;
-  box-shadow:0 4px 0 rgba(18,24,34,0.28);
+  background:radial-gradient(circle, rgba(255,255,255,0.38), rgba(255,255,255,0));
 }
 
-.unlocked{
-  box-shadow:0 10px 0 var(--egg-shadow, #d7ae56), 0 18px 28px rgba(230,171,24,0.18);
+.hero-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:18px;
 }
 
-.completed{
-  box-shadow:0 10px 0 var(--egg-complete-shadow, #c8912d), 0 18px 28px rgba(255,176,32,0.24);
+.hero-copy{
+  max-width:620px;
 }
 
-.icon{
+.eyebrow{
   display:inline-flex;
-  width:78px;
-  height:78px;
+  align-items:center;
+  gap:8px;
+  padding:8px 14px;
+  border-radius:999px;
+  background:rgba(255,255,255,0.82);
+  color:#7f5a00;
+  font-size:13px;
+  font-weight:1000;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+}
+
+.hero h1{
+  margin:14px 0 10px;
+  font-size:clamp(30px, 5vw, 48px);
+  line-height:1.02;
+  color:#19310c;
+}
+
+.hero p{
+  margin:0;
+  font-size:16px;
+  line-height:1.55;
+  color:rgba(24,40,18,0.82);
+  font-weight:800;
+}
+
+.mascot-wrap{
+  flex:0 0 auto;
+  width:116px;
+  height:116px;
+  border-radius:50%;
+  display:flex;
   align-items:center;
   justify-content:center;
-  border-radius:46% 46% 52% 52% / 40% 40% 60% 60%;
   background:
-    radial-gradient(circle at 30% 24%, rgba(255,255,255,0.96), rgba(255,255,255,0.2) 30%, transparent 32%),
-    linear-gradient(180deg, var(--icon-top, #fff7d3) 0%, var(--icon-bottom, #e9c062) 100%);
-  font-size:38px;
-  margin:0 auto 10px;
-  box-shadow:inset 0 -7px 0 rgba(184,137,31,0.34), 0 8px 0 var(--icon-shadow, rgba(196,148,45,0.7));
+    radial-gradient(circle at 30% 24%, rgba(255,255,255,0.96), rgba(255,255,255,0.24) 26%, rgba(255,255,255,0) 34%),
+    linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(255,245,183,0.9) 100%);
+  box-shadow:inset 0 -10px 0 rgba(232,192,58,0.28), 0 14px 0 rgba(170,123,10,0.18);
+  font-size:58px;
+  animation:floatTiger 3.8s ease-in-out infinite;
 }
 
-.skill-name{
-  font-size:17px;
-  line-height:1.2;
+.hero-stats{
+  margin-top:22px;
+  display:grid;
+  grid-template-columns:repeat(4, minmax(0, 1fr));
+  gap:14px;
 }
 
-.skill-name .skill-emoji{
+.stat-pill{
+  border-radius:28px;
+  padding:16px 14px;
+  background:rgba(255,255,255,0.88);
+  box-shadow:0 12px 28px rgba(71,101,18,0.12);
+  text-align:center;
+}
+
+.stat-label{
   display:block;
+  color:#776021;
+  font-size:12px;
+  font-weight:1000;
+  letter-spacing:0.06em;
+  text-transform:uppercase;
+}
+
+.stat-value{
+  display:block;
+  margin-top:6px;
+  font-size:26px;
+  font-weight:1000;
+  color:#21382d;
+}
+
+.map-intro{
+  margin-top:18px;
+  padding:18px 18px 20px;
+  border-radius:28px;
+  background:rgba(255,255,255,0.78);
+  box-shadow:var(--shadow);
+}
+
+.map-intro h2{
+  margin:0 0 8px;
   font-size:24px;
-  margin-bottom:4px;
 }
 
-.small{
-  font-size:13px;
-  color:#6e5527;
-  margin-top:8px;
+.map-intro p{
+  margin:0;
+  color:var(--soft-ink);
+  line-height:1.55;
+  font-weight:800;
 }
 
-.bar{
-  height:10px;
-  background:#edd7a0;
-  border-radius:999px;
+.course-structure{
   margin-top:12px;
-  overflow:hidden;
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
 }
 
-.bar-fill{
-  height:100%;
-  width:0%;
-  background:#58cc02;
-  transition:0.4s ease;
+.course-structure span{
+  padding:8px 12px;
+  border-radius:999px;
+  background:#fff6ce;
+  color:#755400;
+  font-size:12px;
+  font-weight:1000;
+  box-shadow:0 4px 0 rgba(224,187,82,0.35);
 }
 
-.level-0 .bar-fill{ background:#ddd; }
-.level-1 .bar-fill{ background:#ffca28; }
-.level-2 .bar-fill{ background:#ffb300; }
-.level-3 .bar-fill{ background:#66bb6a; }
-.level-4 .bar-fill{ background:#2e7d32; }
+.map{
+  position:relative;
+  margin-top:26px;
+  padding:12px 0 20px;
+}
 
-@media (max-width:520px){
-  body{padding:18px 12px 28px;}
-  #xp{position:static; display:inline-block; margin-bottom:10px;}
-  .node,
-  .node:nth-child(odd),
-  .node:nth-child(even){
-    transform:none;
-    width:88%;
+.map::before{
+  content:"";
+  position:absolute;
+  left:34px;
+  top:0;
+  bottom:0;
+  width:10px;
+  border-radius:999px;
+  background:linear-gradient(180deg, #ffd859 0%, #f7bc47 100%);
+  box-shadow:0 0 0 6px rgba(255,243,201,0.7);
+}
+
+.section-card{
+  position:relative;
+  display:grid;
+  grid-template-columns:68px minmax(0, 1fr);
+  gap:16px;
+  margin:0 0 22px;
+  align-items:start;
+}
+
+.section-marker{
+  position:sticky;
+  top:16px;
+  z-index:2;
+  width:68px;
+  height:68px;
+  border:none;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:24px;
+  font-weight:1000;
+  color:#ffffff;
+  background:linear-gradient(180deg, var(--marker-top) 0%, var(--marker-bottom) 100%);
+  box-shadow:0 10px 0 var(--marker-shadow), 0 18px 28px rgba(41,53,78,0.14);
+}
+
+.section-shell{
+  border-radius:34px;
+  padding:22px 18px 18px;
+  background:linear-gradient(180deg, var(--card-top) 0%, var(--card-bottom) 100%);
+  box-shadow:0 20px 40px rgba(59,67,86,0.1);
+  border:2px solid rgba(255,255,255,0.75);
+}
+
+.section-shell.locked{
+  opacity:0.82;
+}
+
+.section-head{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:space-between;
+  gap:14px;
+  align-items:flex-start;
+}
+
+.section-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 12px;
+  border-radius:999px;
+  background:rgba(255,255,255,0.82);
+  color:#775300;
+  font-size:12px;
+  font-weight:1000;
+  letter-spacing:0.07em;
+  text-transform:uppercase;
+}
+
+.section-title{
+  margin:10px 0 6px;
+  font-size:28px;
+  line-height:1.05;
+}
+
+.section-subtitle{
+  margin:0;
+  color:#5d6780;
+  font-size:15px;
+  font-weight:900;
+}
+
+.section-summary{
+  margin:12px 0 0;
+  color:#41506a;
+  line-height:1.55;
+  font-weight:800;
+}
+
+.section-progress{
+  min-width:170px;
+  padding:14px 14px 12px;
+  border-radius:24px;
+  background:rgba(255,255,255,0.75);
+  text-align:center;
+}
+
+.section-progress strong{
+  display:block;
+  color:#27411e;
+  font-size:24px;
+}
+
+.section-progress span{
+  display:block;
+  margin-top:4px;
+  color:#6d5f30;
+  font-size:12px;
+  font-weight:1000;
+  letter-spacing:0.06em;
+  text-transform:uppercase;
+}
+
+.parts-grid{
+  margin-top:18px;
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+  gap:14px;
+}
+
+.part-card{
+  position:relative;
+  min-height:158px;
+  border:none;
+  border-radius:34px;
+  padding:18px 16px 18px;
+  text-align:left;
+  background:
+    radial-gradient(circle at 24% 20%, rgba(255,255,255,0.95), rgba(255,255,255,0.16) 24%, rgba(255,255,255,0) 30%),
+    linear-gradient(180deg, var(--part-top) 0%, var(--part-bottom) 100%);
+  box-shadow:0 12px 0 var(--part-shadow), 0 20px 32px rgba(47,59,81,0.12);
+  transition:transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+  cursor:pointer;
+}
+
+.part-card:hover{
+  transform:translateY(-2px);
+  box-shadow:0 10px 0 var(--part-shadow), 0 24px 34px rgba(47,59,81,0.16);
+}
+
+.part-card:disabled{
+  cursor:not-allowed;
+}
+
+.part-card.locked{
+  filter:grayscale(0.25);
+  opacity:0.72;
+}
+
+.part-card.completed{
+  box-shadow:0 12px 0 #d29e1d, 0 20px 32px rgba(210,158,29,0.2);
+}
+
+.part-topline{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:center;
+}
+
+.part-order{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  background:rgba(255,255,255,0.82);
+  color:#785200;
+  font-size:16px;
+  font-weight:1000;
+  box-shadow:0 5px 0 rgba(196,155,53,0.28);
+}
+
+.part-status{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:7px 10px;
+  border-radius:999px;
+  background:rgba(255,255,255,0.82);
+  color:#6a5729;
+  font-size:11px;
+  font-weight:1000;
+  letter-spacing:0.05em;
+  text-transform:uppercase;
+}
+
+.part-status.current{
+  background:#fff2b2;
+  color:#7b5600;
+}
+
+.part-icon{
+  margin-top:12px;
+  font-size:34px;
+}
+
+.part-title{
+  margin:10px 0 8px;
+  font-size:20px;
+  line-height:1.18;
+  color:#233049;
+}
+
+.part-summary{
+  margin:0;
+  color:#52617d;
+  font-size:14px;
+  line-height:1.45;
+  font-weight:800;
+}
+
+.part-lessons{
+  margin-top:12px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+
+.part-lessons span{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:5px 9px;
+  border-radius:999px;
+  background:rgba(255,255,255,0.8);
+  color:#5f6680;
+  font-size:11px;
+  font-weight:1000;
+}
+
+.part-footer{
+  margin-top:14px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+}
+
+.part-type{
+  font-size:12px;
+  color:#7a5a15;
+  font-weight:1000;
+}
+
+.part-action{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:106px;
+  border-radius:999px;
+  padding:10px 14px;
+  background:#ffffff;
+  color:#2c405f;
+  font-size:13px;
+  font-weight:1000;
+  box-shadow:0 5px 0 rgba(78,93,120,0.16);
+}
+
+.placeholder-list{
+  margin-top:16px;
+  display:grid;
+  gap:10px;
+}
+
+.placeholder-pill{
+  border-radius:24px;
+  padding:16px 16px;
+  background:rgba(255,255,255,0.74);
+  color:#49556d;
+  font-size:15px;
+  font-weight:900;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+}
+
+.placeholder-pill strong{
+  color:#24324a;
+}
+
+.map-note{
+  margin-top:24px;
+  padding:18px 18px 20px;
+  border-radius:30px;
+  background:#ffffff;
+  box-shadow:var(--shadow);
+}
+
+.map-note h3{
+  margin:0 0 8px;
+  font-size:22px;
+}
+
+.map-note p{
+  margin:0;
+  color:#5c6780;
+  line-height:1.6;
+  font-weight:800;
+}
+
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:18px;
+  transform:translateX(-50%) translateY(120%);
+  width:min(90vw, 420px);
+  padding:16px 18px;
+  border-radius:22px;
+  background:#24324a;
+  color:#ffffff;
+  box-shadow:0 16px 34px rgba(31,49,77,0.24);
+  transition:transform 0.25s ease;
+  z-index:30;
+  font-weight:900;
+}
+
+.toast.show{
+  transform:translateX(-50%) translateY(0);
+}
+
+@keyframes floatTiger{
+  0%,100%{ transform:translateY(0); }
+  50%{ transform:translateY(-8px); }
+}
+
+@media (max-width:860px){
+  .hero-stats{
+    grid-template-columns:repeat(2, minmax(0, 1fr));
   }
-  .node:nth-child(odd):hover,
-  .node:nth-child(even):hover{
-    transform:translateY(-2px);
+
+  .parts-grid{
+    grid-template-columns:1fr;
   }
-  .line{left:22px;}
-  #owlGuide{display:none;}
+}
+
+@media (max-width:620px){
+  .shell{
+    width:min(100%, calc(100% - 18px));
+    padding-top:12px;
+  }
+
+  .topbar{
+    flex-wrap:wrap;
+  }
+
+  .hero{
+    padding:22px 16px 20px;
+    border-radius:28px;
+  }
+
+  .hero-top{
+    flex-direction:column;
+  }
+
+  .mascot-wrap{
+    width:94px;
+    height:94px;
+    font-size:50px;
+  }
+
+  .map::before{
+    left:24px;
+  }
+
+  .section-card{
+    grid-template-columns:50px minmax(0, 1fr);
+    gap:10px;
+  }
+
+  .section-marker{
+    width:50px;
+    height:50px;
+    font-size:18px;
+    top:12px;
+  }
+
+  .section-shell{
+    padding:18px 14px 16px;
+    border-radius:28px;
+  }
+
+  .section-title{
+    font-size:24px;
+  }
+
+  .part-card{
+    min-height:150px;
+    border-radius:28px;
+  }
 }
 </style>
 </head>
-
 <body>
 <script src="pilingo-auth.js"></script>
 <script>PilingoAuth.requireAccount();</script>
 <script src="pilingo-notify.js"></script>
-<script>PilingoNotify.track("page_open", "Opened learning path", { page:"engine" });</script>
+<script>PilingoNotify.track("page_open", "Opened learning map", { page:"engine" });</script>
 
-<div class="top-actions">
-  <button class="back-button" onclick="goBackHome()">← Back to home</button>
+<div class="shell">
+  <div class="topbar">
+    <button class="back-button" onclick="goBackHome()">← Back to home</button>
+    <button class="owner-button" onclick="scrollToCurrentPart()">⭐ Jump to my next part</button>
+  </div>
+
+  <section class="hero">
+    <div class="hero-top">
+      <div class="hero-copy">
+        <span class="eyebrow">🐯 Pilingo • Game 1 • A1</span>
+        <h1>One smooth learning map for the whole first journey.</h1>
+        <p>Section 1 is live now with 9 parts. Sections 2 to 15 are already on the path and will unlock one by one as the learner grows.</p>
+      </div>
+      <div class="mascot-wrap" aria-hidden="true">🐯</div>
+    </div>
+
+    <div class="hero-stats">
+      <div class="stat-pill">
+        <span class="stat-label">XP</span>
+        <span class="stat-value" id="xpValue">0</span>
+      </div>
+      <div class="stat-pill">
+        <span class="stat-label">Streak</span>
+        <span class="stat-value" id="streakValue">0</span>
+      </div>
+      <div class="stat-pill">
+        <span class="stat-label">Hearts</span>
+        <span class="stat-value" id="heartsValue">5</span>
+      </div>
+      <div class="stat-pill">
+        <span class="stat-label">Sections Ready</span>
+        <span class="stat-value" id="sectionsReadyValue">1/15</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="map-intro">
+    <h2>Your A1 Learning Map</h2>
+    <p>Everything is now organized as one vertical course: Course → Section → Part → Lesson → Activity → Quiz → Review. Locked parts stay closed, completed parts show a ✅, and learners only repeat the part they are working on.</p>
+    <div class="course-structure" id="structureChips"></div>
+  </section>
+
+  <main class="map" id="courseMap"></main>
+
+  <section class="map-note">
+    <h3>How unlocking works</h3>
+    <p>Finish Section 1 Part 1 to unlock Part 2. Keep going until Part 9. When all 9 parts in Section 1 are completed, Section 2 unlocks. Sections 2 to 15 stay visible on the map so the path always feels clear and exciting.</p>
+  </section>
 </div>
 
-<h1>🐯 Your Learning Path</h1>
+<div class="toast" id="toast"></div>
 
-<div id="xp">XP: 0</div>
-
-<div class="course-panel">
-  <div class="course-label">Kurmanji to English</div>
-</div>
-
-<div class="path">
-  <div class="line"></div>
-  <div id="owlGuide">🐯</div>
-  <div id="map"></div>
-</div>
-
-<!-- CORE -->
+<script src="course-data.js"></script>
 <script src="engine-core.js"></script>
 <script src="pilingo-sounds.js"></script>
-<script src="vocab_a1.js"></script>
-<script src="app-ui.js"></script>
 <script src="app-state.js"></script>
-<script src="app-polish.js"></script>
 <script src="app-effects.js"></script>
 <script src="pwa.js"></script>
-
 <script>
-/* =========================
-   DEBUG BOOT LOG
-========================= */
+const SECTION_COLORS = [
+  { markerTop:"#ffcb4d", markerBottom:"#ffad1f", markerShadow:"#d28a13", cardTop:"#fff9da", cardBottom:"#ffeab2" },
+  { markerTop:"#6bdde1", markerBottom:"#27b8c1", markerShadow:"#14858d", cardTop:"#e8feff", cardBottom:"#cbf7f8" },
+  { markerTop:"#ff9f8e", markerBottom:"#f56d58", markerShadow:"#ce4f3b", cardTop:"#fff0ec", cardBottom:"#ffd9d2" },
+  { markerTop:"#9fbdff", markerBottom:"#6794f5", markerShadow:"#4572d2", cardTop:"#eef4ff", cardBottom:"#dce7ff" },
+  { markerTop:"#8fe17f", markerBottom:"#59c34c", markerShadow:"#389d2e", cardTop:"#effde9", cardBottom:"#dcf9d5" },
+  { markerTop:"#d8a6ff", markerBottom:"#af71f2", markerShadow:"#8247c4", cardTop:"#f8efff", cardBottom:"#ebdbff" }
+];
 
-console.log("🐯 Pilingo engine loading...");
+const PART_COLORS = {
+  gold:{ top:"#fff2b7", bottom:"#ffd86a", shadow:"#d9a22c" },
+  orange:{ top:"#ffe0c3", bottom:"#ffaf69", shadow:"#d47a35" },
+  sky:{ top:"#dcf5ff", bottom:"#88cdf9", shadow:"#4f9dd1" },
+  pink:{ top:"#ffdbe6", bottom:"#f79ab2", shadow:"#ce6886" },
+  violet:{ top:"#ecddff", bottom:"#b790ff", shadow:"#7c59ca" },
+  leaf:{ top:"#e1f9d8", bottom:"#95dc7a", shadow:"#5fa549" }
+};
 
 function goBackHome(){
   window.location.href = "index.html";
 }
 
-/* =========================
-   WAIT FOR DOM
-========================= */
+function getSectionColors(index){
+  return SECTION_COLORS[index % SECTION_COLORS.length];
+}
 
-document.addEventListener("DOMContentLoaded", () => {
+function getPartColors(accent){
+  return PART_COLORS[accent] || PART_COLORS.gold;
+}
 
-  console.log("DOM ready");
+function getPartStatus(sectionId, part){
+  const progress = Engine.getPartProgress(sectionId, part.id);
+  const unlocked = Engine.isPartUnlocked(sectionId, part.id);
+  const completed = Engine.isPartCompleted(sectionId, part.id);
+  const current = Engine.getCurrentPart();
 
-  /* =========================
-     SAFE ENGINE CHECK
-  ========================= */
-
-  let xp = 0;
-
-  if (window.Engine && typeof Engine.getXP === "function") {
-    xp = Engine.getXP();
-    console.log("Engine loaded ✔ XP:", xp);
-  } else {
-    console.warn("Engine missing → fallback XP = 0");
+  if (completed) {
+    return { label:"Completed", icon:"✅", className:"completed" };
   }
 
-  document.getElementById("xp").innerText = "XP: " + xp;
-
-  if(window.Engine?.setCourse){
-    Engine.setCourse("en-ku");
-  } else {
-    localStorage.setItem("course", "en-ku");
+  if (current && current.sectionId === sectionId && current.partId === part.id) {
+    return { label:"Current", icon:"⭐", className:"current" };
   }
 
-  /* =========================
-     SKILLS
-  ========================= */
-
-  const skills = [
-    { name:"Animals", emoji:"🐶", id:"animals", eggTop:"#fff1cf", eggBottom:"#f0c46f", eggShadow:"#d39d3b", eggHover:"#bf8c2d", eggComplete:"#b67f21", iconTop:"#fff7d8", iconBottom:"#ebc35b", iconShadow:"rgba(201,148,27,0.72)" },
-    { name:"Actions", emoji:"🏃", id:"verbs", eggTop:"#ffe2c9", eggBottom:"#f0a56d", eggShadow:"#cf7d42", eggHover:"#b76832", eggComplete:"#a85922", iconTop:"#fff0df", iconBottom:"#eead7d", iconShadow:"rgba(196,110,46,0.68)" },
-    { name:"This / That", emoji:"👇", id:"this-that", eggTop:"#dff3ff", eggBottom:"#8bc9f5", eggShadow:"#5fa2d4", eggHover:"#438cbe", eggComplete:"#2f77ab", iconTop:"#edf8ff", iconBottom:"#93d4ff", iconShadow:"rgba(67,140,190,0.62)" },
-    { name:"Articles", emoji:"🍎", id:"articles", eggTop:"#ffe0e8", eggBottom:"#ee98ae", eggShadow:"#c96b82", eggHover:"#b45770", eggComplete:"#a1415b", iconTop:"#fff0f4", iconBottom:"#f4a8bc", iconShadow:"rgba(180,87,112,0.66)" },
-    { name:"Numbers", emoji:"🔢", id:"numbers", eggTop:"#efe2ff", eggBottom:"#b89af0", eggShadow:"#8c6fcb", eggHover:"#7558b3", eggComplete:"#5f439e", iconTop:"#f8f2ff", iconBottom:"#c4a8ff", iconShadow:"rgba(117,88,179,0.66)" },
-    { name:"Listening", emoji:"🔊", id:"listening", eggTop:"#ddf8e6", eggBottom:"#8ed0a7", eggShadow:"#5da679", eggHover:"#458c62", eggComplete:"#35704d", iconTop:"#edfdf2", iconBottom:"#95ddb1", iconShadow:"rgba(69,140,98,0.62)" },
-    { name:"Final Review", emoji:"🏆", id:"review", eggTop:"#ffe7bf", eggBottom:"#f0b44b", eggShadow:"#ce8c21", eggHover:"#b77616", eggComplete:"#a5640e", iconTop:"#fff2d8", iconBottom:"#f6c86f", iconShadow:"rgba(183,118,22,0.68)" }
-  ];
-
-  function getSkillLevel(i){
-
-    let key = "skill_" + i;
-    let val = localStorage.getItem(key);
-
-    if(val !== null){
-      return parseInt(val, 10) || 0;
-    }
-
-    return 0;
+  if (progress && progress.latestResult === "failed") {
+    return { label:"Try again", icon:"❌", className:"retry" };
   }
 
-  function isSkillUnlocked(i){
-    if(i === 0) return true;
-
-    try {
-      let course = window.Engine?.getCourse ? Engine.getCourse() : "en-ku";
-      let unlocked = JSON.parse(
-        localStorage.getItem(course + "_unlocked") ||
-        "[true,false,false,false,false,false,false]"
-      );
-
-      if (Array.isArray(unlocked) && unlocked[i] === true) {
-        return true;
-      }
-    } catch(e) {
-      // fall through to sequential check below
-    }
-
-    return getSkillLevel(i - 1) >= 4;
+  if (!unlocked) {
+    return { label:"Locked", icon:"🔒", className:"locked" };
   }
 
-  function getBar(level){
-    if(level === 0) return 0;
-    if(level === 1) return 25;
-    if(level === 2) return 50;
-    if(level === 3) return 75;
-    return 100;
+  return { label:"Ready", icon:"▶", className:"ready" };
+}
+
+function getSectionStatus(section){
+  if (Engine.isSectionCompleted(section.id)) {
+    return { text:"Section completed", icon:"🏆" };
   }
 
-  function render(){
+  if (Engine.isSectionUnlocked(section.id)) {
+    return { text:"Open now", icon:"⭐" };
+  }
 
-    let html = "";
+  return { text:"Locked", icon:"🔒" };
+}
 
-    skills.forEach((s,i)=>{
+function renderStructure(){
+  const chips = document.getElementById("structureChips");
+  chips.innerHTML = COURSE_DATA.structure.map((item) => `<span>${item}</span>`).join("");
+}
 
-      let level = getSkillLevel(i);
-      let progress = getBar(level);
+function renderStats(){
+  document.getElementById("xpValue").textContent = Engine.getXP();
+  document.getElementById("streakValue").textContent = localStorage.getItem("streak") || "0";
+  document.getElementById("heartsValue").textContent = Engine.getHearts();
 
-      let state = isSkillUnlocked(i) ? "unlocked" : "locked";
+  const unlockedSections = COURSE_DATA.sections.filter((section) => Engine.isSectionUnlocked(section.id)).length;
+  document.getElementById("sectionsReadyValue").textContent = `${unlockedSections}/15`;
+}
 
-      html += `
-        <div class="node ${state} level-${level}" style="--egg-top:${s.eggTop}; --egg-bottom:${s.eggBottom}; --egg-shadow:${s.eggShadow}; --egg-hover-shadow:${s.eggHover}; --egg-complete-shadow:${s.eggComplete}; --icon-top:${s.iconTop}; --icon-bottom:${s.iconBottom}; --icon-shadow:${s.iconShadow};" onclick="openSkill(${i})">
-          ${state === "locked" ? `<div class="lock-badge">🔒</div>` : ""}
+function renderMap(){
+  const map = document.getElementById("courseMap");
 
-          <div class="icon">
-            ${level === 4 ? "👑" : s.emoji}
+  map.innerHTML = COURSE_DATA.sections.map((section, sectionIndex) => {
+    const colors = getSectionColors(sectionIndex);
+    const sectionUnlocked = Engine.isSectionUnlocked(section.id);
+    const sectionCompleted = Engine.isSectionCompleted(section.id);
+    const sectionStatus = getSectionStatus(section);
+    const completedParts = Engine.getCompletedPartsCount(section.id);
+    const totalParts = Array.isArray(section.parts) ? section.parts.length : 0;
+
+    const partsMarkup = totalParts
+      ? `
+        <div class="parts-grid">
+          ${section.parts.map((part) => {
+            const partColors = getPartColors(part.accent);
+            const status = getPartStatus(section.id, part);
+            const unlocked = Engine.isPartUnlocked(section.id, part.id);
+            const completed = Engine.isPartCompleted(section.id, part.id);
+            const canOpen = unlocked && Boolean(part.href);
+            const lessonCount = Array.isArray(part.lessons) ? part.lessons.length : 0;
+            const lessonPreview = (part.lessons || []).slice(0, 4).map((lesson) => `<span>${lesson.title}</span>`).join("");
+            const actionLabel = completed ? "Open again" : (canOpen ? "Start now" : (unlocked ? "Ready soon" : "Locked"));
+
+            return `
+              <button
+                class="part-card ${completed ? "completed" : ""} ${unlocked ? "" : "locked"}"
+                style="--part-top:${partColors.top}; --part-bottom:${partColors.bottom}; --part-shadow:${partColors.shadow};"
+                onclick="openPart('${section.id}','${part.id}')"
+                ${unlocked ? "" : "disabled"}
+                data-section-id="${section.id}"
+                data-part-id="${part.id}">
+                <div class="part-topline">
+                  <span class="part-order">${part.number}</span>
+                  <span class="part-status ${status.className}">${status.icon} ${status.label}</span>
+                </div>
+                <div class="part-icon">${part.icon}</div>
+                <h3 class="part-title">${part.title}</h3>
+                <p class="part-summary">${part.summary}</p>
+                <div class="part-lessons">${lessonPreview}</div>
+                <div class="part-footer">
+                  <span class="part-type">${lessonCount} lesson steps</span>
+                  <span class="part-action">${actionLabel}</span>
+                </div>
+              </button>
+            `;
+          }).join("")}
+        </div>
+      `
+      : `
+        <div class="placeholder-list">
+          <div class="placeholder-pill">
+            <strong>Lessons will arrive here later</strong>
+            <span>${sectionUnlocked ? "Soon" : "Locked"}</span>
           </div>
-
-          <div class="skill-name">
-            <span class="skill-emoji">${s.emoji}</span>
-            <span>${s.name}</span>
+          <div class="placeholder-pill">
+            <strong>Quizzes, reviews, and activities</strong>
+            <span>${sectionUnlocked ? "Preparing" : "Wait"}</span>
           </div>
-
-          <div class="small">${state === "locked" ? "Finish the previous game first" : `Level ${level}/4`}</div>
-
-          <div class="bar">
-            <div class="bar-fill" style="width:${progress}%"></div>
-          </div>
-
         </div>
       `;
-    });
 
-    document.getElementById("map").innerHTML = html;
+    return `
+      <section class="section-card">
+        <div
+          class="section-marker"
+          style="--marker-top:${colors.markerTop}; --marker-bottom:${colors.markerBottom}; --marker-shadow:${colors.markerShadow};">
+          ${section.number}
+        </div>
+        <div
+          class="section-shell ${sectionUnlocked ? "" : "locked"}"
+          style="--card-top:${colors.cardTop}; --card-bottom:${colors.cardBottom};">
+          <div class="section-head">
+            <div>
+              <span class="section-badge">${sectionStatus.icon} ${sectionStatus.text}</span>
+              <h2 class="section-title">${section.title}</h2>
+              <p class="section-subtitle">${section.subtitle}</p>
+              <p class="section-summary">${section.summary}</p>
+            </div>
+            <div class="section-progress">
+              <strong>${totalParts ? `${completedParts}/${totalParts}` : (sectionUnlocked ? "0/0" : "🔒")}</strong>
+              <span>${totalParts ? "Parts completed" : (sectionUnlocked ? "Ready for content" : "Unlock later")}</span>
+            </div>
+          </div>
+          ${partsMarkup}
+        </div>
+      </section>
+    `;
+  }).join("");
+}
 
-    setTimeout(placeOwl, 200);
+function openPart(sectionId, partId){
+  const part = COURSE_DATA.sections
+    .find((section) => section.id === sectionId)
+    ?.parts.find((entry) => entry.id === partId);
+
+  if (!part || !Engine.isPartUnlocked(sectionId, partId)) {
+    showToast("This part is still locked. Finish the part above first.");
+    return;
   }
 
-  function placeOwl(){
-
-    let owl = document.getElementById("owlGuide");
-    let nodes = document.querySelectorAll(".node");
-
-    if(!nodes.length) return;
-
-    let first = nodes[0].getBoundingClientRect();
-    let container = document.querySelector(".path").getBoundingClientRect();
-
-    owl.style.top = (first.top - container.top + 10) + "px";
+  if (!part.href) {
+    showToast("This part is unlocked in the map structure now. We will attach its lessons next.");
+    return;
   }
 
-  window.openSkill = function(i){
+  if (window.PilingoAudio?.playGameOpen) {
+    PilingoAudio.playGameOpen(1);
+  }
 
-    let nodes = document.querySelectorAll(".node");
-    if(!nodes[i]) return;
-    if(!isSkillUnlocked(i)) return;
+  setTimeout(() => {
+    window.location.href = part.href;
+  }, 180);
+}
 
-    let rect = nodes[i].getBoundingClientRect();
-    let container = document.querySelector(".path").getBoundingClientRect();
+function scrollToCurrentPart(){
+  const current = Engine.getCurrentPart();
+  const nextButton = current
+    ? document.querySelector(`.part-card[data-section-id="${current.sectionId}"][data-part-id="${current.partId}"]`)
+    : document.querySelector(".part-card:not(.completed):not(.locked)");
 
-    document.getElementById("owlGuide").style.top =
-      (rect.top - container.top + 10) + "px";
+  if (!nextButton) {
+    showToast("Amazing. The next visible step is already completed.");
+    return;
+  }
 
-    if(window.AppState?.setLastSkill){
-      AppState.setLastSkill(i);
-    }
+  nextButton.scrollIntoView({ behavior:"smooth", block:"center" });
+  nextButton.focus({ preventScroll:true });
+}
 
-    if(window.AppEffects?.flash){
-      AppEffects.flash("correct");
-    }
+let toastTimer = null;
+function showToast(message){
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.classList.add("show");
+  window.clearTimeout(toastTimer);
+  toastTimer = window.setTimeout(() => toast.classList.remove("show"), 2600);
+}
 
-    if(window.PilingoAudio?.playCorrect){
-      PilingoAudio.playCorrect();
-    }
-
-    if(window.PilingoAudio?.playGameOpen){
-      setTimeout(() => PilingoAudio.playGameOpen(i + 1), 120);
-    }
-
-    setTimeout(()=>{
-
-      let url = "game" + (i + 1) + ".html";
-      if(i === 0) url += "?v=6";
-
-      if(window.AppState?.go){
-        AppState.go(url);
-      } else {
-        window.location.href = url;
-      }
-
-    }, 700);
-  };
-
-  render();
-
+document.addEventListener("DOMContentLoaded", () => {
+  Engine.init();
+  Engine.setCourse("en-ku");
+  renderStructure();
+  renderStats();
+  renderMap();
 });
-
 </script>
-
 </body>
 </html>

@@ -6,7 +6,7 @@ const Engine = {
     this.dailyReset();
     this.updateStreak();
     this.ensureFirstSkill();
-    this.applyMapClickFix();
+    this.ensureCourseProgress();
   },
 
   getCourse(){
@@ -18,6 +18,7 @@ const Engine = {
     const next = "en-ku";
     localStorage.setItem("course", next);
     this.ensureFirstSkill();
+    this.ensureCourseProgress();
     return next;
   },
 
@@ -178,6 +179,208 @@ const Engine = {
     }
 
     return this.getXP();
+  },
+
+  getCourseProgressKey(){
+    return this.getCourse() + "_course_progress_v2";
+  },
+
+  getCourseProgress(){
+    const fallback = { sections: {} };
+
+    try {
+      const saved = JSON.parse(localStorage.getItem(this.getCourseProgressKey()) || "null");
+      if (!saved || typeof saved !== "object") {
+        return fallback;
+      }
+
+      if (!saved.sections || typeof saved.sections !== "object") {
+        saved.sections = {};
+      }
+
+      return saved;
+    } catch {
+      return fallback;
+    }
+  },
+
+  saveCourseProgress(progress){
+    localStorage.setItem(this.getCourseProgressKey(), JSON.stringify(progress));
+    return progress;
+  },
+
+  getCourseData(){
+    if (!window.COURSE_DATA || !Array.isArray(window.COURSE_DATA.sections)) {
+      return null;
+    }
+
+    return window.COURSE_DATA;
+  },
+
+  getCourseSection(sectionId){
+    const courseData = this.getCourseData();
+    if (!courseData) return null;
+    return courseData.sections.find((section) => section.id === sectionId) || null;
+  },
+
+  getCoursePart(sectionId, partId){
+    const section = this.getCourseSection(sectionId);
+    if (!section || !Array.isArray(section.parts)) return null;
+    return section.parts.find((part) => part.id === partId) || null;
+  },
+
+  ensureCourseProgress(){
+    const courseData = this.getCourseData();
+    if (!courseData) return;
+
+    const progress = this.getCourseProgress();
+
+    courseData.sections.forEach((section) => {
+      if (!progress.sections[section.id]) {
+        progress.sections[section.id] = { parts: {}, completed: false };
+      }
+
+      if (!progress.sections[section.id].parts || typeof progress.sections[section.id].parts !== "object") {
+        progress.sections[section.id].parts = {};
+      }
+
+      (section.parts || []).forEach((part) => {
+        if (!progress.sections[section.id].parts[part.id]) {
+          progress.sections[section.id].parts[part.id] = {
+            completed: false,
+            completedAt: null,
+            attempts: 0,
+            latestResult: null
+          };
+        }
+      });
+    });
+
+    this.saveCourseProgress(progress);
+  },
+
+  getPartProgress(sectionId, partId){
+    this.ensureCourseProgress();
+    const progress = this.getCourseProgress();
+    const section = progress.sections[sectionId];
+    if (!section || !section.parts) return null;
+    return section.parts[partId] || null;
+  },
+
+  isPartCompleted(sectionId, partId){
+    const part = this.getPartProgress(sectionId, partId);
+    return Boolean(part && part.completed);
+  },
+
+  isSectionCompleted(sectionId){
+    const section = this.getCourseSection(sectionId);
+    if (!section || !Array.isArray(section.parts) || !section.parts.length) {
+      return false;
+    }
+
+    return section.parts.every((part) => this.isPartCompleted(sectionId, part.id));
+  },
+
+  getCompletedPartsCount(sectionId){
+    const section = this.getCourseSection(sectionId);
+    if (!section || !Array.isArray(section.parts)) return 0;
+    return section.parts.filter((part) => this.isPartCompleted(sectionId, part.id)).length;
+  },
+
+  getCurrentPart(){
+    const courseData = this.getCourseData();
+    if (!courseData) return null;
+
+    for (const section of courseData.sections) {
+      if (!this.isSectionUnlocked(section.id)) continue;
+
+      for (const part of section.parts || []) {
+        if (this.isPartUnlocked(section.id, part.id) && !this.isPartCompleted(section.id, part.id)) {
+          return { sectionId: section.id, partId: part.id };
+        }
+      }
+    }
+
+    return null;
+  },
+
+  isSectionUnlocked(sectionId){
+    const courseData = this.getCourseData();
+    if (!courseData) return false;
+
+    const sectionIndex = courseData.sections.findIndex((section) => section.id === sectionId);
+    if (sectionIndex === -1) return false;
+    if (sectionIndex === 0) return true;
+
+    const previousSection = courseData.sections[sectionIndex - 1];
+    return this.isSectionCompleted(previousSection.id);
+  },
+
+  isPartUnlocked(sectionId, partId){
+    const section = this.getCourseSection(sectionId);
+    if (!section || !Array.isArray(section.parts) || !this.isSectionUnlocked(sectionId)) {
+      return false;
+    }
+
+    const partIndex = section.parts.findIndex((part) => part.id === partId);
+    if (partIndex === -1) return false;
+    if (partIndex === 0) return true;
+
+    const previousPart = section.parts[partIndex - 1];
+    return this.isPartCompleted(sectionId, previousPart.id);
+  },
+
+  completeCoursePart(sectionId, partId, meta = {}){
+    this.ensureCourseProgress();
+
+    const part = this.getCoursePart(sectionId, partId);
+    if (!part) return null;
+
+    const progress = this.getCourseProgress();
+    const sectionState = progress.sections[sectionId];
+    const partState = sectionState.parts[partId];
+    const wasCompleted = Boolean(partState.completed);
+
+    partState.attempts = (partState.attempts || 0) + 1;
+    partState.latestResult = meta.result || "passed";
+
+    if (!wasCompleted) {
+      partState.completed = true;
+      partState.completedAt = new Date().toISOString();
+      this.addXP(Number(meta.xp) || 10);
+      this.addHeart(1);
+      this.updateStreak();
+    }
+
+    const section = this.getCourseSection(sectionId);
+    sectionState.completed = Boolean(
+      section &&
+      Array.isArray(section.parts) &&
+      section.parts.length &&
+      section.parts.every((entry) => sectionState.parts[entry.id] && sectionState.parts[entry.id].completed)
+    );
+    this.saveCourseProgress(progress);
+
+    return {
+      sectionCompleted: sectionState.completed,
+      nextSectionUnlocked: sectionState.completed,
+      alreadyCompleted: wasCompleted
+    };
+  },
+
+  failCoursePart(sectionId, partId, meta = {}){
+    this.ensureCourseProgress();
+
+    const progress = this.getCourseProgress();
+    const sectionState = progress.sections[sectionId];
+    if (!sectionState || !sectionState.parts || !sectionState.parts[partId]) {
+      return null;
+    }
+
+    sectionState.parts[partId].attempts = (sectionState.parts[partId].attempts || 0) + 1;
+    sectionState.parts[partId].latestResult = meta.result || "failed";
+    this.saveCourseProgress(progress);
+    return sectionState.parts[partId];
   },
 
   ensureFirstSkill(){

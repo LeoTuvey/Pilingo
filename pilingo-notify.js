@@ -4,9 +4,11 @@ const PilingoNotify = {
   leaderboardEndpoint: "/api/leaderboard",
   ownerStudentsEndpoint: "/api/owner/students",
   statsEndpoint: "/api/student-stats",
+  settingsEndpoint: "/api/app-settings",
   pollTimer: null,
   lastSeenEventId: null,
   lastCompetitionMessage: "",
+  settingsCache: null,
 
   canUseServer(){
     return location.protocol.startsWith("http");
@@ -30,6 +32,70 @@ const PilingoNotify = {
       location: account?.location || "",
       hasAccount: !!(account?.email && account?.phone)
     };
+  },
+
+  defaultVisibilitySettings(){
+    return {
+      showLearnersList: true,
+      showRankingList: true
+    };
+  },
+
+  async fetchVisibilitySettings(force){
+    if(!this.canUseServer()) {
+      return this.settingsCache || this.defaultVisibilitySettings();
+    }
+
+    if(this.settingsCache && !force){
+      return this.settingsCache;
+    }
+
+    try {
+      const response = await fetch(this.settingsEndpoint, { cache:"no-store" });
+      const data = await response.json();
+      const settings = {
+        ...this.defaultVisibilitySettings(),
+        ...(data?.settings || {})
+      };
+      this.settingsCache = settings;
+      return settings;
+    } catch(error) {
+      return this.settingsCache || this.defaultVisibilitySettings();
+    }
+  },
+
+  async saveVisibilitySettings(nextSettings){
+    if(!this.canUseServer() || !this.canViewOwnerNotifications()) {
+      throw new Error("Only the owner can change app visibility.");
+    }
+
+    const response = await fetch(this.settingsEndpoint, {
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+        ...this.ownerHeaders()
+      },
+      body:JSON.stringify(nextSettings || {})
+    });
+    const data = await response.json().catch(() => ({}));
+    if(!response.ok || !data?.ok){
+      throw new Error(data?.error || "Could not save app visibility.");
+    }
+    this.settingsCache = {
+      ...this.defaultVisibilitySettings(),
+      ...(data.settings || {})
+    };
+    return this.settingsCache;
+  },
+
+  canShowLearnersList(settings){
+    if(this.canViewOwnerNotifications()) return true;
+    return settings?.showLearnersList !== false;
+  },
+
+  canShowRankingList(settings){
+    if(this.canViewOwnerNotifications()) return true;
+    return settings?.showRankingList !== false;
   },
 
   async track(type, label, details){
@@ -341,6 +407,15 @@ const PilingoNotify = {
   async renderLeaderboard(listId){
     const list = document.getElementById(listId);
     if(!list) return;
+    const settings = await this.fetchVisibilitySettings();
+    const card = list.closest(".leaderboard-card");
+
+    if(!this.canShowRankingList(settings)){
+      if(card) card.hidden = true;
+      return;
+    }
+
+    if(card) card.hidden = false;
 
     const students = await this.fetchLeaderboard();
 

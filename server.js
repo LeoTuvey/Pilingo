@@ -12,6 +12,7 @@ const EVENTS_FILE = path.join(DATA_DIR, "student-events.json");
 const STATS_FILE = path.join(DATA_DIR, "student-stats.json");
 const ACCOUNTS_FILE = path.join(DATA_DIR, "accounts.json");
 const RESETS_FILE = path.join(DATA_DIR, "password-resets.json");
+const APP_SETTINGS_FILE = path.join(DATA_DIR, "app-settings.json");
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || "";
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID || "";
 const RESEND_API_KEY = process.env.RESEND_API_KEY || "";
@@ -81,7 +82,15 @@ const server = http.createServer(async (req, res) => {
   if (req.method === "GET" && parsed.pathname === "/api/leaderboard") {
     return sendJson(res, 200, {
       ok: true,
-      students: getLeaderboard()
+      students: getLeaderboard(),
+      settings: readAppSettings()
+    });
+  }
+
+  if (req.method === "GET" && parsed.pathname === "/api/app-settings") {
+    return sendJson(res, 200, {
+      ok: true,
+      settings: readAppSettings()
     });
   }
 
@@ -295,6 +304,23 @@ const server = http.createServer(async (req, res) => {
     }
   }
 
+  if (req.method === "POST" && parsed.pathname === "/api/app-settings") {
+    if (!hasOwnerAccess(req)) {
+      return sendJson(res, 403, {
+        ok: false,
+        error: "Owner access only"
+      });
+    }
+    try {
+      const body = await readBody(req);
+      const payload = JSON.parse(body || "{}");
+      const settings = updateAppSettings(payload || {});
+      return sendJson(res, 200, { ok: true, settings });
+    } catch (error) {
+      return sendJson(res, 400, { ok: false, error: "Invalid app settings request" });
+    }
+  }
+
   if (req.method !== "GET") {
     return sendJson(res, 405, { ok: false, error: "Method not allowed" });
   }
@@ -318,6 +344,7 @@ function ensureDataFile() {
   if (!fs.existsSync(STATS_FILE)) fs.writeFileSync(STATS_FILE, "[]", "utf8");
   if (!fs.existsSync(ACCOUNTS_FILE)) fs.writeFileSync(ACCOUNTS_FILE, "[]", "utf8");
   if (!fs.existsSync(RESETS_FILE)) fs.writeFileSync(RESETS_FILE, "[]", "utf8");
+  if (!fs.existsSync(APP_SETTINGS_FILE)) fs.writeFileSync(APP_SETTINGS_FILE, JSON.stringify(defaultAppSettings(), null, 2), "utf8");
 }
 
 function loadEnvFile() {
@@ -518,6 +545,47 @@ function upsertStudentStats(payload) {
 
   writeStudentStats(students);
   return merged;
+}
+
+function defaultAppSettings() {
+  return {
+    showLearnersList: true,
+    showRankingList: true,
+    updatedAt: new Date().toISOString()
+  };
+}
+
+function normalizeAppSettings(settings) {
+  const defaults = defaultAppSettings();
+  return {
+    showLearnersList: settings?.showLearnersList !== false,
+    showRankingList: settings?.showRankingList !== false,
+    updatedAt: String(settings?.updatedAt || defaults.updatedAt)
+  };
+}
+
+function readAppSettings() {
+  try {
+    const raw = fs.readFileSync(APP_SETTINGS_FILE, "utf8");
+    return normalizeAppSettings(JSON.parse(raw || "{}"));
+  } catch (error) {
+    return defaultAppSettings();
+  }
+}
+
+function writeAppSettings(settings) {
+  fs.writeFileSync(APP_SETTINGS_FILE, JSON.stringify(normalizeAppSettings(settings), null, 2), "utf8");
+}
+
+function updateAppSettings(payload) {
+  const current = readAppSettings();
+  const next = normalizeAppSettings({
+    ...current,
+    ...(payload || {}),
+    updatedAt: new Date().toISOString()
+  });
+  writeAppSettings(next);
+  return next;
 }
 
 function isNamedStudentEvent(event) {

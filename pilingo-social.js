@@ -164,6 +164,12 @@ const PilingoSocial = {
       return;
     }
 
+    const visibilitySettings = await window.PilingoNotify?.fetchVisibilitySettings?.();
+    if(visibilitySettings && !window.PilingoNotify?.canShowLearnersList?.(visibilitySettings)){
+      card.hidden = true;
+      return;
+    }
+
     card.hidden = false;
 
     if(!this.canUseServer()){

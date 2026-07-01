@@ -423,6 +423,84 @@ body.account-gate-open{
   color:#7d6630;
 }
 
+.owner-visibility-panel{
+  margin:0 0 14px;
+  padding:14px;
+  border-radius:20px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(255,247,223,0.96) 100%);
+  border:2px solid rgba(240,210,122,0.9);
+  box-shadow:0 8px 18px rgba(122,83,0,0.08);
+}
+
+.owner-visibility-panel strong{
+  display:block;
+  font-size:14px;
+  color:#253044;
+}
+
+.owner-visibility-panel span{
+  display:block;
+  margin-top:4px;
+  font-size:12px;
+  color:#7d6630;
+}
+
+.owner-visibility-actions{
+  margin-top:12px;
+  display:grid;
+  gap:10px;
+}
+
+.owner-visibility-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  padding:10px 12px;
+  border-radius:16px;
+  background:#fffef8;
+  border:1px solid rgba(237,215,157,0.9);
+}
+
+.owner-visibility-copy{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+
+.owner-visibility-copy b{
+  font-size:13px;
+  color:#253044;
+}
+
+.owner-visibility-copy small{
+  font-size:11px;
+  color:#7d6630;
+}
+
+.owner-toggle{
+  min-width:88px;
+  padding:10px 14px;
+  border:none;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:1000;
+  letter-spacing:0.05em;
+  text-transform:uppercase;
+  cursor:pointer;
+  box-shadow:0 4px 0 rgba(37,48,68,0.12);
+}
+
+.owner-toggle.on{
+  background:linear-gradient(180deg, #7be41d 0%, #58cc02 100%);
+  color:#fff;
+}
+
+.owner-toggle.off{
+  background:linear-gradient(180deg, #ffd4d9 0%, #ff9fb0 100%);
+  color:#7d1730;
+}
+
 .notify-section-label,
 .leader-section-label{
   display:inline-flex;
@@ -2589,6 +2667,26 @@ button:active{
           <strong>🔔 Student Notifications</strong>
           <span id="notifyStatus" class="notify-status">Waiting</span>
         </div>
+        <div id="ownerVisibilityPanel" class="owner-visibility-panel">
+          <strong>👁 App Visibility</strong>
+          <span>Turn the learners list and ranking list on or off for everyone. These settings are saved permanently.</span>
+          <div class="owner-visibility-actions">
+            <div class="owner-visibility-row">
+              <div class="owner-visibility-copy">
+                <b>Show Learners List</b>
+                <small>Controls the Learner Circle for all users.</small>
+              </div>
+              <button id="toggleLearnersList" class="owner-toggle" type="button" onclick="toggleAppVisibilitySetting('showLearnersList')">...</button>
+            </div>
+            <div class="owner-visibility-row">
+              <div class="owner-visibility-copy">
+                <b>Show Ranking List</b>
+                <small>Controls the ranking and leaderboard for all users.</small>
+              </div>
+              <button id="toggleRankingList" class="owner-toggle" type="button" onclick="toggleAppVisibilitySetting('showRankingList')">...</button>
+            </div>
+          </div>
+        </div>
         <div class="notify-help">Phone notifications currently work while this page stays open on your phone. Use the test button below to confirm they are allowed.</div>
         <div class="notify-actions">
           <button class="secondary-button" type="button" onclick="enablePhoneNotifications()">Enable phone notifications</button>
@@ -2608,7 +2706,7 @@ button:active{
         </div>
       </div>
 
-      <div class="leaderboard-card">
+      <div id="leaderboardCard" class="leaderboard-card">
         <div class="leaderboard-top">
           <strong>🏅 Student Ranking</strong>
           <span class="notify-status">Top Learners</span>
@@ -3394,6 +3492,63 @@ function testPhoneNotification(){
   }
 }
 
+function setOwnerToggleState(button, isOn){
+  if(!button) return;
+  button.classList.toggle("on", !!isOn);
+  button.classList.toggle("off", !isOn);
+  button.innerText = isOn ? "ON" : "OFF";
+  button.setAttribute("aria-pressed", isOn ? "true" : "false");
+}
+
+function applyAppVisibilitySettings(settings){
+  const rankingCard = document.getElementById("leaderboardCard");
+  const socialCard = document.getElementById("socialCard");
+  const canShowRanking = window.PilingoNotify?.canShowRankingList?.(settings);
+  const canShowLearners = window.PilingoNotify?.canShowLearnersList?.(settings);
+  const hasAccount = window.PilingoAuth?.hasAccount?.();
+
+  if(rankingCard) rankingCard.hidden = !canShowRanking;
+  if(socialCard && hasAccount) socialCard.hidden = !canShowLearners;
+}
+
+async function refreshAppVisibilityControls(force){
+  const ownerPanel = document.getElementById("ownerVisibilityPanel");
+  const learnersToggle = document.getElementById("toggleLearnersList");
+  const rankingToggle = document.getElementById("toggleRankingList");
+  const isOwner = !!window.PilingoAuth?.isOwner?.();
+
+  if(ownerPanel) ownerPanel.hidden = !isOwner;
+  if(!window.PilingoNotify) return null;
+
+  const settings = await window.PilingoNotify.fetchVisibilitySettings(!!force);
+  applyAppVisibilitySettings(settings);
+
+  if(isOwner){
+    setOwnerToggleState(learnersToggle, settings?.showLearnersList !== false);
+    setOwnerToggleState(rankingToggle, settings?.showRankingList !== false);
+  }
+
+  return settings;
+}
+
+async function toggleAppVisibilitySetting(key){
+  if(!window.PilingoAuth?.isOwner?.()){
+    return;
+  }
+
+  try {
+    const current = await window.PilingoNotify.fetchVisibilitySettings(true);
+    const nextValue = !(current?.[key] !== false);
+    await window.PilingoNotify.saveVisibilitySettings({ [key]: nextValue });
+    const nextSettings = await refreshAppVisibilityControls(true);
+    applyAppVisibilitySettings(nextSettings);
+    await window.PilingoNotify?.renderLeaderboard?.("leaderList");
+    await window.PilingoSocial?.render?.();
+  } catch(error){
+    alert(error?.message || "Could not update app visibility.");
+  }
+}
+
 function updateOwnerOnlyPanels(){
   const notifyCard = document.getElementById("ownerNotifyCard");
   if(!notifyCard) return;
@@ -3404,6 +3559,8 @@ function updateOwnerOnlyPanels(){
   if(isOwner && window.PilingoNotify){
     window.PilingoNotify.startPolling("notifyList", "notifyStatus");
   }
+
+  refreshAppVisibilityControls(true);
 }
 
 syncAccountGateState();
@@ -3420,9 +3577,13 @@ if(window.PilingoSocial){
   PilingoSocial.startPolling();
 }
 updateOwnerOnlyPanels();
+refreshAppVisibilityControls(true);
 startStudyReminderWatcher();
 document.addEventListener("visibilitychange", () => {
-  if(document.visibilityState === "visible") checkStudyReminder();
+  if(document.visibilityState === "visible"){
+    checkStudyReminder();
+    refreshAppVisibilityControls(true);
+  }
 });
 
 </script>

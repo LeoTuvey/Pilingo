@@ -2762,6 +2762,13 @@ function completeEnginePartForRoute(){
     Engine.completeCoursePart("section-1", activeCoursePartRoute.enginePartId, { xp:10, result:"passed" });
 }
 
+function isActiveCoursePartComplete(index){
+    if(!activeCoursePartRoute) return false;
+    const sections = sectionsForPart(index);
+    if(!sections.length) return false;
+    return sections.every((section, sectionIndex) => isSectionComplete(index, sectionIndex));
+}
+
 function isLessonComplete(index, sectionIndex, lessonId){
     return completedLessonSteps(index, sectionIndex).includes(lessonId);
 }
@@ -3816,6 +3823,18 @@ function completeStep(){
         const nowComplete = isSectionComplete(partIndex, sectionIndex);
         const nextSection = sections[sectionIndex + 1];
         activeLesson = null;
+
+        if(activeCoursePartRoute && isActiveCoursePartComplete(partIndex)) {
+            if(nowComplete && !wasComplete) {
+                markSectionComplete(partIndex, sectionIndex);
+                hearts = window.Engine?.addHeart ? Engine.addHeart(1) : Math.min(5, hearts + 1);
+                renderHearts();
+            }
+
+            completeEnginePartForRoute();
+            showPartComplete(partIndex);
+            return;
+        }
 
         if(nowComplete && !wasComplete) {
             markSectionComplete(partIndex, sectionIndex);

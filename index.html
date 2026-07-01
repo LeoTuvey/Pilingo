@@ -1393,6 +1393,114 @@ button:active{
   letter-spacing:-0.04em;
 }
 
+.continue-swipe{
+  width:min(100%, 360px);
+  min-height:88px;
+  border:none;
+  border-radius:999px;
+  padding:10px;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255,255,255,0.7), rgba(255,255,255,0) 24%),
+    linear-gradient(135deg, #fff6b8 0%, #ffe164 36%, #7be41d 72%, #58cc02 100%);
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.55),
+    0 10px 0 #d4a820,
+    0 22px 34px rgba(108,90,18,0.22);
+  display:flex;
+  align-items:center;
+  gap:12px;
+  position:relative;
+  overflow:hidden;
+  touch-action:none;
+  user-select:none;
+}
+
+.continue-swipe::before{
+  content:"";
+  position:absolute;
+  inset:10px;
+  border-radius:999px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.04) 100%);
+  box-shadow:inset 0 0 0 2px rgba(255,250,221,0.38);
+  pointer-events:none;
+}
+
+.continue-swipe-label{
+  flex:1;
+  padding:0 18px 0 8px;
+  text-align:left;
+  position:relative;
+  z-index:1;
+}
+
+.continue-swipe-title{
+  display:block;
+  color:#214104;
+  font-size:24px;
+  font-weight:1000;
+  line-height:1;
+  letter-spacing:-0.03em;
+  text-shadow:0 1px 0 rgba(255,255,255,0.45);
+}
+
+.continue-swipe-hint{
+  display:block;
+  margin-top:8px;
+  color:#5c5f0c;
+  font-size:12px;
+  font-weight:1000;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+}
+
+.continue-swipe-track{
+  position:relative;
+  width:92px;
+  height:68px;
+  flex:0 0 92px;
+  border-radius:999px;
+  background:rgba(255,255,255,0.32);
+  box-shadow:inset 0 0 0 2px rgba(255,255,255,0.3);
+  z-index:1;
+}
+
+.continue-swipe-thumb{
+  position:absolute;
+  left:0;
+  top:0;
+  width:68px;
+  height:68px;
+  border:none;
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 32% 24%, rgba(255,255,255,0.92), rgba(255,255,255,0.25) 28%, rgba(255,255,255,0) 34%),
+    linear-gradient(180deg, #ffffff 0%, #fff1bd 100%);
+  color:#58a700;
+  font-size:30px;
+  box-shadow:
+    inset 0 -7px 14px rgba(226,185,64,0.24),
+    0 8px 16px rgba(80,93,15,0.2);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:grab;
+  transform:translateX(0);
+  transition:transform 0.18s ease;
+}
+
+.continue-swipe.is-dragging .continue-swipe-thumb{
+  transition:none;
+  cursor:grabbing;
+}
+
+.continue-swipe.is-complete .continue-swipe-thumb{
+  transform:translateX(24px);
+}
+
+.continue-swipe.is-complete .continue-swipe-hint{
+  color:#2f7f08;
+}
+
 .button-row{
   display:flex;
   align-items:center;
@@ -2233,7 +2341,15 @@ button:active{
         <p class="hero-motto">Learn daily. Build streaks. Stay consistent.</p>
       </div>
       <div class="hero-actions">
-        <button class="continue-button" onclick="goLearn()"><span>Continue<br>Learning</span></button>
+        <div class="continue-swipe" id="continueSwipe" role="button" aria-label="Swipe to continue learning" tabindex="0">
+          <div class="continue-swipe-track">
+            <button class="continue-swipe-thumb" id="continueSwipeThumb" type="button" aria-label="Swipe handle">➜</button>
+          </div>
+          <div class="continue-swipe-label">
+            <span class="continue-swipe-title">Continue Learning</span>
+            <span class="continue-swipe-hint">Swipe to start</span>
+          </div>
+        </div>
         <div id="accountBar" class="account-bar" hidden>
           <div id="welcomeChip" class="welcome-chip" hidden>👤 <span id="welcomeName">Learner</span></div>
           <button id="logoutButton" class="logout-button" type="button" onclick="logoutAccount()" hidden>Log out</button>
@@ -2568,8 +2684,11 @@ let xp = 0;
 let studyAlarmPlayed = false;
 let accountMode = "register";
 const continueButton = document.querySelector(".continue-button");
+const continueSwipe = document.getElementById("continueSwipe");
+const continueSwipeThumb = document.getElementById("continueSwipeThumb");
 const reminderKey = "pilingo_study_reminder_v1";
 let reminderTimer = null;
+let continueSwipeState = null;
 
 function playStudyReminderOnce(){
   if(studyAlarmPlayed) return;
@@ -2736,6 +2855,8 @@ if(window.AppUI && typeof AppUI.updateOwl === "function"){
   AppUI.updateOwl();
 }
 
+setupContinueSwipe();
+
 /* =========================
    NAVIGATION (STEP 18+ SAFE)
 ========================= */
@@ -2755,6 +2876,79 @@ function goLearn(){
   } else {
     window.location.href = "engine.html";
   }
+}
+
+function setupContinueSwipe(){
+  if(!continueSwipe || !continueSwipeThumb) return;
+
+  const track = continueSwipe.querySelector(".continue-swipe-track");
+  if(!track) return;
+
+  const maxOffset = () => Math.max(0, track.offsetWidth - continueSwipeThumb.offsetWidth);
+
+  const setThumbOffset = (value) => {
+    const clamped = Math.max(0, Math.min(maxOffset(), value));
+    continueSwipeThumb.style.transform = `translateX(${clamped}px)`;
+    continueSwipe.dataset.offset = String(clamped);
+  };
+
+  const resetSwipe = () => {
+    continueSwipe.classList.remove("is-dragging", "is-complete");
+    setThumbOffset(0);
+  };
+
+  const finishSuccess = () => {
+    continueSwipe.classList.remove("is-dragging");
+    continueSwipe.classList.add("is-complete");
+    setThumbOffset(maxOffset());
+    window.setTimeout(() => {
+      resetSwipe();
+      goLearn();
+    }, 180);
+  };
+
+  continueSwipeThumb.addEventListener("pointerdown", (event) => {
+    event.preventDefault();
+    continueSwipeState = {
+      pointerId:event.pointerId,
+      startX:event.clientX,
+      startOffset:Number(continueSwipe.dataset.offset || "0")
+    };
+    continueSwipe.classList.add("is-dragging");
+    continueSwipeThumb.setPointerCapture(event.pointerId);
+  });
+
+  continueSwipeThumb.addEventListener("pointermove", (event) => {
+    if(!continueSwipeState || event.pointerId !== continueSwipeState.pointerId) return;
+    setThumbOffset(continueSwipeState.startOffset + (event.clientX - continueSwipeState.startX));
+  });
+
+  const endSwipe = (event) => {
+    if(!continueSwipeState || (event && event.pointerId !== continueSwipeState.pointerId)) return;
+    const currentOffset = Number(continueSwipe.dataset.offset || "0");
+    const threshold = maxOffset() * 0.72;
+    continueSwipeState = null;
+
+    if(currentOffset >= threshold){
+      finishSuccess();
+      return;
+    }
+
+    resetSwipe();
+  };
+
+  continueSwipeThumb.addEventListener("pointerup", endSwipe);
+  continueSwipeThumb.addEventListener("pointercancel", endSwipe);
+  continueSwipeThumb.addEventListener("lostpointercapture", endSwipe);
+
+  continueSwipe.addEventListener("keydown", (event) => {
+    if(event.key === "Enter" || event.key === " "){
+      event.preventDefault();
+      finishSuccess();
+    }
+  });
+
+  resetSwipe();
 }
 
 function toggleStudyReminder(){
@@ -3225,6 +3419,7 @@ if(window.PilingoNotify){
 if(window.PilingoSocial){
   PilingoSocial.startPolling();
 }
+updateOwnerOnlyPanels();
 startStudyReminderWatcher();
 document.addEventListener("visibilitychange", () => {
   if(document.visibilityState === "visible") checkStudyReminder();

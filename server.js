@@ -482,11 +482,15 @@ function upsertStudentStats(payload) {
     const studentEmail = String(student.email || "").trim().toLowerCase();
     const studentPhone = String(student.phone || "").trim();
     const studentName = String(student.name || "").trim().toLowerCase();
-    return (
-      (!!email && studentEmail === email) ||
-      (!!phone && studentPhone === phone) ||
-      (!!normalizedName && normalizedName !== "unknown student" && studentName === normalizedName)
-    );
+
+    if (email && studentEmail === email) return true;
+    if (phone && studentPhone === phone) return true;
+
+    if (!email && !phone && normalizedName && normalizedName !== "unknown student" && studentName === normalizedName) {
+      return true;
+    }
+
+    return false;
   });
   const existing = existingIndex >= 0 ? students[existingIndex] : null;
 
@@ -963,7 +967,14 @@ function getLeaderboard() {
     for (const [key, value] of merged.entries()) {
       const sameEmail = !!(email && value.email === email);
       const samePhone = !!(phone && value.phone === phone);
-      const sameName = !!(nameKey && normalizeName(value.name) === nameKey);
+      const sameName = !!(
+        !email &&
+        !phone &&
+        !value.email &&
+        !value.phone &&
+        nameKey &&
+        normalizeName(value.name) === nameKey
+      );
       if (sameEmail || samePhone || sameName) {
         current = value;
         currentKey = key;
@@ -1055,10 +1066,13 @@ function getLeaderboard() {
       rankScore: leaderboardScore(student)
     }))
     .sort((a, b) =>
-      b.rankScore - a.rankScore ||
       b.xp - a.xp ||
-      b.averageGrade - a.averageGrade ||
       b.completedSections - a.completedSections ||
+      b.bestGrade - a.bestGrade ||
+      b.averageGrade - a.averageGrade ||
+      b.lessonsFinished - a.lessonsFinished ||
+      b.streak - a.streak ||
+      b.rankScore - a.rankScore ||
       a.name.localeCompare(b.name)
     );
 }
@@ -1341,10 +1355,12 @@ function getOwnerStudentRoster() {
 
 function leaderboardScore(student) {
   return (
-    safeNumber(student.xp, 0) +
-    (safeNumber(student.averageGrade, 0) * 4) +
-    (safeNumber(student.completedSections, 0) * 25) +
-    (safeNumber(student.streak, 0) * 3)
+    (safeNumber(student.xp, 0) * 1000) +
+    (safeNumber(student.completedSections, 0) * 200) +
+    (safeNumber(student.bestGrade, 0) * 5) +
+    (safeNumber(student.averageGrade, 0) * 3) +
+    (safeNumber(student.lessonsFinished, 0) * 10) +
+    (safeNumber(student.streak, 0) * 2)
   );
 }
 

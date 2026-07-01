@@ -336,116 +336,52 @@ button.wrong{
     background:#61d80a;
 }
 
-.part-menu{
+.part-selector{
+    width:min(100%, 540px);
+    margin:0 auto;
     position:relative;
-    width:min(100%, 760px);
-    margin:20px auto 14px;
-    padding:22px;
-    border-radius:38px;
-    display:grid;
-    grid-template-columns:repeat(2, minmax(0, 1fr));
-    gap:18px;
-    background:
-        radial-gradient(circle at 16% 16%, rgba(255,255,255,0.96), rgba(255,255,255,0) 18%),
-        radial-gradient(circle at 84% 14%, rgba(255,255,255,0.84), rgba(255,255,255,0) 16%),
-        radial-gradient(circle at 22% 78%, var(--menu-glow-a, rgba(118,205,255,0.26)), rgba(118,205,255,0) 22%),
-        radial-gradient(circle at 74% 76%, var(--menu-glow-b, rgba(255,212,121,0.28)), rgba(255,212,121,0) 24%),
-        linear-gradient(180deg, var(--menu-top, #ffe59c) 0%, var(--menu-mid, #ffd166) 44%, var(--menu-bottom, #f4b740) 100%);
-    box-shadow:
-        inset 0 -16px 0 var(--menu-inset, rgba(173,113,17,0.14)),
-        0 20px 40px var(--menu-shadow, rgba(157,112,14,0.18));
-    border:3px solid var(--menu-border, rgba(255,255,255,0.58));
-    overflow:hidden;
+    padding:0 0 6px;
 }
 
-.part-selector{
-    width:min(100%, 640px);
+.part-menu{
+    position:relative;
+    width:100%;
     margin:0 auto;
 }
 
-.part-cluster{
-    margin:0 auto 24px;
-}
-
-.part-cluster-title{
-    margin:8px auto 4px;
-    font-size:13px;
-    font-weight:900;
-    letter-spacing:0.08em;
-    text-transform:uppercase;
-    color:#9d6c06;
-}
-
-.part-menu::before,
-.part-menu::after{
-    content:"";
+.part-path-line{
     position:absolute;
-    pointer-events:none;
-}
-
-.part-menu::before{
-    inset:18px;
-    border-radius:30px;
-    border:2px dashed rgba(255,255,255,0.28);
-    opacity:0.7;
-}
-
-.part-menu::after{
-    right:-26px;
-    bottom:-34px;
-    width:150px;
-    height:150px;
-    border-radius:50%;
-    background:radial-gradient(circle, rgba(255,255,255,0.34), rgba(255,255,255,0));
+    left:50%;
+    top:176px;
+    bottom:24px;
+    width:8px;
+    transform:translateX(-50%);
+    border-radius:999px;
+    background:linear-gradient(180deg, rgba(241,199,94,0.2) 0%, rgba(214,155,35,0.9) 18%, rgba(214,155,35,0.9) 82%, rgba(241,199,94,0.2) 100%);
+    box-shadow:0 0 0 6px rgba(255,255,255,0.34);
     pointer-events:none;
 }
 
 .part-menu-core{
     position:relative;
-    left:auto;
-    top:auto;
     width:100%;
     min-height:152px;
-    transform:none;
-    grid-column:1 / -1;
-    border-radius:32px;
+    margin-bottom:16px;
+    border-radius:34px;
     background:
-        radial-gradient(circle at 18% 22%, rgba(255,255,255,0.95), rgba(255,255,255,0.18) 22%, transparent 26%),
-        linear-gradient(180deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.08) 100%);
+        radial-gradient(circle at 18% 22%, rgba(255,255,255,0.95), rgba(255,255,255,0.22) 20%, transparent 24%),
+        linear-gradient(180deg, rgba(255,252,240,0.98) 0%, rgba(255,243,214,0.98) 100%);
     box-shadow:
-        inset 0 -10px 0 rgba(255,255,255,0.12),
-        0 10px 24px rgba(110,79,15,0.14);
+        inset 0 -10px 0 rgba(220,179,88,0.12),
+        0 10px 0 rgba(204,156,55,0.46),
+        0 18px 24px rgba(124,91,17,0.14);
     display:flex;
     flex-direction:column;
     align-items:center;
     justify-content:center;
     color:#5b4212;
-    border:2px solid rgba(255,255,255,0.55);
+    border:2px solid rgba(255,255,255,0.82);
     overflow:hidden;
-}
-
-.part-menu-core::before,
-.part-menu-core::after{
-    content:"";
-    position:absolute;
-    border-radius:50% 50% 54% 54% / 38% 38% 62% 62%;
-    background:rgba(255,255,255,0.2);
-}
-
-.part-menu-core::before{
-    width:126px;
-    height:92px;
-    left:18px;
-    top:18px;
-    transform:rotate(-12deg);
-}
-
-.part-menu-core::after{
-    width:88px;
-    height:62px;
-    right:26px;
-    bottom:18px;
-    transform:rotate(18deg);
 }
 
 .part-menu-core strong{
@@ -467,22 +403,23 @@ button.wrong{
     text-shadow:none;
 }
 
+.part-list{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+    position:relative;
+}
+
 .part-choice{
     position:relative;
-    left:auto;
-    top:auto;
-    width:100%;
-    min-height:156px;
-    margin:0;
-    transform:none !important;
-    display:grid;
-    grid-template-columns:108px 1fr;
-    grid-template-areas:
-        "badge copy"
-        "badge status";
+    width:min(330px, calc(100% - 44px));
+    min-height:128px;
+    margin:0 auto;
+    display:flex;
+    flex-direction:column;
     align-items:center;
-    justify-content:flex-start;
-    text-align:left;
+    justify-content:center;
+    text-align:center;
     background:
         radial-gradient(circle at 24% 18%, rgba(255,255,255,0.96), rgba(255,255,255,0.22) 24%, transparent 28%),
         linear-gradient(180deg, rgba(255,252,239,0.98) 0%, rgba(255,244,217,0.98) 100%);
@@ -491,27 +428,30 @@ button.wrong{
         inset 0 -10px 0 rgba(220,179,88,0.12),
         0 10px 0 rgba(204,156,55,0.46),
         0 18px 24px rgba(124,91,17,0.14);
-    padding:14px 16px 16px;
+    padding:18px 16px 18px;
     overflow:hidden;
     border-radius:44% 44% 50% 50% / 34% 34% 62% 62%;
-    animation:none;
+    transition:transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+}
+
+.part-choice:nth-child(odd){
+    transform:translateX(-74px);
+}
+
+.part-choice:nth-child(even){
+    transform:translateX(74px);
 }
 
 .part-choice:hover{
     filter:none;
-    transform:translateY(-3px) !important;
-}
-
-.part-choice::before{
-    display:none;
+    transform:translateY(-3px) translateX(var(--hover-offset, 0px));
 }
 
 .part-badge{
-    grid-area:badge;
     display:inline-flex;
     position:relative;
-    width:118px;
-    height:118px;
+    width:96px;
+    height:96px;
     align-items:flex-start;
     justify-content:center;
     border-radius:50%;
@@ -530,15 +470,15 @@ button.wrong{
     border:4px solid rgba(255,255,255,0.92);
     text-shadow:0 2px 0 rgba(255,255,255,0.35);
     overflow:hidden;
-    animation:planetSpin 8.8s linear infinite;
+    animation:planetSpin 12s linear infinite;
 }
 
-.part-choice:hover .part-badge{
-    box-shadow:
-        inset 0 -10px 0 rgba(176,113,17,0.22),
-        0 0 24px rgba(255,226,126,0.36),
-        0 12px 0 rgba(197,119,21,0.82),
-        0 22px 30px rgba(14,35,65,0.28);
+.part-choice:nth-child(odd){
+    --hover-offset:-74px;
+}
+
+.part-choice:nth-child(even){
+    --hover-offset:74px;
 }
 
 .part-badge::before{
@@ -563,22 +503,10 @@ button.wrong{
     position:relative;
     z-index:1;
     display:inline-block;
-    margin-top:18px;
+    margin-top:12px;
     filter:drop-shadow(0 5px 5px rgba(122,83,0,0.18));
     transform-origin:center bottom;
     animation:animalBob 2.8s ease-in-out infinite;
-}
-
-.part-choice:hover .part-animal{
-    animation-duration:1.4s;
-}
-
-.part-choice:nth-child(2n) .part-animal{
-    animation-name:animalWiggle;
-}
-
-.part-choice:nth-child(3n) .part-animal{
-    animation-name:animalHop;
 }
 
 @keyframes animalBob{
@@ -588,45 +516,24 @@ button.wrong{
     78%{ transform:translateY(-2px) rotate(-2deg) scale(1.02); }
 }
 
-@keyframes animalWiggle{
-    0%, 100%{ transform:translateY(0) rotate(0deg) scale(1); }
-    20%{ transform:translateY(-2px) rotate(-6deg) scale(1.02); }
-    45%{ transform:translateY(-6px) rotate(6deg) scale(1.06); }
-    70%{ transform:translateY(-1px) rotate(-3deg) scale(1.03); }
-}
-
-@keyframes animalHop{
-    0%, 100%{ transform:translateY(0) scale(1); }
-    18%{ transform:translateY(-1px) scale(1.02); }
-    45%{ transform:translateY(-8px) scale(1.08); }
-    60%{ transform:translateY(-3px) scale(1.03); }
-    78%{ transform:translateY(0) scale(0.99); }
-}
-
-@keyframes orbitHalo{
-    from{ transform:rotate(0deg); }
-    to{ transform:rotate(360deg); }
-}
-
 @keyframes planetSpin{
     from{ transform:rotate(0deg); }
     to{ transform:rotate(360deg); }
 }
 
 .part-copy{
-    grid-area:copy;
     display:flex;
     flex-direction:column;
     gap:5px;
-    margin-top:0;
+    margin-top:10px;
     width:100%;
-    padding:0 0 0 8px;
+    padding:0;
     align-self:center;
 }
 
 .part-name{
     color:#644717;
-    font-size:20px;
+    font-size:22px;
     font-weight:900;
     line-height:1.2;
     text-shadow:none;
@@ -634,20 +541,19 @@ button.wrong{
 
 .part-detail{
     color:#83612a;
-    font-size:14px;
+    font-size:13px;
     font-weight:700;
     line-height:1.35;
     text-shadow:none;
+    max-width:220px;
+    margin:0 auto;
 }
 
 .part-status{
-    grid-area:status;
-    justify-self:start;
     color:#fff;
     font-size:12px;
     font-weight:900;
-    margin-top:8px;
-    margin-left:8px;
+    margin-top:12px;
     padding:7px 12px;
     border-radius:999px;
     background:#58cc02;
@@ -687,6 +593,7 @@ button.wrong{
     color:#6d4b12;
     max-width:none;
     padding:2px 4px 0;
+    margin-bottom:8px;
 }
 
 .part-menu-banner strong{
@@ -946,88 +853,82 @@ button.wrong{
         width:100%;
     }
     .part-menu{
-        display:grid;
-        grid-template-columns:1fr;
-        gap:14px;
+        display:block;
         width:100%;
-        height:auto;
-        aspect-ratio:auto;
         padding:18px 12px 14px;
         border-radius:34px;
-    }
-    .part-menu::before,
-    .part-menu::after,
-    .part-menu-glow{
-        display:none;
     }
     .part-menu-banner{
         position:relative;
         left:auto;
         top:auto;
         max-width:none;
-        grid-column:1 / -1;
         text-align:center;
-        margin-bottom:2px;
+        margin-bottom:10px;
     }
     .part-menu-core{
-        position:relative;
-        left:auto;
-        top:auto;
-        transform:none;
         width:100%;
         height:132px;
-        grid-column:1 / -1;
-        margin-bottom:4px;
+        margin-bottom:14px;
+    }
+    .part-path-line{
+        left:28px;
+        top:202px;
+        bottom:18px;
+        width:6px;
+        transform:none;
+        box-shadow:none;
     }
     .part-choice{
-        position:relative;
-        left:auto;
-        top:auto;
-        width:100%;
-        min-height:144px;
+        width:calc(100% - 20px);
+        min-height:120px;
         transform:none !important;
-        animation:none;
-        grid-template-columns:88px 1fr;
         padding:12px 14px 14px;
+        margin:0 0 0 auto;
+        border-radius:28px;
+        text-align:left;
+        align-items:flex-start;
+    }
+    .part-choice:nth-child(odd),
+    .part-choice:nth-child(even){
+        transform:none !important;
+    }
+    .part-choice:hover{
+        transform:translateY(-2px) !important;
     }
     .part-choice::before{
-        display:none;
+        content:"";
+        position:absolute;
+        left:-20px;
+        top:50%;
+        width:20px;
+        height:6px;
+        transform:translateY(-50%);
+        border-radius:999px;
+        background:#d89d23;
+        opacity:0.95;
     }
     .part-badge{
-        width:88px;
-        height:88px;
+        width:74px;
+        height:74px;
+        margin-left:0;
     }
     .part-copy{
-        padding:0 0 0 10px;
+        margin-top:8px;
+        padding:0;
+        align-items:flex-start;
     }
     .part-name{
         font-size:18px;
     }
     .part-detail{
         font-size:13px;
+        max-width:none;
+        margin:0;
     }
     .part-status{
-        margin-left:10px;
         font-size:11px;
-    }
-    .part-extra-choice{
-        width:100%;
-        padding:14px;
-        gap:12px;
-    }
-    .part-extra-badge{
-        flex-basis:74px;
-        width:74px;
-        height:74px;
-        font-size:40px;
-    }
-    .part-extra-name{
-        font-size:16px;
-    }
-    .part-extra-status{
-        min-width:72px;
-        padding:7px 10px;
-        font-size:12px;
+        margin-top:10px;
     }
     .image-options{grid-template-columns:1fr;}
     .match-grid{gap:10px;}
@@ -3243,10 +3144,6 @@ function showPartSelect(){
     matchedKeys = [];
     selectedMatch = null;
     activeLesson = null;
-    const partGroups = [];
-    for(let i = 0; i < gameParts.length; i += 5) {
-        partGroups.push(gameParts.slice(i, i + 5));
-    }
 
     renderHearts();
     document.getElementById("menuButton").style.display = "none";
@@ -3260,37 +3157,32 @@ function showPartSelect(){
     showIdleGrade("Choose a part to begin grading");
     document.getElementById("activity").innerHTML = `
         <div class="part-selector">
-            ${partGroups.map((group, groupIndex) => `
-                <div class="part-cluster">
-                    ${groupIndex > 0 ? `<div class="part-cluster-title">More Lessons</div>` : ""}
-                    <div class="part-menu" style="${partMenuThemeStyle(groupIndex)}">
-                        <div class="part-menu-banner">
-                            <strong>${groupIndex === 0 ? "Choose a Part" : `Choose More Parts`}</strong>
-                            <span>${groupIndex === 0 ? "Start anywhere in Game One. Each part below opens real grouped lessons that are easier to study." : "More Game One parts are here. Tap any one and continue learning."}</span>
-                        </div>
-                        <div class="part-menu-core">
-                            <strong>${groupIndex === 0 ? "🌍" : "📘"}</strong>
-                            <span>${groupIndex === 0 ? "Game One" : `Page ${groupIndex + 1}`}</span>
-                        </div>
-                        ${group.map((part, index) => {
-                            const actualIndex = (groupIndex * 5) + index;
-                            return `
-                                <button class="part-choice" onclick="startPart(${actualIndex})">
-                                    <span class="part-badge" aria-hidden="true">
-                                        <span class="part-letter">${escapeHtml(partCode(part.title))}</span>
-                                        <span class="part-animal" style="animation-delay:${(actualIndex * 0.18).toFixed(2)}s">${partEmojis[actualIndex] || "🦉"}</span>
-                                    </span>
-                                    <span class="part-copy">
-                                        <span class="part-name">${escapeHtml(displayPartTitle(actualIndex))}</span>
-                                        <span class="part-detail">${escapeHtml(partDescriptions[actualIndex] || "Practice section")}</span>
-                                    </span>
-                                    <span class="part-status">${completedParts.includes(actualIndex) ? "✓ Done" : "Start"}</span>
-                                </button>
-                            `;
-                        }).join("")}
-                    </div>
+            <div class="part-menu" style="${partMenuThemeStyle(0)}">
+                <div class="part-menu-banner">
+                    <strong>Choose a Part</strong>
+                    <span>Move down the path and open any Game One part. Each part contains grouped lessons, quizzes, and review.</span>
                 </div>
-            `).join("")}
+                <div class="part-menu-core">
+                    <strong>🌍</strong>
+                    <span>Game One Path</span>
+                </div>
+                <div class="part-path-line" aria-hidden="true"></div>
+                <div class="part-list">
+                    ${gameParts.map((part, actualIndex) => `
+                        <button class="part-choice" onclick="startPart(${actualIndex})">
+                            <span class="part-badge" aria-hidden="true">
+                                <span class="part-letter">${escapeHtml(partCode(part.title))}</span>
+                                <span class="part-animal" style="animation-delay:${(actualIndex * 0.18).toFixed(2)}s">${partEmojis[actualIndex] || "🦉"}</span>
+                            </span>
+                            <span class="part-copy">
+                                <span class="part-name">${escapeHtml(displayPartTitle(actualIndex))}</span>
+                                <span class="part-detail">${escapeHtml(partDescriptions[actualIndex] || "Practice section")}</span>
+                            </span>
+                            <span class="part-status">${completedParts.includes(actualIndex) ? "✓ Done" : "Start"}</span>
+                        </button>
+                    `).join("")}
+                </div>
+            </div>
         </div>
     `;
 }

@@ -1190,30 +1190,16 @@ const gameParts = [
             rawBuildStep("Wergera vê hevokê bike.\nTranslate the sentence", "I am a girl.\n…………… .", ["Ez", "keç", "im", "kur", "bav"], ["Ez", "keç", "im"]),
             rawBuildStep("Wergera vê hevokê bike.\nTranslate the sentence", "I am a woman.\n…………… .", ["jin", "im", "mêr", "Ez", "law"], ["Ez", "jin", "im"]),
             nextStep("Game One A • Part 1C complete"),
-            imageStep("şîr", [
-                imgOpt("Coffee", "coffee"),
-                imgOpt("Water", "water"),
-                imgOpt("Tea", "tea"),
-                imgOpt("Milk", "milk")
-            ], "Milk"),
             choiceStep("Translate this sentence", "Silav", ["Hello", "Or", "Bye"], "Hello"),
-            buildStep("Translate this sentence", "qehwe, ji kerema xwe!", ["coffee", "or", "welcome", "please", "!"], ["coffee", "please", "!"]),
-            buildStep("Translate this sentence", "Şîr û Qehwe", ["and", "coffee", "or", "milk", "welcome"], ["milk", "and", "coffee"]),
-            matchStep([
-                ["Milk", "Şîr"],
-                ["Coffee", "Qehwe"],
-                ["Hello", "Silav"],
-                ["And", "û"]
-            ]),
-            hearStep("Milk", ["Milk", "Silav", "Qehwe", "Şîr"], "Milk", "Tap what you hear | Li ser tiştê ku dibihîze bitikîne!"),
             choiceStep("Select the correct word", "Silav", ["Tea", "Coffee", "Hello"], "Hello"),
-            hearStep("Coffee", ["Coffee", "Silav", "Qehwe", "Şîr"], "Coffee"),
-            matchStep([
-                ["Milk", "Şîr"],
-                ["Coffee", "Qehwe"],
-                ["Hello", "Silav"],
-                ["And", "û"]
-            ]),
+            buildStep("Translate this sentence", "Bi xêr hatî!", ["coffee", "please", "welcome"], ["welcome"]),
+            choiceStep("Select the correct translation", "Bi xêr hatî!", ["Coffee", "Milk", "Hi", "Welcome"], "Welcome"),
+            choiceStep("Translate this sentence", "Erê!", ["Yes", "Bye", "Coffee"], "Yes"),
+            choiceStep("Translate this sentence", "Na!", ["Now", "Coffee", "No"], "No"),
+            choiceStep("Translate this sentence", "Bi xatirê te!", ["Bye", "Milk", "Tea"], "Bye"),
+            buildStep("Translate this sentence", "Silav, Susan!", ["hello", "please", "welcome", "susan"], ["hello", "susan"]),
+            hearStep("Bye", ["Erê", "Bi xatirê te!", "Silav", "Na"], "Bi xatirê te!", undefined, ""),
+            choiceStep("Select the correct word", "Silav", ["Tea", "Coffee", "Hello"], "Hello"),
             nextStep()
         ]
     },
@@ -1979,12 +1965,12 @@ const partSections = {
         {
             id:"a-part-2",
             label:"Part 2",
-            detail:"Milk, coffee, greetings, and basic matching",
+            detail:"Greetings, welcome words, and polite phrases",
             start:65,
             end:74,
             lessons:[
-                { id:"a-part-2-lesson-1", label:"Lesson 1", detail:"Core everyday words", start:65, end:69 },
-                { id:"a-part-2-lesson-2", label:"Lesson 2", detail:"Matching and review", start:70, end:74 }
+                { id:"a-part-2-lesson-1", label:"Lesson 1", detail:"Hello and welcome basics", start:65, end:69 },
+                { id:"a-part-2-lesson-2", label:"Lesson 2", detail:"Yes, no, bye, and greeting review", start:70, end:74 }
             ]
         }
     ],

@@ -983,6 +983,8 @@ let completedLessons = loadCompletedLessons();
 let lessonStatuses = loadLessonStatuses();
 let gradebook = loadGradebook();
 let gradeState = null;
+const urlParams = new URLSearchParams(window.location.search);
+const coursePartSlug = urlParams.get("coursePart") || "";
 
 const emoji = {
     coffee:"☕",
@@ -1728,6 +1730,60 @@ const partDisplayNames = [
     "E • People and Animals",
     "F • Sentence Builder"
 ];
+
+const coursePartRoutes = {
+    alphabets:{
+        slug:"alphabets",
+        title:"🔤 Alphabets",
+        gamePartIndex:0,
+        sectionIds:["a-part-1a"],
+        enginePartId:"part-1"
+    },
+    family:{
+        slug:"family",
+        title:"👨‍👩‍👧‍👦 Describe Your Family",
+        gamePartIndex:0,
+        sectionIds:["a-part-1b", "a-part-1c"],
+        enginePartId:"part-2"
+    },
+    greetings:{
+        slug:"greetings",
+        title:"👋 Greet People",
+        gamePartIndex:0,
+        sectionIds:["a-part-2"],
+        enginePartId:"part-3"
+    },
+    "food-drink":{
+        slug:"food-drink",
+        title:"🍎 Talk About Food and Drink",
+        gamePartIndex:1,
+        sectionIds:["b-part-1"],
+        enginePartId:"part-4"
+    },
+    possessions:{
+        slug:"possessions",
+        title:"🎒 Talk About Possessions",
+        gamePartIndex:3,
+        sectionIds:["d-part-1", "d-part-2", "d-part-3"],
+        enginePartId:"part-6"
+    },
+    animals:{
+        slug:"animals",
+        title:"🐶 Describe Animals",
+        gamePartIndex:4,
+        sectionIds:["e-part-7", "e-part-8"],
+        enginePartId:"part-8"
+    },
+    questions:{
+        slug:"questions",
+        title:"❓ Form Questions",
+        gamePartIndex:5,
+        sectionIds:["f-part-1", "f-part-2a", "f-part-2b", "f-part-3"],
+        enginePartId:"part-9"
+    }
+};
+
+const activeCoursePartRoute = coursePartRoutes[coursePartSlug] || null;
 
 const partMenuThemes = [
     {
@@ -2608,7 +2664,13 @@ function saveGradebook(){
 }
 
 function sectionsForPart(index){
-    return partSections[index] || [];
+    const sections = partSections[index] || [];
+
+    if(!activeCoursePartRoute || activeCoursePartRoute.gamePartIndex !== index) {
+        return sections;
+    }
+
+    return sections.filter((section) => activeCoursePartRoute.sectionIds.includes(section.id));
 }
 
 function sectionKey(index){
@@ -2692,6 +2754,11 @@ function sectionLessonProgress(index, sectionIndex){
     const total = lessonsForSection(index, sectionIndex).length;
     const completed = Math.min(completedLessonSteps(index, sectionIndex).length, total);
     return { completed:completed, total:total };
+}
+
+function completeEnginePartForRoute(){
+    if(!activeCoursePartRoute || !window.Engine?.completeCoursePart) return;
+    Engine.completeCoursePart("section-1", activeCoursePartRoute.enginePartId, { xp:10, result:"passed" });
 }
 
 function isLessonComplete(index, sectionIndex, lessonId){
@@ -2983,6 +3050,10 @@ function leaderboardSummary(){
 }
 
 function markPartComplete(index){
+    if(activeCoursePartRoute && activeCoursePartRoute.gamePartIndex === index) {
+        return;
+    }
+
     if(!completedParts.includes(index)) {
         completedParts.push(index);
         saveCompletedParts();
@@ -2990,10 +3061,12 @@ function markPartComplete(index){
 }
 
 function nextOpenPart(){
+    if(activeCoursePartRoute) return -1;
     return gameParts.findIndex((part, index) => !completedParts.includes(index));
 }
 
 function allPartsComplete(){
+    if(activeCoursePartRoute) return false;
     return completedParts.length >= gameParts.length;
 }
 
@@ -3133,7 +3206,7 @@ function showSectionSelect(index, message){
                     </button>
                 `;
             }).join("")}
-            <button class="secondary" onclick="showPartSelect()">Back to parts</button>
+            <button class="secondary" onclick="${activeCoursePartRoute ? "goBackToGames()" : "showPartSelect()"}">${activeCoursePartRoute ? "Back to learning map" : "Back to parts"}</button>
         </div>
     `;
 }
@@ -3193,6 +3266,10 @@ function partCode(title){
 }
 
 function displayPartTitle(index){
+    if(activeCoursePartRoute && activeCoursePartRoute.gamePartIndex === index) {
+        return activeCoursePartRoute.title;
+    }
+
     return partDisplayNames[index] || gameParts[index]?.title || "Part";
 }
 
@@ -3749,6 +3826,9 @@ function completeStep(){
                 return;
             }
 
+            if(activeCoursePartRoute) {
+                completeEnginePartForRoute();
+            }
             markPartComplete(partIndex);
             showPartComplete(partIndex);
             return;
@@ -3769,6 +3849,9 @@ function completeStep(){
         saveCurrentGradeRecord();
     }
 
+    if(activeCoursePartRoute) {
+        completeEnginePartForRoute();
+    }
     markPartComplete(partIndex);
     showPartComplete(partIndex);
 }
@@ -3795,9 +3878,10 @@ function showPartComplete(completedIndex){
     document.getElementById("activity").innerHTML = `
         <div class="part-complete-actions">
             <div class="section-grade" style="font-size:16px !important; margin-bottom:10px;">${escapeHtml(record ? `Your latest grade: ${record.latestLetter} (${record.latestPercent}%)` : "Your grade was saved.")}</div>
-            ${openPart >= 0 ? `<button class="primary-action" onclick="startPart(${openPart})">Start next part</button>` : ""}
-            <button class="secondary-action" onclick="showPartSelect()">Choose another part</button>
-            ${isAllDone ? `<button class="primary-action" onclick="finish()">Finish Game One</button>` : ""}
+            ${activeCoursePartRoute ? `<button class="primary-action" onclick="window.location.href='engine.html'">Back to learning map</button>` : ""}
+            ${!activeCoursePartRoute && openPart >= 0 ? `<button class="primary-action" onclick="startPart(${openPart})">Start next part</button>` : ""}
+            <button class="secondary-action" onclick="${activeCoursePartRoute ? "window.location.href='engine.html'" : "showPartSelect()"}">${activeCoursePartRoute ? "Choose another course part" : "Choose another part"}</button>
+            ${!activeCoursePartRoute && isAllDone ? `<button class="primary-action" onclick="finish()">Finish Game One</button>` : ""}
         </div>
     `;
 
@@ -3849,7 +3933,11 @@ function gameOver(){
     </div>`;
 }
 
-showPartSelect();
+if(activeCoursePartRoute) {
+    showSectionSelect(activeCoursePartRoute.gamePartIndex, "Choose a lesson in this part");
+} else {
+    showPartSelect();
+}
 </script>
 </body>
 </html>

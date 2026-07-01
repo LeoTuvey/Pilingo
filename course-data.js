@@ -1,19 +1,9 @@
-function buildLessonFlow(partKey) {
-  return [
-    { id: `${partKey}-intro`, title: "Introduction", type: "lesson" },
-    { id: `${partKey}-vocabulary`, title: "Vocabulary", type: "lesson" },
-    { id: `${partKey}-pronunciation`, title: "Pronunciation", type: "activity" },
-    { id: `${partKey}-grammar`, title: "Grammar", type: "lesson" },
-    { id: `${partKey}-listening`, title: "Listening", type: "activity" },
-    { id: `${partKey}-reading`, title: "Reading", type: "activity" },
-    { id: `${partKey}-speaking`, title: "Speaking", type: "activity" },
-    { id: `${partKey}-writing`, title: "Writing", type: "activity" },
-    { id: `${partKey}-matching`, title: "Matching", type: "quiz" },
-    { id: `${partKey}-drag-drop`, title: "Drag and Drop", type: "activity" },
-    { id: `${partKey}-practice`, title: "Practice", type: "quiz" },
-    { id: `${partKey}-review`, title: "Review", type: "review" },
-    { id: `${partKey}-final-quiz`, title: "Final Quiz", type: "quiz" }
-  ];
+function lessonList(...titles) {
+  return titles.map((title, index) => ({
+    id: `lesson-${index + 1}`,
+    title,
+    type: index === titles.length - 1 ? "quiz" : "lesson"
+  }));
 }
 
 const SECTION_ONE_PARTS = [
@@ -22,37 +12,60 @@ const SECTION_ONE_PARTS = [
     number: 1,
     title: "🔤 Alphabets",
     summary: "Letters, sounds, and first symbols.",
-    href: "game1.html",
+    href: "game1.html?coursePart=alphabets",
     icon: "🔤",
     accent: "gold",
-    lessons: buildLessonFlow("alphabets")
+    lessons: lessonList(
+      "Kurmanji letters and Sorani matching",
+      "Letter sounds and example names",
+      "Alphabet review",
+      "Final alphabet quiz"
+    )
   },
   {
     id: "part-2",
     number: 2,
     title: "👨‍👩‍👧‍👦 Describe Your Family",
     summary: "Family words, roles, and simple descriptions.",
+    href: "game1.html?coursePart=family",
     icon: "👨‍👩‍👧‍👦",
     accent: "orange",
-    lessons: buildLessonFlow("family")
+    lessons: lessonList(
+      "Family member matching",
+      "Meaning and missing-word practice",
+      "Write family words in English",
+      "Listening and typing review",
+      "Translate family sentences",
+      "Final family quiz"
+    )
   },
   {
     id: "part-3",
     number: 3,
     title: "👋 Greet People",
     summary: "Greetings, introductions, and polite phrases.",
+    href: "game1.html?coursePart=greetings",
     icon: "👋",
     accent: "sky",
-    lessons: buildLessonFlow("greetings")
+    lessons: lessonList(
+      "Greeting words",
+      "Simple greeting review",
+      "Final greetings quiz"
+    )
   },
   {
     id: "part-4",
     number: 4,
     title: "🍎 Talk About Food and Drink",
     summary: "Everyday food, drinks, and simple choices.",
+    href: "game1.html?coursePart=food-drink",
     icon: "🍎",
     accent: "pink",
-    lessons: buildLessonFlow("food-drink")
+    lessons: lessonList(
+      "Daily food and drink words",
+      "Meaning and review practice",
+      "Final food and drink quiz"
+    )
   },
   {
     id: "part-5",
@@ -61,16 +74,27 @@ const SECTION_ONE_PARTS = [
     summary: "Work, roles, and describing what people do.",
     icon: "💼",
     accent: "violet",
-    lessons: buildLessonFlow("jobs")
+    lessons: lessonList(
+      "Job words coming soon",
+      "Job sentence review coming soon",
+      "Final job quiz coming soon"
+    )
   },
   {
     id: "part-6",
     number: 6,
     title: "🎒 Talk About Possessions",
     summary: "Ownership, items, and who has what.",
+    href: "game1.html?coursePart=possessions",
     icon: "🎒",
     accent: "leaf",
-    lessons: buildLessonFlow("possessions")
+    lessons: lessonList(
+      "Book vocabulary",
+      "Ball vocabulary",
+      "House vocabulary",
+      "Objects review",
+      "Final possessions quiz"
+    )
   },
   {
     id: "part-7",
@@ -79,25 +103,42 @@ const SECTION_ONE_PARTS = [
     summary: "Free time, likes, and fun activities.",
     icon: "⚽",
     accent: "gold",
-    lessons: buildLessonFlow("hobbies")
+    lessons: lessonList(
+      "Hobby words coming soon",
+      "Hobby sentence review coming soon",
+      "Final hobbies quiz coming soon"
+    )
   },
   {
     id: "part-8",
     number: 8,
     title: "🐶 Describe Animals",
     summary: "Animal names and basic descriptions.",
+    href: "game1.html?coursePart=animals",
     icon: "🐶",
     accent: "orange",
-    lessons: buildLessonFlow("animals")
+    lessons: lessonList(
+      "Cat lesson",
+      "Dog lesson",
+      "Animal review",
+      "Final animals quiz"
+    )
   },
   {
     id: "part-9",
     number: 9,
     title: "❓ Form Questions",
     summary: "Question words, patterns, and review.",
+    href: "game1.html?coursePart=questions",
     icon: "❓",
     accent: "sky",
-    lessons: buildLessonFlow("questions")
+    lessons: lessonList(
+      "This, that, these, and those",
+      "Color sentence questions",
+      "Listening challenge",
+      "Boss level review",
+      "Final questions quiz"
+    )
   }
 ];
 

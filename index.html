@@ -2750,10 +2750,10 @@ button:active{
             </span>
           </span>
         </div>
-        <div class="reminder-note">Turn this on and the owl will sing from time to time to remind students to come back and learn again.</div>
+        <div class="reminder-note">Turn this on and Pilingo will remind the learner every 2 hours to come back and study again.</div>
         <div id="reminderStatus" class="reminder-status">Reminder is off</div>
         <div class="reminder-actions">
-          <button class="secondary-button" type="button" onclick="toggleStudyReminder()">Turn on owl reminder</button>
+          <button class="secondary-button" type="button" onclick="toggleStudyReminder()">Turn on 2-hour reminder</button>
           <button class="secondary-button" type="button" onclick="playWoodpeckerReminderNow()">Remind now</button>
         </div>
       </div>
@@ -2785,6 +2785,7 @@ const continueButton = document.querySelector(".continue-button");
 const continueSwipe = document.getElementById("continueSwipe");
 const continueSwipeThumb = document.getElementById("continueSwipeThumb");
 const reminderKey = "pilingo_study_reminder_v1";
+const reminderIntervalMinutes = 120;
 let reminderTimer = null;
 let continueSwipeState = null;
 
@@ -2801,11 +2802,11 @@ function loadReminderSettings(){
     const saved = JSON.parse(localStorage.getItem(reminderKey) || "{}");
     return {
       enabled: !!saved.enabled,
-      intervalMinutes: Number(saved.intervalMinutes) || 30,
+      intervalMinutes: reminderIntervalMinutes,
       lastSentAt: Number(saved.lastSentAt) || 0
     };
   } catch(error) {
-    return { enabled:false, intervalMinutes:30, lastSentAt:0 };
+    return { enabled:false, intervalMinutes:reminderIntervalMinutes, lastSentAt:0 };
   }
 }
 
@@ -2821,8 +2822,8 @@ function updateReminderUI(){
   if(settings.enabled){
     const nextAt = settings.lastSentAt
       ? new Date(settings.lastSentAt + (settings.intervalMinutes * 60000)).toLocaleTimeString()
-      : "soon";
-    status.innerText = "Reminder is on • Next owl song around " + nextAt;
+      : "in 2 hours";
+    status.innerText = "Reminder is on • Next study reminder around " + nextAt;
   } else {
     status.innerText = "Reminder is off";
   }
@@ -3052,8 +3053,11 @@ function setupContinueSwipe(){
 function toggleStudyReminder(){
   const settings = loadReminderSettings();
   settings.enabled = !settings.enabled;
+  settings.intervalMinutes = reminderIntervalMinutes;
   if(!settings.enabled){
     settings.lastSentAt = 0;
+  } else {
+    settings.lastSentAt = Date.now();
   }
   saveReminderSettings(settings);
   updateReminderUI();
@@ -3062,7 +3066,6 @@ function toggleStudyReminder(){
     if("Notification" in window && Notification.permission === "default"){
       Notification.requestPermission();
     }
-    triggerWoodpeckerReminder("enabled");
   }
 }
 

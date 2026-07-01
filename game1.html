@@ -3809,7 +3809,9 @@ function finish(){
   showLessonComplete();
   PilingoAudio.speak("Great job! You finished this lesson.");
 
-    if (typeof Engine.completeSkill === "function") {
+    if (typeof Engine.completeCoursePart === "function") {
+        Engine.completeCoursePart("section-1", "part-1", { xp: 10, result: "passed" });
+    } else if (typeof Engine.completeSkill === "function") {
         Engine.completeSkill(0, 10);
     } else {
         Engine.addXP(10);

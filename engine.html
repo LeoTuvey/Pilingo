@@ -67,6 +67,24 @@ button{
   font-weight:900;
   cursor:pointer;
   box-shadow:0 6px 0 rgba(31,49,77,0.12);
+  transition:transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+}
+
+.back-button:active,
+.owner-button:active,
+.part-action:active{
+  transform:translateY(3px) scale(0.97);
+}
+
+.back-button.is-pressed,
+.owner-button.is-pressed,
+.part-action.is-pressed{
+  transform:translateY(4px) scale(0.965) !important;
+}
+
+.back-button.is-pressed,
+.owner-button.is-pressed{
+  box-shadow:0 2px 0 rgba(31,49,77,0.1) !important;
 }
 
 .back-button{
@@ -538,6 +556,10 @@ button{
 .part-action:disabled{
   cursor:not-allowed;
   opacity:0.9;
+}
+
+.part-action.is-pressed{
+  box-shadow:0 2px 0 rgba(67,136,18,0.22) !important;
 }
 
 .placeholder-list{

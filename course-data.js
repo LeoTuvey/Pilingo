@@ -143,9 +143,9 @@ const SECTION_ONE_PARTS = [
   {
     id: "part-10",
     number: 10,
-    title: "🏁 Final Exam of the Section",
+    title: "🏆 Final Exam of the Section",
     summary: "A final checkpoint for everything learned in Section 1.",
-    icon: "🏁",
+    icon: "🏆",
     accent: "violet",
     lessons: lessonList(
       "Section 1 review",

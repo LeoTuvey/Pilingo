@@ -1003,6 +1003,7 @@ let completedLessons = loadCompletedLessons();
 let lessonStatuses = loadLessonStatuses();
 let gradebook = loadGradebook();
 let gradeState = null;
+let pendingAdvanceTimer = null;
 const urlParams = new URLSearchParams(window.location.search);
 const coursePartSlug = urlParams.get("coursePart") || "";
 
@@ -3601,10 +3602,37 @@ function renderTypeStep(step){
     document.getElementById("activity").innerHTML = `
         ${step.spoken ? `<button class="speaker" onclick="speak('${escapeHtml(step.spoken)}')" aria-label="Play sound">🔊</button>` : ""}
         <input class="type-answer" id="typedAnswer" type="text" autocomplete="off" autocapitalize="none" placeholder="Type in English">
-        <button onclick="checkTyped(this)">Check</button>
+        <button id="typedCheckButton" onclick="checkTyped(this)">Check</button>
     `;
 
+    setupTypingQuizKeyboard();
+
     if(step.spoken) setTimeout(() => speak(step.spoken), 250);
+}
+
+function setupTypingQuizKeyboard(){
+    const input = document.getElementById("typedAnswer");
+    if(!input) return;
+
+    window.setTimeout(() => {
+        input.focus();
+        input.select();
+    }, 0);
+
+    input.addEventListener("keydown", (event) => {
+        if(event.key !== "Enter") return;
+        event.preventDefault();
+
+        if(pendingAdvanceTimer){
+            finishPendingAdvance();
+            return;
+        }
+
+        const checkButton = document.getElementById("typedCheckButton");
+        if(checkButton && !checkButton.disabled){
+            checkTyped(checkButton);
+        }
+    });
 }
 
 function shuffleCards(cards, salt){
@@ -3753,6 +3781,12 @@ function checkTyped(button){
     document.getElementById("feedback").innerText =
         "Correct answer: " + answersForStep(step).join(" / ");
     showButtonResult(button, "wrong");
+    if(input){
+        window.setTimeout(() => {
+            input.focus();
+            input.select();
+        }, 0);
+    }
     markWrong();
 }
 
@@ -3812,7 +3846,11 @@ function markCorrect(){
     registerCorrectForGrade();
     playSound("correct");
     document.getElementById("feedback").innerText = "✅ Correct";
-    setTimeout(completeStep, 650);
+    if(pendingAdvanceTimer) clearTimeout(pendingAdvanceTimer);
+    pendingAdvanceTimer = setTimeout(() => {
+        pendingAdvanceTimer = null;
+        completeStep();
+    }, 650);
 }
 
 function markWrong(){
@@ -3825,7 +3863,18 @@ function markWrong(){
     if(hearts <= 0) gameOver();
 }
 
+function finishPendingAdvance(){
+    if(!pendingAdvanceTimer) return;
+    clearTimeout(pendingAdvanceTimer);
+    pendingAdvanceTimer = null;
+    completeStep();
+}
+
 function completeStep(){
+    if(pendingAdvanceTimer){
+        clearTimeout(pendingAdvanceTimer);
+        pendingAdvanceTimer = null;
+    }
     const sections = sectionsForPart(partIndex);
     const sectionIndex = currentSectionIndex();
     if(activeLesson && sections.length && sectionIndex >= 0) {

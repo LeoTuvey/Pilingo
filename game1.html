@@ -183,6 +183,24 @@ body{
     background:#f7fbff;
 }
 
+.map-button{
+    display:none;
+    width:auto;
+    margin:0;
+    padding:10px 16px;
+    background:linear-gradient(180deg, #fff5ca 0%, #ffd96f 100%);
+    color:#734b00;
+    border:2px solid #f0cf7a;
+    box-shadow:0 4px 0 #d9b253, 0 10px 18px rgba(178,130,19,0.16);
+    font-size:14px;
+    font-weight:900;
+    border-radius:999px;
+}
+
+.map-button:hover{
+    background:linear-gradient(180deg, #fff8d8 0%, #ffe283 100%);
+}
+
 .back-button{
     display:inline-block;
     width:auto;
@@ -955,6 +973,7 @@ button.wrong{
     </div>
     <div class="lesson-top">
         <button class="back-button" onclick="goBackToGames()">← Choose another game</button>
+        <button id="mapButton" class="map-button" onclick="goBackToGames()">🗺 Back to learning map</button>
         <button id="menuButton" class="menu-button" onclick="showPartSelect()">← Parts</button>
     </div>
     <div id="partLabel"></div>
@@ -2537,6 +2556,13 @@ function goBackToGames(){
     window.location.href = "engine.html";
 }
 
+function updateTopNavigationButtons(){
+    const mapButton = document.getElementById("mapButton");
+    if(mapButton){
+        mapButton.style.display = activeCoursePartRoute ? "inline-block" : "none";
+    }
+}
+
 function playSound(type){
     if(type === "correct"){
         PilingoAudio.playCorrect();
@@ -3200,7 +3226,7 @@ function showSectionSelect(index, message){
                     </button>
                 `;
             }).join("")}
-            <button class="secondary" onclick="${activeCoursePartRoute ? "goBackToGames()" : "showPartSelect()"}">${activeCoursePartRoute ? "Back to learning map" : "Back to parts"}</button>
+            ${activeCoursePartRoute ? "" : `<button class="secondary" onclick="showPartSelect()">Back to parts</button>`}
         </div>
     `;
 }
@@ -3938,6 +3964,8 @@ function gameOver(){
         <button onclick="location.reload()">Try again</button>
     </div>`;
 }
+
+updateTopNavigationButtons();
 
 if(activeCoursePartRoute) {
     showSectionSelect(activeCoursePartRoute.gamePartIndex, "Choose a lesson in this part");

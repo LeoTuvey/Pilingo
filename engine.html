@@ -370,7 +370,7 @@ button{
     0 10px 0 rgba(177,195,221,0.64),
     0 22px 34px rgba(49,69,102,0.12);
   transition:transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease, border-color 0.18s ease, background 0.18s ease;
-  cursor:pointer;
+  cursor:default;
   overflow:hidden;
 }
 
@@ -400,10 +400,6 @@ button{
   box-shadow:
     0 12px 0 rgba(162,183,214,0.68),
     0 28px 42px rgba(49,69,102,0.16);
-}
-
-.part-card:disabled{
-  cursor:not-allowed;
 }
 
 .part-card.locked{
@@ -537,6 +533,11 @@ button{
   font-weight:1000;
   box-shadow:0 6px 0 rgba(67,136,18,0.26);
   border:1px solid rgba(87,176,23,0.9);
+}
+
+.part-action:disabled{
+  cursor:not-allowed;
+  opacity:0.9;
 }
 
 .placeholder-list{
@@ -853,16 +854,15 @@ function renderMap(){
             const canOpen = unlocked && Boolean(part.href);
             const lessonCount = Array.isArray(part.lessons) ? part.lessons.length : 0;
             const lessonPreview = (part.lessons || []).slice(0, 4).map((lesson) => `<span>${lesson.title}</span>`).join("");
-            const actionLabel = completed ? "Tap to open" : (canOpen ? "Tap to start" : (unlocked ? "Ready soon" : "Locked"));
+            const actionLabel = completed ? "Tap to Open" : (canOpen ? "Tap to Open" : (unlocked ? "Ready Soon" : "Locked"));
 
             return `
-              <button
+              <div
                 class="part-card ${completed ? "completed" : ""} ${unlocked ? "" : "locked"}"
                 style="--part-top:${partColors.top}; --part-bottom:${partColors.bottom}; --part-shadow:${partColors.shadow};"
-                onclick="openPart('${section.id}','${part.id}')"
-                ${unlocked ? "" : "disabled"}
                 data-section-id="${section.id}"
-                data-part-id="${part.id}">
+                data-part-id="${part.id}"
+                tabindex="-1">
                 <div class="part-topline">
                   <span class="part-order">${part.number}</span>
                   <span class="part-status ${status.className}">${status.icon} ${status.label}</span>
@@ -873,9 +873,15 @@ function renderMap(){
                 <div class="part-lessons">${lessonPreview}</div>
                 <div class="part-footer">
                   <span class="part-type">${lessonCount} lesson steps</span>
-                  <span class="part-action">${unlocked ? "👉 " : "🔒 "}${actionLabel}</span>
+                  <button
+                    class="part-action"
+                    type="button"
+                    onclick="openPart('${section.id}','${part.id}')"
+                    ${canOpen ? "" : "disabled"}>
+                    ${unlocked ? "👉 " : "🔒 "}${actionLabel}
+                  </button>
                 </div>
-              </button>
+              </div>
             `;
           }).join("")}
         </div>

@@ -139,6 +139,19 @@ const SECTION_ONE_PARTS = [
       "Boss level review",
       "Final questions quiz"
     )
+  },
+  {
+    id: "part-10",
+    number: 10,
+    title: "🏁 Final Exam of the Section",
+    summary: "A final checkpoint for everything learned in Section 1.",
+    icon: "🏁",
+    accent: "violet",
+    lessons: lessonList(
+      "Section 1 review",
+      "Mixed practice challenge",
+      "Final section exam"
+    )
   }
 ];
 

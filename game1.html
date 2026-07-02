@@ -3891,18 +3891,6 @@ function completeStep(){
         const nextSection = sections[sectionIndex + 1];
         activeLesson = null;
 
-        if(activeCoursePartRoute && isActiveCoursePartComplete(partIndex)) {
-            if(nowComplete && !wasComplete) {
-                markSectionComplete(partIndex, sectionIndex);
-                hearts = window.Engine?.addHeart ? Engine.addHeart(1) : Math.min(5, hearts + 1);
-                renderHearts();
-            }
-
-            completeEnginePartForRoute();
-            showPartComplete(partIndex);
-            return;
-        }
-
         if(nowComplete && !wasComplete) {
             markSectionComplete(partIndex, sectionIndex);
             hearts = window.Engine?.addHeart ? Engine.addHeart(1) : Math.min(5, hearts + 1);
@@ -3915,6 +3903,8 @@ function completeStep(){
 
             if(activeCoursePartRoute) {
                 completeEnginePartForRoute();
+                showSectionSelect(partIndex, "🏆 This course part is completed. You can review these lessons again or go back when you are ready.");
+                return;
             }
             markPartComplete(partIndex);
             showPartComplete(partIndex);

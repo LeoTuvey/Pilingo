@@ -1,5 +1,7 @@
 const PilingoAudio = (() => {
   let audioContext = null;
+  let buttonSoundInstalled = false;
+  let lastTapAt = 0;
 
   function getContext(){
     const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -40,6 +42,33 @@ const PilingoAudio = (() => {
     gain.connect(ctx.destination);
     oscillator.start(begin);
     oscillator.stop(end + 0.02);
+  }
+
+  function canPlayEffects(){
+    try {
+      const account = window.PilingoAuth?.loadAccount?.();
+      if(account?.settings?.soundEffects === false) return false;
+    } catch(error) {
+      // keep default behavior below
+    }
+
+    return true;
+  }
+
+  function playButtonTap(){
+    if(!canPlayEffects()) return;
+
+    [
+      { frequency:540, start:0.00, duration:0.045, type:"triangle", volume:0.016, filter:2400, slideTo:620 },
+      { frequency:760, start:0.03, duration:0.05, type:"sine", volume:0.01, filter:3200, slideTo:690 }
+    ].forEach((note) => {
+      tone(note.frequency, note.start, note.duration, {
+        type:note.type,
+        volume:note.volume,
+        filter:note.filter,
+        slideTo:note.slideTo
+      });
+    });
   }
 
   function playCorrect(){
@@ -299,7 +328,39 @@ const PilingoAudio = (() => {
     window.speechSynthesis.onvoiceschanged = getYoungEnglishFemaleVoice;
   }
 
+  function installButtonSounds(){
+    if(buttonSoundInstalled || typeof document === "undefined") return;
+    buttonSoundInstalled = true;
+
+    document.addEventListener("click", (event) => {
+      const target = event.target instanceof Element ? event.target : null;
+      if(!target) return;
+
+      const clickable = target.closest(
+        'button, .continue-swipe, .part-card, .section-card, .part-choice, .student-mini-card, .social-student-card, .social-stat-button, .account-link, .password-toggle, .logout-button'
+      );
+      if(!clickable) return;
+      if(clickable.disabled || clickable.getAttribute("aria-disabled") === "true") return;
+      if(clickable.classList.contains("speaker")) return;
+
+      const now = Date.now();
+      if(now - lastTapAt < 70) return;
+      lastTapAt = now;
+      playButtonTap();
+    }, true);
+  }
+
+  if(typeof document !== "undefined"){
+    if(document.readyState === "loading"){
+      document.addEventListener("DOMContentLoaded", installButtonSounds, { once:true });
+    } else {
+      installButtonSounds();
+    }
+  }
+
   return {
+    canPlayEffects,
+    playButtonTap,
     playCorrect,
     playWrong,
     playLessonComplete,
@@ -308,7 +369,8 @@ const PilingoAudio = (() => {
     playPartAnimal,
     speak,
     getYoungEnglishFemaleVoice,
-    getVoiceForLang
+    getVoiceForLang,
+    installButtonSounds
   };
 })();
 

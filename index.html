@@ -147,7 +147,6 @@ body.account-gate-open{
 
 .hero-title-word{
   display:inline-block;
-  color:#ffffff;
   background:linear-gradient(180deg, #86eb3f 0%, #58cc02 56%, #3ea100 100%);
   padding:6px 14px 10px;
   border-radius:22px;
@@ -155,7 +154,9 @@ body.account-gate-open{
     0 8px 16px rgba(56,130,9,0.24),
     inset 0 2px 0 rgba(255,255,255,0.42),
     inset 0 -4px 0 rgba(37,111,2,0.32);
-  animation:heroWordSwipe 3.8s ease-in-out infinite;
+  animation:heroWordSwipe 3.8s ease-in-out infinite, heroWordColors 3.8s linear infinite;
+  color:#fff7b8;
+  text-shadow:0 0 12px rgba(255,255,255,0.28);
 }
 
 @keyframes heroWordSwipe{
@@ -175,6 +176,49 @@ body.account-gate-open{
   }
   86%{
     transform:translateX(0) scale(1);
+  }
+}
+
+@keyframes heroWordColors{
+  0%{
+    color:#fff7b8;
+    opacity:1;
+    text-shadow:0 0 12px rgba(255,255,255,0.28);
+  }
+  18%{
+    color:#ffd6f4;
+    opacity:1;
+    text-shadow:0 0 12px rgba(255,173,227,0.3);
+  }
+  32%{
+    opacity:0.08;
+    color:#c9f8ff;
+    text-shadow:none;
+  }
+  46%{
+    color:#c9f8ff;
+    opacity:1;
+    text-shadow:0 0 12px rgba(135,230,255,0.34);
+  }
+  62%{
+    color:#ffe0b0;
+    opacity:1;
+    text-shadow:0 0 12px rgba(255,196,107,0.32);
+  }
+  76%{
+    opacity:0.08;
+    color:#e8ddff;
+    text-shadow:none;
+  }
+  88%{
+    color:#e8ddff;
+    opacity:1;
+    text-shadow:0 0 12px rgba(197,171,255,0.32);
+  }
+  100%{
+    color:#fff7b8;
+    opacity:1;
+    text-shadow:0 0 12px rgba(255,255,255,0.28);
   }
 }
 

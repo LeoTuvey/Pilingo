@@ -3154,7 +3154,7 @@ function showLessonSelect(index, sectionIndex, message){
     renderHearts();
     document.getElementById("menuButton").style.display = "none";
     document.getElementById("bar").style.width = progress.total ? ((progress.completed / progress.total) * 100) + "%" : "0%";
-    document.getElementById("partLabel").innerText = "Kurmanji to English";
+    showPartLabel("Kurmanji to English");
     document.getElementById("instruction").innerText = message || "Choose any lesson in this section";
     document.getElementById("question").innerText = displayPartTitle(index) + " • " + section.label;
     document.getElementById("question").classList.remove("rich-prompt");
@@ -3199,7 +3199,7 @@ function showSectionSelect(index, message){
     renderHearts();
     document.getElementById("menuButton").style.display = "none";
     document.getElementById("bar").style.width = "0%";
-    document.getElementById("partLabel").innerText = "Kurmanji to English";
+    showPartLabel("Kurmanji to English");
     document.getElementById("instruction").innerText = message || "Choose a section to study";
     document.getElementById("question").innerText = displayPartTitle(index);
     document.getElementById("question").classList.remove("rich-prompt");
@@ -3241,7 +3241,7 @@ function showPartSelect(){
     renderHearts();
     document.getElementById("menuButton").style.display = "none";
     document.getElementById("bar").style.width = "0%";
-    document.getElementById("partLabel").innerText = "Kurmanji to English";
+    showPartLabel("Kurmanji to English");
     document.getElementById("instruction").innerText = "Choose a part to study";
     document.getElementById("question").innerText = "Game One";
     document.getElementById("image").style.display = "none";
@@ -3360,6 +3360,13 @@ function partMenuThemeStyle(groupIndex){
     ].join("; ");
 }
 
+function showPartLabel(text){
+    const label = document.getElementById("partLabel");
+    if(!label) return;
+    label.style.display = text ? "inline-block" : "none";
+    label.innerText = text || "";
+}
+
 function load(){
     const part = gameParts[partIndex];
     const step = currentStep();
@@ -3380,8 +3387,7 @@ function load(){
         document.getElementById("menuButton").innerText = sectionsForPart(partIndex).length ? "← Sections" : "← Parts";
         document.getElementById("menuButton").onclick = () => sectionsForPart(partIndex).length ? showSectionSelect(partIndex) : showPartSelect();
     }
-    document.getElementById("partLabel").innerText =
-        "Kurmanji to English\nPart " + (partIndex + 1) + " of " + gameParts.length + " • " + displayPartTitle(partIndex);
+    showPartLabel("");
     document.getElementById("instruction").innerText = step.instruction || "";
     const questionEl = document.getElementById("question");
     questionEl.classList.toggle("rich-prompt", Boolean(step.promptHtml));
@@ -3898,7 +3904,7 @@ function showPartComplete(completedIndex){
     renderHearts();
     document.getElementById("menuButton").style.display = "none";
     document.getElementById("bar").style.width = "100%";
-    document.getElementById("partLabel").innerText = "Kurmanji to English";
+    showPartLabel("Kurmanji to English");
     document.getElementById("instruction").innerText = "Part complete";
     document.getElementById("question").innerText = displayPartTitle(completedIndex);
     document.getElementById("image").style.display = "none";

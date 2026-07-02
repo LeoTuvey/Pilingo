@@ -277,6 +277,7 @@ const PilingoAuth = {
       addOrigin(`${protocol}//${host}:3000`);
     }
 
+    addOrigin("https://pilingo.onrender.com");
     addOrigin("http://localhost:3000");
     addOrigin("http://127.0.0.1:3000");
 

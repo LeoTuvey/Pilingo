@@ -147,34 +147,34 @@ body.account-gate-open{
 
 .hero-title-word{
   display:inline-block;
-  color:#5e4200;
-  background:linear-gradient(180deg, #fff4ac 0%, #ffd95a 56%, #efbf2b 100%);
+  color:#ffffff;
+  background:linear-gradient(180deg, #86eb3f 0%, #58cc02 56%, #3ea100 100%);
   padding:6px 14px 10px;
   border-radius:22px;
   box-shadow:
-    0 8px 16px rgba(170,129,8,0.22),
+    0 8px 16px rgba(56,130,9,0.24),
     inset 0 2px 0 rgba(255,255,255,0.42),
-    inset 0 -4px 0 rgba(171,125,16,0.28);
-  animation:heroWordBounce 3.6s ease-in-out infinite;
+    inset 0 -4px 0 rgba(37,111,2,0.32);
+  animation:heroWordSwipe 3.8s ease-in-out infinite;
 }
 
-@keyframes heroWordBounce{
+@keyframes heroWordSwipe{
   0%,100%{
-    transform:translateY(0) rotate(0deg) scale(1);
+    transform:translateX(0) scale(1);
     filter:brightness(1);
   }
-  20%{
-    transform:translateY(-2px) rotate(-2deg) scale(1.04);
+  22%{
+    transform:translateX(12px) scale(1.03);
   }
-  40%{
-    transform:translateY(1px) rotate(2deg) scale(0.99);
+  48%{
+    transform:translateX(22px) scale(1.05);
     filter:brightness(1.06);
   }
-  60%{
-    transform:translateY(-3px) rotate(-1deg) scale(1.05);
+  72%{
+    transform:translateX(10px) scale(1.02);
   }
-  80%{
-    transform:translateY(0) rotate(1deg) scale(1.01);
+  86%{
+    transform:translateX(0) scale(1);
   }
 }
 

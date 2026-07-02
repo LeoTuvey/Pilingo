@@ -265,6 +265,14 @@ const PilingoAuth = {
 
     addOrigin(this.getPreferredApiOrigin());
 
+    if(host && protocol === "https:"){
+      if(host.startsWith("www.")){
+        addOrigin(`https://${host.slice(4)}`);
+      } else if(host.includes(".")) {
+        addOrigin(`https://www.${host}`);
+      }
+    }
+
     if(host && host !== "localhost" && host !== "127.0.0.1"){
       addOrigin(`${protocol}//${host}:3000`);
     }

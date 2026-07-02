@@ -1004,6 +1004,7 @@ let lessonStatuses = loadLessonStatuses();
 let gradebook = loadGradebook();
 let gradeState = null;
 let pendingAdvanceTimer = null;
+let currentBuildOptions = [];
 const urlParams = new URLSearchParams(window.location.search);
 const coursePartSlug = urlParams.get("coursePart") || "";
 
@@ -2596,7 +2597,16 @@ function matchKeyLiteral(value){
 }
 
 function currentStep(){
-    return gameParts[partIndex].steps[stepIndex];
+    return gameParts[partIndex].steps[currentStepActualIndex()];
+}
+
+function currentStepActualIndex(){
+    if(activeLesson && Array.isArray(activeLesson.stepOrder) && activeLesson.stepOrder.length) {
+        const position = Math.max(0, Math.min(activeLesson.orderPosition || 0, activeLesson.stepOrder.length - 1));
+        return activeLesson.stepOrder[position];
+    }
+
+    return stepIndex;
 }
 
 function totalSteps(){
@@ -2847,7 +2857,8 @@ function markSectionComplete(index, sectionIndex){
 
 function currentSectionIndex(){
     const sections = sectionsForPart(partIndex);
-    return sections.findIndex((section) => stepIndex >= section.start && stepIndex <= section.end);
+    const actualIndex = currentStepActualIndex();
+    return sections.findIndex((section) => actualIndex >= section.start && actualIndex <= section.end);
 }
 
 function isGradableStep(step){
@@ -2916,7 +2927,7 @@ function ensureGradeState(){
 
 function currentStepGradeState(){
     ensureGradeState();
-    const key = String(stepIndex);
+    const key = String(currentStepActualIndex());
 
     if(!gradeState.stepStates[key]) {
         gradeState.stepStates[key] = { missed:false, completed:false };
@@ -3126,7 +3137,9 @@ function startLesson(index, sectionIndex, lessonIndex){
     activeLesson = {
         ...lesson,
         sectionIndex:sectionIndex,
-        scopeLabel:displayPartTitle(index) + " • " + section.label + " • " + lesson.label
+        scopeLabel:displayPartTitle(index) + " • " + section.label + " • " + lesson.label,
+        stepOrder:buildLessonStepOrder(index, lesson.start, lesson.end),
+        orderPosition:0
     };
     hearts = Engine.getHearts();
     gradeState = null;
@@ -3413,9 +3426,11 @@ function load(){
 }
 
 function renderImageStep(step){
+    const options = [...step.options];
+    shuffleChoiceOptions(options);
     document.getElementById("activity").innerHTML = `
         <div class="image-options">
-            ${step.options.map((option) => `
+            ${options.map((option) => `
                 <button onclick="checkChoice('${escapeHtml(option.value)}', this)">
                     <span aria-hidden="true">${escapeHtml(option.emoji)}</span><br>
                     ${escapeHtml(option.label)}
@@ -3427,9 +3442,7 @@ function renderImageStep(step){
 
 function renderChoiceStep(step){
     const options = [...step.options];
-    if(shouldShuffleChoiceStep(step)) {
-        shuffleChoiceOptions(options);
-    }
+    shuffleChoiceOptions(options);
 
     document.getElementById("activity").innerHTML =
         options.map(option => `
@@ -3442,10 +3455,6 @@ function shuffleChoiceOptions(options){
         const swapIndex = Math.floor(Math.random() * (i + 1));
         [options[i], options[swapIndex]] = [options[swapIndex], options[i]];
     }
-}
-
-function shouldShuffleChoiceStep(step){
-    return partIndex === 5 && stepIndex >= 0 && stepIndex <= 4;
 }
 
 function emojiForCorrectChoice(step, option){
@@ -3483,9 +3492,12 @@ function isPluralChoice(step, option){
 }
 
 function renderHearStep(step){
+    const options = [...step.options];
+    shuffleChoiceOptions(options);
+
     document.getElementById("activity").innerHTML = `
         <button class="speaker" onclick="speak('${escapeHtml(step.spoken)}')" aria-label="Play sound">🔊</button>
-        ${step.options.map(option => `
+        ${options.map(option => `
             <button onclick="checkChoice('${escapeHtml(option)}', this)">${escapeHtml(option)}</button>
         `).join("")}
     `;
@@ -3493,11 +3505,15 @@ function renderHearStep(step){
 }
 
 function renderBuildStep(step){
+    const options = [...step.options];
+    shuffleChoiceOptions(options);
+    currentBuildOptions = options;
+
     document.getElementById("activity").innerHTML = `
         ${step.spoken ? `<button class="speaker" onclick="speak('${escapeHtml(step.spoken)}')" aria-label="Play sound">🔊</button>` : ""}
         <div class="answer-bank" id="answerBank"></div>
         <div class="word-bank" id="wordBank">
-            ${step.options.map((word, index) => `
+            ${options.map((word, index) => `
                 <button class="secondary" id="word-${index}" onclick="selectWord(${index})">${escapeHtml(word)}</button>
             `).join("")}
         </div>
@@ -3610,6 +3626,19 @@ function renderTypeStep(step){
     if(step.spoken) setTimeout(() => speak(step.spoken), 250);
 }
 
+function buildLessonStepOrder(partIdx, start, end){
+    const order = [];
+
+    for(let i = start; i <= end; i++) {
+        if(isGradableStep(gameParts[partIdx].steps[i])) {
+            order.push(i);
+        }
+    }
+
+    shuffleChoiceOptions(order);
+    return order;
+}
+
 function setupTypingQuizKeyboard(){
     const input = document.getElementById("typedAnswer");
     if(!input) return;
@@ -3639,7 +3668,7 @@ function shuffleCards(cards, salt){
     if(cards.length < 2) return;
 
     let seed = 2166136261;
-    const text = salt + "-" + partIndex + "-" + stepIndex + "-" + cards.length;
+    const text = salt + "-" + partIndex + "-" + currentStepActualIndex() + "-" + cards.length;
 
     for(let i = 0; i < text.length; i++) {
         seed ^= text.charCodeAt(i);
@@ -3711,13 +3740,12 @@ function checkChoice(value, button){
 }
 
 function selectWord(index){
-    const step = currentStep();
     const button = document.getElementById("word-" + index);
     if(!button || button.disabled) return;
 
     button.disabled = true;
     button.classList.add("selected");
-    selectedWords.push({ index:index, text:step.options[index] });
+    selectedWords.push({ index:index, text:currentBuildOptions[index] });
     renderSelectedWords();
 }
 
@@ -3879,8 +3907,8 @@ function completeStep(){
     const sectionIndex = currentSectionIndex();
     if(activeLesson && sections.length && sectionIndex >= 0) {
         const wasComplete = isSectionComplete(partIndex, sectionIndex);
-        if(stepIndex < activeLesson.end) {
-            stepIndex++;
+        if(Array.isArray(activeLesson.stepOrder) && activeLesson.orderPosition < activeLesson.stepOrder.length - 1) {
+            activeLesson.orderPosition++;
             load();
             return;
         }

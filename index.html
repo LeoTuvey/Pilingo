@@ -142,6 +142,44 @@ body.account-gate-open{
   text-shadow:0 10px 24px rgba(100,31,0,0.16);
 }
 
+.hero-title-main{
+  color:#3f2a14;
+}
+
+.hero-title-go{
+  display:inline-block;
+  margin-left:2px;
+  color:#ffffff;
+  background:linear-gradient(180deg, #8df64a 0%, #58cc02 56%, #389a00 100%);
+  padding:2px 10px 6px;
+  border-radius:18px;
+  box-shadow:
+    0 8px 16px rgba(51,128,7,0.22),
+    inset 0 2px 0 rgba(255,255,255,0.42),
+    inset 0 -4px 0 rgba(41,114,3,0.3);
+  animation:heroGoBounce 3.6s ease-in-out infinite;
+}
+
+@keyframes heroGoBounce{
+  0%,100%{
+    transform:translateY(0) rotate(0deg) scale(1);
+    filter:brightness(1);
+  }
+  20%{
+    transform:translateY(-2px) rotate(-2deg) scale(1.04);
+  }
+  40%{
+    transform:translateY(1px) rotate(2deg) scale(0.99);
+    filter:brightness(1.06);
+  }
+  60%{
+    transform:translateY(-3px) rotate(-1deg) scale(1.05);
+  }
+  80%{
+    transform:translateY(0) rotate(1deg) scale(1.01);
+  }
+}
+
 .hero-subtitle{
   margin:0;
   max-width:430px;
@@ -2437,7 +2475,7 @@ button:active{
   <div id="xp">XP: 0</div>
   <div class="hero-wrap">
     <div class="hero-copy">
-      <h1 class="hero-title">🐯 Pilingo</h1>
+      <h1 class="hero-title">🐯 <span class="hero-title-main">Pilin</span><span class="hero-title-go">Go</span></h1>
       <div class="hero-text-block">
         <p class="hero-subtitle">Learn Kurmanji and English step by step</p>
         <p class="hero-motto">Learn daily. Build streaks. Stay consistent.</p>

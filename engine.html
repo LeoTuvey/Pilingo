@@ -371,51 +371,6 @@ button{
   cursor:pointer;
 }
 
-.part-card.star-part{
-  min-height:182px;
-  padding:24px 18px 22px;
-  clip-path:polygon(
-    50% 0%,
-    61% 11%,
-    77% 8%,
-    82% 23%,
-    97% 28%,
-    89% 42%,
-    100% 56%,
-    86% 66%,
-    89% 82%,
-    73% 84%,
-    67% 100%,
-    50% 92%,
-    33% 100%,
-    27% 84%,
-    11% 82%,
-    14% 66%,
-    0% 56%,
-    11% 42%,
-    3% 28%,
-    18% 23%,
-    23% 8%,
-    39% 11%
-  );
-}
-
-.part-card.star-part::before{
-  content:"";
-  position:absolute;
-  inset:8px;
-  clip-path:inherit;
-  background:
-    radial-gradient(circle at 26% 18%, rgba(255,255,255,0.95), rgba(255,255,255,0.16) 26%, rgba(255,255,255,0) 34%),
-    linear-gradient(180deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.02) 100%);
-  pointer-events:none;
-}
-
-.part-card.star-part > *{
-  position:relative;
-  z-index:1;
-}
-
 .part-card:hover{
   transform:translateY(-2px);
   box-shadow:0 10px 0 var(--part-shadow), 0 24px 34px rgba(47,59,81,0.16);
@@ -673,11 +628,6 @@ button{
     min-height:150px;
     border-radius:28px;
   }
-
-  .part-card.star-part{
-    min-height:168px;
-    padding:22px 16px 20px;
-  }
 }
 </style>
 </head>
@@ -853,7 +803,7 @@ function renderMap(){
 
             return `
               <button
-                class="part-card ${section.id === "section-1" ? "star-part" : ""} ${completed ? "completed" : ""} ${unlocked ? "" : "locked"}"
+                class="part-card ${completed ? "completed" : ""} ${unlocked ? "" : "locked"}"
                 style="--part-top:${partColors.top}; --part-bottom:${partColors.bottom}; --part-shadow:${partColors.shadow};"
                 onclick="openPart('${section.id}','${part.id}')"
                 ${unlocked ? "" : "disabled"}

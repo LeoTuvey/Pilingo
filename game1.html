@@ -2353,7 +2353,7 @@ function movingSentenceChoiceStep(prefix, movingWord, suffix, englishPrompt, opt
 function movingEnglishSentenceChoiceStep(prefix, movingWord, suffix, options, answer){
     return {
         type:"choice",
-        instruction:"🎯 Fill in the Missing Kurmanji Word | Peyva Kurdî ya winda temam bike!",
+        instruction:"🎯 Pick the Kurmanji Word for the Underlined English Word",
         prompt:prefix + movingWord + suffix,
         promptHtml:`${escapeHtml(prefix)}<span class="moving-demo-word">${escapeHtml(movingWord)}</span>${escapeHtml(suffix)}`,
         options:options,

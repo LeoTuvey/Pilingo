@@ -12,14 +12,12 @@ const SECTION_ONE_PARTS = [
     number: 1,
     title: "🔤 Alphabets",
     summary: "Letters, sounds, and first symbols.",
-    href: "game1.html?coursePart=alphabets",
+    href: "game1.html?coursePart=alphabets&v=lessonpath2",
     icon: "🔤",
     accent: "gold",
     lessons: lessonList(
       "Kurmanji letters and Sorani matching",
-      "Letter sounds and example names",
-      "Alphabet review",
-      "Final alphabet quiz"
+      "Letter sounds and example names"
     )
   },
   {
@@ -27,7 +25,7 @@ const SECTION_ONE_PARTS = [
     number: 2,
     title: "👨‍👩‍👧‍👦 Describe Your Family",
     summary: "Family words, roles, and simple descriptions.",
-    href: "game1.html?coursePart=family",
+    href: "game1.html?coursePart=family&v=lessonpath2",
     icon: "👨‍👩‍👧‍👦",
     accent: "orange",
     lessons: lessonList(
@@ -35,8 +33,8 @@ const SECTION_ONE_PARTS = [
       "Meaning and missing-word practice",
       "Write family words in English",
       "Listening and typing review",
-      "Translate family sentences",
-      "Final family quiz"
+      "Translate Kurmanji family sentences into English",
+      "Translate English family sentences into Kurmanji"
     )
   },
   {
@@ -44,13 +42,12 @@ const SECTION_ONE_PARTS = [
     number: 3,
     title: "👋 Greet People",
     summary: "Greetings, introductions, and polite phrases.",
-    href: "game1.html?coursePart=greetings",
+    href: "game1.html?coursePart=greetings&v=lessonpath2",
     icon: "👋",
     accent: "sky",
     lessons: lessonList(
       "Greeting words",
-      "Simple greeting review",
-      "Final greetings quiz"
+      "Simple greeting review"
     )
   },
   {
@@ -58,13 +55,12 @@ const SECTION_ONE_PARTS = [
     number: 4,
     title: "🍎 Talk About Food and Drink",
     summary: "Everyday food, drinks, and simple choices.",
-    href: "game1.html?coursePart=food-drink",
+    href: "game1.html?coursePart=food-drink&v=lessonpath2",
     icon: "🍎",
     accent: "pink",
     lessons: lessonList(
       "Daily food and drink words",
-      "Meaning and review practice",
-      "Final food and drink quiz"
+      "Meaning and review practice"
     )
   },
   {
@@ -74,26 +70,23 @@ const SECTION_ONE_PARTS = [
     summary: "Work, roles, and describing what people do.",
     icon: "💼",
     accent: "violet",
-    lessons: lessonList(
-      "Job words coming soon",
-      "Job sentence review coming soon",
-      "Final job quiz coming soon"
-    )
+    lessons: []
   },
   {
     id: "part-6",
     number: 6,
     title: "🎒 Talk About Possessions",
     summary: "Ownership, items, and who has what.",
-    href: "game1.html?coursePart=possessions",
+    href: "game1.html?coursePart=possessions&v=lessonpath2",
     icon: "🎒",
     accent: "leaf",
     lessons: lessonList(
       "Book vocabulary",
+      "Book sentence review",
       "Ball vocabulary",
+      "Ball sentence review",
       "House vocabulary",
-      "Objects review",
-      "Final possessions quiz"
+      "House sentence review"
     )
   },
   {
@@ -103,25 +96,21 @@ const SECTION_ONE_PARTS = [
     summary: "Free time, likes, and fun activities.",
     icon: "⚽",
     accent: "gold",
-    lessons: lessonList(
-      "Hobby words coming soon",
-      "Hobby sentence review coming soon",
-      "Final hobbies quiz coming soon"
-    )
+    lessons: []
   },
   {
     id: "part-8",
     number: 8,
     title: "🐶 Describe Animals",
     summary: "Animal names and basic descriptions.",
-    href: "game1.html?coursePart=animals",
+    href: "game1.html?coursePart=animals&v=lessonpath2",
     icon: "🐶",
     accent: "orange",
     lessons: lessonList(
       "Cat lesson",
+      "Cat review",
       "Dog lesson",
-      "Animal review",
-      "Final animals quiz"
+      "Dog review"
     )
   },
   {
@@ -129,15 +118,24 @@ const SECTION_ONE_PARTS = [
     number: 9,
     title: "❓ Form Questions",
     summary: "Question words, patterns, and review.",
-    href: "game1.html?coursePart=questions",
+    href: "game1.html?coursePart=questions&v=lessonpath2",
     icon: "❓",
     accent: "sky",
     lessons: lessonList(
       "This, that, these, and those",
-      "Color sentence questions",
+      "This, that, these, and those in English",
+      "Kurmanji noun forms",
+      "Apple and apples review",
+      "This, that, these, and those with colors",
+      "Ev and Ew with color sentences",
+      "Is and are endings",
+      "English is and are review",
+      "True or false sentence check",
+      "Pair matching",
       "Listening challenge",
-      "Boss level review",
-      "Final questions quiz"
+      "Match the meaning",
+      "Fill in the missing word",
+      "Boss level review"
     )
   },
   {
@@ -147,11 +145,7 @@ const SECTION_ONE_PARTS = [
     summary: "A final checkpoint for everything learned in Section 1.",
     icon: "🏆",
     accent: "violet",
-    lessons: lessonList(
-      "Section 1 review",
-      "Mixed practice challenge",
-      "Final section exam"
-    )
+    lessons: []
   }
 ];
 

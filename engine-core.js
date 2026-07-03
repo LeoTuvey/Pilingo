@@ -229,6 +229,20 @@ const Engine = {
     return section.parts.find((part) => part.id === partId) || null;
   },
 
+  partHasContent(sectionId, partId){
+    const part = typeof sectionId === "object"
+      ? sectionId
+      : this.getCoursePart(sectionId, partId);
+
+    return Boolean(part && part.href);
+  },
+
+  getRequiredParts(sectionId){
+    const section = this.getCourseSection(sectionId);
+    if (!section || !Array.isArray(section.parts)) return [];
+    return section.parts.filter((part) => this.partHasContent(part));
+  },
+
   ensureCourseProgress(){
     const courseData = this.getCourseData();
     if (!courseData) return;
@@ -273,18 +287,17 @@ const Engine = {
   },
 
   isSectionCompleted(sectionId){
-    const section = this.getCourseSection(sectionId);
-    if (!section || !Array.isArray(section.parts) || !section.parts.length) {
+    const requiredParts = this.getRequiredParts(sectionId);
+    if (!requiredParts.length) {
       return false;
     }
 
-    return section.parts.every((part) => this.isPartCompleted(sectionId, part.id));
+    return requiredParts.every((part) => this.isPartCompleted(sectionId, part.id));
   },
 
   getCompletedPartsCount(sectionId){
-    const section = this.getCourseSection(sectionId);
-    if (!section || !Array.isArray(section.parts)) return 0;
-    return section.parts.filter((part) => this.isPartCompleted(sectionId, part.id)).length;
+    const requiredParts = this.getRequiredParts(sectionId);
+    return requiredParts.filter((part) => this.isPartCompleted(sectionId, part.id)).length;
   },
 
   getCurrentPart(){
@@ -295,7 +308,11 @@ const Engine = {
       if (!this.isSectionUnlocked(section.id)) continue;
 
       for (const part of section.parts || []) {
-        if (this.isPartUnlocked(section.id, part.id) && !this.isPartCompleted(section.id, part.id)) {
+        if (
+          this.partHasContent(part) &&
+          this.isPartUnlocked(section.id, part.id) &&
+          !this.isPartCompleted(section.id, part.id)
+        ) {
           return { sectionId: section.id, partId: part.id };
         }
       }
@@ -324,10 +341,23 @@ const Engine = {
 
     const partIndex = section.parts.findIndex((part) => part.id === partId);
     if (partIndex === -1) return false;
-    if (partIndex === 0) return true;
+    const part = section.parts[partIndex];
+    const requiredParts = this.getRequiredParts(sectionId);
 
-    const previousPart = section.parts[partIndex - 1];
-    return this.isPartCompleted(sectionId, previousPart.id);
+    if (this.partHasContent(part)) {
+      const requiredIndex = requiredParts.findIndex((entry) => entry.id === partId);
+      if (requiredIndex <= 0) return true;
+      return this.isPartCompleted(sectionId, requiredParts[requiredIndex - 1].id);
+    }
+
+    for (let index = partIndex - 1; index >= 0; index -= 1) {
+      const previousPart = section.parts[index];
+      if (this.partHasContent(previousPart)) {
+        return this.isPartCompleted(sectionId, previousPart.id);
+      }
+    }
+
+    return true;
   },
 
   completeCoursePart(sectionId, partId, meta = {}){
@@ -352,12 +382,10 @@ const Engine = {
       this.updateStreak();
     }
 
-    const section = this.getCourseSection(sectionId);
+    const requiredParts = this.getRequiredParts(sectionId);
     sectionState.completed = Boolean(
-      section &&
-      Array.isArray(section.parts) &&
-      section.parts.length &&
-      section.parts.every((entry) => sectionState.parts[entry.id] && sectionState.parts[entry.id].completed)
+      requiredParts.length &&
+      requiredParts.every((entry) => sectionState.parts[entry.id] && sectionState.parts[entry.id].completed)
     );
     this.saveCourseProgress(progress);
 

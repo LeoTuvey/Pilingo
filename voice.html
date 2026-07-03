@@ -37,6 +37,18 @@ button{
   background:#1976d2;
   color:white;
   font-size:16px;
+  box-shadow:0 4px 0 rgba(16,87,158,0.26);
+  transition:transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+}
+
+button:active{
+  transform:translateY(3px) scale(0.97);
+  box-shadow:0 1px 0 rgba(16,87,158,0.26);
+}
+
+button.is-pressed{
+  transform:translateY(4px) scale(0.965) !important;
+  box-shadow:0 1px 0 rgba(16,87,158,0.26) !important;
 }
 button.save{
   background:#58cc02;
@@ -69,6 +81,7 @@ button.save{
 </div>
 
 <script src="pwa.js"></script>
+<script src="app-polish.js"></script>
 <script>
 document.getElementById("voices").innerText =
   "Samantha is selected automatically when your device provides that voice.";

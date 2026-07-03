@@ -74,6 +74,11 @@ button:active{
   transform:translateY(2px);
   box-shadow:0 2px 0 #46a302;
 }
+
+button.is-pressed{
+  transform:translateY(4px) scale(0.965) !important;
+  box-shadow:0 1px 0 #46a302 !important;
+}
 </style>
 </head>
 
@@ -165,6 +170,7 @@ document.getElementById("finishBtn").addEventListener("click", function () {
 });
 
 </script>
+<script src="app-polish.js"></script>
 
 </body>
 </html>

@@ -1,4 +1,95 @@
 const AppPolish = {
+  _buttonPressReady:false,
+  _activePressedButtons:new Set(),
+
+  _getPressableButton(target){
+    if(!target?.closest) return null;
+
+    const el = target.closest('button, [role="button"]');
+    if(!el) return null;
+    if(el.matches(".continue-swipe")) return null;
+    if(el.disabled || el.getAttribute("aria-disabled") === "true") return null;
+    return el;
+  },
+
+  _applyPressedState(el){
+    if(!el || this._activePressedButtons.has(el)) return;
+
+    this._activePressedButtons.add(el);
+    el.classList.add("is-pressed");
+
+    if(el.dataset.pressOriginalTransition === undefined){
+      el.dataset.pressOriginalTransition = el.style.transition || "";
+    }
+    if(el.dataset.pressOriginalTransform === undefined){
+      el.dataset.pressOriginalTransform = el.style.transform || "";
+    }
+
+    el.style.transition = [
+      el.dataset.pressOriginalTransition,
+      "transform 135ms cubic-bezier(0.2, 0.75, 0.25, 1)",
+      "filter 135ms ease",
+      "box-shadow 135ms ease"
+    ].filter(Boolean).join(", ");
+    el.style.transform = `${el.dataset.pressOriginalTransform || ""} translateY(4px) scale(0.965)`.trim();
+    el.style.filter = "brightness(0.97)";
+  },
+
+  _releasePressedState(el){
+    if(!el || !this._activePressedButtons.has(el)) return;
+
+    this._activePressedButtons.delete(el);
+    el.classList.remove("is-pressed");
+    el.style.transform = el.dataset.pressOriginalTransform || "";
+    el.style.filter = "";
+
+    window.setTimeout(() => {
+      if(!this._activePressedButtons.has(el)){
+        el.style.transition = el.dataset.pressOriginalTransition || "";
+      }
+    }, 150);
+  },
+
+  initButtonPressEffects(){
+    if(this._buttonPressReady || !document?.body) return;
+    this._buttonPressReady = true;
+
+    document.addEventListener("pointerdown", (event) => {
+      const button = this._getPressableButton(event.target);
+      if(button) this._applyPressedState(button);
+    }, true);
+
+    document.addEventListener("pointerup", () => {
+      this._activePressedButtons.forEach((button) => this._releasePressedState(button));
+    }, true);
+
+    document.addEventListener("pointercancel", () => {
+      this._activePressedButtons.forEach((button) => this._releasePressedState(button));
+    }, true);
+
+    document.addEventListener("keydown", (event) => {
+      if(event.repeat) return;
+      if(event.key !== "Enter" && event.key !== " ") return;
+      const button = this._getPressableButton(event.target);
+      if(button) this._applyPressedState(button);
+    }, true);
+
+    document.addEventListener("keyup", (event) => {
+      if(event.key !== "Enter" && event.key !== " ") return;
+      const button = this._getPressableButton(event.target);
+      if(button) this._releasePressedState(button);
+    }, true);
+
+    window.addEventListener("blur", () => {
+      this._activePressedButtons.forEach((button) => this._releasePressedState(button));
+    });
+
+    document.addEventListener("visibilitychange", () => {
+      if(document.hidden){
+        this._activePressedButtons.forEach((button) => this._releasePressedState(button));
+      }
+    });
+  },
 
   setMood(state){
 
@@ -171,3 +262,9 @@ const AppPolish = {
 };
 
 window.AppPolish = AppPolish;
+
+if(document.readyState === "loading"){
+  document.addEventListener("DOMContentLoaded", () => AppPolish.initButtonPressEffects(), { once:true });
+} else {
+  AppPolish.initButtonPressEffects();
+}

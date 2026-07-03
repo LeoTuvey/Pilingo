@@ -7,5 +7,23 @@
     "password": "Katter@10",
     "location": "Location unavailable",
     "createdAt": "2026-06-24T06:23:25.512Z"
+  },
+  {
+    "id": "1782285412905-b55ed5",
+    "name": "Debug User",
+    "email": "debug-user@example.com",
+    "phone": "123123123",
+    "password": "pass1234",
+    "location": "Debug",
+    "createdAt": "2026-06-24T07:16:52.905Z"
+  },
+  {
+    "id": "1782286053191-216e9a",
+    "name": "Katy",
+    "email": "katyshean11@gmail.com",
+    "phone": "+491638469654",
+    "password": "Susan",
+    "location": "Location unavailable",
+    "createdAt": "2026-06-24T07:27:33.191Z"
   }
 ]

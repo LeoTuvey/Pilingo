@@ -374,6 +374,187 @@ button{
   gap:20px;
 }
 
+.part-path{
+  position:relative;
+  margin-top:24px;
+  padding:8px 0 6px;
+}
+
+.part-path::before{
+  content:"";
+  position:absolute;
+  top:10px;
+  bottom:18px;
+  left:50%;
+  width:10px;
+  transform:translateX(-50%);
+  border-radius:999px;
+  background:linear-gradient(180deg, rgba(247,225,140,0.9) 0%, rgba(186,220,244,0.94) 100%);
+  box-shadow:
+    inset 0 2px 4px rgba(255,255,255,0.65),
+    inset 0 -2px 3px rgba(73,97,131,0.08);
+}
+
+.part-path-node{
+  position:relative;
+  display:flex;
+  margin:0 0 26px;
+}
+
+.part-path-node.left{
+  justify-content:flex-start;
+  padding-right:56%;
+}
+
+.part-path-node.right{
+  justify-content:flex-end;
+  padding-left:56%;
+}
+
+.part-path-node:last-child{
+  margin-bottom:10px;
+}
+
+.part-orb-button{
+  width:100%;
+  max-width:194px;
+  margin:0;
+  padding:0;
+  border:none;
+  background:transparent;
+  box-shadow:none;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:9px;
+  color:#1f2d45;
+  cursor:pointer;
+}
+
+.part-orb-button:hover{
+  transform:translateY(-2px);
+  background:transparent;
+  box-shadow:none;
+}
+
+.part-orb-button:disabled{
+  cursor:not-allowed;
+  opacity:0.72;
+}
+
+.part-orb-ring{
+  --part-progress:0deg;
+  width:122px;
+  height:122px;
+  border-radius:50%;
+  background:conic-gradient(var(--part-bottom) var(--part-progress), #dfe7f1 0deg);
+  display:grid;
+  place-items:center;
+  padding:8px;
+  box-shadow:0 12px 22px rgba(37,48,68,0.13);
+}
+
+.part-orb-button.current .part-orb-ring{
+  background:conic-gradient(#ffbf32 var(--part-progress), #dfe7f1 0deg);
+  box-shadow:0 14px 24px rgba(176,135,29,0.16);
+}
+
+.part-orb-button.completed .part-orb-ring{
+  background:conic-gradient(#58cc02 360deg, #58cc02 360deg);
+}
+
+.part-orb-button.locked .part-orb-ring{
+  background:conic-gradient(#dbe5ef 360deg, #dbe5ef 360deg);
+  box-shadow:none;
+}
+
+.part-orb-core{
+  width:100%;
+  height:100%;
+  border-radius:50%;
+  background:#ffffff;
+  border:4px solid rgba(255,255,255,0.98);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  box-shadow:
+    inset 0 3px 10px rgba(230,236,244,0.8),
+    inset 0 -8px 14px rgba(231,238,247,0.5),
+    0 5px 10px rgba(37,48,68,0.05);
+}
+
+.part-orb-icon{
+  font-size:30px;
+  line-height:1;
+}
+
+.part-orb-index{
+  font-size:12px;
+  font-weight:1000;
+  letter-spacing:0.06em;
+  color:#68788f;
+  text-transform:uppercase;
+}
+
+.part-orb-copy{
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+  text-align:center;
+}
+
+.part-orb-title{
+  font-size:18px;
+  font-weight:1000;
+  line-height:1.15;
+  color:#24324a;
+}
+
+.part-orb-summary{
+  color:#5b6c84;
+  font-size:12px;
+  line-height:1.35;
+  max-width:168px;
+  font-weight:800;
+}
+
+.part-orb-progress{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:28px;
+  padding:6px 10px;
+  border-radius:999px;
+  background:#ffffff;
+  border:1px solid #dfe8f2;
+  box-shadow:0 3px 0 #e8eef6;
+  color:#50627d;
+  font-size:11px;
+  font-weight:1000;
+}
+
+.part-orb-button.completed .part-orb-progress{
+  border-color:#bde3ad;
+  box-shadow:0 3px 0 #dbeecf;
+  color:#3d7a22;
+}
+
+.part-orb-button.current .part-orb-progress{
+  border-color:#f0d27a;
+  box-shadow:0 3px 0 #f4e3ae;
+  color:#9b6b00;
+}
+
+.part-orb-button.locked .part-orb-progress{
+  border-color:#e4eaf2;
+  box-shadow:0 3px 0 #edf1f6;
+  color:#93a0b4;
+}
+
 .part-card{
   position:relative;
   min-height:214px;
@@ -705,6 +886,42 @@ button{
     padding:11px 14px;
     font-size:13px;
   }
+
+  .part-path::before{
+    left:28px;
+    transform:none;
+  }
+
+  .part-path-node,
+  .part-path-node.left,
+  .part-path-node.right{
+    justify-content:flex-start;
+    padding-left:0;
+    padding-right:0;
+  }
+
+  .part-orb-button{
+    max-width:none;
+    width:100%;
+    flex-direction:row;
+    align-items:center;
+    gap:12px;
+  }
+
+  .part-orb-ring{
+    width:94px;
+    height:94px;
+    flex:0 0 94px;
+  }
+
+  .part-orb-copy{
+    align-items:flex-start;
+    text-align:left;
+  }
+
+  .part-orb-summary{
+    max-width:none;
+  }
 }
 </style>
 </head>
@@ -792,6 +1009,16 @@ const PART_COLORS = {
   leaf:{ top:"#bbe79f", bottom:"#5db65d", shadow:"#3d8039" }
 };
 
+const COURSE_PART_SECTION_MAP = {
+  alphabets:["a-part-1a"],
+  family:["a-part-1b"],
+  greetings:["a-part-2"],
+  "food-drink":["b-part-1"],
+  possessions:["d-part-1","d-part-2","d-part-3"],
+  animals:["e-part-7","e-part-8"],
+  questions:["f-part-1","f-part-2a","f-part-2b","f-part-3"]
+};
+
 function goBackHome(){
   window.location.href = "index.html";
 }
@@ -802,6 +1029,47 @@ function getSectionColors(index){
 
 function getPartColors(accent){
   return PART_COLORS[accent] || PART_COLORS.gold;
+}
+
+function getPartSlugFromHref(href){
+  if (!href || !href.includes("coursePart=")) return "";
+  const match = href.match(/coursePart=([^&]+)/);
+  return match ? decodeURIComponent(match[1]) : "";
+}
+
+function getSavedLessonProgress(){
+  try {
+    const saved = JSON.parse(localStorage.getItem("pilingo_game1_completed_lessons") || "{}");
+    return saved && typeof saved === "object" ? saved : {};
+  } catch {
+    return {};
+  }
+}
+
+function getBallProgress(part){
+  const total = Array.isArray(part.lessons) ? part.lessons.length : 0;
+  if (!total) return { completed:0, total:0, percent:0 };
+
+  const slug = getPartSlugFromHref(part.href || "");
+  const sectionIds = COURSE_PART_SECTION_MAP[slug];
+  if (!Array.isArray(sectionIds) || !sectionIds.length) {
+    return { completed:0, total, percent:0 };
+  }
+
+  const saved = getSavedLessonProgress();
+  const completed = Math.min(
+    total,
+    sectionIds.reduce((sum, sectionId) => {
+      const values = Array.isArray(saved[sectionId]) ? saved[sectionId] : [];
+      return sum + values.filter((value) => typeof value === "string").length;
+    }, 0)
+  );
+
+  return {
+    completed,
+    total,
+    percent: total ? completed / total : 0
+  };
 }
 
 function getPartStatus(sectionId, part){
@@ -868,42 +1136,39 @@ function renderMap(){
 
     const partsMarkup = totalParts
       ? `
-        <div class="parts-grid">
-          ${section.parts.map((part) => {
+        <div class="part-path">
+          ${section.parts.map((part, partIndex) => {
             const partColors = getPartColors(part.accent);
             const status = getPartStatus(section.id, part);
             const unlocked = Engine.isPartUnlocked(section.id, part.id);
             const completed = Engine.isPartCompleted(section.id, part.id);
             const canOpen = unlocked && Boolean(part.href);
-            const lessonCount = Array.isArray(part.lessons) ? part.lessons.length : 0;
-            const lessonPreview = (part.lessons || []).slice(0, 4).map((lesson) => `<span>${lesson.title}</span>`).join("");
-            const actionLabel = completed ? "Tap to Open" : (canOpen ? "Tap to Open" : (unlocked ? "Ready Soon" : "Locked"));
+            const ballProgress = getBallProgress(part);
+            const progressDeg = Math.round(Math.max(0, Math.min(ballProgress.percent, 1)) * 360);
+            const actionLabel = completed
+              ? "Finished"
+              : (canOpen ? (ballProgress.completed > 0 ? "Continue" : "Start") : (unlocked ? "Ready Soon" : "Locked"));
 
             return `
-              <div
-                class="part-card ${completed ? "completed" : ""} ${unlocked ? "" : "locked"}"
-                style="--part-top:${partColors.top}; --part-bottom:${partColors.bottom}; --part-shadow:${partColors.shadow};"
-                data-section-id="${section.id}"
-                data-part-id="${part.id}"
-                tabindex="-1">
-                <div class="part-topline">
-                  <span class="part-order">${part.number}</span>
-                  <span class="part-status ${status.className}">${status.icon} ${status.label}</span>
-                </div>
-                <div class="part-icon">${part.icon}</div>
-                <h3 class="part-title">${part.title}</h3>
-                <p class="part-summary">${part.summary}</p>
-                <div class="part-lessons">${lessonPreview}</div>
-                <div class="part-footer">
-                  <span class="part-type">${lessonCount} lesson steps</span>
-                  <button
-                    class="part-action"
-                    type="button"
-                    onclick="openPart('${section.id}','${part.id}')"
-                    ${canOpen ? "" : "disabled"}>
-                    ${unlocked ? "👉 " : "🔒 "}${actionLabel}
-                  </button>
-                </div>
+              <div class="part-path-node ${partIndex % 2 === 0 ? "left" : "right"}">
+                <button
+                  class="part-orb-button ${completed ? "completed" : ""} ${status.className === "current" ? "current" : ""} ${unlocked ? "" : "locked"}"
+                  type="button"
+                  style="--part-top:${partColors.top}; --part-bottom:${partColors.bottom}; --part-shadow:${partColors.shadow};"
+                  onclick="openPart('${section.id}','${part.id}')"
+                  ${canOpen ? "" : "disabled"}>
+                  <span class="part-orb-ring" style="--part-progress:${progressDeg}deg">
+                    <span class="part-orb-core">
+                      <span class="part-orb-icon">${part.icon}</span>
+                      <span class="part-orb-index">Ball ${part.number}</span>
+                    </span>
+                  </span>
+                  <span class="part-orb-copy">
+                    <span class="part-orb-title">${part.title}</span>
+                    <span class="part-orb-summary">${part.summary}</span>
+                    <span class="part-orb-progress">${status.icon} ${actionLabel} • ${ballProgress.completed}/${ballProgress.total || (Array.isArray(part.lessons) ? part.lessons.length : 0)} done</span>
+                  </span>
+                </button>
               </div>
             `;
           }).join("")}

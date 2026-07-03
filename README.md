@@ -48,6 +48,16 @@ export EMAIL_TO="your@email.com"
 export EMAIL_FROM="Pilingo <onboarding@resend.dev>"
 ```
 
+Or create a local `.env` file in the project folder with:
+
+```bash
+RESEND_API_KEY="your_resend_api_key"
+EMAIL_TO="your@email.com"
+EMAIL_FROM="Pilingo <onboarding@resend.dev>"
+```
+
+Then restart the server. Password-reset emails will start using those saved values automatically.
+
 ## Notes
 
 - Browser notifications work when the app is opened through the local server.

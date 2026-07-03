@@ -766,20 +766,20 @@ button.wrong{
 }
 
 .lesson-path-shell{
-    width:96%;
-    margin:14px auto 0;
-    text-align:left;
+    width:min(100%, 540px);
+    margin:12px auto 0;
+    text-align:center;
 }
 
 .lesson-path-banner{
-    padding:18px 18px 16px;
-    border-radius:24px;
-    background:linear-gradient(180deg, #fffdf7 0%, #fff4dd 100%);
-    border:2px solid #f0d7a2;
-    box-shadow:0 6px 0 #e7c985, 0 14px 24px rgba(160,109,13,0.08);
+    padding:12px 14px;
+    border-radius:20px;
+    background:linear-gradient(180deg, #fffefb 0%, #fff7ea 100%);
+    border:2px solid #f3e2b8;
+    box-shadow:0 4px 0 #ead49a, 0 10px 18px rgba(160,109,13,0.06);
     display:flex;
     flex-direction:column;
-    gap:5px;
+    gap:4px;
 }
 
 .lesson-path-banner strong,
@@ -788,58 +788,60 @@ button.wrong{
 }
 
 .lesson-path-banner strong{
-    font-size:22px;
+    font-size:20px;
     color:#53411f;
 }
 
 .lesson-path-banner span{
     color:#65748b;
-    font-size:14px;
-    line-height:1.45;
+    font-size:13px;
+    line-height:1.4;
 }
 
 .lesson-path{
     position:relative;
-    margin:18px auto 0;
-    padding:8px 0 6px;
+    margin:22px auto 0;
+    padding:10px 0 6px;
 }
 
 .lesson-path::before{
     content:"";
     position:absolute;
-    top:10px;
-    bottom:10px;
+    top:4px;
+    bottom:26px;
     left:50%;
     width:8px;
     transform:translateX(-50%);
     border-radius:999px;
-    background:linear-gradient(180deg, rgba(234,220,182,0.96) 0%, rgba(216,234,248,0.98) 100%);
-    box-shadow:inset 0 1px 2px rgba(100,84,40,0.08);
+    background:linear-gradient(180deg, #dce9f7 0%, #d6e4f4 50%, #c9ddf4 100%);
+    box-shadow:
+        inset 0 2px 3px rgba(255,255,255,0.65),
+        inset 0 -2px 3px rgba(128,148,177,0.12);
 }
 
 .lesson-path-node{
     position:relative;
     display:flex;
-    margin:0 0 18px;
+    margin:0 0 30px;
 }
 
 .lesson-path-node.left{
     justify-content:flex-start;
-    padding-right:52%;
+    padding-right:58%;
 }
 
 .lesson-path-node.right{
     justify-content:flex-end;
-    padding-left:52%;
+    padding-left:58%;
 }
 
 .lesson-path-node:last-child{
-    margin-bottom:8px;
+    margin-bottom:10px;
 }
 
 .lesson-egg-button{
     width:100%;
-    max-width:250px;
+    max-width:168px;
     margin:0;
     padding:0;
     background:transparent;
@@ -848,7 +850,7 @@ button.wrong{
     display:flex;
     flex-direction:column;
     align-items:center;
-    gap:10px;
+    gap:8px;
     color:#253044;
 }
 
@@ -856,28 +858,29 @@ button.wrong{
     background:transparent;
     border-color:transparent;
     box-shadow:none;
-    transform:none;
+    transform:translateY(-2px);
 }
 
 .lesson-egg-button:active{
-    transform:none;
+    transform:translateY(2px);
     box-shadow:none;
 }
 
 .lesson-egg-ring{
     --egg-progress:0deg;
-    width:108px;
-    height:108px;
+    width:122px;
+    height:122px;
     border-radius:50%;
-    background:conic-gradient(#58cc02 var(--egg-progress), #dbe5ef 0deg);
+    background:conic-gradient(#58cc02 var(--egg-progress), #dfe7f1 0deg);
     display:grid;
     place-items:center;
-    padding:7px;
-    box-shadow:0 10px 22px rgba(37,48,68,0.12);
+    padding:8px;
+    box-shadow:0 12px 22px rgba(37,48,68,0.13);
 }
 
 .lesson-egg-button.current .lesson-egg-ring{
-    background:conic-gradient(#ffbe2f var(--egg-progress), #dbe5ef 0deg);
+    background:conic-gradient(#ffbf32 var(--egg-progress), #dfe7f1 0deg);
+    box-shadow:0 14px 24px rgba(176,135,29,0.16);
 }
 
 .lesson-egg-button.completed .lesson-egg-ring{
@@ -894,17 +897,20 @@ button.wrong{
     height:100%;
     border-radius:50%;
     background:#ffffff;
-    border:3px solid rgba(255,255,255,0.98);
+    border:4px solid rgba(255,255,255,0.98);
     display:flex;
     flex-direction:column;
     align-items:center;
     justify-content:center;
-    gap:4px;
-    box-shadow:inset 0 2px 8px rgba(230,236,244,0.78), 0 4px 8px rgba(37,48,68,0.06);
+    gap:5px;
+    box-shadow:
+        inset 0 3px 10px rgba(230,236,244,0.8),
+        inset 0 -8px 14px rgba(231,238,247,0.5),
+        0 5px 10px rgba(37,48,68,0.05);
 }
 
 .lesson-egg-symbol{
-    font-size:28px;
+    font-size:30px;
     line-height:1;
 }
 
@@ -916,58 +922,54 @@ button.wrong{
     text-transform:uppercase;
 }
 
-.lesson-egg-card{
+.lesson-egg-label{
     width:100%;
-    padding:14px 14px 13px;
-    border-radius:24px;
-    background:#ffffff;
-    border:2px solid #e8eef6;
-    box-shadow:0 7px 0 #e8eef6, 0 14px 22px rgba(37,48,68,0.08);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:4px;
 }
 
 .lesson-egg-title{
     display:block;
-    font-size:18px;
+    font-size:16px;
     font-weight:1000;
     color:#314159;
-    margin-bottom:4px;
 }
 
 .lesson-egg-detail{
     display:block;
-    font-size:13px;
-    line-height:1.45;
+    font-size:12px;
+    line-height:1.35;
     color:#6b7a90;
+    max-width:164px;
 }
 
-.lesson-egg-meta{
-    display:flex;
-    flex-wrap:wrap;
-    gap:8px;
-    margin-top:10px;
-}
-
-.lesson-egg-pill{
+.lesson-egg-progress{
     display:inline-flex;
     align-items:center;
     justify-content:center;
-    padding:7px 10px;
+    min-height:28px;
+    padding:6px 10px;
     border-radius:999px;
-    background:#f4f8fd;
-    color:#50627d;
-    font-size:12px;
-    font-weight:900;
+    background:#ffffff;
     border:1px solid #dfe8f2;
+    box-shadow:0 3px 0 #e8eef6;
+    color:#50627d;
+    font-size:11px;
+    font-weight:900;
 }
 
-.lesson-egg-button.completed .lesson-egg-card{
+.lesson-egg-button.completed .lesson-egg-progress{
     border-color:#bde3ad;
-    box-shadow:0 7px 0 #dbeecf, 0 14px 22px rgba(59,136,33,0.08);
+    box-shadow:0 3px 0 #dbeecf;
+    color:#3d7a22;
 }
 
-.lesson-egg-button.current .lesson-egg-card{
+.lesson-egg-button.current .lesson-egg-progress{
     border-color:#f0d27a;
-    box-shadow:0 7px 0 #f4e3ae, 0 14px 22px rgba(176,135,29,0.1);
+    box-shadow:0 3px 0 #f4e3ae;
+    color:#9b6b00;
 }
 
 .lesson-egg-button.locked{
@@ -975,13 +977,14 @@ button.wrong{
     opacity:0.72;
 }
 
-.lesson-egg-button.locked .lesson-egg-card{
+.lesson-egg-button.locked .lesson-egg-progress{
     border-color:#e4eaf2;
-    box-shadow:0 6px 0 #edf1f6;
+    box-shadow:0 3px 0 #edf1f6;
+    color:#93a0b4;
 }
 
 .lesson-path-footer{
-    margin-top:16px;
+    margin-top:14px;
 }
 
 .image-options{
@@ -1186,18 +1189,18 @@ button.wrong{
     .lesson-egg-button{
         max-width:none;
         width:100%;
-        flex-direction:row;
+        flex-direction:column;
         align-items:center;
-        gap:12px;
-        padding-left:4px;
+        gap:10px;
+        padding-left:0;
     }
     .lesson-egg-ring{
-        width:88px;
-        height:88px;
-        flex:0 0 88px;
+        width:96px;
+        height:96px;
+        flex:0 0 96px;
     }
-    .lesson-egg-card{
-        text-align:left;
+    .lesson-egg-detail{
+        max-width:190px;
     }
     .image-options{grid-template-columns:1fr;}
     .match-grid{gap:10px;}
@@ -3418,6 +3421,20 @@ function lessonNodeActionLabel(status, progress){
     return "🔒 Locked";
 }
 
+function nextLessonIndexForSection(index, sectionIndex){
+    const lessons = lessonsForSection(index, sectionIndex);
+    const nextIndex = lessons.findIndex((lesson) => !isLessonComplete(index, sectionIndex, lesson.id));
+    return nextIndex >= 0 ? nextIndex : 0;
+}
+
+function sectionNodeStatus(index, sectionIndex){
+    const progress = sectionLessonProgress(index, sectionIndex);
+    if(isSectionComplete(index, sectionIndex)) return "completed";
+    if(!isSectionUnlocked(index, sectionIndex)) return "locked";
+    if(progress.completed > 0) return "current";
+    return "current";
+}
+
 function leaderboardSummary(){
     const records = Object.values(gradebook || {});
     const count = records.length;
@@ -3477,8 +3494,7 @@ function startSection(index, sectionIndex){
     const sections = sectionsForPart(index);
     const section = sections[sectionIndex];
     if(!section || !isSectionUnlocked(index, sectionIndex)) return;
-
-    showLessonSelect(index, sectionIndex);
+    startLesson(index, sectionIndex, nextLessonIndexForSection(index, sectionIndex));
 }
 
 function startLesson(index, sectionIndex, lessonIndex){
@@ -3551,9 +3567,9 @@ function showLessonSelect(index, sectionIndex, message){
                     const status = lessonPathStatus(index, sectionIndex, lessonIndex);
                     const lessonProgress = lessonStepProgress(index, sectionIndex, lessonIndex);
                     const progressDeg = Math.round(Math.max(0, Math.min(lessonProgress.percent, 1)) * 360);
-                    const detailText = completed
-                        ? "All lesson steps and quizzes inside this egg are complete."
-                        : `${lessonProgress.completed}/${lessonProgress.total} activities finished`;
+                    const progressText = completed
+                        ? "Finished"
+                        : `${lessonProgress.completed}/${lessonProgress.total} done`;
 
                     return `
                         <div class="lesson-path-node ${lessonIndex % 2 === 0 ? "left" : "right"}">
@@ -3569,13 +3585,10 @@ function showLessonSelect(index, sectionIndex, message){
                                         <span class="lesson-egg-index">Egg ${lessonIndex + 1}</span>
                                     </span>
                                 </span>
-                                <span class="lesson-egg-card">
+                                <span class="lesson-egg-label">
                                     <span class="lesson-egg-title">${escapeHtml(lesson.label)} ${lessonCompletionBadge(lesson.id)}</span>
                                     <span class="lesson-egg-detail">${escapeHtml(lesson.detail)}</span>
-                                    <span class="lesson-egg-meta">
-                                        <span class="lesson-egg-pill">${escapeHtml(lessonNodeActionLabel(status, lessonProgress))}</span>
-                                        <span class="lesson-egg-pill">${escapeHtml(detailText)}</span>
-                                    </span>
+                                    <span class="lesson-egg-progress">${escapeHtml(lessonNodeActionLabel(status, lessonProgress))} • ${escapeHtml(progressText)}</span>
                                 </span>
                             </button>
                         </div>
@@ -3613,27 +3626,51 @@ function showSectionSelect(index, message){
     document.getElementById("image").style.display = "none";
     document.getElementById("image").removeAttribute("src");
     document.getElementById("feedback").innerText = "";
-    showIdleGrade("Choose a section to see its live grade");
+    showIdleGrade("Tap a ball to start or continue learning");
     document.getElementById("activity").innerHTML = `
-        <div class="section-select">
-            ${sections.map((section, sectionIndex) => {
-                const unlocked = isSectionUnlocked(index, sectionIndex);
-                const complete = isSectionComplete(index, sectionIndex);
-                const progress = sectionLessonProgress(index, sectionIndex);
-                return `
-                    <button
-                        class="section-card ${unlocked ? "" : "locked"}"
-                        onclick="${unlocked ? `showLessonSelect(${index}, ${sectionIndex})` : ""}"
-                        ${unlocked ? "" : "disabled"}
-                    >
-                        <strong>${escapeHtml(section.label)} ${complete ? "✅✅" : ""}</strong>
-                        <span>${escapeHtml(section.detail)}</span>
-                        <span class="section-grade">${escapeHtml(progress.completed + "/" + progress.total + " lesson groups passed")}</span>
-                        <span>${unlocked ? (complete ? "✅ Completed • Open lessons again" : "Open this section") : "Finish the previous section first"}</span>
-                    </button>
-                `;
-            }).join("")}
-            ${activeCoursePartRoute ? "" : `<button class="secondary" onclick="showPartSelect()">Back to parts</button>`}
+        <div class="lesson-path-shell">
+            <div class="lesson-path-banner">
+                <strong>${escapeHtml(displayPartTitle(index))}</strong>
+                <span>Tap a learning ball to immediately start the next unfinished lesson or quiz inside it.</span>
+            </div>
+            <div class="lesson-path">
+                ${sections.map((section, sectionIndex) => {
+                    const unlocked = isSectionUnlocked(index, sectionIndex);
+                    const completed = isSectionComplete(index, sectionIndex);
+                    const status = sectionNodeStatus(index, sectionIndex);
+                    const progress = sectionLessonProgress(index, sectionIndex);
+                    const progressDeg = Math.round(Math.max(0, Math.min(progress.total ? progress.completed / progress.total : 0, 1)) * 360);
+                    const progressText = completed
+                        ? "Finished"
+                        : `${progress.completed}/${progress.total} done`;
+
+                    return `
+                        <div class="lesson-path-node ${sectionIndex % 2 === 0 ? "left" : "right"}">
+                            <button
+                                class="lesson-egg-button ${completed ? "completed" : ""} ${status === "current" ? "current" : ""} ${unlocked ? "" : "locked"}"
+                                type="button"
+                                onclick="${unlocked ? `startSection(${index}, ${sectionIndex})` : ""}"
+                                ${unlocked ? "" : "disabled"}
+                            >
+                                <span class="lesson-egg-ring" style="--egg-progress:${progressDeg}deg">
+                                    <span class="lesson-egg-core">
+                                        <span class="lesson-egg-symbol">${lessonNodeSymbol(status)}</span>
+                                        <span class="lesson-egg-index">Ball ${sectionIndex + 1}</span>
+                                    </span>
+                                </span>
+                                <span class="lesson-egg-label">
+                                    <span class="lesson-egg-title">${escapeHtml(section.label)}</span>
+                                    <span class="lesson-egg-detail">${escapeHtml(section.detail)}</span>
+                                    <span class="lesson-egg-progress">${escapeHtml(lessonNodeActionLabel(status, progress))} • ${escapeHtml(progressText)}</span>
+                                </span>
+                            </button>
+                        </div>
+                    `;
+                }).join("")}
+            </div>
+            <div class="lesson-path-footer">
+                ${activeCoursePartRoute ? "" : `<button class="secondary" onclick="showPartSelect()">Back to parts</button>`}
+            </div>
         </div>
     `;
 }
@@ -4333,7 +4370,7 @@ function completeStep(){
             return;
         }
 
-        showLessonSelect(partIndex, sectionIndex, "✅ Lesson passed. You can open any other lesson in this section.");
+        showSectionSelect(partIndex, "✅ Lesson passed. Tap the same ball to continue, or open another unlocked ball.");
         return;
     }
 

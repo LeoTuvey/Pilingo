@@ -3497,6 +3497,10 @@ function startSection(index, sectionIndex){
     startLesson(index, sectionIndex, nextLessonIndexForSection(index, sectionIndex));
 }
 
+function routeUsesSingleSection(index){
+    return Boolean(activeCoursePartRoute) && sectionsForPart(index).length === 1;
+}
+
 function startLesson(index, sectionIndex, lessonIndex){
     const sections = sectionsForPart(index);
     const section = sections[sectionIndex];
@@ -3596,7 +3600,7 @@ function showLessonSelect(index, sectionIndex, message){
                 }).join("")}
             </div>
             <div class="lesson-path-footer">
-                <button class="secondary" onclick="showSectionSelect(${index})">Back to sections</button>
+                <button class="secondary" onclick="${routeUsesSingleSection(index) ? "window.location.href='engine.html'" : `showSectionSelect(${index})`}">${routeUsesSingleSection(index) ? "Back to learning map" : "Back to sections"}</button>
             </div>
         </div>
     `;

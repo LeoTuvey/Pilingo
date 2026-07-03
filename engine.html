@@ -1011,7 +1011,7 @@ const PART_COLORS = {
 
 const COURSE_PART_SECTION_MAP = {
   alphabets:["a-part-1a"],
-  family:["a-part-1b"],
+  family:["a-part-1b","a-part-1c"],
   greetings:["a-part-2"],
   "food-drink":["b-part-1"],
   possessions:["d-part-1","d-part-2","d-part-3"],
@@ -1077,6 +1077,11 @@ function getPartStatus(sectionId, part){
   const unlocked = Engine.isPartUnlocked(sectionId, part.id);
   const completed = Engine.isPartCompleted(sectionId, part.id);
   const current = Engine.getCurrentPart();
+  const hasContent = Boolean(part.href);
+
+  if (!hasContent) {
+    return { label:"Coming soon", icon:"🛠️", className:"soon" };
+  }
 
   if (completed) {
     return { label:"Completed", icon:"✅", className:"completed" };
@@ -1129,10 +1134,9 @@ function renderMap(){
   map.innerHTML = COURSE_DATA.sections.map((section, sectionIndex) => {
     const colors = getSectionColors(sectionIndex);
     const sectionUnlocked = Engine.isSectionUnlocked(section.id);
-    const sectionCompleted = Engine.isSectionCompleted(section.id);
     const sectionStatus = getSectionStatus(section);
     const completedParts = Engine.getCompletedPartsCount(section.id);
-    const totalParts = Array.isArray(section.parts) ? section.parts.length : 0;
+    const totalParts = Array.isArray(section.parts) ? section.parts.filter((part) => Boolean(part.href)).length : 0;
 
     const partsMarkup = totalParts
       ? `
@@ -1142,12 +1146,15 @@ function renderMap(){
             const status = getPartStatus(section.id, part);
             const unlocked = Engine.isPartUnlocked(section.id, part.id);
             const completed = Engine.isPartCompleted(section.id, part.id);
-            const canOpen = unlocked && Boolean(part.href);
+            const hasContent = Boolean(part.href);
+            const canOpen = unlocked && hasContent;
             const ballProgress = getBallProgress(part);
             const progressDeg = Math.round(Math.max(0, Math.min(ballProgress.percent, 1)) * 360);
-            const actionLabel = completed
-              ? "Finished"
-              : (canOpen ? (ballProgress.completed > 0 ? "Continue" : "Start") : (unlocked ? "Ready Soon" : "Locked"));
+            const actionLabel = !hasContent
+              ? "Coming Soon"
+              : completed
+                ? "Finished"
+                : (canOpen ? (ballProgress.completed > 0 ? "Continue" : "Start") : "Locked");
 
             return `
               <div class="part-path-node ${partIndex % 2 === 0 ? "left" : "right"}">
@@ -1166,7 +1173,7 @@ function renderMap(){
                   <span class="part-orb-copy">
                     <span class="part-orb-title">${part.title}</span>
                     <span class="part-orb-summary">${part.summary}</span>
-                    <span class="part-orb-progress">${status.icon} ${actionLabel} • ${ballProgress.completed}/${ballProgress.total || (Array.isArray(part.lessons) ? part.lessons.length : 0)} done</span>
+                    <span class="part-orb-progress">${hasContent ? `${status.icon} ${actionLabel} • ${ballProgress.completed}/${ballProgress.total || (Array.isArray(part.lessons) ? part.lessons.length : 0)} done` : `${status.icon} ${actionLabel}`}</span>
                   </span>
                 </button>
               </div>
@@ -1227,7 +1234,7 @@ function openPart(sectionId, partId){
   }
 
   if (!part.href) {
-    showToast("This part is unlocked in the map structure now. We will attach its lessons next.");
+    showToast("This part is coming soon. The available lesson path will continue through the real lesson parts.");
     return;
   }
 

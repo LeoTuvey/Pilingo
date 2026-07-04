@@ -2318,15 +2318,7 @@ const partSections = {
             start:65,
             end:84,
             lessons:[
-                { id:"a-part-1d-lesson-1", label:"Lesson 1", detail:"Different types of uncles", start:65, end:65 },
-                { id:"a-part-1d-lesson-2", label:"Lesson 2", detail:"Different types of aunts", start:66, end:66 },
-                { id:"a-part-1d-lesson-3", label:"Lesson 3", detail:"Different types of cousins", start:67, end:67 },
-                { id:"a-part-1d-lesson-4", label:"Lesson 4", detail:"Nieces and nephews", start:68, end:68 },
-                { id:"a-part-1d-lesson-5", label:"Lesson 5", detail:"Family groups with full meanings", start:69, end:69 },
-                { id:"a-part-1d-lesson-6", label:"Lesson 6", detail:"Family groups with short meanings", start:70, end:70 },
-                { id:"a-part-1d-lesson-7", label:"Quiz 1", detail:"Match the Meaning", start:71, end:76 },
-                { id:"a-part-1d-lesson-8", label:"Quiz 2", detail:"Match the Meaning", start:77, end:82 },
-                { id:"a-part-1d-lesson-9", label:"Quiz 3", detail:"Match the Pairs", start:83, end:83 }
+                { id:"a-part-1d-lesson-1", label:"Lesson 1", detail:"Extended family members, family groups, and quizzes", start:65, end:84 }
             ]
         },
         {
@@ -3596,11 +3588,6 @@ function startSection(index, sectionIndex){
     const sections = sectionsForPart(index);
     const section = sections[sectionIndex];
     if(!section || !isSectionUnlocked(index, sectionIndex)) return;
-    const lessons = lessonsForSection(index, sectionIndex);
-    if(lessons.length > 1) {
-        showLessonSelect(index, sectionIndex, "Choose a lesson in this ball");
-        return;
-    }
     startLesson(index, sectionIndex, nextLessonIndexForSection(index, sectionIndex));
 }
 

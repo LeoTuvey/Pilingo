@@ -2367,7 +2367,12 @@ const partSections = {
             start:65,
             end:84,
             lessons:[
-                { id:"a-part-1d-v3-lesson-1", label:"Lesson 1", detail:"Extended family members, family groups, and quizzes", start:65, end:84 }
+                { id:"a-part-1d-v3-lesson-1", label:"Lesson 1", detail:"Different types of uncles and aunts", start:65, end:66 },
+                { id:"a-part-1d-v3-lesson-2", label:"Lesson 2", detail:"Different types of cousins and nieces/nephews", start:67, end:68 },
+                { id:"a-part-1d-v3-lesson-3", label:"Lesson 3", detail:"Family groups", start:69, end:70 },
+                { id:"a-part-1d-v3-lesson-4", label:"Quiz 1", detail:"Match the Meaning", start:71, end:76 },
+                { id:"a-part-1d-v3-lesson-5", label:"Quiz 2", detail:"Match the Meaning", start:77, end:82 },
+                { id:"a-part-1d-v3-lesson-6", label:"Quiz 3", detail:"Match the Pairs", start:83, end:83 }
             ]
         },
         {
@@ -3011,16 +3016,26 @@ function currentStepActualIndex(){
 }
 
 function totalSteps(){
+    if(activeLesson && Array.isArray(activeLesson.stepOrder) && activeLesson.stepOrder.length) {
+        return activeLesson.stepOrder.length;
+    }
+
     return gameParts[partIndex].steps.length;
 }
 
 function completedSteps(){
+    if(activeLesson && Array.isArray(activeLesson.stepOrder) && activeLesson.stepOrder.length) {
+        return Math.max(0, activeLesson.orderPosition || 0);
+    }
+
     return stepIndex;
 }
 
 function updateProgress(){
+    const total = totalSteps();
+    const completed = completedSteps();
     document.getElementById("bar").style.width =
-        (completedSteps() / totalSteps()) * 100 + "%";
+        (total ? (completed / total) : 0) * 100 + "%";
 }
 
 function loadCompletedParts(){

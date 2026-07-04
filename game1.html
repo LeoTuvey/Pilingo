@@ -1274,6 +1274,55 @@ let pendingAdvanceTimer = null;
 let currentBuildOptions = [];
 const urlParams = new URLSearchParams(window.location.search);
 const coursePartSlug = urlParams.get("coursePart") || "";
+const FAMILY_BALL3_PROGRESS_VERSION = "family-ball3-v3";
+
+function resetFamilyBall3Progress(){
+    const legacySectionIds = new Set(["a-part-1d", "a-part-1d-v2", "a-part-1d-v3"]);
+    const legacyLessonPrefixes = ["a-part-1d-", "a-part-1d-v2-", "a-part-1d-v3-"];
+
+    Object.keys(completedSections || {}).forEach((key) => {
+        const values = Array.isArray(completedSections[key]) ? completedSections[key] : [];
+        const filtered = values.filter((value) => !legacySectionIds.has(value));
+        if(filtered.length !== values.length) {
+            completedSections[key] = filtered;
+        }
+    });
+
+    Object.keys(completedLessons || {}).forEach((key) => {
+        if(legacySectionIds.has(key) || legacyLessonPrefixes.some((prefix) => key.startsWith(prefix))) {
+            delete completedLessons[key];
+        }
+    });
+
+    Object.keys(completedLessonStepMap || {}).forEach((key) => {
+        if(legacyLessonPrefixes.some((prefix) => key.startsWith(prefix))) {
+            delete completedLessonStepMap[key];
+        }
+    });
+
+    Object.keys(lessonStatuses || {}).forEach((key) => {
+        if(legacyLessonPrefixes.some((prefix) => key.startsWith(prefix))) {
+            delete lessonStatuses[key];
+        }
+    });
+
+    Object.keys(gradebook || {}).forEach((key) => {
+        if(legacyLessonPrefixes.some((prefix) => key.startsWith(prefix)) || legacySectionIds.has(key)) {
+            delete gradebook[key];
+        }
+    });
+
+    saveCompletedSections();
+    saveCompletedLessons();
+    saveCompletedLessonStepMap();
+    saveLessonStatuses();
+    saveGradebook();
+}
+
+if(localStorage.getItem(FAMILY_BALL3_PROGRESS_VERSION) !== "done"){
+    resetFamilyBall3Progress();
+    localStorage.setItem(FAMILY_BALL3_PROGRESS_VERSION, "done");
+}
 
 const emoji = {
     coffee:"☕",
@@ -2079,7 +2128,7 @@ const coursePartRoutes = {
         slug:"family",
         title:"👨‍👩‍👧‍👦 Describe Your Family",
         gamePartIndex:0,
-        sectionIds:["a-part-1b", "a-part-1c", "a-part-1d-v2"],
+        sectionIds:["a-part-1b", "a-part-1c", "a-part-1d-v3"],
         enginePartId:"part-2"
     },
     greetings:{
@@ -2312,13 +2361,13 @@ const partSections = {
             ]
         },
         {
-            id:"a-part-1d-v2",
+            id:"a-part-1d-v3",
             label:"Part 1D",
             detail:"Extended family members, family groups, and quizzes",
             start:65,
             end:84,
             lessons:[
-                { id:"a-part-1d-v2-lesson-1", label:"Lesson 1", detail:"Extended family members, family groups, and quizzes", start:65, end:84 }
+                { id:"a-part-1d-v3-lesson-1", label:"Lesson 1", detail:"Extended family members, family groups, and quizzes", start:65, end:84 }
             ]
         },
         {

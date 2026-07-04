@@ -1478,19 +1478,19 @@ const gameParts = [
             rawBuildStep("Wergera vê hevokê bike.\nTranslate the sentence", "I am a girl.\n…………… .", ["Ez", "keç", "im", "kur", "bav"], ["Ez", "keç", "im"]),
             rawBuildStep("Wergera vê hevokê bike.\nTranslate the sentence", "I am a woman.\n…………… .", ["jin", "im", "mêr", "Ez", "law"], ["Ez", "jin", "im"]),
             nextStep("Game One A • Part 1C complete"),
-            familyEmojiMatchStep([
+            familyEmojiMatchStepNamed("👨 Different Types of Uncles", [
                 { english:"uncle", kurmanji:"👨 Mam", group:"uncle" },
                 { english:"uncle", kurmanji:"👨 Xal", group:"uncle" },
                 { english:"uncle", kurmanji:"👨 Mêrê Metê", group:"uncle" },
                 { english:"uncle", kurmanji:"👨 Mêrê Xaletê", group:"uncle" }
             ]),
-            familyEmojiMatchStep([
+            familyEmojiMatchStepNamed("👩 Different Types of Aunts", [
                 { english:"Aunt", kurmanji:"👩 Met", group:"aunt" },
                 { english:"Aunt", kurmanji:"👩 Xalet", group:"aunt" },
                 { english:"Aunt", kurmanji:"👩 Jin Mam", group:"aunt" },
                 { english:"Aunt", kurmanji:"👩 Jin Xal", group:"aunt" }
             ]),
-            familyEmojiMatchStep([
+            familyEmojiMatchStepNamed("👧👦 Different Types of Cousins", [
                 { english:"Cousin", kurmanji:"👧👦 Kur met û Kiç met", group:"cousin" },
                 { english:"Cousin", kurmanji:"👧👦 Kur mam û Kiç mam", group:"cousin" },
                 { english:"Cousin", kurmanji:"👧👦 Kur xalet û Kiç Xalet", group:"cousin" },
@@ -1503,7 +1503,7 @@ const gameParts = [
                 { english:"Nephew", kurmanji:"Kurê xwișkê", group:"nephew" }
             ], "👧👦 Nieces and Nephews", "kurmanji"),
             choiceStep("Match the Meaning", "dayik(dî) û bab(bav)", ["mother and father (parents)", "daughters and sons", "sisters and brothers", "wives and husbands"], "mother and father (parents)"),
-            choiceStep("Match the Meaning", "keç û kur(biçûk)", ["parents", "daughters and sons (children)", "siblings", "grandparents"], "daughters and sons (children)"),
+            choiceStep("Match the Meaning", "keç û kur", ["parents", "daughters and sons (children)", "siblings", "grandparents"], "daughters and sons (children)"),
             choiceStep("Match the Meaning", "xwişk û bira", ["parents", "children", "sisters and brothers (siblings)", "cousins"], "sisters and brothers (siblings)"),
             choiceStep("Match the Meaning", "jin û mêr", ["children", "grandparents", "cousins", "wives and husbands (spouses)"], "wives and husbands (spouses)"),
             choiceStep("Match the Meaning", "Nevî (nevîk)", ["parents", "siblings", "grandparents", "granddaughters and grandsons (grandchildren)"], "granddaughters and grandsons (grandchildren)"),
@@ -1521,7 +1521,7 @@ const gameParts = [
                 ["Spouses", "jin û mêr"],
                 ["Grandparents", "dapîr û bapîr"],
                 ["Grandchildren", "nevî (nevîk)"]
-            ], "🎯 Match the Pairs", "kurmanji"),
+            ], "🎯 Match the Pairs\nIn box: keç û kur(biçûk), nevî (nevîk), dapîr û bapîr, xwişk û bira, jin û mêr, dayik û bab", "kurmanji"),
             nextStep("Game One A • Part 1D complete"),
             choiceStep("Translate this sentence", "Silav", ["Hello", "Or", "Bye"], "Hello"),
             choiceStep("Select the correct word", "Silav", ["Tea", "Coffee", "Hello"], "Hello"),
@@ -2828,6 +2828,20 @@ function familyEmojiMatchStep(pairs){
         pairs:pairs,
         leftHeading:"Kurmanji",
         rightHeading:"🇬🇧 English",
+        leftSide:"second",
+        rightSide:"first",
+        rightSpeakValues:true
+    };
+}
+
+function familyEmojiMatchStepNamed(title, pairs, leftHeading, rightHeading){
+    return {
+        type:"match",
+        instruction:title,
+        prompt:"",
+        pairs:pairs,
+        leftHeading:leftHeading || "Kurmanji",
+        rightHeading:rightHeading || "🇬🇧 English",
         leftSide:"second",
         rightSide:"first",
         rightSpeakValues:true

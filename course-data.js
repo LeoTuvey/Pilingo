@@ -25,7 +25,7 @@ const SECTION_ONE_PARTS = [
     number: 2,
     title: "👨‍👩‍👧‍👦 Describe Your Family",
     summary: "Family words, roles, and simple descriptions.",
-    href: "game1.html?coursePart=family&v=lessonpath3",
+    href: "game1.html?coursePart=family&v=lessonpath4",
     icon: "👨‍👩‍👧‍👦",
     accent: "orange",
     lessons: lessonList(
@@ -34,10 +34,7 @@ const SECTION_ONE_PARTS = [
       "Write family words in English",
       "Listening and typing review",
       "Translate Kurmanji family sentences into English",
-      "Translate English family sentences into Kurmanji",
-      "Extended family words and relationships",
-      "Family groups and meaning review",
-      "Voice and pair matching review"
+      "Translate English family sentences into Kurmanji"
     )
   },
   {

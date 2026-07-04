@@ -1478,67 +1478,6 @@ const gameParts = [
             rawBuildStep("Wergera vê hevokê bike.\nTranslate the sentence", "I am a girl.\n…………… .", ["Ez", "keç", "im", "kur", "bav"], ["Ez", "keç", "im"]),
             rawBuildStep("Wergera vê hevokê bike.\nTranslate the sentence", "I am a woman.\n…………… .", ["jin", "im", "mêr", "Ez", "law"], ["Ez", "jin", "im"]),
             nextStep("Game One A • Part 1C complete"),
-            familyEmojiMatchStepNamed("👨 Different Types of Uncles", [
-                { english:"uncle", kurmanji:"👨 Mam", group:"uncle" },
-                { english:"uncle", kurmanji:"👨 Xal", group:"uncle" },
-                { english:"uncle", kurmanji:"👨 Mêrê Metê", group:"uncle" },
-                { english:"uncle", kurmanji:"👨 Mêrê Xaletê", group:"uncle" }
-            ]),
-            familyEmojiMatchStepNamed("👩 Different Types of Aunts", [
-                { english:"Aunt", kurmanji:"👩 Met", group:"aunt" },
-                { english:"Aunt", kurmanji:"👩 Xalet", group:"aunt" },
-                { english:"Aunt", kurmanji:"👩 Jin Mam", group:"aunt" },
-                { english:"Aunt", kurmanji:"👩 Jin Xal", group:"aunt" }
-            ]),
-            familyEmojiMatchStepNamed("👧👦 Different Types of Cousins", [
-                { english:"Cousin", kurmanji:"👧👦 Kur met û Kiç met", group:"cousin" },
-                { english:"Cousin", kurmanji:"👧👦 Kur mam û Kiç mam", group:"cousin" },
-                { english:"Cousin", kurmanji:"👧👦 Kur xalet û Kiç Xalet", group:"cousin" },
-                { english:"Cousin", kurmanji:"👧👦 Kur xal û Kiç Xal", group:"cousin" }
-            ]),
-            spokenMatchStep([
-                { english:"Niece", kurmanji:"Kiça biray", group:"niece" },
-                { english:"Niece", kurmanji:"Kiça xwișkê", group:"niece" },
-                { english:"Nephew", kurmanji:"Kurê biray", group:"nephew" },
-                { english:"Nephew", kurmanji:"Kurê xwișkê", group:"nephew" }
-            ], "👧👦 Nieces and Nephews", "kurmanji"),
-            familyEmojiMatchStepNamed("👨‍👩‍👧‍👦 Family Groups", [
-                ["mother and father (parents)", "dayik(dî) û bab(bav)"],
-                ["daughters and sons (children)", "keç û kur(biçûk)"],
-                ["sisters and brothers (siblings)", "xwişk û bira"],
-                ["wives and husbands (spouses)", "jin û mêr"],
-                ["granddaughters and grandsons (grandchildren)", "nevî (nevîk)"],
-                ["grandmother and grandfather (grandparents)", "dapîr û bapîr"]
-            ]),
-            familyEmojiMatchStepNamed("👨‍👩‍👧‍👦 Family Groups", [
-                ["parents", "dayik(dî) û bab(bav)"],
-                ["children", "keç û kur(biçûk)"],
-                ["siblings", "xwişk û bira"],
-                ["spouses", "jin û mêr"],
-                ["grandchildren", "nevî (nevîk)"],
-                ["grandparents", "dapîr û bapîr"]
-            ]),
-            choiceStep("Match the Meaning", "dayik(dî) û bab(bav)", ["mother and father (parents)", "daughters and sons", "sisters and brothers", "wives and husbands"], "mother and father (parents)"),
-            choiceStep("Match the Meaning", "keç û kur", ["parents", "daughters and sons (children)", "siblings", "grandparents"], "daughters and sons (children)"),
-            choiceStep("Match the Meaning", "xwişk û bira", ["parents", "children", "sisters and brothers (siblings)", "cousins"], "sisters and brothers (siblings)"),
-            choiceStep("Match the Meaning", "jin û mêr", ["children", "grandparents", "cousins", "wives and husbands (spouses)"], "wives and husbands (spouses)"),
-            choiceStep("Match the Meaning", "Nevî (nevîk)", ["parents", "siblings", "grandparents", "granddaughters and grandsons (grandchildren)"], "granddaughters and grandsons (grandchildren)"),
-            choiceStep("Match the Meaning", "dapîr û bapîr", ["parents", "grandchildren", "cousins", "grandmother and grandfather (grandparents)"], "grandmother and grandfather (grandparents)"),
-            choiceStep("Match the Meaning", "dayik(dî) û bab(bav)", ["parents", "daughters and sons", "sisters and brothers", "wives and husbands"], "parents"),
-            choiceStep("Match the Meaning", "keç û kur(biçûk)", ["parents", "children", "siblings", "grandparents"], "children"),
-            choiceStep("Match the Meaning", "xwişk û bira", ["parents", "children", "siblings", "cousins"], "siblings"),
-            choiceStep("Match the Meaning", "jin û mêr", ["children", "grandparents", "cousins", "spouses"], "spouses"),
-            choiceStep("Match the Meaning", "Nevî (nevîk)", ["parents", "siblings", "grandparents", "grandchildren"], "grandchildren"),
-            choiceStep("Match the Meaning", "dapîr û bapîr", ["parents", "grandchildren", "cousins", "grandparents"], "grandparents"),
-            spokenMatchStep([
-                ["Parents", "dayik û bab"],
-                ["Children", "keç û kur (biçûk)"],
-                ["Siblings", "xwişk û bira"],
-                ["Spouses", "jin û mêr"],
-                ["Grandparents", "dapîr û bapîr"],
-                ["Grandchildren", "nevî (nevîk)"]
-            ], "🎯 Match the Pairs\nIn box: keç û kur(biçûk), nevî (nevîk), dapîr û bapîr, xwişk û bira, jin û mêr, dayik û bab", "kurmanji"),
-            nextStep("Game One A • Part 1D complete"),
             choiceStep("Translate this sentence", "Silav", ["Hello", "Or", "Bye"], "Hello"),
             choiceStep("Select the correct word", "Silav", ["Tea", "Coffee", "Hello"], "Hello"),
             buildStep("Translate this sentence", "Bi xêr hatî!", ["coffee", "please", "welcome"], ["welcome"]),
@@ -2079,7 +2018,7 @@ const coursePartRoutes = {
         slug:"family",
         title:"👨‍👩‍👧‍👦 Describe Your Family",
         gamePartIndex:0,
-        sectionIds:["a-part-1b", "a-part-1c", "a-part-1d"],
+        sectionIds:["a-part-1b", "a-part-1c"],
         enginePartId:"part-2"
     },
     greetings:{
@@ -2312,24 +2251,14 @@ const partSections = {
             ]
         },
         {
-            id:"a-part-1d",
-            label:"Part 1D",
-            detail:"Extended family members, family groups, and pair review",
-            start:65,
-            end:84,
-            lessons:[
-                { id:"a-part-1d-lesson-1", label:"Lesson 1", detail:"Extended family members, family groups, and quizzes", start:65, end:84 }
-            ]
-        },
-        {
             id:"a-part-2",
             label:"Part 2",
             detail:"Greetings, welcome words, and polite phrases",
-            start:85,
-            end:94,
+            start:65,
+            end:74,
             lessons:[
-                { id:"a-part-2-lesson-1", label:"Lesson 1", detail:"Hello and welcome basics", start:85, end:89 },
-                { id:"a-part-2-lesson-2", label:"Lesson 2", detail:"Yes, no, bye, and greeting review", start:90, end:94 }
+                { id:"a-part-2-lesson-1", label:"Lesson 1", detail:"Hello and welcome basics", start:65, end:69 },
+                { id:"a-part-2-lesson-2", label:"Lesson 2", detail:"Yes, no, bye, and greeting review", start:70, end:74 }
             ]
         }
     ],

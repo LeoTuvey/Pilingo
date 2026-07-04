@@ -25,7 +25,7 @@ const SECTION_ONE_PARTS = [
     number: 2,
     title: "👨‍👩‍👧‍👦 Describe Your Family",
     summary: "Family words, roles, and simple descriptions.",
-    href: "game1.html?coursePart=family&v=lessonpath7",
+    href: "game1.html?coursePart=family&v=lessonpath8",
     icon: "👨‍👩‍👧‍👦",
     accent: "orange",
     lessons: lessonList(

@@ -7,6 +7,12 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="🐯 Pilingo">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
+<script>
+if (window.location.protocol === "file:") {
+  const target = "http://localhost:3000/engine.html" + window.location.search + window.location.hash;
+  window.location.replace(target);
+}
+</script>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="pilingo-icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="pilingo-icon-192.png">
@@ -1011,7 +1017,7 @@ const PART_COLORS = {
 
 const COURSE_PART_SECTION_MAP = {
   alphabets:["a-part-1a"],
-  family:["a-part-1b","a-part-1c"],
+  family:["a-part-1b","a-part-1c","a-part-1d"],
   greetings:["a-part-2"],
   "food-drink":["b-part-1"],
   possessions:["d-part-1","d-part-2","d-part-3"],

@@ -1502,6 +1502,22 @@ const gameParts = [
                 { english:"Nephew", kurmanji:"Kurê biray", group:"nephew" },
                 { english:"Nephew", kurmanji:"Kurê xwișkê", group:"nephew" }
             ], "👧👦 Nieces and Nephews", "kurmanji"),
+            familyEmojiMatchStepNamed("👨‍👩‍👧‍👦 Family Groups", [
+                ["mother and father (parents)", "dayik(dî) û bab(bav)"],
+                ["daughters and sons (children)", "keç û kur(biçûk)"],
+                ["sisters and brothers (siblings)", "xwişk û bira"],
+                ["wives and husbands (spouses)", "jin û mêr"],
+                ["granddaughters and grandsons (grandchildren)", "nevî (nevîk)"],
+                ["grandmother and grandfather (grandparents)", "dapîr û bapîr"]
+            ]),
+            familyEmojiMatchStepNamed("👨‍👩‍👧‍👦 Family Groups", [
+                ["parents", "dayik(dî) û bab(bav)"],
+                ["children", "keç û kur(biçûk)"],
+                ["siblings", "xwişk û bira"],
+                ["spouses", "jin û mêr"],
+                ["grandchildren", "nevî (nevîk)"],
+                ["grandparents", "dapîr û bapîr"]
+            ]),
             choiceStep("Match the Meaning", "dayik(dî) û bab(bav)", ["mother and father (parents)", "daughters and sons", "sisters and brothers", "wives and husbands"], "mother and father (parents)"),
             choiceStep("Match the Meaning", "keç û kur", ["parents", "daughters and sons (children)", "siblings", "grandparents"], "daughters and sons (children)"),
             choiceStep("Match the Meaning", "xwişk û bira", ["parents", "children", "sisters and brothers (siblings)", "cousins"], "sisters and brothers (siblings)"),
@@ -2300,22 +2316,28 @@ const partSections = {
             label:"Part 1D",
             detail:"Extended family members, family groups, and pair review",
             start:65,
-            end:82,
+            end:84,
             lessons:[
-                { id:"a-part-1d-lesson-1", label:"Lesson 1", detail:"Different types of uncles, aunts, cousins, nieces, and nephews", start:65, end:68 },
-                { id:"a-part-1d-lesson-2", label:"Lesson 2", detail:"Family groups and meaning practice", start:69, end:74 },
-                { id:"a-part-1d-lesson-3", label:"Lesson 3", detail:"Short family group meanings and voice pair review", start:75, end:82 }
+                { id:"a-part-1d-lesson-1", label:"Lesson 1", detail:"Different types of uncles", start:65, end:65 },
+                { id:"a-part-1d-lesson-2", label:"Lesson 2", detail:"Different types of aunts", start:66, end:66 },
+                { id:"a-part-1d-lesson-3", label:"Lesson 3", detail:"Different types of cousins", start:67, end:67 },
+                { id:"a-part-1d-lesson-4", label:"Lesson 4", detail:"Nieces and nephews", start:68, end:68 },
+                { id:"a-part-1d-lesson-5", label:"Lesson 5", detail:"Family groups with full meanings", start:69, end:69 },
+                { id:"a-part-1d-lesson-6", label:"Lesson 6", detail:"Family groups with short meanings", start:70, end:70 },
+                { id:"a-part-1d-lesson-7", label:"Quiz 1", detail:"Match the Meaning", start:71, end:76 },
+                { id:"a-part-1d-lesson-8", label:"Quiz 2", detail:"Match the Meaning", start:77, end:82 },
+                { id:"a-part-1d-lesson-9", label:"Quiz 3", detail:"Match the Pairs", start:83, end:83 }
             ]
         },
         {
             id:"a-part-2",
             label:"Part 2",
             detail:"Greetings, welcome words, and polite phrases",
-            start:83,
-            end:92,
+            start:85,
+            end:94,
             lessons:[
-                { id:"a-part-2-lesson-1", label:"Lesson 1", detail:"Hello and welcome basics", start:83, end:87 },
-                { id:"a-part-2-lesson-2", label:"Lesson 2", detail:"Yes, no, bye, and greeting review", start:88, end:92 }
+                { id:"a-part-2-lesson-1", label:"Lesson 1", detail:"Hello and welcome basics", start:85, end:89 },
+                { id:"a-part-2-lesson-2", label:"Lesson 2", detail:"Yes, no, bye, and greeting review", start:90, end:94 }
             ]
         }
     ],
@@ -3143,10 +3165,7 @@ function remainingLessonStepOrder(index, sectionIndex, lessonIndex){
 
     const allSteps = gradableStepsInRange(index, lesson.start, lesson.end);
     if(!allSteps.length) return [];
-
-    const completed = new Set(savedCompletedStepsForLesson(lesson.id));
-    const remaining = allSteps.filter(step => !completed.has(step));
-    return remaining.length ? remaining : [...allSteps];
+    return [...allSteps];
 }
 
 function lessonProgressIds(index, sectionIndex){
@@ -3577,6 +3596,11 @@ function startSection(index, sectionIndex){
     const sections = sectionsForPart(index);
     const section = sections[sectionIndex];
     if(!section || !isSectionUnlocked(index, sectionIndex)) return;
+    const lessons = lessonsForSection(index, sectionIndex);
+    if(lessons.length > 1) {
+        showLessonSelect(index, sectionIndex, "Choose a lesson in this ball");
+        return;
+    }
     startLesson(index, sectionIndex, nextLessonIndexForSection(index, sectionIndex));
 }
 

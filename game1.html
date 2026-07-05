@@ -1590,7 +1590,7 @@ const gameParts = [
             nextStep("Game One A • Part 1D complete"),
             {
                 type:"match",
-                instruction:"🔀 Match the Pairs\nEnglish\t\t\t\tKurmanji\nMix the answers in order be verdifficult for learners",
+                instruction:"🔀 Match the Pairs",
                 prompt:"",
                 pairs:[
                     ["Smart", "zîrek (jîr)"],
@@ -1629,7 +1629,7 @@ const gameParts = [
             },
             {
                 type:"match",
-                instruction:"Subject Pronouns\n\nKurmanji\t\tEnglish\n\nAnswers:\n\nEz=I\nTu=You or You\nEw=He or She or They\nEw=He or She or They\nEm=We\nHûn (Hing)=You or You\nEw=He or She or They",
+                instruction:"Subject Pronouns",
                 prompt:"",
                 pairs:[
                     { english:"I", kurmanji:"Ez", group:"ez" },
@@ -1640,7 +1640,6 @@ const gameParts = [
                     { english:"You", kurmanji:"Hûn (Hing)", group:"you" },
                     { english:"They", kurmanji:"Ew", group:"ew-pronoun" }
                 ],
-                noShuffle:true,
                 leftHeading:"Kurmanji",
                 rightHeading:"English",
                 leftSide:"second",
@@ -1648,7 +1647,7 @@ const gameParts = [
             },
             {
                 type:"match",
-                instruction:"To Be\n\nKurmanji\t\tEnglish\n\nAnswers:\n\nEz im = I am\nTu î = You are or You are\nEw e = He is or She is\nEw e = She is or He is\nEm in = We are\nHûn(Hing) in = You are or You are\nEw in = They are",
+                instruction:"To Be",
                 prompt:"",
                 pairs:[
                     { english:"I am", kurmanji:"Ez im", group:"ez-im" },
@@ -1659,7 +1658,6 @@ const gameParts = [
                     { english:"You are", kurmanji:"Hûn(Hing) in", group:"you-are" },
                     { english:"They are", kurmanji:"Ew in", group:"ew-in" }
                 ],
-                noShuffle:true,
                 leftHeading:"Kurmanji",
                 rightHeading:"English",
                 leftSide:"second",
@@ -1686,7 +1684,7 @@ const gameParts = [
             typeStep("Type the Correct English Sentence", "Hûn(hing) in.\n……………..", "You are."),
             typeStep("Type the Correct English Sentence", "Ew in.\n……………", "They are."),
             rawBuildStep("Put the Words in Order", "Ez mamoste me.\n\nI, teacher, am, a", ["I", "teacher", "am", "a"], ["I", "am", "a", "teacher"]),
-            rawBuildStepMulti("Put the Words in Order", "You are a doctor.\n\nî • Tu • doktor • bijîşk", ["î", "Tu", "doktor", "bijîşk"], [["Tu", "doktor", "î"], ["Tu", "bijîşk", "î"]]),
+            rawBuildStep("Put the Words in Order", "You are a doctor.\n\nî • Tu • doktor • bijîşk", ["î", "Tu", "doktor", "bijîşk"], ["Tu", "bijîşk", "î"]),
             rawBuildStep("Put the Words in Order", "He is an engineer.\n\ne • Ew • Endazyar", ["e", "Ew", "Endazyar"], ["Ew", "Endazyar", "e"]),
             rawBuildStep("Put the Words in Order", "She is a nurse.\n\ne • Ew • perstar", ["e", "Ew", "perstar"], ["Ew", "perstar", "e"]),
             rawBuildStep("Put the Words in Order", "We are Kurdish(Kurds).\n\nin • Em • kurd", ["in", "Em", "kurd"], ["Em", "kurd", "in"]),
@@ -1706,14 +1704,13 @@ const gameParts = [
                     ["Your family", "Malbat-a we(hingo)"],
                     ["Their family", "Malbat-a wan"]
                 ],
-                noShuffle:true,
                 leftHeading:"English",
                 rightHeading:"Kurmanji",
                 leftSide:"first",
                 rightSide:"second",
                 leftSpeakMap:{
-                    "My father (dad)":"My father",
-                    "Your mother (mom)":"Your mother",
+                    "My father (dad)":"My father (dad)",
+                    "Your mother (mom)":"Your mother (mom)",
                     "His sister":"His sister",
                     "Her sister":"Her sister",
                     "His brother":"His brother",
@@ -2264,7 +2261,7 @@ const coursePartRoutes = {
         slug:"family",
         title:"👨‍👩‍👧‍👦 Describe Your Family",
         gamePartIndex:0,
-        sectionIds:["a-part-1b", "a-part-1c", "a-part-1d-v3", "a-part-1e-v1"],
+        sectionIds:["a-part-1b", "a-part-1c", "a-part-1d-v3", "a-part-1e-v2"],
         enginePartId:"part-2"
     },
     greetings:{
@@ -2512,18 +2509,20 @@ const partSections = {
             ]
         },
         {
-            id:"a-part-1e-v1",
+            id:"a-part-1e-v2",
             label:"Part 1E",
-            detail:"Descriptions, pronouns, and family possession phrases",
+            detail:"Descriptions, pronouns, to be, and family possessives",
             start:85,
             end:115,
             lessons:[
-                { id:"a-part-1e-v1-lesson-1", label:"Lesson 1", detail:"Match new words and subject pronouns", start:85, end:87 },
-                { id:"a-part-1e-v1-lesson-2", label:"Quiz 1", detail:"Select the correct meaning", start:88, end:94 },
-                { id:"a-part-1e-v1-lesson-3", label:"Lesson 2", detail:"Translate into Kurmanji", start:95, end:100 },
-                { id:"a-part-1e-v1-lesson-4", label:"Lesson 3", detail:"Translate into English", start:101, end:107 },
-                { id:"a-part-1e-v1-lesson-5", label:"Lesson 4", detail:"Unscramble the sentence", start:108, end:113 },
-                { id:"a-part-1e-v1-lesson-6", label:"Lesson 5", detail:"Family possession phrases", start:114, end:114 }
+                { id:"a-part-1e-v2-lesson-1", label:"Lesson 1", detail:"Match the Pairs", start:85, end:85 },
+                { id:"a-part-1e-v2-lesson-2", label:"Lesson 2", detail:"Subject Pronouns", start:86, end:86 },
+                { id:"a-part-1e-v2-lesson-3", label:"Lesson 3", detail:"To Be", start:87, end:87 },
+                { id:"a-part-1e-v2-lesson-4", label:"Lesson 4", detail:"Select the Correct Meaning", start:88, end:94 },
+                { id:"a-part-1e-v2-lesson-5", label:"Lesson 5", detail:"Translate into Kurmanji", start:95, end:100 },
+                { id:"a-part-1e-v2-lesson-6", label:"Lesson 6", detail:"Type the Correct English Sentence", start:101, end:107 },
+                { id:"a-part-1e-v2-lesson-7", label:"Lesson 7", detail:"Put the Words in Order", start:108, end:113 },
+                { id:"a-part-1e-v2-lesson-8", label:"Lesson 8", detail:"Family & Possessives", start:114, end:114 }
             ]
         },
         {

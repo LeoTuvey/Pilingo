@@ -25,7 +25,7 @@ const SECTION_ONE_PARTS = [
     number: 2,
     title: "👨‍👩‍👧‍👦 Describe Your Family",
     summary: "Family words, roles, and simple descriptions.",
-    href: "game1.html?coursePart=family&v=lessonpath9",
+    href: "game1.html?coursePart=family&v=lessonpath11",
     icon: "👨‍👩‍👧‍👦",
     accent: "orange",
     lessons: lessonList(
@@ -37,8 +37,14 @@ const SECTION_ONE_PARTS = [
       "Translate English family sentences into Kurmanji",
       "Extended family words and relationships",
       "Family groups and review",
-      "Subject pronouns and descriptions",
-      "Family possession phrases"
+      "Match the Pairs",
+      "Subject Pronouns",
+      "To Be",
+      "Select the Correct Meaning",
+      "Translate into Kurmanji",
+      "Type the Correct English Sentence",
+      "Put the Words in Order",
+      "Family & Possessives"
     )
   },
   {

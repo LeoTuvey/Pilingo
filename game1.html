@@ -1588,6 +1588,131 @@ const gameParts = [
                 ["Grandchildren", "nevî (nevîk)"]
             ], "🎯 Match the Pairs\nIn box: keç û kur(biçûk), nevî (nevîk), dapîr û bapîr, xwişk û bira, jin û mêr, dayik û bab", "kurmanji"),
             nextStep("Game One A • Part 1D complete"),
+            {
+                type:"match",
+                instruction:"🔀 Match the Pairs",
+                prompt:"",
+                pairs:[
+                    ["Smart", "zîrek (jîr)"],
+                    ["stupid", "bêaqil (gêl)"],
+                    ["long", "dirêj"],
+                    ["short", "kurt"],
+                    ["tall", "bilind"],
+                    ["very", "gelek (zor / pir)"],
+                    ["student", "Xwendevan (xwendekar)"],
+                    ["teacher", "mamoste"],
+                    ["lazy", "tembel"]
+                ],
+                leftHeading:"English",
+                rightHeading:"Kurmanji",
+                leftSide:"first",
+                rightSide:"second",
+                leftSpeakMap:{
+                    "Smart":"Smart",
+                    "stupid":"stupid",
+                    "long":"long",
+                    "short":"short",
+                    "tall":"tall",
+                    "very":"very",
+                    "student":"student",
+                    "teacher":"teacher",
+                    "lazy":"lazy"
+                }
+            },
+            {
+                type:"match",
+                instruction:"Subject Pronouns",
+                prompt:"",
+                pairs:[
+                    ["I", "Ez"],
+                    ["You", "Tu"],
+                    ["He", "Ew"],
+                    ["She", "Ew"],
+                    ["We", "Em"],
+                    ["You", "Hûn (Hing)"],
+                    ["They", "Ew"]
+                ],
+                leftHeading:"Kurmanji",
+                rightHeading:"English",
+                leftSide:"second",
+                rightSide:"first"
+            },
+            {
+                type:"match",
+                instruction:"Kurmanji\t\tEnglish",
+                prompt:"",
+                pairs:[
+                    ["I am", "Ez im"],
+                    ["You are", "Tu î"],
+                    ["He is", "Ew e"],
+                    ["She is", "Ew e"],
+                    ["We are", "Em in"],
+                    ["You are", "Hûn(Hing) in"],
+                    ["They are", "Ew in"]
+                ],
+                leftHeading:"Kurmanji",
+                rightHeading:"English",
+                leftSide:"second",
+                rightSide:"first"
+            },
+            choiceStep("Select the Correct Meaning", "Ez im", ["We are", "They are", "He is", "I am"], "I am"),
+            choiceStep("Select the Correct Meaning", "Tu î", ["I am", "He is", "You are", "They are"], "You are"),
+            choiceStep("Select the Correct Meaning", "Ew e", ["We are", "I am", "They are", "He is"], "He is"),
+            choiceStep("Select the Correct Meaning", "Ew e", ["We are", "I am", "They are", "She is"], "She is"),
+            choiceStep("Select the Correct Meaning", "Em in", ["She is", "You are", "They are", "We are"], "We are"),
+            choiceStep("Select the Correct Meaning", "Hûn (hing) in", ["I am", "He is", "You are", "We are"], "You are"),
+            choiceStep("Select the Correct Meaning", "Ew in", ["He is", "She is", "We are", "They are"], "They are"),
+            rawBuildStep("Translate into Kurmanji", "I am.\n……", ["im", "Ez", "in", "Ew"], ["Ez", "im"]),
+            rawBuildStep("Translate into Kurmanji", "You are.\n……..", ["Tu", "î", "im", "e"], ["Tu", "î"]),
+            rawBuildStep("Translate into Kurmanji", "He is.\n……….", ["e", "Ew", "in", "Em"], ["Ew", "e"]),
+            rawBuildStep("Translate into Kurmanji", "she is.\n……….", ["e", "Ew", "in", "Em"], ["Ew", "e"]),
+            rawBuildStep("Translate into Kurmanji", "We are.\n…………", ["Em", "in", "e", "Tu"], ["Em", "in"]),
+            rawBuildStep("Translate into Kurmanji", "They are.\n…………", ["Ew", "in", "î", "Tu"], ["Ew", "in"]),
+            rawBuildStep("Translate into English", "Ez im.\n……..", ["I", "am", "You", "are"], ["I", "am"]),
+            rawBuildStep("Translate into English", "Tu î.\n……….", ["You", "are", "I", "am"], ["You", "are"]),
+            rawBuildStep("Translate into English", "Ew e. (nêr)\n………..", ["He", "is", "They", "are"], ["He", "is"]),
+            rawBuildStep("Translate into English", "Ew e. (mê)\n………..", ["She", "is", "They", "are"], ["She", "is"]),
+            rawBuildStep("Translate into English", "Em in.\n……………", ["We", "are", "You", "are"], ["We", "are"]),
+            rawBuildStep("Translate into English", "Hûn(hing) in.\n……………..", ["You", "are", "We", "are"], ["You", "are"]),
+            rawBuildStep("Translate into English", "Ew in.\n……………", ["They", "are", "He", "is"], ["They", "are"]),
+            rawBuildStep("Unscramble the Sentence", "I am.\nWords\nim • Ez", ["im", "Ez"], ["Ez", "im"]),
+            rawBuildStep("Unscramble the Sentence", "You are.\nWords\nî • Tu", ["î", "Tu"], ["Tu", "î"]),
+            rawBuildStep("Unscramble the Sentence", "He is.\nWords\ne • Ew", ["e", "Ew"], ["Ew", "e"]),
+            rawBuildStep("Unscramble the Sentence", "She is.\nWords\ne • Ew", ["e", "Ew"], ["Ew", "e"]),
+            rawBuildStep("Unscramble the Sentence", "We are.\nWords\nin • Em", ["in", "Em"], ["Em", "in"]),
+            rawBuildStep("Unscramble the Sentence", "They are.\nWords\nEw • in", ["Ew", "in"], ["Ew", "in"]),
+            {
+                type:"match",
+                instruction:"English\t\t\t\t\tKurmanji",
+                prompt:"",
+                pairs:[
+                    ["My father (dad)", "Bab-ê min"],
+                    ["Your mother (mom)", "Dayik-a te"],
+                    ["His sister", "Xwişk-a wî"],
+                    ["Her sister", "Xwişk-a wê"],
+                    ["His brother", "Bira-ê wî"],
+                    ["Her brother", "Bira-ê wê"],
+                    ["Our family", "Malbat-a me"],
+                    ["Your family", "Malbat-a we(hingo)"],
+                    ["Their family", "Malbat-a wan"]
+                ],
+                leftHeading:"English",
+                rightHeading:"Kurmanji",
+                leftSide:"first",
+                rightSide:"second",
+                leftSpeakMap:{
+                    "My father (dad)":"My father",
+                    "Your mother (mom)":"Your mother",
+                    "His sister":"His sister",
+                    "Her sister":"Her sister",
+                    "His brother":"His brother",
+                    "Her brother":"Her brother",
+                    "Our family":"Our family",
+                    "Your family":"Your family",
+                    "Their family":"Their family"
+                }
+            },
+            nextStep("Game One A • Part 1E complete"),
             choiceStep("Translate this sentence", "Silav", ["Hello", "Or", "Bye"], "Hello"),
             choiceStep("Select the correct word", "Silav", ["Tea", "Coffee", "Hello"], "Hello"),
             buildStep("Translate this sentence", "Bi xêr hatî!", ["coffee", "please", "welcome"], ["welcome"]),
@@ -2128,7 +2253,7 @@ const coursePartRoutes = {
         slug:"family",
         title:"👨‍👩‍👧‍👦 Describe Your Family",
         gamePartIndex:0,
-        sectionIds:["a-part-1b", "a-part-1c", "a-part-1d-v3"],
+        sectionIds:["a-part-1b", "a-part-1c", "a-part-1d-v3", "a-part-1e-v1"],
         enginePartId:"part-2"
     },
     greetings:{
@@ -2376,14 +2501,29 @@ const partSections = {
             ]
         },
         {
+            id:"a-part-1e-v1",
+            label:"Part 1E",
+            detail:"Descriptions, pronouns, and family possession phrases",
+            start:85,
+            end:115,
+            lessons:[
+                { id:"a-part-1e-v1-lesson-1", label:"Lesson 1", detail:"Match new words and subject pronouns", start:85, end:87 },
+                { id:"a-part-1e-v1-lesson-2", label:"Quiz 1", detail:"Select the correct meaning", start:88, end:94 },
+                { id:"a-part-1e-v1-lesson-3", label:"Lesson 2", detail:"Translate into Kurmanji", start:95, end:100 },
+                { id:"a-part-1e-v1-lesson-4", label:"Lesson 3", detail:"Translate into English", start:101, end:107 },
+                { id:"a-part-1e-v1-lesson-5", label:"Lesson 4", detail:"Unscramble the sentence", start:108, end:113 },
+                { id:"a-part-1e-v1-lesson-6", label:"Lesson 5", detail:"Family possession phrases", start:114, end:114 }
+            ]
+        },
+        {
             id:"a-part-2",
             label:"Part 2",
             detail:"Greetings, welcome words, and polite phrases",
-            start:85,
-            end:94,
+            start:116,
+            end:125,
             lessons:[
-                { id:"a-part-2-lesson-1", label:"Lesson 1", detail:"Hello and welcome basics", start:85, end:89 },
-                { id:"a-part-2-lesson-2", label:"Lesson 2", detail:"Yes, no, bye, and greeting review", start:90, end:94 }
+                { id:"a-part-2-lesson-1", label:"Lesson 1", detail:"Hello and welcome basics", start:116, end:120 },
+                { id:"a-part-2-lesson-2", label:"Lesson 2", detail:"Yes, no, bye, and greeting review", start:121, end:125 }
             ]
         }
     ],

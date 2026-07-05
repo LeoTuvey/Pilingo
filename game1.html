@@ -1590,7 +1590,7 @@ const gameParts = [
             nextStep("Game One A • Part 1D complete"),
             {
                 type:"match",
-                instruction:"🔀 Match the Pairs",
+                instruction:"🔀 Match the Pairs\nEnglish\t\t\t\tKurmanji\nMix the answers in order be verdifficult for learners",
                 prompt:"",
                 pairs:[
                     ["Smart", "zîrek (jîr)"],
@@ -1629,16 +1629,16 @@ const gameParts = [
             },
             {
                 type:"match",
-                instruction:"Subject Pronouns",
+                instruction:"Subject Pronouns\n\nKurmanji\t\tEnglish\n\nAnswers:\n\nEz=I\nTu=You or You\nEw=He or She or They\nEw=He or She or They\nEm=We\nHûn (Hing)=You or You\nEw=He or She or They",
                 prompt:"",
                 pairs:[
-                    ["I", "Ez"],
-                    ["You", "Tu"],
-                    ["He", "Ew"],
-                    ["She", "Ew"],
-                    ["We", "Em"],
-                    ["You", "Hûn (Hing)"],
-                    ["They", "Ew"]
+                    { english:"I", kurmanji:"Ez", group:"ez" },
+                    { english:"You", kurmanji:"Tu", group:"you" },
+                    { english:"He", kurmanji:"Ew", group:"ew-pronoun" },
+                    { english:"She", kurmanji:"Ew", group:"ew-pronoun" },
+                    { english:"We", kurmanji:"Em", group:"em" },
+                    { english:"You", kurmanji:"Hûn (Hing)", group:"you" },
+                    { english:"They", kurmanji:"Ew", group:"ew-pronoun" }
                 ],
                 noShuffle:true,
                 leftHeading:"Kurmanji",
@@ -1648,16 +1648,16 @@ const gameParts = [
             },
             {
                 type:"match",
-                instruction:"Kurmanji\t\tEnglish",
+                instruction:"To Be\n\nKurmanji\t\tEnglish\n\nAnswers:\n\nEz im = I am\nTu î = You are or You are\nEw e = He is or She is\nEw e = She is or He is\nEm in = We are\nHûn(Hing) in = You are or You are\nEw in = They are",
                 prompt:"",
                 pairs:[
-                    ["I am", "Ez im"],
-                    ["You are", "Tu î"],
-                    ["He is", "Ew e"],
-                    ["She is", "Ew e"],
-                    ["We are", "Em in"],
-                    ["You are", "Hûn(Hing) in"],
-                    ["They are", "Ew in"]
+                    { english:"I am", kurmanji:"Ez im", group:"ez-im" },
+                    { english:"You are", kurmanji:"Tu î", group:"you-are" },
+                    { english:"He is", kurmanji:"Ew e", group:"ew-e" },
+                    { english:"She is", kurmanji:"Ew e", group:"ew-e" },
+                    { english:"We are", kurmanji:"Em in", group:"em-in" },
+                    { english:"You are", kurmanji:"Hûn(Hing) in", group:"you-are" },
+                    { english:"They are", kurmanji:"Ew in", group:"ew-in" }
                 ],
                 noShuffle:true,
                 leftHeading:"Kurmanji",

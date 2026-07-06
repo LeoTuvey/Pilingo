@@ -1,8 +1,51 @@
 (function(){
   const STYLE_ID = "pilingo-mascot-styles";
+  const BUBBLE_LAYER_ID = "pilingo-mascot-bubble-layer";
   const DEFAULT_STATE = "idle";
   const TRANSIENT_STATES = new Set(["wave", "smile", "jump", "laugh", "think", "read", "write", "talk", "listen", "celebrate", "sad"]);
   const INSTANCES = new Map();
+  const MESSAGE_GROUPS = {
+    correct: [
+      "Excellent!",
+      "Great job!",
+      "Well done!",
+      "You're doing great!",
+      "Fantastic!",
+      "Keep going!",
+      "Awesome!",
+      "You got it!"
+    ],
+    wrong: [
+      "Almost!",
+      "Try again!",
+      "You can do it!",
+      "Keep practicing!",
+      "Don't give up!",
+      "Let's try once more!",
+      "You're improving!"
+    ],
+    lessonComplete: [
+      "Lesson Complete!",
+      "Excellent work!",
+      "You finished the lesson!",
+      "Amazing progress!",
+      "Keep learning!"
+    ],
+    quizComplete: [
+      "Quiz Complete!",
+      "You did it!",
+      "Great work!",
+      "Ready for the next challenge?",
+      "Let's continue!"
+    ],
+    achievement: [
+      "Amazing progress!",
+      "You're on fire!",
+      "Big win!",
+      "Keep shining!",
+      "That was strong!"
+    ]
+  };
 
   function injectStyles(){
     if(document.getElementById(STYLE_ID)) return;
@@ -37,6 +80,75 @@
 
       .pilingo-mascot.is-home{
         --pilingo-drop: 0 12px 24px rgba(157, 112, 8, 0.22);
+      }
+
+      .pilingo-mascot.is-speaking [data-face="mouth-happy"],
+      .pilingo-mascot.is-speaking [data-face="mouth-small"]{
+        display:none;
+      }
+
+      .pilingo-mascot.is-speaking [data-face="mouth-open"]{
+        display:block;
+        animation:pilingoTalkMouth 0.32s infinite ease-in-out;
+      }
+
+      .pilingo-mascot.is-speaking [data-part="head"]{
+        animation:pilingoTalkHead 0.58s infinite ease-in-out;
+      }
+
+      .pilingo-mascot-bubble-layer{
+        position:fixed;
+        inset:0;
+        pointer-events:none;
+        z-index:12000;
+      }
+
+      .pilingo-speech-bubble{
+        position:fixed;
+        max-width:min(260px, calc(100vw - 24px));
+        background:linear-gradient(180deg, #ffffff 0%, #fffaf0 100%);
+        border:3px solid #f1d16f;
+        border-radius:22px;
+        box-shadow:0 18px 34px rgba(36, 52, 27, 0.18);
+        color:#28411d;
+        padding:12px 14px;
+        font-size:14px;
+        line-height:1.4;
+        font-weight:900;
+        opacity:0;
+        transform:translateY(10px) scale(0.96);
+        transition:opacity 180ms ease, transform 180ms ease;
+      }
+
+      .pilingo-speech-bubble.show{
+        opacity:1;
+        transform:translateY(0) scale(1);
+      }
+
+      .pilingo-speech-bubble::after{
+        content:"";
+        position:absolute;
+        width:18px;
+        height:18px;
+        background:#fffaf0;
+        border-right:3px solid #f1d16f;
+        border-bottom:3px solid #f1d16f;
+        transform:rotate(45deg);
+        bottom:-11px;
+        right:28px;
+      }
+
+      .pilingo-speech-bubble.is-left::after{
+        right:auto;
+        left:28px;
+      }
+
+      .pilingo-speech-bubble-score{
+        display:block;
+        margin-top:6px;
+        color:#0e7a41;
+        font-size:13px;
+        font-weight:1000;
       }
 
       .pilingo-mascot.is-float{
@@ -173,8 +285,21 @@
       @keyframes pilingoSad { 0%,100%{transform:translateY(0)} 50%{transform:translateY(4px)} }
       @keyframes pilingoBrowLeftSad { 0%,100%{transform:rotate(0)} 50%{transform:rotate(8deg) translateY(2px)} }
       @keyframes pilingoBrowRightSad { 0%,100%{transform:rotate(0)} 50%{transform:rotate(-8deg) translateY(2px)} }
+      @keyframes pilingoTalkHead { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-1px)} }
+      @keyframes pilingoTalkMouth { 0%,100%{transform:scaleY(1)} 50%{transform:scaleY(0.82)} }
     `;
     document.head.appendChild(style);
+  }
+
+  function ensureBubbleLayer(){
+    let layer = document.getElementById(BUBBLE_LAYER_ID);
+    if(layer) return layer;
+
+    layer = document.createElement("div");
+    layer.id = BUBBLE_LAYER_ID;
+    layer.className = "pilingo-mascot-bubble-layer";
+    document.body.appendChild(layer);
+    return layer;
   }
 
   function buildMarkup(label){
@@ -292,6 +417,75 @@
     instance.state = safeState;
   }
 
+  function pickMessage(category){
+    const list = MESSAGE_GROUPS[category] || MESSAGE_GROUPS.correct;
+    return list[Math.floor(Math.random() * list.length)];
+  }
+
+  function clearBubble(instance){
+    if(!instance) return;
+    if(instance._bubbleTimer){
+      clearTimeout(instance._bubbleTimer);
+      instance._bubbleTimer = null;
+    }
+    if(instance._bubbleEl){
+      instance._bubbleEl.remove();
+      instance._bubbleEl = null;
+    }
+    if(instance.host){
+      instance.host.classList.remove("is-speaking");
+    }
+  }
+
+  function positionBubble(instance, bubble){
+    const rect = instance.host.getBoundingClientRect();
+    const bubbleWidth = bubble.offsetWidth || 220;
+    const bubbleHeight = bubble.offsetHeight || 70;
+    const preferLeft = rect.left > window.innerWidth * 0.55;
+    const top = rect.top - bubbleHeight - 12 < 10
+      ? Math.min(window.innerHeight - bubbleHeight - 12, rect.bottom + 10)
+      : rect.top - bubbleHeight - 12;
+    let left = preferLeft
+      ? rect.left - bubbleWidth + 36
+      : rect.right - 36;
+    left = Math.max(12, Math.min(window.innerWidth - bubbleWidth - 12, left));
+
+    bubble.style.top = `${top}px`;
+    bubble.style.left = `${left}px`;
+    bubble.classList.toggle("is-left", !preferLeft);
+  }
+
+  function showBubble(instance, text, options = {}){
+    if(!instance?.host || !text) return null;
+    injectStyles();
+    const layer = ensureBubbleLayer();
+    clearBubble(instance);
+
+    const bubble = document.createElement("div");
+    bubble.className = "pilingo-speech-bubble";
+    bubble.innerHTML = `${escapeHtml(text).replace(/\n/g, "<br>")}${options.score ? `<span class="pilingo-speech-bubble-score">${escapeHtml(options.score)}</span>` : ""}`;
+    layer.appendChild(bubble);
+    positionBubble(instance, bubble);
+    requestAnimationFrame(() => bubble.classList.add("show"));
+    instance.host.classList.add("is-speaking");
+
+    const duration = options.duration || 2200;
+    instance._bubbleEl = bubble;
+    instance._bubbleTimer = window.setTimeout(() => {
+      bubble.classList.remove("show");
+      window.setTimeout(() => {
+        if(instance._bubbleEl === bubble){
+          bubble.remove();
+          instance._bubbleEl = null;
+        }
+      }, 180);
+      instance.host.classList.remove("is-speaking");
+      instance._bubbleTimer = null;
+    }, duration);
+
+    return bubble;
+  }
+
   function scheduleReturn(instance, nextState, duration){
     if(instance._timer){
       clearTimeout(instance._timer);
@@ -337,6 +531,9 @@
       },
       setOutfit(outfit){
         host.dataset.outfit = outfit || "default";
+      },
+      showMessage(message, messageOptions = {}){
+        return showBubble(instance, message, messageOptions);
       }
     };
 
@@ -384,6 +581,31 @@
       if(instance) instance.play(state, options || {});
       return instance || null;
     },
+    showMessage(config = {}){
+      const target = config.target ? resolveTarget(config.target) : null;
+      const instance =
+        (target ? INSTANCES.get(target) : null) ||
+        (config.screen ? Array.from(INSTANCES.values()).find((item) => item.screen === config.screen) : null) ||
+        Array.from(INSTANCES.values())[0];
+
+      if(!instance) return null;
+
+      const animation = config.animation || "smile";
+      const message = config.message || pickMessage(config.category || "correct");
+      const duration = config.duration || 2200;
+      const score = config.score || "";
+
+      instance.play(animation, {
+        returnTo: config.returnTo || DEFAULT_STATE,
+        duration: Math.max(duration, stateDurations[animation] || 1100)
+      });
+      return showBubble(instance, message, { duration, score });
+    },
+    clearMessage(target){
+      const resolved = resolveTarget(target);
+      const instance = resolved ? INSTANCES.get(resolved) : Array.from(INSTANCES.values())[0];
+      if(instance) clearBubble(instance);
+    },
     replaceRenderer(){
       return "svg";
     }
@@ -392,5 +614,8 @@
   window.PilingoMascot = api;
   window.playPilingoAnimation = function(state, target, options){
     return api.play(state, target, options);
+  };
+  window.showPilingoMessage = function(config){
+    return api.showMessage(config || {});
   };
 })();

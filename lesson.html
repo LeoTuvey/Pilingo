@@ -191,10 +191,19 @@ window.runFinishLogic = function () {
 // =========================
 document.getElementById("finishBtn").addEventListener("click", function () {
   console.log("button clicked");
-  if(window.playPilingoAnimation){
+  if(window.showPilingoMessage){
+    showPilingoMessage({
+      target:"#lessonMascot",
+      category:"lessonComplete",
+      animation:"celebrate",
+      duration:2200
+    });
+  } else if(window.playPilingoAnimation){
     playPilingoAnimation("celebrate", "#lessonMascot");
   }
-  window.runFinishLogic();
+  window.setTimeout(() => {
+    window.runFinishLogic();
+  }, 900);
 });
 
 </script>

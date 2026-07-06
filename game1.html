@@ -169,6 +169,23 @@ body{
     text-align:right;
 }
 
+.lesson-mascot-slot{
+    width:94px;
+    min-width:94px;
+    margin-left:auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.lesson-complete-mascot{
+    width:132px;
+    margin:0 auto 14px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
 .lesson-top{
     display:flex;
     justify-content:space-between;
@@ -1216,6 +1233,11 @@ button.wrong{
     }
     .image-options{grid-template-columns:1fr;}
     .match-grid{gap:10px;}
+    .lesson-mascot-slot{
+        width:86px;
+        min-width:86px;
+        margin:0 auto 6px;
+    }
 }
 </style>
 </head>
@@ -1236,6 +1258,7 @@ button.wrong{
             <span id="gradeScore" class="grade-score">0/0 first-try correct</span>
         </div>
         <div id="gradeNote" class="grade-note">Keep your first answer right to keep a high grade.</div>
+        <div id="lessonMascot" class="lesson-mascot-slot" aria-hidden="true"></div>
     </div>
     <div class="lesson-top">
         <button class="back-button" onclick="goBackToGames()">← Choose another game</button>
@@ -1253,6 +1276,7 @@ button.wrong{
 <script src="course-data.js"></script>
 <script src="engine-core.js"></script>
 <script src="pilingo-sounds.js"></script>
+<script src="pilingo-mascot.js"></script>
 <script src="pwa.js"></script>
 
 <script>
@@ -3121,12 +3145,19 @@ function updateTopNavigationButtons(){
     }
 }
 
+function setLessonMascot(state, options){
+    if(!window.playPilingoAnimation) return;
+    playPilingoAnimation(state, "#lessonMascot", options || {});
+}
+
 function playSound(type){
     if(type === "correct"){
+        setLessonMascot("smile", { returnTo:"idle", duration:900 });
         PilingoAudio.playCorrect();
         return;
     }
 
+    setLessonMascot("think", { returnTo:"idle", duration:1300 });
     PilingoAudio.playWrong();
 }
 
@@ -3944,6 +3975,7 @@ function showSectionSelect(index, message){
     document.getElementById("image").removeAttribute("src");
     document.getElementById("feedback").innerText = "";
     showIdleGrade("Tap a ball to start or continue learning");
+    setLessonMascot("idle");
     document.getElementById("activity").innerHTML = `
         <div class="lesson-path-shell">
             <div class="lesson-path-banner">
@@ -4009,6 +4041,7 @@ function showPartSelect(){
     document.getElementById("image").removeAttribute("src");
     document.getElementById("feedback").innerText = "";
     showIdleGrade("Choose a part to begin grading");
+    setLessonMascot("wave", { returnTo:"idle", duration:1100 });
     document.getElementById("activity").innerHTML = `
         <div class="part-selector">
             <div class="part-menu" style="${partMenuThemeStyle(0)}">
@@ -4164,6 +4197,14 @@ function load(){
     document.getElementById("image").removeAttribute("src");
     document.getElementById("feedback").innerText = "";
     updateGradeDisplay();
+    setLessonMascot(
+        step.type === "type" ? "write" :
+        step.type === "hear" ? "listen" :
+        step.type === "match" || step.type === "audioMatch" ? "read" :
+        step.type === "next" ? "talk" :
+        "idle",
+        { returnTo:"idle", duration:1200 }
+    );
 
     if(step.type === "image") renderImageStep(step);
     if(step.type === "choice") renderChoiceStep(step);
@@ -4450,6 +4491,7 @@ function speakAndSelectMatch(buttonIndex, side, key, spoken, lang){
 
 function renderNextStep(step){
     PilingoAudio.playLessonComplete();
+    setLessonMascot("talk", { returnTo:"idle", duration:900 });
     document.getElementById("activity").innerHTML =
         `<button onclick="completeStep()">${escapeHtml(step.button || "Next")}</button>`;
 }
@@ -4717,6 +4759,7 @@ function completeStep(){
 function showPartComplete(completedIndex){
     PilingoAudio.playLessonComplete();
     applyPageTheme(completedIndex);
+    setLessonMascot("celebrate", { returnTo:"idle", duration:1700 });
 
     const openPart = nextOpenPart();
     const isAllDone = allPartsComplete();
@@ -4772,10 +4815,17 @@ function showLessonComplete(){
   const card = document.querySelector(".card");
   if(!card) return;
   card.innerHTML = `
-<h1>🐯</h1>
+<div id="lessonCompleteMascot" class="lesson-complete-mascot" aria-hidden="true"></div>
 <h2>Great job!</h2>
 <p>You finished this lesson.</p>
 `;
+  if(window.PilingoMascot){
+    PilingoMascot.mount("#lessonCompleteMascot", {
+      size: 132,
+      screen: "results",
+      state: "celebrate"
+    });
+  }
 }
 
 function gameOver(){
@@ -4785,13 +4835,31 @@ function gameOver(){
     }
     document.body.innerHTML = `
     <div class="card">
-        <h1>💔</h1>
+        <div id="gameOverMascot" class="lesson-complete-mascot" aria-hidden="true"></div>
         <h2>Out of hearts</h2>
         <button onclick="location.reload()">Try again</button>
     </div>`;
+    if(window.PilingoMascot){
+        PilingoMascot.mount("#gameOverMascot", {
+            size: 132,
+            screen: "results",
+            state: "sad"
+        });
+    }
 }
 
 updateTopNavigationButtons();
+
+if(window.PilingoMascot){
+    PilingoMascot.mount("#lessonMascot", {
+        size: 94,
+        screen: "quiz",
+        compact: true,
+        float: false,
+        state: "wave"
+    });
+    window.setTimeout(() => setLessonMascot("idle"), 950);
+}
 
 if(activeCoursePartRoute) {
     showSectionSelect(activeCoursePartRoute.gamePartIndex, "Choose a lesson in this part");

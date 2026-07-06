@@ -181,6 +181,14 @@ button{
   animation:floatTiger 3.8s ease-in-out infinite;
 }
 
+.engine-mascot-slot{
+  width:104px;
+  height:104px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
 .hero-stats{
   margin-top:22px;
   display:grid;
@@ -951,7 +959,7 @@ button{
         <h1>One smooth learning map for the whole first journey.</h1>
         <p>Section 1 is live now with 10 parts. Sections 2 to 15 are already on the path and will unlock one by one as the learner grows.</p>
       </div>
-      <div class="mascot-wrap" aria-hidden="true">🐯</div>
+      <div class="mascot-wrap" aria-hidden="true"><div id="engineMascot" class="engine-mascot-slot"></div></div>
     </div>
 
     <div class="hero-stats">
@@ -992,6 +1000,7 @@ button{
 
 <script src="course-data.js"></script>
 <script src="engine-core.js"></script>
+<script src="pilingo-mascot.js"></script>
 <script src="pilingo-sounds.js"></script>
 <script src="app-state.js"></script>
 <script src="app-effects.js"></script>
@@ -1283,6 +1292,13 @@ document.addEventListener("DOMContentLoaded", () => {
   renderStructure();
   renderStats();
   renderMap();
+  if(window.PilingoMascot){
+    PilingoMascot.mount("#engineMascot", {
+      size: 104,
+      screen: "engine",
+      state: "idle"
+    });
+  }
 });
 </script>
 </body>

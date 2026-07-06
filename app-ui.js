@@ -29,6 +29,13 @@ getMood(){
    🐯 PILINGO UPDATE (SAFE)
 ========================= */
 updateOwl(){
+  if(window.playPilingoAnimation){
+    const mood = this.getMood();
+    if(mood === "new") playPilingoAnimation("idle");
+    if(mood === "learning") playPilingoAnimation("wave");
+    if(mood === "confident") playPilingoAnimation("smile");
+    if(mood === "master") playPilingoAnimation("celebrate");
+  }
 
   let owl = document.getElementById("owl");
 

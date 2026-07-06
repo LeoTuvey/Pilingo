@@ -92,6 +92,11 @@ const AppPolish = {
   },
 
   setMood(state){
+    if(window.playPilingoAnimation){
+      if(state === "correct") playPilingoAnimation("smile");
+      else if(state === "wrong") playPilingoAnimation("think");
+      else if(state === "levelup") playPilingoAnimation("celebrate");
+    }
 
     const owl =
       document.getElementById("owl") ||
@@ -114,7 +119,12 @@ const AppPolish = {
 
     const el = document.createElement("div");
 
-    el.innerText = "+" + value + " XP";
+    el.innerHTML = `
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div id="xpPopupMascot" style="width:52px;height:52px;"></div>
+        <span>+${value} XP</span>
+      </div>
+    `;
 
     Object.assign(el.style, {
       position: "fixed",
@@ -132,6 +142,15 @@ const AppPolish = {
     });
 
     document.body.appendChild(el);
+    if(window.PilingoMascot){
+      PilingoMascot.mount("#xpPopupMascot", {
+        size: 52,
+        screen: "xp",
+        compact: true,
+        float: false,
+        state: "celebrate"
+      });
+    }
 
     requestAnimationFrame(() => {
       el.style.opacity = "1";

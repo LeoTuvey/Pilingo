@@ -50,7 +50,12 @@ const AppEffects = {
     const el = document.createElement("div");
     el.id = "owl-streak-fire";
 
-    el.innerText = "🔥 Streak!";
+    el.innerHTML = `
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div id="streakMascot" style="width:60px;height:60px;"></div>
+        <span>🔥 Streak!</span>
+      </div>
+    `;
 
     Object.assign(el.style, {
       position: "fixed",
@@ -65,6 +70,15 @@ const AppEffects = {
     });
 
     document.body.appendChild(el);
+    if(window.PilingoMascot){
+      PilingoMascot.mount("#streakMascot", {
+        size: 60,
+        screen: "streak",
+        compact: true,
+        float: false,
+        state: "celebrate"
+      });
+    }
 
     setTimeout(() => el.remove(), 900);
   },

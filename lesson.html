@@ -7,6 +7,12 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="🐯 Pilingo">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
+<script>
+if (window.location.protocol === "file:") {
+  const target = "http://localhost:3000/lesson.html" + window.location.search + window.location.hash;
+  window.location.replace(target);
+}
+</script>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="pilingo-icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="pilingo-icon-192.png">
@@ -37,6 +43,14 @@ body{
   border-radius:8px;
   box-shadow:0 8px 0 #e5edf5;
   padding:26px 20px;
+}
+
+.lesson-mascot-slot{
+  width:124px;
+  margin:0 auto 16px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 
 h1{
@@ -89,6 +103,7 @@ button.is-pressed{
 <script>PilingoNotify.track("page_open", "Opened lesson page", { page:"lesson" });</script>
 
 <div class="lesson-card">
+  <div id="lessonMascot" class="lesson-mascot-slot" aria-hidden="true"></div>
   <h1>🐯 Lesson Page</h1>
 
   <p>Click below to finish lesson</p>
@@ -100,10 +115,20 @@ button.is-pressed{
 
 <!-- ENGINE -->
 <script src="engine-core.js"></script>
+<script src="pilingo-mascot.js"></script>
 <script src="pwa.js"></script>
 
 <script>
 console.log("🧪 Lesson loaded");
+
+if(window.PilingoMascot){
+  PilingoMascot.mount("#lessonMascot", {
+    size: 124,
+    screen: "lesson",
+    state: "wave"
+  });
+  window.setTimeout(() => playPilingoAnimation("idle", "#lessonMascot"), 1000);
+}
 
 const lessonParams = new URLSearchParams(window.location.search);
 
@@ -166,6 +191,9 @@ window.runFinishLogic = function () {
 // =========================
 document.getElementById("finishBtn").addEventListener("click", function () {
   console.log("button clicked");
+  if(window.playPilingoAnimation){
+    playPilingoAnimation("celebrate", "#lessonMascot");
+  }
   window.runFinishLogic();
 });
 

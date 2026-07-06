@@ -7,6 +7,12 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="🐯 Pilingo">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
+<script>
+if (window.location.protocol === "file:") {
+  const target = "http://localhost:3000/index.html" + window.location.search + window.location.hash;
+  window.location.replace(target);
+}
+</script>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="pilingo-icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="pilingo-icon-192.png">
@@ -1094,6 +1100,16 @@ body.account-gate-open{
   transform-origin:center 68%;
   animation:mascotFaceOrbit 6.2s ease-in-out infinite;
   will-change:transform, filter;
+}
+
+.hero-mascot-slot{
+  width:112px;
+  height:112px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  z-index:3;
 }
 
 .hero-mascot-face::after{
@@ -2495,7 +2511,7 @@ button.is-pressed{
         <div class="hero-mascot-orbit two"><div class="hero-mascot-spark two">⭐</div></div>
         <div class="hero-mascot-orbit three"><div class="hero-mascot-spark three">❤️</div></div>
         <div class="hero-mascot-orbit four"><div class="hero-mascot-spark four">🏆</div></div>
-        <span class="hero-mascot-face">🐯</span>
+        <div id="homeMascot" class="hero-mascot-slot" aria-hidden="true"></div>
       </div>
       <div class="hero-panel-grid">
         <div class="hero-chip">
@@ -2818,6 +2834,7 @@ button.is-pressed{
 
 <!-- SCRIPTS -->
 <script src="engine-core.js"></script>
+<script src="pilingo-mascot.js"></script>
 <script src="pilingo-auth.js?v=8"></script>
 <script src="pilingo-notify.js?v=8"></script>
 <script src="pilingo-social.js?v=1"></script>
@@ -3007,6 +3024,15 @@ document.getElementById("questText").innerText =
 
 if(window.AppUI && typeof AppUI.updateOwl === "function"){
   AppUI.updateOwl();
+}
+
+if(window.PilingoMascot){
+  PilingoMascot.mount("#homeMascot", {
+    size: 112,
+    screen: "home",
+    state: "wave"
+  });
+  window.setTimeout(() => playPilingoAnimation("idle", "#homeMascot"), 1200);
 }
 
 setupContinueSwipe();

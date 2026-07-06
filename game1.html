@@ -914,24 +914,44 @@ button.wrong{
     width:122px;
     height:122px;
     border-radius:50%;
-    background:conic-gradient(#58cc02 var(--egg-progress), #dfe7f1 0deg);
+    position:relative;
+    background:
+        radial-gradient(circle at 50% 50%, transparent 67%, rgba(255,255,255,0.92) 67.5%, rgba(255,255,255,0.92) 100%),
+        conic-gradient(#58cc02 var(--egg-progress), #dfe7f1 0deg);
     display:grid;
     place-items:center;
-    padding:8px;
-    box-shadow:0 12px 22px rgba(37,48,68,0.13);
+    padding:9px;
+    box-shadow:
+        0 12px 22px rgba(37,48,68,0.13),
+        inset 0 0 0 2px rgba(255,255,255,0.82);
+}
+
+.lesson-egg-ring::after{
+    content:"";
+    position:absolute;
+    inset:6px;
+    border-radius:50%;
+    background:radial-gradient(circle at 28% 24%, rgba(255,255,255,0.9), rgba(255,255,255,0) 34%);
+    pointer-events:none;
 }
 
 .lesson-egg-button.current .lesson-egg-ring{
-    background:conic-gradient(#ffbf32 var(--egg-progress), #dfe7f1 0deg);
+    background:
+        radial-gradient(circle at 50% 50%, transparent 67%, rgba(255,255,255,0.92) 67.5%, rgba(255,255,255,0.92) 100%),
+        conic-gradient(#ffbf32 var(--egg-progress), #dfe7f1 0deg);
     box-shadow:0 14px 24px rgba(176,135,29,0.16);
 }
 
 .lesson-egg-button.completed .lesson-egg-ring{
-    background:conic-gradient(#58cc02 360deg, #58cc02 360deg);
+    background:
+        radial-gradient(circle at 50% 50%, transparent 67%, rgba(255,255,255,0.92) 67.5%, rgba(255,255,255,0.92) 100%),
+        conic-gradient(#58cc02 360deg, #58cc02 360deg);
 }
 
 .lesson-egg-button.locked .lesson-egg-ring{
-    background:conic-gradient(#dbe5ef 360deg, #dbe5ef 360deg);
+    background:
+        radial-gradient(circle at 50% 50%, transparent 67%, rgba(255,255,255,0.92) 67.5%, rgba(255,255,255,0.92) 100%),
+        conic-gradient(#dbe5ef 360deg, #dbe5ef 360deg);
     box-shadow:none;
 }
 
@@ -963,6 +983,37 @@ button.wrong{
     letter-spacing:0.06em;
     color:#6b7484;
     text-transform:uppercase;
+}
+
+.lesson-egg-percent{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-width:48px;
+    padding:4px 8px;
+    border-radius:999px;
+    background:#ffffff;
+    border:1px solid #dfe8f2;
+    box-shadow:0 2px 0 #ebf0f6;
+    color:#4f637e;
+    font-size:11px;
+    font-weight:1000;
+    line-height:1;
+}
+
+.lesson-egg-button.current .lesson-egg-percent{
+    border-color:#f0d27a;
+    color:#9b6b00;
+}
+
+.lesson-egg-button.completed .lesson-egg-percent{
+    border-color:#bde3ad;
+    color:#3d7a22;
+}
+
+.lesson-egg-button.locked .lesson-egg-percent{
+    border-color:#e4eaf2;
+    color:#93a0b4;
 }
 
 .lesson-egg-label{
@@ -3983,7 +4034,11 @@ function startSection(index, sectionIndex){
     const sections = sectionsForPart(index);
     const section = sections[sectionIndex];
     if(!section || !isSectionUnlocked(index, sectionIndex)) return;
-    startLesson(index, sectionIndex, nextLessonIndexForSection(index, sectionIndex));
+    const progress = sectionLessonProgress(index, sectionIndex);
+    const message = progress.completed > 0
+        ? "Choose any visible lesson or quiz inside this ball, or continue where you stopped."
+        : "Open the first lesson to begin this ball.";
+    showLessonSelect(index, sectionIndex, message);
 }
 
 function routeUsesSingleSection(index){
@@ -4039,7 +4094,7 @@ function showLessonSelect(index, sectionIndex, message){
     setTopBackButton("← Back", () => showSectionSelect(index));
     document.getElementById("bar").style.width = progress.total ? ((progress.completed / progress.total) * 100) + "%" : "0%";
     showPartLabel("Kurmanji to English");
-    document.getElementById("instruction").innerText = message || "Follow the egg path inside this section";
+    document.getElementById("instruction").innerText = message || "Choose a lesson or quiz inside this ball";
     document.getElementById("question").innerText = displayPartTitle(index) + " • " + section.label;
     document.getElementById("question").classList.remove("rich-prompt");
     document.getElementById("image").style.display = "none";
@@ -4060,6 +4115,7 @@ function showLessonSelect(index, sectionIndex, message){
                     const status = lessonPathStatus(index, sectionIndex, lessonIndex);
                     const lessonProgress = lessonStepProgress(index, sectionIndex, lessonIndex);
                     const progressDeg = Math.round(Math.max(0, Math.min(lessonProgress.percent, 1)) * 360);
+                    const progressPercent = Math.round(Math.max(0, Math.min(lessonProgress.percent, 1)) * 100);
                     const progressText = completed
                         ? "Finished"
                         : `${lessonProgress.completed}/${lessonProgress.total} done`;
@@ -4076,6 +4132,7 @@ function showLessonSelect(index, sectionIndex, message){
                                     <span class="lesson-egg-core">
                                         <span class="lesson-egg-symbol">${lessonNodeSymbol(status)}</span>
                                         <span class="lesson-egg-index">Egg ${lessonIndex + 1}</span>
+                                        <span class="lesson-egg-percent">${progressPercent}%</span>
                                     </span>
                                 </span>
                                 <span class="lesson-egg-label">
@@ -4121,7 +4178,7 @@ function showSectionSelect(index, message){
     });
     document.getElementById("bar").style.width = "0%";
     showPartLabel("Kurmanji to English");
-    document.getElementById("instruction").innerText = message || "Choose a section to study";
+    document.getElementById("instruction").innerText = message || "Open a ball to view all lessons and quizzes inside it";
     document.getElementById("question").innerText = displayPartTitle(index);
     document.getElementById("question").classList.remove("rich-prompt");
     document.getElementById("image").style.display = "none";
@@ -4133,7 +4190,7 @@ function showSectionSelect(index, message){
         <div class="lesson-path-shell">
             <div class="lesson-path-banner">
                 <strong>${escapeHtml(displayPartTitle(index))}</strong>
-                <span>Tap a learning ball to immediately start the next unfinished lesson or quiz inside it.</span>
+                <span>Tap a learning ball to see all lessons and quizzes inside it. Completed content stays visible and can always be repeated.</span>
             </div>
             <div class="lesson-path">
                 ${sections.map((section, sectionIndex) => {
@@ -4142,6 +4199,7 @@ function showSectionSelect(index, message){
                     const status = sectionNodeStatus(index, sectionIndex);
                     const progress = sectionLessonProgress(index, sectionIndex);
                     const progressDeg = Math.round(Math.max(0, Math.min(progress.total ? progress.completed / progress.total : 0, 1)) * 360);
+                    const progressPercent = Math.round(Math.max(0, Math.min(progress.total ? progress.completed / progress.total : 0, 1)) * 100);
                     const progressText = completed
                         ? "Finished"
                         : `${progress.completed}/${progress.total} done`;
@@ -4158,6 +4216,7 @@ function showSectionSelect(index, message){
                                     <span class="lesson-egg-core">
                                         <span class="lesson-egg-symbol">${lessonNodeSymbol(status)}</span>
                                         <span class="lesson-egg-index">Ball ${sectionIndex + 1}</span>
+                                        <span class="lesson-egg-percent">${progressPercent}%</span>
                                     </span>
                                 </span>
                                 <span class="lesson-egg-label">

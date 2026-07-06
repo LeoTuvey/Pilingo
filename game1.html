@@ -5066,7 +5066,7 @@ function gameOver(){
     }
 }
 
-updateTopNavigationButtons();
+setTopBackButton("← Back", () => goBackToGames());
 
 if(window.PilingoMascot){
     PilingoMascot.mount("#lessonMascot", {

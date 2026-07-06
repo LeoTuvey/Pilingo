@@ -3273,6 +3273,20 @@ function setLessonMascot(state, options){
     playPilingoAnimation(state, "#lessonMascot", options || {});
 }
 
+function showLessonMascotMessage(config){
+    if(!window.showPilingoMessage) return;
+    showPilingoMessage(Object.assign({
+        target:"#lessonMascot",
+        duration:2200
+    }, config || {}));
+}
+
+function activeLessonIsQuiz(){
+    if(!activeLesson) return false;
+    const label = `${activeLesson.label || ""} ${activeLesson.detail || ""}`.toLowerCase();
+    return label.includes("quiz") || label.includes("boss");
+}
+
 function playSound(type){
     if(type === "correct"){
         setLessonMascot("smile", { returnTo:"idle", duration:900 });
@@ -4791,6 +4805,11 @@ function markCorrect(){
     registerCorrectForGrade();
     playSound("correct");
     document.getElementById("feedback").innerText = "✅ Correct";
+    showLessonMascotMessage({
+        category:"correct",
+        animation:Math.random() > 0.45 ? "smile" : "wave",
+        duration:1900
+    });
     if(pendingAdvanceTimer) clearTimeout(pendingAdvanceTimer);
     pendingAdvanceTimer = setTimeout(() => {
         pendingAdvanceTimer = null;
@@ -4804,6 +4823,11 @@ function markWrong(){
     renderHearts();
     playSound("wrong");
     document.getElementById("feedback").innerText = "❌ Try again";
+    showLessonMascotMessage({
+        category:"wrong",
+        animation:"think",
+        duration:2100
+    });
 
     if(hearts <= 0) gameOver();
 }
@@ -4833,9 +4857,21 @@ function completeStep(){
 
         markLessonComplete(partIndex, sectionIndex, activeLesson.id);
         saveCurrentGradeRecord();
+        const lessonPercent = currentGradePercent();
+        const completionCategory = activeLessonIsQuiz() ? "quizComplete" : "lessonComplete";
+        const completionScore = activeLessonIsQuiz()
+            ? `${gradeLetter(lessonPercent)} • ${lessonPercent}%`
+            : "";
         const nowComplete = isSectionComplete(partIndex, sectionIndex);
         const nextSection = sections[sectionIndex + 1];
         activeLesson = null;
+
+        showLessonMascotMessage({
+            category:completionCategory,
+            animation:"celebrate",
+            duration:2600,
+            score:completionScore
+        });
 
         if(nowComplete && !wasComplete) {
             markSectionComplete(partIndex, sectionIndex);
@@ -4883,6 +4919,11 @@ function showPartComplete(completedIndex){
     PilingoAudio.playLessonComplete();
     applyPageTheme(completedIndex);
     setLessonMascot("celebrate", { returnTo:"idle", duration:1700 });
+    showLessonMascotMessage({
+        category:"lessonComplete",
+        animation:"celebrate",
+        duration:2600
+    });
 
     const openPart = nextOpenPart();
     const isAllDone = allPartsComplete();
@@ -4948,6 +4989,14 @@ function showLessonComplete(){
       screen: "results",
       state: "celebrate"
     });
+    if(window.showPilingoMessage){
+      showPilingoMessage({
+        target:"#lessonCompleteMascot",
+        category:"lessonComplete",
+        animation:"celebrate",
+        duration:2600
+      });
+    }
   }
 }
 
@@ -4968,6 +5017,14 @@ function gameOver(){
             screen: "results",
             state: "sad"
         });
+        if(window.showPilingoMessage){
+            showPilingoMessage({
+                target:"#gameOverMascot",
+                category:"wrong",
+                animation:"think",
+                duration:2500
+            });
+        }
     }
 }
 

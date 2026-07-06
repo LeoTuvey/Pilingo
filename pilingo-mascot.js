@@ -67,6 +67,10 @@
         transform-origin: center bottom;
       }
 
+      .pilingo-mascot.is-reaction-zoom{
+        animation: pilingoReactionZoom 0.58s cubic-bezier(0.2, 0.84, 0.24, 1.06);
+      }
+
       .pilingo-mascot svg{
         width: 100%;
         height: auto;
@@ -253,6 +257,11 @@
       .pilingo-mascot [data-decor="confetti"]{ display: none; }
 
       @keyframes pilingoFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
+      @keyframes pilingoReactionZoom {
+        0% { transform: translateY(14px) scale(0.82); }
+        52% { transform: translateY(-6px) scale(1.08); }
+        100% { transform: translateY(0) scale(1); }
+      }
       @keyframes pilingoIdle { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
       @keyframes pilingoBounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
       @keyframes pilingoSmile { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-6px) scale(1.02)} }
@@ -486,6 +495,44 @@
     return bubble;
   }
 
+  function triggerZoom(instance, duration){
+    if(!instance?.host) return;
+    if(instance._zoomTimer){
+      clearTimeout(instance._zoomTimer);
+      instance._zoomTimer = null;
+    }
+
+    instance.host.classList.remove("is-reaction-zoom");
+    void instance.host.offsetWidth;
+    instance.host.classList.add("is-reaction-zoom");
+
+    instance._zoomTimer = window.setTimeout(() => {
+      instance.host.classList.remove("is-reaction-zoom");
+      instance._zoomTimer = null;
+    }, Math.max(620, duration || 0));
+  }
+
+  function speakMessage(message, config = {}){
+    if(!message || config.speak === false) return;
+
+    if(window.PilingoAudio?.speak){
+      window.PilingoAudio.speak(message, {
+        lang: config.lang || config.voiceLang || "en-US",
+        preferFemale: config.preferFemale !== false
+      });
+      return;
+    }
+
+    if(!window.speechSynthesis) return;
+    const utterance = new SpeechSynthesisUtterance(message);
+    utterance.lang = config.lang || config.voiceLang || "en-US";
+    utterance.rate = 0.92;
+    utterance.pitch = 1.25;
+    utterance.volume = 1;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+  }
+
   function scheduleReturn(instance, nextState, duration){
     if(instance._timer){
       clearTimeout(instance._timer);
@@ -601,6 +648,33 @@
       });
       return showBubble(instance, message, { duration, score });
     },
+    showReaction(config = {}){
+      const target = config.target ? resolveTarget(config.target) : null;
+      const instance =
+        (target ? INSTANCES.get(target) : null) ||
+        (config.screen ? Array.from(INSTANCES.values()).find((item) => item.screen === config.screen) : null) ||
+        Array.from(INSTANCES.values())[0];
+
+      if(!instance) return null;
+
+      const animation = config.animation || "celebrate";
+      const message = config.message || pickMessage(config.category || "lessonComplete");
+      const duration = config.duration || 2600;
+      const score = config.score || "";
+
+      if(config.zoomIn !== false){
+        triggerZoom(instance, duration);
+      }
+
+      instance.play(animation, {
+        returnTo: config.returnTo || DEFAULT_STATE,
+        duration: Math.max(duration, stateDurations[animation] || 1100)
+      });
+
+      const bubble = showBubble(instance, message, { duration, score });
+      speakMessage(message, config);
+      return bubble;
+    },
     clearMessage(target){
       const resolved = resolveTarget(target);
       const instance = resolved ? INSTANCES.get(resolved) : Array.from(INSTANCES.values())[0];
@@ -617,5 +691,8 @@
   };
   window.showPilingoMessage = function(config){
     return api.showMessage(config || {});
+  };
+  window.showPilingoReaction = function(config){
+    return api.showReaction(config || {});
   };
 })();

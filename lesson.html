@@ -116,6 +116,7 @@ button.is-pressed{
 <!-- ENGINE -->
 <script src="engine-core.js"></script>
 <script src="pilingo-mascot.js"></script>
+<script src="pilingo-sounds.js"></script>
 <script src="pwa.js"></script>
 
 <script>
@@ -191,7 +192,16 @@ window.runFinishLogic = function () {
 // =========================
 document.getElementById("finishBtn").addEventListener("click", function () {
   console.log("button clicked");
-  if(window.showPilingoMessage){
+  if(window.showPilingoReaction){
+    showPilingoReaction({
+      target:"#lessonMascot",
+      category:"lessonComplete",
+      animation:"celebrate",
+      duration:2400,
+      speak:true,
+      zoomIn:true
+    });
+  } else if(window.showPilingoMessage){
     showPilingoMessage({
       target:"#lessonMascot",
       category:"lessonComplete",

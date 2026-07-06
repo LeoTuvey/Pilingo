@@ -3281,6 +3281,19 @@ function showLessonMascotMessage(config){
     }, config || {}));
 }
 
+function showLessonMascotReaction(config){
+    if(window.showPilingoReaction){
+        showPilingoReaction(Object.assign({
+            target:"#lessonMascot",
+            duration:2600,
+            speak:true,
+            zoomIn:true
+        }, config || {}));
+        return;
+    }
+    showLessonMascotMessage(config);
+}
+
 function activeLessonIsQuiz(){
     if(!activeLesson) return false;
     const label = `${activeLesson.label || ""} ${activeLesson.detail || ""}`.toLowerCase();
@@ -4866,11 +4879,13 @@ function completeStep(){
         const nextSection = sections[sectionIndex + 1];
         activeLesson = null;
 
-        showLessonMascotMessage({
+        showLessonMascotReaction({
             category:completionCategory,
             animation:"celebrate",
             duration:2600,
-            score:completionScore
+            score:completionScore,
+            speak:true,
+            zoomIn:true
         });
 
         if(nowComplete && !wasComplete) {
@@ -4919,10 +4934,12 @@ function showPartComplete(completedIndex){
     PilingoAudio.playLessonComplete();
     applyPageTheme(completedIndex);
     setLessonMascot("celebrate", { returnTo:"idle", duration:1700 });
-    showLessonMascotMessage({
+    showLessonMascotReaction({
         category:"lessonComplete",
         animation:"celebrate",
-        duration:2600
+        duration:2600,
+        speak:true,
+        zoomIn:true
     });
 
     const openPart = nextOpenPart();
@@ -4949,14 +4966,11 @@ function showPartComplete(completedIndex){
             ${!activeCoursePartRoute && isAllDone ? `<button class="primary-action" onclick="finish()">Finish Game One</button>` : ""}
         </div>
     `;
-
-    PilingoAudio.speak("Great job! You finished this part.");
 }
 
 function finish(){
     PilingoAudio.playLessonComplete();
   showLessonComplete();
-  PilingoAudio.speak("Great job! You finished this lesson.");
 
     if (typeof Engine.completeCoursePart === "function") {
         Engine.completeCoursePart("section-1", "part-1", { xp: 10, result: "passed" });
@@ -4983,13 +4997,22 @@ function showLessonComplete(){
 <h2>Great job!</h2>
 <p>You finished this lesson.</p>
 `;
-  if(window.PilingoMascot){
-    PilingoMascot.mount("#lessonCompleteMascot", {
-      size: 132,
-      screen: "results",
-      state: "celebrate"
-    });
-    if(window.showPilingoMessage){
+    if(window.PilingoMascot){
+      PilingoMascot.mount("#lessonCompleteMascot", {
+        size: 132,
+        screen: "results",
+        state: "celebrate"
+      });
+    if(window.showPilingoReaction){
+      showPilingoReaction({
+        target:"#lessonCompleteMascot",
+        category:"lessonComplete",
+        animation:"celebrate",
+        duration:2600,
+        speak:true,
+        zoomIn:true
+      });
+    } else if(window.showPilingoMessage){
       showPilingoMessage({
         target:"#lessonCompleteMascot",
         category:"lessonComplete",

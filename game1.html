@@ -1275,8 +1275,6 @@ button.wrong{
         <div id="lessonMascot" class="lesson-mascot-slot" aria-hidden="true"></div>
     </div>
     <div class="lesson-top">
-        <button class="back-button" onclick="goBackToGames()">← Choose another game</button>
-        <button id="mapButton" class="map-button" onclick="goBackToGames()">🗺 Back to learning map</button>
         <button id="menuButton" class="menu-button" onclick="showPartSelect()">← Parts</button>
     </div>
     <div id="partLabel"></div>
@@ -3262,11 +3260,12 @@ function goBackToGames(){
     window.location.href = "engine.html";
 }
 
-function updateTopNavigationButtons(){
-    const mapButton = document.getElementById("mapButton");
-    if(mapButton){
-        mapButton.style.display = activeCoursePartRoute ? "inline-block" : "none";
-    }
+function setTopBackButton(label, handler){
+    const button = document.getElementById("menuButton");
+    if(!button) return;
+    button.style.display = "block";
+    button.innerText = label || "← Back";
+    button.onclick = handler || (() => goBackToGames());
 }
 
 function setLessonMascot(state, options){
@@ -4037,7 +4036,7 @@ function showLessonSelect(index, sectionIndex, message){
     selectedMatch = null;
 
     renderHearts();
-    document.getElementById("menuButton").style.display = "none";
+    setTopBackButton("← Back", () => showSectionSelect(index));
     document.getElementById("bar").style.width = progress.total ? ((progress.completed / progress.total) * 100) + "%" : "0%";
     showPartLabel("Kurmanji to English");
     document.getElementById("instruction").innerText = message || "Follow the egg path inside this section";
@@ -4089,9 +4088,6 @@ function showLessonSelect(index, sectionIndex, message){
                     `;
                 }).join("")}
             </div>
-            <div class="lesson-path-footer">
-                <button class="secondary" onclick="${routeUsesSingleSection(index) ? "window.location.href='engine.html'" : `showSectionSelect(${index})`}">${routeUsesSingleSection(index) ? "Back to learning map" : "Back to sections"}</button>
-            </div>
         </div>
     `;
 }
@@ -4116,7 +4112,13 @@ function showSectionSelect(index, message){
     selectedMatch = null;
 
     renderHearts();
-    document.getElementById("menuButton").style.display = "none";
+    setTopBackButton("← Back", () => {
+        if(activeCoursePartRoute){
+            window.location.href = "engine.html";
+            return;
+        }
+        showPartSelect();
+    });
     document.getElementById("bar").style.width = "0%";
     showPartLabel("Kurmanji to English");
     document.getElementById("instruction").innerText = message || "Choose a section to study";
@@ -4168,9 +4170,6 @@ function showSectionSelect(index, message){
                     `;
                 }).join("")}
             </div>
-            <div class="lesson-path-footer">
-                ${activeCoursePartRoute ? "" : `<button class="secondary" onclick="showPartSelect()">Back to parts</button>`}
-            </div>
         </div>
     `;
 }
@@ -4183,7 +4182,7 @@ function showPartSelect(){
     activeLesson = null;
 
     renderHearts();
-    document.getElementById("menuButton").style.display = "none";
+    setTopBackButton("← Back", () => goBackToGames());
     document.getElementById("bar").style.width = "0%";
     showPartLabel("Kurmanji to English");
     document.getElementById("instruction").innerText = "Choose a part to study";
@@ -4324,16 +4323,19 @@ function load(){
 
     renderHearts();
     updateProgress();
-    document.getElementById("menuButton").style.display = "block";
-    if(activeCoursePartRoute) {
-        document.getElementById("menuButton").innerText = "← Back";
-        document.getElementById("menuButton").onclick = () => window.location.href = "engine.html";
+    if(activeLesson) {
+        const sectionIndex = currentSectionIndex();
+        setTopBackButton("← Back", () => {
+            if(sectionsForPart(partIndex).length && sectionIndex >= 0) {
+                showLessonSelect(partIndex, sectionIndex);
+                return;
+            }
+            showPartSelect();
+        });
     } else if(sectionsForPart(partIndex).length && currentSectionIndex() >= 0) {
-        document.getElementById("menuButton").innerText = "← Lessons";
-        document.getElementById("menuButton").onclick = () => showLessonSelect(partIndex, currentSectionIndex());
+        setTopBackButton("← Back", () => showLessonSelect(partIndex, currentSectionIndex()));
     } else {
-        document.getElementById("menuButton").innerText = sectionsForPart(partIndex).length ? "← Sections" : "← Parts";
-        document.getElementById("menuButton").onclick = () => sectionsForPart(partIndex).length ? showSectionSelect(partIndex) : showPartSelect();
+        setTopBackButton(sectionsForPart(partIndex).length ? "← Back" : "← Back", () => sectionsForPart(partIndex).length ? showSectionSelect(partIndex) : showPartSelect());
     }
     showPartLabel("");
     document.getElementById("instruction").innerText = step.instruction || "";
@@ -4955,7 +4957,13 @@ function showPartComplete(completedIndex){
     const isAllDone = allPartsComplete();
 
     renderHearts();
-    document.getElementById("menuButton").style.display = "none";
+    setTopBackButton("← Back", () => {
+        if(activeCoursePartRoute){
+            showSectionSelect(completedIndex, "🏆 This course part is completed. You can review these lessons again or go back when you are ready.");
+            return;
+        }
+        showPartSelect();
+    });
     document.getElementById("bar").style.width = "100%";
     showPartLabel("Kurmanji to English");
     document.getElementById("instruction").innerText = "Part complete";
@@ -4969,9 +4977,7 @@ function showPartComplete(completedIndex){
     document.getElementById("activity").innerHTML = `
         <div class="part-complete-actions">
             <div class="section-grade" style="font-size:16px !important; margin-bottom:10px;">${escapeHtml(record ? `Your latest grade: ${record.latestLetter} (${record.latestPercent}%)` : "Your grade was saved.")}</div>
-            ${activeCoursePartRoute ? `<button class="primary-action" onclick="window.location.href='engine.html'">Back to learning map</button>` : ""}
             ${!activeCoursePartRoute && openPart >= 0 ? `<button class="primary-action" onclick="startPart(${openPart})">Start next part</button>` : ""}
-            <button class="secondary-action" onclick="${activeCoursePartRoute ? "window.location.href='engine.html'" : "showPartSelect()"}">${activeCoursePartRoute ? "Choose another course part" : "Choose another part"}</button>
             ${!activeCoursePartRoute && isAllDone ? `<button class="primary-action" onclick="finish()">Finish Game One</button>` : ""}
         </div>
     `;

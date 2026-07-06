@@ -35,16 +35,22 @@ const SECTION_ONE_PARTS = [
       "Listening and typing review",
       "Translate Kurmanji family sentences into English",
       "Translate English family sentences into Kurmanji",
-      "Extended family words and relationships",
-      "Family groups and review",
+      "Different types of uncles and aunts",
+      "Different types of cousins",
+      "Nieces and nephews",
+      "Family groups",
+      "Family groups review",
+      "Match the Pairs review",
       "Match the Pairs",
+      "Match the Pairs 2",
       "Subject Pronouns",
       "To Be",
       "Select the Correct Meaning",
       "Translate into Kurmanji",
       "Type the Correct English Sentence",
       "Put the Words in Order",
-      "Family & Possessives"
+      "Family & Possessives",
+      "Describing people and jobs"
     )
   },
   {

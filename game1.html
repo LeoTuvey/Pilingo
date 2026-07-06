@@ -291,6 +291,15 @@ body{
     animation:movingDemoWord 1.8s ease-in-out infinite;
 }
 
+.prompt-subnote{
+    display:block;
+    margin-top:6px;
+    font-size:0.46em;
+    line-height:1.3;
+    color:#667085;
+    font-weight:800;
+}
+
 @keyframes movingDemoWord{
     0%, 100%{ transform:translateY(0); }
     35%{ transform:translateY(-3px); }
@@ -1622,7 +1631,26 @@ const gameParts = [
                     ["long", "dirêj"],
                     ["short", "kurt"],
                     ["tall", "bilind"],
-                    ["very", "gelek (zor / pir)"],
+                    ["very", "gelek (zor / pir)"]
+                ],
+                leftHeading:"English",
+                rightHeading:"Kurmanji",
+                leftSide:"first",
+                rightSide:"second",
+                leftSpeakMap:{
+                    "Smart":"Smart",
+                    "stupid":"stupid",
+                    "long":"long",
+                    "short":"short",
+                    "tall":"tall",
+                    "very":"very"
+                }
+            },
+            {
+                type:"match",
+                instruction:"🔀 Match the Pairs",
+                prompt:"",
+                pairs:[
                     ["student", "Xwendevan (xwendekar)"],
                     ["teacher", "mamoste"],
                     ["lazy", "tembel"],
@@ -1636,12 +1664,6 @@ const gameParts = [
                 leftSide:"first",
                 rightSide:"second",
                 leftSpeakMap:{
-                    "Smart":"Smart",
-                    "stupid":"stupid",
-                    "long":"long",
-                    "short":"short",
-                    "tall":"tall",
-                    "very":"very",
                     "student":"student",
                     "teacher":"teacher",
                     "lazy":"lazy",
@@ -1744,6 +1766,90 @@ const gameParts = [
                     "Their family":"Their family"
                 }
             },
+            richChoiceStep(
+                "Select the Correct Meaning",
+                "Ez ê zîrek im. (male / masculine)\nI am …… .",
+                `Ez ê <span class="moving-demo-word">zîrek</span> im.<span class="prompt-subnote">(male / masculine)</span><br>I am …… .`,
+                ["Stupid", "short", "smart", "tall"],
+                "smart"
+            ),
+            richChoiceStep(
+                "Select the Correct Meaning",
+                "Ez a zîrek im. (female / feminine)\nI am …… .",
+                `Ez a <span class="moving-demo-word">zîrek</span> im.<span class="prompt-subnote">(female / feminine)</span><br>I am …… .`,
+                ["Stupid", "short", "smart", "tall"],
+                "smart"
+            ),
+            richChoiceStep(
+                "Select the Correct Meaning",
+                "Tu ê tembel î. (male / masculine)\nYou are ….. .",
+                `Tu ê <span class="moving-demo-word">tembel</span> î.<span class="prompt-subnote">(male / masculine)</span><br>You are ….. .`,
+                ["short", "smart", "lazy", "Stupid"],
+                "lazy"
+            ),
+            richChoiceStep(
+                "Select the Correct Meaning",
+                "Tu a tembel î. (female / feminine)\nYou are ….. .",
+                `Tu a <span class="moving-demo-word">tembel</span> î.<span class="prompt-subnote">(female / feminine)</span><br>You are ….. .`,
+                ["short", "smart", "lazy", "Stupid"],
+                "lazy"
+            ),
+            richChoiceStep(
+                "Select the Correct Meaning",
+                "Ez Xwendevan im.\nI am a …. .",
+                `Ez <span class="moving-demo-word">Xwendevan</span> im.<br>I am a …. .`,
+                ["short", "smart", "student", "Stupid"],
+                "student"
+            ),
+            richChoiceStep(
+                "Select the Correct Meaning",
+                "Tu ê bilind î. (male / masculine)\nYou are ….. .",
+                `Tu ê <span class="moving-demo-word">bilind</span> î.<span class="prompt-subnote">(male / masculine)</span><br>You are ….. .`,
+                ["Stupid", "short", "smart", "tall"],
+                "tall"
+            ),
+            richChoiceStep(
+                "Select the Correct Meaning",
+                "Tu a bilind î. (female / feminine)\nYou are ….. .",
+                `Tu a <span class="moving-demo-word">bilind</span> î.<span class="prompt-subnote">(female / feminine)</span><br>You are ….. .`,
+                ["Stupid", "short", "smart", "tall"],
+                "tall"
+            ),
+            richChoiceStep(
+                "Select the Correct Meaning",
+                "Ez gelek ê bilind im. (male / masculine)\nI am …… tall.",
+                `Ez <span class="moving-demo-word">gelek</span> ê bilind im.<span class="prompt-subnote">(male / masculine)</span><br>I am …… tall.`,
+                ["very", "smart", "student", "Stupid"],
+                "very"
+            ),
+            richChoiceStep(
+                "Select the Correct Meaning",
+                "Ez gelek a bilind im. (female / feminine)\nI am …… tall.",
+                `Ez <span class="moving-demo-word">gelek</span> a bilind im.<span class="prompt-subnote">(female / feminine)</span><br>I am …… tall.`,
+                ["very", "smart", "student", "Stupid"],
+                "very"
+            ),
+            richChoiceStep(
+                "Select the Correct Meaning",
+                "Tu zor ê kurt î. (male / masculine)\nYou are very ….. .",
+                `Tu zor ê <span class="moving-demo-word">kurt</span> î.<span class="prompt-subnote">(male / masculine)</span><br>You are very ….. .`,
+                ["very", "smart", "short", "Stupid"],
+                "short"
+            ),
+            richChoiceStep(
+                "Select the Correct Meaning",
+                "Tu zor a  kurt î. (female / feminine)\nYou are very ….. .",
+                `Tu zor a <span class="moving-demo-word">kurt</span> î.<span class="prompt-subnote">(female / feminine)</span><br>You are very ….. .`,
+                ["very", "smart", "short", "Stupid"],
+                "short"
+            ),
+            richChoiceStep(
+                "Select the Correct Meaning",
+                "Tu mamoste î.\nYou are a …… .",
+                `Tu <span class="moving-demo-word">mamoste</span> î.<br>You are a …… .`,
+                ["smart", "student", "Stupid", "Teacher"],
+                "Teacher"
+            ),
             nextStep("Game One A • Part 1E complete"),
             choiceStep("Translate this sentence", "Silav", ["Hello", "Or", "Bye"], "Hello"),
             choiceStep("Select the correct word", "Silav", ["Tea", "Coffee", "Hello"], "Hello"),
@@ -2537,27 +2643,28 @@ const partSections = {
             label:"Part 1E",
             detail:"Descriptions, pronouns, to be, and family possessives",
             start:85,
-            end:115,
+            end:128,
             lessons:[
-                { id:"a-part-1e-v2-lesson-1", label:"Lesson 1", detail:"Match the Pairs", start:85, end:85 },
-                { id:"a-part-1e-v2-lesson-2", label:"Lesson 2", detail:"Subject Pronouns", start:86, end:86 },
-                { id:"a-part-1e-v2-lesson-3", label:"Lesson 3", detail:"To Be", start:87, end:87 },
-                { id:"a-part-1e-v2-lesson-4", label:"Lesson 4", detail:"Select the Correct Meaning", start:88, end:94 },
-                { id:"a-part-1e-v2-lesson-5", label:"Lesson 5", detail:"Translate into Kurmanji", start:95, end:100 },
-                { id:"a-part-1e-v2-lesson-6", label:"Lesson 6", detail:"Type the Correct English Sentence", start:101, end:107 },
-                { id:"a-part-1e-v2-lesson-7", label:"Lesson 7", detail:"Put the Words in Order", start:108, end:113 },
-                { id:"a-part-1e-v2-lesson-8", label:"Lesson 8", detail:"Family & Possessives", start:114, end:114 }
+                { id:"a-part-1e-v2-lesson-1", label:"Lesson 1", detail:"Match the Pairs", start:85, end:86 },
+                { id:"a-part-1e-v2-lesson-2", label:"Lesson 2", detail:"Subject Pronouns", start:87, end:87 },
+                { id:"a-part-1e-v2-lesson-3", label:"Lesson 3", detail:"To Be", start:88, end:88 },
+                { id:"a-part-1e-v2-lesson-4", label:"Lesson 4", detail:"Select the Correct Meaning", start:89, end:95 },
+                { id:"a-part-1e-v2-lesson-5", label:"Lesson 5", detail:"Translate into Kurmanji", start:96, end:101 },
+                { id:"a-part-1e-v2-lesson-6", label:"Lesson 6", detail:"Type the Correct English Sentence", start:102, end:108 },
+                { id:"a-part-1e-v2-lesson-7", label:"Lesson 7", detail:"Put the Words in Order", start:109, end:114 },
+                { id:"a-part-1e-v2-lesson-8", label:"Lesson 8", detail:"Family & Possessives", start:115, end:115 },
+                { id:"a-part-1e-v2-lesson-9", label:"Lesson 9", detail:"Describing people and jobs", start:116, end:127 }
             ]
         },
         {
             id:"a-part-2",
             label:"Part 2",
             detail:"Greetings, welcome words, and polite phrases",
-            start:116,
-            end:125,
+            start:129,
+            end:138,
             lessons:[
-                { id:"a-part-2-lesson-1", label:"Lesson 1", detail:"Hello and welcome basics", start:116, end:120 },
-                { id:"a-part-2-lesson-2", label:"Lesson 2", detail:"Yes, no, bye, and greeting review", start:121, end:125 }
+                { id:"a-part-2-lesson-1", label:"Lesson 1", detail:"Hello and welcome basics", start:129, end:133 },
+                { id:"a-part-2-lesson-2", label:"Lesson 2", detail:"Yes, no, bye, and greeting review", start:134, end:138 }
             ]
         }
     ],
@@ -2836,6 +2943,17 @@ function choiceStep(instruction, prompt, options, answer){
         type:"choice",
         instruction:instruction + helper,
         prompt:prompt,
+        options:options,
+        answer:answer
+    };
+}
+
+function richChoiceStep(instruction, prompt, promptHtml, options, answer){
+    return {
+        type:"choice",
+        instruction:instruction,
+        prompt:prompt,
+        promptHtml:promptHtml,
         options:options,
         answer:answer
     };

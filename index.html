@@ -2720,8 +2720,36 @@ button.is-pressed{
                 <span>Enable study reminders</span>
               </label>
               <label class="settings-check">
+                <input id="settingsPushEnabled" type="checkbox">
+                <span>Enable push notifications</span>
+              </label>
+              <label class="settings-check">
                 <input id="settingsSoundEffects" type="checkbox">
                 <span>Enable sound effects</span>
+              </label>
+            </div>
+            <div class="settings-grid">
+              <label>
+                Daily reminder time
+                <input id="settingsReminderTime" type="time" value="18:00">
+              </label>
+              <label>
+                Push notification status
+                <div id="settingsPushStatus" class="mini-note">Checking notification support...</div>
+              </label>
+            </div>
+            <div class="settings-switches">
+              <label class="settings-check">
+                <input id="settingsDailyReminders" type="checkbox">
+                <span>Daily reminders</span>
+              </label>
+              <label class="settings-check">
+                <input id="settingsStreakReminders" type="checkbox">
+                <span>Streak reminders</span>
+              </label>
+              <label class="settings-check">
+                <input id="settingsNewLessonReminders" type="checkbox">
+                <span>New lesson reminders</span>
               </label>
             </div>
             <button class="continue-button account-submit settings-save" type="submit"><span>Save<br>Profile</span></button>
@@ -2754,7 +2782,7 @@ button.is-pressed{
             </div>
           </div>
         </div>
-        <div class="notify-help">Phone notifications currently work while this page stays open on your phone. Use the test button below to confirm they are allowed.</div>
+        <div class="notify-help">Push notifications can remind learners even after they leave the app. Enable them after the learner has started using Pilingo.</div>
         <div class="notify-actions">
           <button class="secondary-button" type="button" onclick="enablePhoneNotifications()">Enable phone notifications</button>
           <button class="secondary-button" type="button" onclick="testPhoneNotification()">Test phone notification</button>
@@ -2817,7 +2845,7 @@ button.is-pressed{
             </span>
           </span>
         </div>
-        <div class="reminder-note">Turn this on and Pilingo will remind the learner every 2 hours to come back and study again.</div>
+        <div class="reminder-note">Turn this on and Pilingo can send daily, streak, and follow-up push reminders like Duolingo.</div>
         <div id="reminderStatus" class="reminder-status">Reminder is off</div>
         <div class="reminder-actions">
           <button class="secondary-button" type="button" onclick="toggleStudyReminder()">Turn on 2-hour reminder</button>
@@ -2852,9 +2880,6 @@ let accountMode = "register";
 const continueButton = document.querySelector(".continue-button");
 const continueSwipe = document.getElementById("continueSwipe");
 const continueSwipeThumb = document.getElementById("continueSwipeThumb");
-const reminderKey = "pilingo_study_reminder_v1";
-const reminderIntervalMinutes = 120;
-let reminderTimer = null;
 let continueSwipeState = null;
 
 function playStudyReminderOnce(){
@@ -2865,74 +2890,10 @@ function playStudyReminderOnce(){
   }
 }
 
-function loadReminderSettings(){
-  try {
-    const saved = JSON.parse(localStorage.getItem(reminderKey) || "{}");
-    return {
-      enabled: !!saved.enabled,
-      intervalMinutes: reminderIntervalMinutes,
-      lastSentAt: Number(saved.lastSentAt) || 0
-    };
-  } catch(error) {
-    return { enabled:false, intervalMinutes:reminderIntervalMinutes, lastSentAt:0 };
-  }
-}
-
-function saveReminderSettings(settings){
-  localStorage.setItem(reminderKey, JSON.stringify(settings));
-}
-
 function updateReminderUI(){
-  const settings = loadReminderSettings();
-  const status = document.getElementById("reminderStatus");
-  if(!status) return;
-
-  if(settings.enabled){
-    const nextAt = settings.lastSentAt
-      ? new Date(settings.lastSentAt + (settings.intervalMinutes * 60000)).toLocaleTimeString()
-      : "in 2 hours";
-    status.innerText = "Reminder is on • Next study reminder around " + nextAt;
-  } else {
-    status.innerText = "Reminder is off";
+  if(window.PilingoPush?.updateReminderCard){
+    window.PilingoPush.updateReminderCard();
   }
-}
-
-function triggerWoodpeckerReminder(source){
-  const settings = loadReminderSettings();
-  settings.lastSentAt = Date.now();
-  saveReminderSettings(settings);
-  updateReminderUI();
-
-  if(window.PilingoAudio?.playWoodpeckerAlarm){
-    PilingoAudio.playWoodpeckerAlarm();
-  }
-
-  if("Notification" in window && Notification.permission === "granted"){
-    new Notification("Pilingo owl reminder", {
-      body: "Time to come back and study."
-    });
-  }
-
-  if(window.PilingoNotify?.track){
-    PilingoNotify.track("study_reminder", "Owl reminder", { source:source || "manual" });
-  }
-}
-
-function checkStudyReminder(){
-  const settings = loadReminderSettings();
-  if(!settings.enabled) return;
-
-  const now = Date.now();
-  const waitMs = settings.intervalMinutes * 60000;
-  if(!settings.lastSentAt || now - settings.lastSentAt >= waitMs){
-    triggerWoodpeckerReminder("automatic");
-  }
-}
-
-function startStudyReminderWatcher(){
-  if(reminderTimer) clearInterval(reminderTimer);
-  reminderTimer = setInterval(checkStudyReminder, 60000);
-  updateReminderUI();
 }
 
 window.addEventListener("pointerdown", playStudyReminderOnce, { once:true });
@@ -3128,26 +3089,29 @@ function setupContinueSwipe(){
 }
 
 function toggleStudyReminder(){
-  const settings = loadReminderSettings();
-  settings.enabled = !settings.enabled;
-  settings.intervalMinutes = reminderIntervalMinutes;
-  if(!settings.enabled){
-    settings.lastSentAt = 0;
-  } else {
-    settings.lastSentAt = Date.now();
-  }
-  saveReminderSettings(settings);
-  updateReminderUI();
+  if(!window.PilingoPush) return;
+  const settings = window.PilingoAuth?.loadAccount?.()?.settings || {};
+  const currentlyEnabled = settings.pushNotificationsEnabled !== false;
+  const action = currentlyEnabled
+    ? window.PilingoPush.disable()
+    : window.PilingoPush.enableFromUserAction();
 
-  if(settings.enabled){
-    if("Notification" in window && Notification.permission === "default"){
-      Notification.requestPermission();
-    }
-  }
+  Promise.resolve(action)
+    .then(() => updateReminderUI())
+    .catch((error) => {
+      alert(error?.message || "Could not change study reminders.");
+      updateReminderUI();
+    });
 }
 
 function playWoodpeckerReminderNow(){
-  triggerWoodpeckerReminder("manual");
+  if(!window.PilingoPush?.sendTest){
+    alert("Push notifications are not ready yet.");
+    return;
+  }
+  window.PilingoPush.sendTest().catch((error) => {
+    alert(error?.message || "Could not send the test reminder.");
+  });
 }
 
 function showAccountGate(){
@@ -3344,7 +3308,13 @@ function openMySettings(){
   document.getElementById("settingsBio").value = account.bio || "";
   document.getElementById("settingsVisibility").value = account?.settings?.profileVisibility === "private" ? "private" : "public";
   document.getElementById("settingsStudyReminders").checked = account?.settings?.studyReminders !== false;
+  document.getElementById("settingsPushEnabled").checked = account?.settings?.pushNotificationsEnabled !== false;
   document.getElementById("settingsSoundEffects").checked = account?.settings?.soundEffects !== false;
+  document.getElementById("settingsReminderTime").value = account?.settings?.notificationTime || "18:00";
+  document.getElementById("settingsDailyReminders").checked = account?.settings?.dailyReminders !== false;
+  document.getElementById("settingsStreakReminders").checked = account?.settings?.streakReminders !== false;
+  document.getElementById("settingsNewLessonReminders").checked = account?.settings?.newLessonReminders !== false;
+  window.PilingoPush?.updateSettingsInputs?.(account?.settings || {});
   refreshSettingsAvatarPreview();
   modal.hidden = false;
 }
@@ -3379,14 +3349,19 @@ async function saveMySettings(event){
       settings: {
         profileVisibility: document.getElementById("settingsVisibility").value,
         studyReminders: document.getElementById("settingsStudyReminders").checked,
-        soundEffects: document.getElementById("settingsSoundEffects").checked
+        soundEffects: document.getElementById("settingsSoundEffects").checked,
+        pushNotificationsEnabled: document.getElementById("settingsPushEnabled").checked,
+        dailyReminders: document.getElementById("settingsDailyReminders").checked,
+        streakReminders: document.getElementById("settingsStreakReminders").checked,
+        newLessonReminders: document.getElementById("settingsNewLessonReminders").checked,
+        notificationTime: document.getElementById("settingsReminderTime").value || "18:00",
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"
       }
     });
 
     if(updated?.settings){
-      const reminderSettings = loadReminderSettings();
-      reminderSettings.enabled = updated.settings.studyReminders !== false;
-      saveReminderSettings(reminderSettings);
+      await window.PilingoPush?.syncWithAccount?.();
+      window.PilingoPush?.updateSettingsInputs?.(updated.settings);
       updateReminderUI();
     }
 
@@ -3558,18 +3533,22 @@ async function submitAccountForm(event){
 }
 
 async function enablePhoneNotifications(){
-  if(!("Notification" in window)) return;
-  await Notification.requestPermission();
-  if(window.PilingoNotify){
-    PilingoNotify.renderInto("notifyList", "notifyStatus");
-    PilingoNotify.sendTestNotification();
+  try {
+    await window.PilingoPush?.enableFromUserAction?.();
+    window.PilingoPush?.updateSettingsInputs?.();
+    if(window.PilingoNotify){
+      PilingoNotify.renderInto("notifyList", "notifyStatus");
+    }
+  } catch(error){
+    alert(error?.message || "Could not enable phone notifications.");
   }
 }
 
 function testPhoneNotification(){
-  if(!window.PilingoNotify?.sendTestNotification()){
-    alert("Phone notifications are not allowed yet. Press Enable phone notifications first.");
-  }
+  window.PilingoPush?.sendTest?.()
+    .catch((error) => {
+      alert(error?.message || "Phone notifications are not allowed yet. Press Enable phone notifications first.");
+    });
 }
 
 function setOwnerToggleState(button, isOn){
@@ -3658,11 +3637,11 @@ if(window.PilingoSocial){
 }
 updateOwnerOnlyPanels();
 refreshAppVisibilityControls(true);
-startStudyReminderWatcher();
+updateReminderUI();
 document.addEventListener("visibilitychange", () => {
   if(document.visibilityState === "visible"){
-    checkStudyReminder();
     refreshAppVisibilityControls(true);
+    updateReminderUI();
   }
 });
 

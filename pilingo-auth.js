@@ -32,12 +32,18 @@ const PilingoAuth = {
     } else {
       localStorage.removeItem(this.ownerTokenKey);
     }
+    window.dispatchEvent(new CustomEvent("pilingo:account-changed", {
+      detail: { account }
+    }));
     return account;
   },
 
   clearAccount(){
     localStorage.removeItem(this.accountKey);
     localStorage.removeItem(this.ownerTokenKey);
+    window.dispatchEvent(new CustomEvent("pilingo:account-changed", {
+      detail: { account: null }
+    }));
   },
 
   logout(){
@@ -111,7 +117,13 @@ const PilingoAuth = {
       settings: {
         profileVisibility: "public",
         studyReminders: true,
-        soundEffects: true
+        soundEffects: true,
+        pushNotificationsEnabled: true,
+        dailyReminders: true,
+        streakReminders: true,
+        newLessonReminders: true,
+        notificationTime: "18:00",
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"
       }
     };
 
@@ -159,7 +171,13 @@ const PilingoAuth = {
       settings: account.settings || {
         profileVisibility: "public",
         studyReminders: true,
-        soundEffects: true
+        soundEffects: true,
+        pushNotificationsEnabled: true,
+        dailyReminders: true,
+        streakReminders: true,
+        newLessonReminders: true,
+        notificationTime: "18:00",
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"
       }
     });
   },
@@ -229,7 +247,13 @@ const PilingoAuth = {
       settings: accounts[index].settings || {
         profileVisibility: "public",
         studyReminders: true,
-        soundEffects: true
+        soundEffects: true,
+        pushNotificationsEnabled: true,
+        dailyReminders: true,
+        streakReminders: true,
+        newLessonReminders: true,
+        notificationTime: "18:00",
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"
       }
     });
   },
@@ -439,7 +463,13 @@ const PilingoAuth = {
         settings: {
           profileVisibility: payload.settings?.profileVisibility === "private" ? "private" : "public",
           studyReminders: payload.settings?.studyReminders !== false,
-          soundEffects: payload.settings?.soundEffects !== false
+          soundEffects: payload.settings?.soundEffects !== false,
+          pushNotificationsEnabled: payload.settings?.pushNotificationsEnabled !== false,
+          dailyReminders: payload.settings?.dailyReminders !== false,
+          streakReminders: payload.settings?.streakReminders !== false,
+          newLessonReminders: payload.settings?.newLessonReminders !== false,
+          notificationTime: /^\d{2}:\d{2}$/.test(String(payload.settings?.notificationTime || "")) ? String(payload.settings.notificationTime) : "18:00",
+          timezone: String(payload.settings?.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC")
         }
       };
       this.saveLocalAccounts(accounts);

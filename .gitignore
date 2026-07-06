@@ -1,3 +1,7 @@
 .env
+node_modules/
+.pnpm-store/
 data/student-events.json
 data/student-stats.json
+data/push-subscriptions.json
+data/vapid-keys.json

@@ -4887,6 +4887,14 @@ function completeStep(){
             speak:true,
             zoomIn:true
         });
+        window.PilingoPush?.recordLessonCompletion?.({
+            page:"game1.html",
+            lessonId: activeLesson?.id || "",
+            partId: activeCoursePartRoute?.slug || `part-${partIndex + 1}`,
+            label: completionCategory,
+            score: completionScore
+        });
+        window.PilingoPush?.maybePromptAfterUse?.(completionCategory);
 
         if(nowComplete && !wasComplete) {
             markSectionComplete(partIndex, sectionIndex);

@@ -184,6 +184,13 @@ window.runFinishLogic = function () {
     alert("+10 XP!");
   }
 
+  window.PilingoPush?.recordLessonCompletion?.({
+    page: "lesson.html",
+    lessonId: String(skillIndex),
+    label: "Standalone lesson completed"
+  });
+  window.PilingoPush?.maybePromptAfterUse?.("lesson-complete");
+
   window.location.href = "engine.html";
 };
 

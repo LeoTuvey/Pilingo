@@ -2,6 +2,12 @@ const http = require("http");
 const fs = require("fs");
 const path = require("path");
 const { URL } = require("url");
+let webPush = null;
+try {
+  webPush = require("web-push");
+} catch (error) {
+  webPush = null;
+}
 
 loadEnvFile();
 
@@ -13,6 +19,8 @@ const STATS_FILE = path.join(DATA_DIR, "student-stats.json");
 const ACCOUNTS_FILE = path.join(DATA_DIR, "accounts.json");
 const RESETS_FILE = path.join(DATA_DIR, "password-resets.json");
 const APP_SETTINGS_FILE = path.join(DATA_DIR, "app-settings.json");
+const PUSH_SUBSCRIPTIONS_FILE = path.join(DATA_DIR, "push-subscriptions.json");
+const PUSH_KEYS_FILE = path.join(DATA_DIR, "vapid-keys.json");
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || "";
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID || "";
 const RESEND_API_KEY = process.env.RESEND_API_KEY || "";
@@ -21,6 +29,7 @@ const EMAIL_FROM = process.env.EMAIL_FROM || "";
 const OWNER_EMAILS = parseOwnerEmails(process.env.OWNER_EMAILS || EMAIL_TO);
 const OWNER_PANEL_TOKEN = process.env.OWNER_PANEL_TOKEN || `owner-${Math.random().toString(36).slice(2)}-${Date.now().toString(36)}`;
 const RESET_CODE_TTL_MS = 15 * 60 * 1000;
+const PUSH_REMINDER_INTERVAL_MS = 5 * 60 * 1000;
 
 const MIME_TYPES = {
   ".html": "text/html; charset=utf-8",
@@ -35,6 +44,8 @@ const MIME_TYPES = {
 };
 
 ensureDataFile();
+const PUSH_RUNTIME = initializePushRuntime();
+startPushReminderScheduler();
 
 const server = http.createServer(async (req, res) => {
   const parsed = new URL(req.url, `http://${req.headers.host}`);
@@ -115,39 +126,7 @@ const server = http.createServer(async (req, res) => {
     try {
       const body = await readBody(req);
       const payload = JSON.parse(body || "{}");
-      const event = {
-        id: `${Date.now()}-${Math.random().toString(16).slice(2, 8)}`,
-        type: String(payload.type || "activity"),
-        page: String(payload.page || ""),
-        label: String(payload.label || ""),
-        studentName: String(payload.studentName || "Unknown student"),
-        studentEmail: String(payload.studentEmail || ""),
-        studentPhone: String(payload.studentPhone || ""),
-        studentLocation: String(payload.studentLocation || ""),
-        details: payload.details && typeof payload.details === "object" ? payload.details : {},
-        createdAt: new Date().toISOString()
-      };
-
-      const events = readEvents();
-      events.push(event);
-      writeEvents(events.slice(-400));
-      if (isNamedStudentEvent(event)) {
-        upsertStudentStats({
-          studentName: event.studentName,
-          studentEmail: event.studentEmail,
-          studentPhone: event.studentPhone,
-          studentLocation: event.studentLocation,
-          xp: 0,
-          level: 0,
-          streak: 0,
-          completedSections: 0,
-          averageGrade: 0,
-          bestGrade: 0,
-          lessonsFinished: 0
-        });
-      }
-      sendNotifications(event).catch(() => {});
-
+      const event = appendStudentEvent(payload || {});
       return sendJson(res, 200, { ok: true, event });
     } catch (error) {
       return sendJson(res, 400, { ok: false, error: "Invalid request body" });
@@ -226,6 +205,19 @@ const server = http.createServer(async (req, res) => {
       if (!account) {
         return sendJson(res, 400, { ok: false, error: "This email is already in use." });
       }
+      appendStudentEvent({
+        type: "account_created",
+        page: "index.html",
+        label: "Created account",
+        studentName: account.name,
+        studentEmail: account.email,
+        studentPhone: account.phone,
+        studentLocation: account.location || "",
+        details: {
+          source: "register",
+          location: account.location || ""
+        }
+      });
       return sendJson(res, 200, { ok: true, account: publicAccount(account) });
     } catch (error) {
       return sendJson(res, 400, { ok: false, error: "Invalid register request" });
@@ -304,6 +296,78 @@ const server = http.createServer(async (req, res) => {
     }
   }
 
+  if (req.method === "GET" && parsed.pathname === "/api/push/public-key") {
+    if (!PUSH_RUNTIME.enabled) {
+      return sendJson(res, 200, {
+        ok: false,
+        supported: false,
+        error: "Push notifications are not configured on the server yet."
+      });
+    }
+    return sendJson(res, 200, {
+      ok: true,
+      supported: true,
+      publicKey: PUSH_RUNTIME.publicKey
+    });
+  }
+
+  if (req.method === "POST" && parsed.pathname === "/api/push/subscribe") {
+    try {
+      const body = await readBody(req);
+      const payload = JSON.parse(body || "{}");
+      const result = upsertPushSubscription(payload || {});
+      if (!result?.ok) {
+        return sendJson(res, 400, { ok: false, error: result?.error || "Could not save push subscription." });
+      }
+      return sendJson(res, 200, result);
+    } catch (error) {
+      return sendJson(res, 400, { ok: false, error: "Invalid push subscription request" });
+    }
+  }
+
+  if (req.method === "POST" && parsed.pathname === "/api/push/unsubscribe") {
+    try {
+      const body = await readBody(req);
+      const payload = JSON.parse(body || "{}");
+      const result = removePushSubscription(payload || {});
+      return sendJson(res, 200, { ok: true, ...result });
+    } catch (error) {
+      return sendJson(res, 400, { ok: false, error: "Invalid push unsubscribe request" });
+    }
+  }
+
+  if (req.method === "POST" && parsed.pathname === "/api/push/activity") {
+    try {
+      const body = await readBody(req);
+      const payload = JSON.parse(body || "{}");
+      const result = recordPushActivity(payload || {});
+      return sendJson(res, 200, { ok: true, result });
+    } catch (error) {
+      return sendJson(res, 400, { ok: false, error: "Invalid push activity request" });
+    }
+  }
+
+  if (req.method === "POST" && parsed.pathname === "/api/push/test") {
+    try {
+      const body = await readBody(req);
+      const payload = JSON.parse(body || "{}");
+      const email = normalizeEmail(payload?.email);
+      if (!email) {
+        return sendJson(res, 400, { ok: false, error: "Email is required." });
+      }
+      const delivered = await sendPushNotificationToUser(email, {
+        title: "🐆 Pilingo is waiting for you!",
+        body: "📚 Time for today’s lesson!",
+        tag: "pilingo-test",
+        url: "/index.html",
+        data: { type: "test" }
+      });
+      return sendJson(res, 200, { ok: true, delivered });
+    } catch (error) {
+      return sendJson(res, 400, { ok: false, error: "Could not send test notification." });
+    }
+  }
+
   if (req.method === "POST" && parsed.pathname === "/api/app-settings") {
     if (!hasOwnerAccess(req)) {
       return sendJson(res, 403, {
@@ -330,6 +394,11 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(PORT, () => {
   console.log(`Pilingo server running on http://localhost:${PORT}`);
+  if (PUSH_RUNTIME.enabled) {
+    console.log("Push notifications: enabled");
+  } else {
+    console.log("Push notifications: disabled");
+  }
   if (TELEGRAM_BOT_TOKEN && TELEGRAM_CHAT_ID) {
     console.log("Telegram notifications: enabled");
   }
@@ -345,6 +414,7 @@ function ensureDataFile() {
   if (!fs.existsSync(ACCOUNTS_FILE)) fs.writeFileSync(ACCOUNTS_FILE, "[]", "utf8");
   if (!fs.existsSync(RESETS_FILE)) fs.writeFileSync(RESETS_FILE, "[]", "utf8");
   if (!fs.existsSync(APP_SETTINGS_FILE)) fs.writeFileSync(APP_SETTINGS_FILE, JSON.stringify(defaultAppSettings(), null, 2), "utf8");
+  if (!fs.existsSync(PUSH_SUBSCRIPTIONS_FILE)) fs.writeFileSync(PUSH_SUBSCRIPTIONS_FILE, "[]", "utf8");
 }
 
 function loadEnvFile() {
@@ -381,6 +451,44 @@ function readEvents() {
 
 function writeEvents(events) {
   fs.writeFileSync(EVENTS_FILE, JSON.stringify(events, null, 2), "utf8");
+}
+
+function appendStudentEvent(payload) {
+  const event = {
+    id: `${Date.now()}-${Math.random().toString(16).slice(2, 8)}`,
+    type: String(payload?.type || "activity"),
+    page: String(payload?.page || ""),
+    label: String(payload?.label || ""),
+    studentName: String(payload?.studentName || "Unknown student"),
+    studentEmail: String(payload?.studentEmail || ""),
+    studentPhone: String(payload?.studentPhone || ""),
+    studentLocation: String(payload?.studentLocation || ""),
+    details: payload?.details && typeof payload.details === "object" ? payload.details : {},
+    createdAt: new Date().toISOString()
+  };
+
+  const events = readEvents();
+  events.push(event);
+  writeEvents(events.slice(-400));
+
+  if (isNamedStudentEvent(event)) {
+    upsertStudentStats({
+      studentName: event.studentName,
+      studentEmail: event.studentEmail,
+      studentPhone: event.studentPhone,
+      studentLocation: event.studentLocation,
+      xp: 0,
+      level: 0,
+      streak: 0,
+      completedSections: 0,
+      averageGrade: 0,
+      bestGrade: 0,
+      lessonsFinished: 0
+    });
+  }
+
+  sendNotifications(event).catch(() => {});
+  return event;
 }
 
 function readStudentStats() {
@@ -680,6 +788,46 @@ function normalizeEmail(value) {
   return String(value || "").trim().toLowerCase();
 }
 
+function readPushSubscriptions() {
+  try {
+    const raw = fs.readFileSync(PUSH_SUBSCRIPTIONS_FILE, "utf8");
+    const list = JSON.parse(raw || "[]");
+    return Array.isArray(list) ? list.map(normalizePushSubscriptionRecord).filter(Boolean) : [];
+  } catch (error) {
+    return [];
+  }
+}
+
+function writePushSubscriptions(list) {
+  fs.writeFileSync(
+    PUSH_SUBSCRIPTIONS_FILE,
+    JSON.stringify((Array.isArray(list) ? list : []).map(normalizePushSubscriptionRecord).filter(Boolean), null, 2),
+    "utf8"
+  );
+}
+
+function normalizePushSubscriptionRecord(record) {
+  const endpoint = String(record?.endpoint || record?.subscription?.endpoint || "").trim();
+  const email = normalizeEmail(record?.email);
+  if (!endpoint || !email) return null;
+
+  return {
+    email,
+    endpoint,
+    subscription: record?.subscription || null,
+    userAgent: String(record?.userAgent || "").trim(),
+    timezone: normalizeTimezone(record?.timezone),
+    createdAt: String(record?.createdAt || new Date().toISOString()),
+    updatedAt: String(record?.updatedAt || new Date().toISOString()),
+    lastSeenAt: String(record?.lastSeenAt || ""),
+    lastLessonCompletionAt: String(record?.lastLessonCompletionAt || ""),
+    lastDailySentAt: String(record?.lastDailySentAt || ""),
+    lastStreakSentAt: String(record?.lastStreakSentAt || ""),
+    lastFollowUpSentAt: String(record?.lastFollowUpSentAt || ""),
+    lastPage: String(record?.lastPage || "").trim()
+  };
+}
+
 function normalizeAccountRecord(account) {
   const following = Array.isArray(account?.following)
     ? account.following.map((email) => normalizeEmail(email)).filter(Boolean)
@@ -715,8 +863,24 @@ function normalizeStudentSettings(settings) {
   return {
     profileVisibility: String(settings?.profileVisibility || "public") === "private" ? "private" : "public",
     studyReminders: settings?.studyReminders !== false,
-    soundEffects: settings?.soundEffects !== false
+    soundEffects: settings?.soundEffects !== false,
+    pushNotificationsEnabled: settings?.pushNotificationsEnabled !== false,
+    dailyReminders: settings?.dailyReminders !== false,
+    streakReminders: settings?.streakReminders !== false,
+    newLessonReminders: settings?.newLessonReminders !== false,
+    notificationTime: normalizeNotificationTime(settings?.notificationTime),
+    timezone: normalizeTimezone(settings?.timezone)
   };
+}
+
+function normalizeNotificationTime(value) {
+  const raw = String(value || "").trim();
+  return /^\d{2}:\d{2}$/.test(raw) ? raw : "18:00";
+}
+
+function normalizeTimezone(value) {
+  const raw = String(value || "").trim();
+  return raw || "UTC";
 }
 
 function loginAccount(payload) {
@@ -970,6 +1134,329 @@ function updateStudentProfile(payload) {
 
   writeAccounts(accounts);
   return accounts[index];
+}
+
+function initializePushRuntime() {
+  if (!webPush) {
+    return { enabled: false, publicKey: "", privateKey: "", reason: "web-push package is not installed" };
+  }
+
+  let keys = null;
+
+  if (process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
+    keys = {
+      publicKey: String(process.env.VAPID_PUBLIC_KEY || "").trim(),
+      privateKey: String(process.env.VAPID_PRIVATE_KEY || "").trim()
+    };
+  } else {
+    try {
+      if (fs.existsSync(PUSH_KEYS_FILE)) {
+        keys = JSON.parse(fs.readFileSync(PUSH_KEYS_FILE, "utf8") || "{}");
+      }
+    } catch (error) {
+      keys = null;
+    }
+
+    if (!keys?.publicKey || !keys?.privateKey) {
+      keys = webPush.generateVAPIDKeys();
+      fs.writeFileSync(PUSH_KEYS_FILE, JSON.stringify(keys, null, 2), "utf8");
+    }
+  }
+
+  const subject = `mailto:${EMAIL_FROM.match(/<([^>]+)>/)?.[1] || EMAIL_TO || "owner@pilingoacademy.com"}`;
+  webPush.setVapidDetails(subject, keys.publicKey, keys.privateKey);
+  return { enabled: true, publicKey: keys.publicKey, privateKey: keys.privateKey };
+}
+
+function upsertPushSubscription(payload) {
+  if (!PUSH_RUNTIME.enabled) {
+    return { ok: false, error: "Push notifications are not configured on the server yet." };
+  }
+
+  const email = normalizeEmail(payload?.email);
+  const subscription = payload?.subscription || null;
+  const endpoint = String(subscription?.endpoint || "").trim();
+  if (!email || !endpoint) {
+    return { ok: false, error: "A valid account email and push subscription are required." };
+  }
+
+  const subscriptions = readPushSubscriptions();
+  const existingIndex = subscriptions.findIndex((item) => item.endpoint === endpoint);
+  const now = new Date().toISOString();
+  const current = existingIndex >= 0 ? subscriptions[existingIndex] : null;
+  const record = normalizePushSubscriptionRecord({
+    ...(current || {}),
+    email,
+    endpoint,
+    subscription,
+    userAgent: String(payload?.userAgent || current?.userAgent || "").trim(),
+    timezone: normalizeTimezone(payload?.timezone || current?.timezone),
+    createdAt: current?.createdAt || now,
+    updatedAt: now,
+    lastSeenAt: now,
+    lastPage: String(payload?.page || current?.lastPage || "").trim()
+  });
+
+  if (existingIndex >= 0) {
+    subscriptions[existingIndex] = record;
+  } else {
+    subscriptions.push(record);
+  }
+
+  writePushSubscriptions(subscriptions);
+  return { ok: true, subscription: { endpoint: record.endpoint, email: record.email } };
+}
+
+function removePushSubscription(payload) {
+  const email = normalizeEmail(payload?.email);
+  const endpoint = String(payload?.endpoint || payload?.subscription?.endpoint || "").trim();
+  const subscriptions = readPushSubscriptions();
+  const filtered = subscriptions.filter((item) => {
+    if (endpoint && item.endpoint === endpoint) return false;
+    if (!endpoint && email && item.email === email) return false;
+    return true;
+  });
+  writePushSubscriptions(filtered);
+  return { removed: subscriptions.length - filtered.length };
+}
+
+function recordPushActivity(payload) {
+  const email = normalizeEmail(payload?.email);
+  if (!email) return { updated: 0 };
+
+  const type = String(payload?.type || "page_open").trim().toLowerCase();
+  const page = String(payload?.page || "").trim();
+  const subscriptions = readPushSubscriptions();
+  const now = new Date().toISOString();
+  let updated = 0;
+
+  subscriptions.forEach((item) => {
+    if (item.email !== email) return;
+    item.lastSeenAt = now;
+    item.updatedAt = now;
+    item.lastPage = page || item.lastPage;
+    if (type === "lesson_complete" || type === "quiz_complete") {
+      item.lastLessonCompletionAt = now;
+    }
+    updated += 1;
+  });
+
+  if (updated > 0) {
+    writePushSubscriptions(subscriptions);
+  }
+
+  return { updated };
+}
+
+function getZonedDateParts(date, timeZone) {
+  const formatter = new Intl.DateTimeFormat("en-CA", {
+    timeZone: normalizeTimezone(timeZone),
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false
+  });
+
+  const parts = formatter.formatToParts(date).reduce((acc, part) => {
+    acc[part.type] = part.value;
+    return acc;
+  }, {});
+
+  return {
+    dateKey: `${parts.year}-${parts.month}-${parts.day}`,
+    minutes: (Number(parts.hour || 0) * 60) + Number(parts.minute || 0)
+  };
+}
+
+function clockToMinutes(value) {
+  const [hours, minutes] = normalizeNotificationTime(value).split(":").map((item) => Number(item));
+  return (hours * 60) + minutes;
+}
+
+function addClockMinutes(value, extraMinutes) {
+  const total = (clockToMinutes(value) + extraMinutes + (24 * 60)) % (24 * 60);
+  const hours = String(Math.floor(total / 60)).padStart(2, "0");
+  const minutes = String(total % 60).padStart(2, "0");
+  return `${hours}:${minutes}`;
+}
+
+function sameLocalDay(isoTime, timeZone, nowDateKey) {
+  if (!isoTime) return false;
+  return getZonedDateParts(new Date(isoTime), timeZone).dateKey === nowDateKey;
+}
+
+function latestStatsByEmail() {
+  const map = new Map();
+  readStudentStats().forEach((student) => {
+    const email = normalizeEmail(student?.email);
+    if (email) map.set(email, student);
+  });
+  return map;
+}
+
+function latestAccountByEmail() {
+  const map = new Map();
+  readAccounts().forEach((account) => {
+    const normalized = normalizeAccountRecord(account);
+    if (normalized.email) map.set(normalized.email, normalized);
+  });
+  return map;
+}
+
+function reminderMessages(type) {
+  const sets = {
+    daily: [
+      "🐆 Pilingo is waiting for you!",
+      "📚 Time for today’s lesson!",
+      "⭐ Learn for just 5 minutes today!",
+      "📖 Your next lesson is waiting!"
+    ],
+    streak: [
+      "🔥 Don’t lose your learning streak!",
+      "🐆 Come back and continue learning!",
+      "⭐ Learn for just 5 minutes today!"
+    ],
+    followup: [
+      "🎉 A new lesson is ready!",
+      "🐆 Come back and continue learning!",
+      "📖 Your next lesson is waiting!"
+    ]
+  };
+  const list = sets[type] || sets.daily;
+  return list[Math.floor(Math.random() * list.length)];
+}
+
+async function sendPushNotificationRecord(record, payload) {
+  if (!PUSH_RUNTIME.enabled || !record?.subscription) return false;
+
+  const notificationPayload = JSON.stringify({
+    title: payload.title || "🐯 Pilingo",
+    body: payload.body || "",
+    icon: "/pilingo-icon-192.png",
+    badge: "/pilingo-icon-192.png",
+    tag: payload.tag || "pilingo-reminder",
+    url: payload.url || "/index.html",
+    data: payload.data || {}
+  });
+
+  try {
+    await webPush.sendNotification(record.subscription, notificationPayload);
+    return true;
+  } catch (error) {
+    const statusCode = Number(error?.statusCode || 0);
+    if (statusCode === 404 || statusCode === 410) {
+      removePushSubscription({ endpoint: record.endpoint });
+    }
+    return false;
+  }
+}
+
+async function sendPushNotificationToUser(email, payload) {
+  const normalizedEmail = normalizeEmail(email);
+  if (!normalizedEmail) return 0;
+  const subscriptions = readPushSubscriptions().filter((item) => item.email === normalizedEmail);
+  let delivered = 0;
+  for (const record of subscriptions) {
+    if (await sendPushNotificationRecord(record, payload)) {
+      delivered += 1;
+    }
+  }
+  return delivered;
+}
+
+async function processPushReminders() {
+  if (!PUSH_RUNTIME.enabled) return;
+
+  const now = new Date();
+  const subscriptions = readPushSubscriptions();
+  if (!subscriptions.length) return;
+
+  const accountsByEmail = latestAccountByEmail();
+  const statsByEmail = latestStatsByEmail();
+  let changed = false;
+
+  for (const record of subscriptions) {
+    const account = accountsByEmail.get(record.email);
+    if (!account) continue;
+    const settings = normalizeStudentSettings(account.settings || {});
+    if (settings.pushNotificationsEnabled === false) continue;
+
+    const zone = settings.timezone || record.timezone || "UTC";
+    const nowParts = getZonedDateParts(now, zone);
+    const lastSeenToday = sameLocalDay(record.lastSeenAt, zone, nowParts.dateKey);
+    const dailyReady = nowParts.minutes >= clockToMinutes(settings.notificationTime);
+    const streakReady = nowParts.minutes >= clockToMinutes(addClockMinutes(settings.notificationTime, 120));
+
+    if (settings.dailyReminders !== false && dailyReady && !lastSeenToday && !sameLocalDay(record.lastDailySentAt, zone, nowParts.dateKey)) {
+      const delivered = await sendPushNotificationRecord(record, {
+        title: "🐯 Pilingo",
+        body: reminderMessages("daily"),
+        tag: `daily-${nowParts.dateKey}`,
+        url: "/index.html",
+        data: { type: "daily-reminder" }
+      });
+      if (delivered) {
+        record.lastDailySentAt = now.toISOString();
+        changed = true;
+      }
+    }
+
+    const streakValue = Number(statsByEmail.get(record.email)?.streak || 0);
+    if (settings.streakReminders !== false && streakValue > 0 && streakReady && !lastSeenToday && !sameLocalDay(record.lastStreakSentAt, zone, nowParts.dateKey)) {
+      const delivered = await sendPushNotificationRecord(record, {
+        title: "🐯 Pilingo",
+        body: reminderMessages("streak"),
+        tag: `streak-${nowParts.dateKey}`,
+        url: "/index.html",
+        data: { type: "streak-reminder" }
+      });
+      if (delivered) {
+        record.lastStreakSentAt = now.toISOString();
+        changed = true;
+      }
+    }
+
+    const lessonAt = record.lastLessonCompletionAt ? new Date(record.lastLessonCompletionAt).getTime() : 0;
+    const followUpSentAt = record.lastFollowUpSentAt ? new Date(record.lastFollowUpSentAt).getTime() : 0;
+    const lastSeenAt = record.lastSeenAt ? new Date(record.lastSeenAt).getTime() : 0;
+    const enoughTimePassed = lessonAt && (now.getTime() - lessonAt >= 2 * 60 * 60 * 1000);
+    const notReturnedSinceLesson = !lastSeenAt || lastSeenAt <= (lessonAt + (5 * 60 * 1000));
+
+    if (
+      settings.newLessonReminders !== false &&
+      enoughTimePassed &&
+      followUpSentAt < lessonAt &&
+      notReturnedSinceLesson
+    ) {
+      const delivered = await sendPushNotificationRecord(record, {
+        title: "🐯 Pilingo",
+        body: reminderMessages("followup"),
+        tag: `followup-${lessonAt}`,
+        url: "/engine.html",
+        data: { type: "lesson-followup" }
+      });
+      if (delivered) {
+        record.lastFollowUpSentAt = now.toISOString();
+        changed = true;
+      }
+    }
+  }
+
+  if (changed) {
+    writePushSubscriptions(subscriptions);
+  }
+}
+
+function startPushReminderScheduler() {
+  if (!PUSH_RUNTIME.enabled) return;
+  setTimeout(() => {
+    processPushReminders().catch(() => {});
+  }, 15000);
+  setInterval(() => {
+    processPushReminders().catch(() => {});
+  }, PUSH_REMINDER_INTERVAL_MS);
 }
 
 async function createPasswordReset(payload) {

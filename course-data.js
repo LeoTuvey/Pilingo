@@ -76,7 +76,13 @@ const SECTION_ONE_PARTS = [
     accent: "pink",
     lessons: lessonList(
       "Daily food and drink words",
-      "Meaning and review practice"
+      "Meaning and review practice",
+      "Simple phrases",
+      "Listening and matching",
+      "Yes and no basics",
+      "Short review quiz",
+      "Final meaning review",
+      "Sentence building and wrap-up"
     )
   },
   {

@@ -3983,6 +3983,12 @@ function startSection(index, sectionIndex){
     const sections = sectionsForPart(index);
     const section = sections[sectionIndex];
     if(!section || !isSectionUnlocked(index, sectionIndex)) return;
+
+    if(lessonsForSection(index, sectionIndex).length > 2) {
+        showLessonSelect(index, sectionIndex, "Choose a lesson in this ball");
+        return;
+    }
+
     startLesson(index, sectionIndex, nextLessonIndexForSection(index, sectionIndex));
 }
 

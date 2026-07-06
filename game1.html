@@ -2459,7 +2459,7 @@ const coursePartRoutes = {
         slug:"food-drink",
         title:"🍎 Talk About Food and Drink",
         gamePartIndex:1,
-        sectionIds:["b-part-1"],
+        sectionIds:["b-part-1", "b-part-2", "b-part-3", "b-part-4"],
         enginePartId:"part-4"
     },
     possessions:{
@@ -4034,15 +4034,7 @@ function startSection(index, sectionIndex){
     const sections = sectionsForPart(index);
     const section = sections[sectionIndex];
     if(!section || !isSectionUnlocked(index, sectionIndex)) return;
-    const progress = sectionLessonProgress(index, sectionIndex);
-    const message = progress.completed > 0
-        ? "Choose any visible lesson or quiz inside this ball, or continue where you stopped."
-        : "Open the first lesson to begin this ball.";
-    showLessonSelect(index, sectionIndex, message);
-}
-
-function routeUsesSingleSection(index){
-    return Boolean(activeCoursePartRoute) && sectionsForPart(index).length === 1;
+    startLesson(index, sectionIndex, nextLessonIndexForSection(index, sectionIndex));
 }
 
 function startLesson(index, sectionIndex, lessonIndex){
@@ -4156,11 +4148,6 @@ function showSectionSelect(index, message){
         return;
     }
 
-    if(routeUsesSingleSection(index)) {
-        showLessonSelect(index, 0, message || "Follow the egg path inside this section");
-        return;
-    }
-
     partIndex = index;
     applyPageTheme(index);
     activeLesson = null;
@@ -4178,7 +4165,7 @@ function showSectionSelect(index, message){
     });
     document.getElementById("bar").style.width = "0%";
     showPartLabel("Kurmanji to English");
-    document.getElementById("instruction").innerText = message || "Open a ball to view all lessons and quizzes inside it";
+    document.getElementById("instruction").innerText = message || "Tap a ball to start or continue the next lesson inside it";
     document.getElementById("question").innerText = displayPartTitle(index);
     document.getElementById("question").classList.remove("rich-prompt");
     document.getElementById("image").style.display = "none";
@@ -4190,7 +4177,7 @@ function showSectionSelect(index, message){
         <div class="lesson-path-shell">
             <div class="lesson-path-banner">
                 <strong>${escapeHtml(displayPartTitle(index))}</strong>
-                <span>Tap a learning ball to see all lessons and quizzes inside it. Completed content stays visible and can always be repeated.</span>
+                <span>Each ball keeps all of its lessons and quizzes inside one sequence. Completed balls can always be opened again for review.</span>
             </div>
             <div class="lesson-path">
                 ${sections.map((section, sectionIndex) => {
@@ -4383,16 +4370,15 @@ function load(){
     renderHearts();
     updateProgress();
     if(activeLesson) {
-        const sectionIndex = currentSectionIndex();
         setTopBackButton("← Back", () => {
-            if(sectionsForPart(partIndex).length && sectionIndex >= 0) {
-                showLessonSelect(partIndex, sectionIndex);
+            if(sectionsForPart(partIndex).length) {
+                showSectionSelect(partIndex, "Tap a ball to continue from the next unfinished lesson.");
                 return;
             }
             showPartSelect();
         });
-    } else if(sectionsForPart(partIndex).length && currentSectionIndex() >= 0) {
-        setTopBackButton("← Back", () => showLessonSelect(partIndex, currentSectionIndex()));
+    } else if(sectionsForPart(partIndex).length) {
+        setTopBackButton("← Back", () => showSectionSelect(partIndex));
     } else {
         setTopBackButton(sectionsForPart(partIndex).length ? "← Back" : "← Back", () => sectionsForPart(partIndex).length ? showSectionSelect(partIndex) : showPartSelect());
     }
@@ -5139,7 +5125,7 @@ if(window.PilingoMascot){
 }
 
 if(activeCoursePartRoute) {
-    showSectionSelect(activeCoursePartRoute.gamePartIndex, "Choose a lesson in this part");
+    showSectionSelect(activeCoursePartRoute.gamePartIndex, "Tap a ball to start or continue the next lesson inside it");
 } else {
     showPartSelect();
 }

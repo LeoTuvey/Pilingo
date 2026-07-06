@@ -1770,6 +1770,7 @@ const gameParts = [
             choiceStep("Select the Correct Meaning", "Em in", ["She is", "You are", "They are", "We are"], "We are"),
             choiceStep("Select the Correct Meaning", "Hûn (hing) in", ["I am", "He is", "You are", "We are"], "You are"),
             choiceStep("Select the Correct Meaning", "Ew in", ["He is", "She is", "We are", "They are"], "They are"),
+            nextStep("Game One A • Part 1E complete"),
             rawBuildStep("Translate into Kurmanji", "I am.", ["im", "in", "Ew", "Ez"], ["Ez", "im"]),
             rawBuildStep("Translate into Kurmanji", "You are.", ["Tu", "im", "e", "î"], ["Tu", "î"]),
             rawBuildStep("Translate into Kurmanji", "He is.", ["e", "in", "Em", "Ew"], ["Ew", "e"]),
@@ -1784,9 +1785,9 @@ const gameParts = [
             typeStep("Type the Correct English Sentence", "Hûn(hing) in.", "You are."),
             typeStep("Type the Correct English Sentence", "Ew in.", "They are."),
             rawBuildStep("Put the Words in Order", "Ez mamoste me.", ["I", "teacher", "am", "a"], ["I", "am", "a", "teacher"]),
-            rawBuildStep("Put the Words in Order", "You are a doctor.", ["Î", "Tu", "bijîşk"], ["Tu", "bijîşk", "Î"]),
-            rawBuildStep("Put the Words in Order", "He is an engineer.", ["E", "Ew", "Endazyar"], ["Ew", "Endazyar", "E"]),
-            rawBuildStep("Put the Words in Order", "She is a nurse.", ["E", "Ew", "perstar"], ["Ew", "perstar", "E"]),
+            rawBuildStep("Put the Words in Order", "You are a doctor.", ["Î", "Tu", "bijîşk"], ["Tu", "bijîşk", "î"]),
+            rawBuildStep("Put the Words in Order", "He is an engineer.", ["E", "Ew", "Endazyar"], ["Ew", "Endazyar", "e"]),
+            rawBuildStep("Put the Words in Order", "She is a nurse.", ["E", "Ew", "perstar"], ["Ew", "perstar", "e"]),
             rawBuildStep("Put the Words in Order", "We are Kurdish(Kurds).", ["in", "Em", "kurd"], ["Em", "kurd", "in"]),
             rawBuildStep("Put the Words in Order", "They are lawyers.", ["Parêzer", "Ew", "in"], ["Ew", "Parêzer", "in"]),
             {
@@ -1904,7 +1905,7 @@ const gameParts = [
                 ["smart", "student", "Stupid,", "Teacher"],
                 "Teacher"
             ),
-            nextStep("Game One A • Part 1E complete"),
+            nextStep("Game One A • Part 1F complete"),
             choiceStep("Translate this sentence", "Silav", ["Hello", "Or", "Bye"], "Hello"),
             choiceStep("Select the correct word", "Silav", ["Tea", "Coffee", "Hello"], "Hello"),
             buildStep("Translate this sentence", "Bi xêr hatî!", ["coffee", "please", "welcome"], ["welcome"]),
@@ -2445,7 +2446,7 @@ const coursePartRoutes = {
         slug:"family",
         title:"👨‍👩‍👧‍👦 Describe Your Family",
         gamePartIndex:0,
-        sectionIds:["a-part-1b", "a-part-1c", "a-part-1d-v3", "a-part-1e-v2"],
+        sectionIds:["a-part-1b", "a-part-1c", "a-part-1d-v3", "a-part-1e-v2", "a-part-1f-v1"],
         enginePartId:"part-2"
     },
     greetings:{
@@ -2697,29 +2698,39 @@ const partSections = {
             label:"Part 1E",
             detail:"Descriptions, pronouns, to be, and family possessives",
             start:85,
-            end:128,
+            end:96,
             lessons:[
                 { id:"a-part-1e-v2-lesson-1", label:"Lesson 1", detail:"Match the Pairs", start:85, end:85 },
                 { id:"a-part-1e-v2-lesson-2", label:"Lesson 2", detail:"Match the Pairs", start:86, end:86 },
                 { id:"a-part-1e-v2-lesson-3", label:"Lesson 3", detail:"Subject Pronouns", start:87, end:87 },
                 { id:"a-part-1e-v2-lesson-4", label:"Lesson 4", detail:"To Be", start:88, end:88 },
-                { id:"a-part-1e-v2-lesson-5", label:"Lesson 5", detail:"Select the Correct Meaning", start:89, end:95 },
-                { id:"a-part-1e-v2-lesson-6", label:"Lesson 6", detail:"Translate into Kurmanji", start:96, end:101 },
-                { id:"a-part-1e-v2-lesson-7", label:"Lesson 7", detail:"Type the Correct English Sentence", start:102, end:108 },
-                { id:"a-part-1e-v2-lesson-8", label:"Lesson 8", detail:"Put the Words in Order", start:109, end:114 },
-                { id:"a-part-1e-v2-lesson-9", label:"Lesson 9", detail:"Family & Possessives", start:115, end:115 },
-                { id:"a-part-1e-v2-lesson-10", label:"Lesson 10", detail:"Describing people and jobs", start:116, end:127 }
+                { id:"a-part-1e-v2-lesson-5", label:"Lesson 5", detail:"Select the Correct Meaning", start:89, end:95 }
+            ]
+        },
+        {
+            id:"a-part-1f-v1",
+            ballNumber:6,
+            label:"Part 1F",
+            detail:"Translation, possessives, and describing people",
+            start:129,
+            end:161,
+            lessons:[
+                { id:"a-part-1f-v1-lesson-1", label:"Lesson 1", detail:"Translate into Kurmanji", start:129, end:134 },
+                { id:"a-part-1f-v1-lesson-2", label:"Lesson 2", detail:"Type the Correct English Sentence", start:135, end:141 },
+                { id:"a-part-1f-v1-lesson-3", label:"Lesson 3", detail:"Put the Words in Order", start:142, end:147 },
+                { id:"a-part-1f-v1-lesson-4", label:"Lesson 4", detail:"Family & Possessives", start:148, end:148 },
+                { id:"a-part-1f-v1-lesson-5", label:"Lesson 5", detail:"Describing people and jobs", start:149, end:160 }
             ]
         },
         {
             id:"a-part-2",
             label:"Part 2",
             detail:"Greetings, welcome words, and polite phrases",
-            start:129,
-            end:138,
+            start:162,
+            end:171,
             lessons:[
-                { id:"a-part-2-lesson-1", label:"Lesson 1", detail:"Hello and welcome basics", start:129, end:133 },
-                { id:"a-part-2-lesson-2", label:"Lesson 2", detail:"Yes, no, bye, and greeting review", start:134, end:138 }
+                { id:"a-part-2-lesson-1", label:"Lesson 1", detail:"Hello and welcome basics", start:162, end:166 },
+                { id:"a-part-2-lesson-2", label:"Lesson 2", detail:"Yes, no, bye, and greeting review", start:167, end:171 }
             ]
         }
     ],
@@ -4202,7 +4213,7 @@ function showSectionSelect(index, message){
                                 <span class="lesson-egg-ring" style="--egg-progress:${progressDeg}deg">
                                     <span class="lesson-egg-core">
                                         <span class="lesson-egg-symbol">${lessonNodeSymbol(status)}</span>
-                                        <span class="lesson-egg-index">Ball ${sectionIndex + 1}</span>
+                                        <span class="lesson-egg-index">Ball ${section.ballNumber || (sectionIndex + 1)}</span>
                                         <span class="lesson-egg-percent">${progressPercent}%</span>
                                     </span>
                                 </span>

@@ -390,6 +390,120 @@ button{
   padding:8px 0 6px;
 }
 
+.part-group-list{
+  margin-top:20px;
+  display:grid;
+  gap:18px;
+}
+
+.part-group-card{
+  position:relative;
+  border-radius:28px;
+  padding:18px 16px 16px;
+  background:rgba(255,255,255,0.82);
+  border:1px solid rgba(210,224,241,0.94);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.75),
+    0 10px 24px rgba(44,66,104,0.08);
+}
+
+.part-group-card.locked{
+  opacity:0.82;
+}
+
+.part-group-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+}
+
+.part-group-copy{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.part-group-kicker{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  font-size:12px;
+  font-weight:1000;
+  letter-spacing:0.05em;
+  text-transform:uppercase;
+  color:#6a7e98;
+}
+
+.part-group-title{
+  margin:0;
+  font-size:24px;
+  line-height:1.15;
+  color:#21324b;
+}
+
+.part-group-summary{
+  margin:0;
+  color:#5b6c84;
+  font-size:14px;
+  line-height:1.45;
+  font-weight:800;
+}
+
+.part-group-status{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:8px 12px;
+  border-radius:999px;
+  background:#eef5ff;
+  border:1px solid rgba(198,215,240,0.9);
+  color:#47607f;
+  font-size:12px;
+  font-weight:1000;
+  white-space:nowrap;
+}
+
+.part-group-status.current{
+  background:#fff2b2;
+  color:#7b5600;
+  border-color:rgba(243,214,100,0.88);
+}
+
+.part-group-status.completed{
+  background:#eefadf;
+  color:#3d7a22;
+  border-color:#cfe9b8;
+}
+
+.part-group-status.locked{
+  background:#f3f6fb;
+  color:#8a98ae;
+  border-color:#dde6f1;
+}
+
+.part-group-balls{
+  margin-top:16px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:18px 16px;
+  align-items:flex-start;
+}
+
+.part-group-balls .part-orb-button{
+  width:calc(50% - 8px);
+  max-width:none;
+}
+
+.part-group-balls .part-orb-copy{
+  align-items:flex-start;
+  text-align:left;
+}
+
+.part-group-balls .part-orb-summary{
+  max-width:none;
+}
+
 .part-path::before{
   content:"";
   position:absolute;
@@ -953,6 +1067,18 @@ button{
     transform:none;
   }
 
+  .part-group-head{
+    flex-direction:column;
+  }
+
+  .part-group-balls{
+    gap:14px;
+  }
+
+  .part-group-balls .part-orb-button{
+    width:100%;
+  }
+
   .part-path-node,
   .part-path-node.left,
   .part-path-node.right{
@@ -1134,6 +1260,39 @@ function getBallProgress(part){
   };
 }
 
+function getSavedBallLessonCount(ballId){
+  const saved = getSavedLessonProgress();
+  const values = Array.isArray(saved[ballId]) ? saved[ballId] : [];
+  return values.filter((value) => typeof value === "string").length;
+}
+
+function getPartBalls(part){
+  return Array.isArray(part?.balls) ? part.balls : [];
+}
+
+function getDirectBallProgress(ball){
+  const total = Number(ball?.lessonCount) || 0;
+  const completed = Math.min(total, getSavedBallLessonCount(ball?.id));
+  return {
+    completed,
+    total,
+    percent: total ? completed / total : 0
+  };
+}
+
+function isBallCompleted(ball){
+  const progress = getDirectBallProgress(ball);
+  return progress.total > 0 && progress.completed >= progress.total;
+}
+
+function isBallUnlocked(sectionId, part, ballIndex){
+  if (!Engine.isPartUnlocked(sectionId, part.id)) return false;
+  const balls = getPartBalls(part);
+  if (!balls.length) return false;
+  if (ballIndex === 0) return true;
+  return balls.slice(0, ballIndex).every((ball) => isBallCompleted(ball));
+}
+
 function getPartStatus(sectionId, part){
   const progress = Engine.getPartProgress(sectionId, part.id);
   const unlocked = Engine.isPartUnlocked(sectionId, part.id);
@@ -1202,44 +1361,68 @@ function renderMap(){
 
     const partsMarkup = totalParts
       ? `
-        <div class="part-path">
-          ${section.parts.map((part, partIndex) => {
+        <div class="part-group-list">
+          ${section.parts.map((part) => {
             const partColors = getPartColors(part.accent);
             const status = getPartStatus(section.id, part);
+            const balls = getPartBalls(part);
             const unlocked = Engine.isPartUnlocked(section.id, part.id);
             const completed = Engine.isPartCompleted(section.id, part.id);
-            const hasContent = Boolean(part.href);
-            const canOpen = unlocked && hasContent;
-            const ballProgress = getBallProgress(part);
-            const progressDeg = Math.round(Math.max(0, Math.min(ballProgress.percent, 1)) * 360);
-            const progressPercent = Math.round(Math.max(0, Math.min(ballProgress.percent, 1)) * 100);
-            const actionLabel = !hasContent
-              ? "Coming Soon"
-              : completed
-                ? "Finished"
-                : (canOpen ? (ballProgress.completed > 0 ? "Continue" : "Start") : "Locked");
+            const completedBalls = balls.filter((ball) => isBallCompleted(ball)).length;
 
             return `
-              <div class="part-path-node ${partIndex % 2 === 0 ? "left" : "right"}">
-                <button
-                  class="part-orb-button ${completed ? "completed" : ""} ${status.className === "current" ? "current" : ""} ${unlocked ? "" : "locked"}"
-                  type="button"
-                  style="--part-top:${partColors.top}; --part-bottom:${partColors.bottom}; --part-shadow:${partColors.shadow};"
-                  onclick="openPart('${section.id}','${part.id}')"
-                  ${canOpen ? "" : "disabled"}>
-                    <span class="part-orb-ring" style="--part-progress:${progressDeg}deg">
-                      <span class="part-orb-core">
-                        <span class="part-orb-icon">${part.icon}</span>
-                        <span class="part-orb-index">Ball ${part.number}</span>
-                        <span class="part-orb-percent">${progressPercent}%</span>
-                      </span>
-                    </span>
-                  <span class="part-orb-copy">
-                    <span class="part-orb-title">${part.title}</span>
-                    <span class="part-orb-summary">${part.summary}</span>
-                    <span class="part-orb-progress">${hasContent ? `${status.icon} ${actionLabel} • ${ballProgress.completed}/${ballProgress.total || (Array.isArray(part.lessons) ? part.lessons.length : 0)} done` : `${status.icon} ${actionLabel}`}</span>
-                  </span>
-                </button>
+              <div class="part-group-card ${unlocked ? "" : "locked"}">
+                <div class="part-group-head">
+                  <div class="part-group-copy">
+                    <span class="part-group-kicker">${part.icon} Part ${part.number}</span>
+                    <h3 class="part-group-title">${part.title}</h3>
+                    <p class="part-group-summary">${part.summary}</p>
+                  </div>
+                  <span class="part-group-status ${status.className}">${status.icon} ${balls.length ? `${completedBalls}/${balls.length} balls` : status.label}</span>
+                </div>
+                ${balls.length ? `
+                  <div class="part-group-balls">
+                    ${balls.map((ball, ballIndex) => {
+                      const ballUnlocked = isBallUnlocked(section.id, part, ballIndex);
+                      const ballCompleted = isBallCompleted(ball);
+                      const ballProgress = getDirectBallProgress(ball);
+                      const progressDeg = Math.round(Math.max(0, Math.min(ballProgress.percent, 1)) * 360);
+                      const progressPercent = Math.round(Math.max(0, Math.min(ballProgress.percent, 1)) * 100);
+                      const actionLabel = ballCompleted
+                        ? "Finished"
+                        : (ballUnlocked ? (ballProgress.completed > 0 ? "Continue" : "Start") : "Locked");
+
+                      return `
+                        <button
+                          class="part-orb-button ${ballCompleted ? "completed" : ""} ${ballUnlocked && !ballCompleted ? "current" : ""} ${ballUnlocked ? "" : "locked"}"
+                          type="button"
+                          style="--part-top:${partColors.top}; --part-bottom:${partColors.bottom}; --part-shadow:${partColors.shadow};"
+                          onclick="openPartBall('${section.id}','${part.id}','${ball.id}')"
+                          ${ballUnlocked ? "" : "disabled"}>
+                            <span class="part-orb-ring" style="--part-progress:${progressDeg}deg">
+                              <span class="part-orb-core">
+                                <span class="part-orb-icon">${part.icon}</span>
+                                <span class="part-orb-index">${ball.title}</span>
+                                <span class="part-orb-percent">${progressPercent}%</span>
+                              </span>
+                            </span>
+                          <span class="part-orb-copy">
+                            <span class="part-orb-title">${ball.title}</span>
+                            <span class="part-orb-summary">${ball.summary}</span>
+                            <span class="part-orb-progress">${ballUnlocked ? "▶" : "🔒"} ${actionLabel} • ${ballProgress.completed}/${ballProgress.total} done</span>
+                          </span>
+                        </button>
+                      `;
+                    }).join("")}
+                  </div>
+                ` : `
+                  <div class="placeholder-list">
+                    <div class="placeholder-pill">
+                      <strong>Lessons will arrive under this title later</strong>
+                      <span>${unlocked ? "Soon" : "Locked"}</span>
+                    </div>
+                  </div>
+                `}
               </div>
             `;
           }).join("")}
@@ -1287,12 +1470,20 @@ function renderMap(){
   }).join("");
 }
 
-function openPart(sectionId, partId){
+function openPartBall(sectionId, partId, ballId){
   const part = COURSE_DATA.sections
     .find((section) => section.id === sectionId)
     ?.parts.find((entry) => entry.id === partId);
+  const balls = getPartBalls(part);
+  const ballIndex = balls.findIndex((entry) => entry.id === ballId);
+  const ball = ballIndex >= 0 ? balls[ballIndex] : null;
 
-  if (!part || !Engine.isPartUnlocked(sectionId, partId)) {
+  if (!part || !ball || ballIndex < 0) {
+    showToast("This lesson ball could not be found.");
+    return;
+  }
+
+  if (!isBallUnlocked(sectionId, part, ballIndex)) {
     showToast("This part is still locked. Finish the part above first.");
     return;
   }
@@ -1306,16 +1497,19 @@ function openPart(sectionId, partId){
     PilingoAudio.playGameOpen(1);
   }
 
+  const targetUrl = new URL(part.href, window.location.href);
+  targetUrl.searchParams.set("ballId", ball.id);
+
   setTimeout(() => {
-    window.location.href = part.href;
+    window.location.href = targetUrl.toString();
   }, 180);
 }
 
 function scrollToCurrentPart(){
   const current = Engine.getCurrentPart();
   const nextButton = current
-    ? document.querySelector(`.part-card[data-section-id="${current.sectionId}"][data-part-id="${current.partId}"]`)
-    : document.querySelector(".part-card:not(.completed):not(.locked)");
+    ? document.querySelector(".part-orb-button.current:not(.locked)")
+    : document.querySelector(".part-orb-button:not(.completed):not(.locked)");
 
   if (!nextButton) {
     showToast("Amazing. The next visible step is already completed.");

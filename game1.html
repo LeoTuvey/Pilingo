@@ -1361,6 +1361,7 @@ let pendingAdvanceTimer = null;
 let currentBuildOptions = [];
 const urlParams = new URLSearchParams(window.location.search);
 const coursePartSlug = urlParams.get("coursePart") || "";
+const initialBallId = urlParams.get("ballId") || "";
 const FAMILY_BALL3_PROGRESS_VERSION = "family-ball3-v4";
 
 function resetFamilyBall3Progress(){
@@ -4048,6 +4049,21 @@ function startSection(index, sectionIndex){
     startLesson(index, sectionIndex, nextLessonIndexForSection(index, sectionIndex));
 }
 
+function startSectionById(index, sectionId){
+    const sectionIndex = sectionsForPart(index).findIndex((section) => section.id === sectionId);
+    if(sectionIndex < 0) {
+        showSectionSelect(index, "That ball could not be found.");
+        return;
+    }
+
+    if(!isSectionUnlocked(index, sectionIndex)) {
+        showSectionSelect(index, "Finish the previous ball first to unlock this one.");
+        return;
+    }
+
+    startSection(index, sectionIndex);
+}
+
 function startLesson(index, sectionIndex, lessonIndex){
     const sections = sectionsForPart(index);
     const section = sections[sectionIndex];
@@ -5136,7 +5152,11 @@ if(window.PilingoMascot){
 }
 
 if(activeCoursePartRoute) {
-    showSectionSelect(activeCoursePartRoute.gamePartIndex, "Tap a ball to start or continue the next lesson inside it");
+    if(initialBallId) {
+        startSectionById(activeCoursePartRoute.gamePartIndex, initialBallId);
+    } else {
+        showSectionSelect(activeCoursePartRoute.gamePartIndex, "Tap a ball to start or continue the next lesson inside it");
+    }
 } else {
     showPartSelect();
 }

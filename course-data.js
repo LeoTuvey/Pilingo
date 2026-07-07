@@ -6,6 +6,10 @@ function lessonList(...titles) {
   }));
 }
 
+function ball(id, number, title, summary, lessonCount) {
+  return { id, number, title, summary, lessonCount };
+}
+
 const SECTION_ONE_PARTS = [
   {
     id: "part-1",
@@ -18,7 +22,10 @@ const SECTION_ONE_PARTS = [
     lessons: lessonList(
       "Kurmanji letters and Sorani matching",
       "Letter sounds and example names"
-    )
+    ),
+    balls: [
+      ball("a-part-1a", 1, "Ball 1", "Alphabet, Sorani script, and letter sounds", 2)
+    ]
   },
   {
     id: "part-2",
@@ -51,7 +58,14 @@ const SECTION_ONE_PARTS = [
       "Put the Words in Order",
       "Family & Possessives",
       "Describing people and jobs"
-    )
+    ),
+    balls: [
+      ball("a-part-1b", 1, "Ball 1", "Family words and basic family practice", 4),
+      ball("a-part-1c", 2, "Ball 2", "Family sentence translation and sentence building", 2),
+      ball("a-part-1d-v3", 3, "Ball 3", "Extended family members, family groups, and quizzes", 6),
+      ball("a-part-1e-v2", 4, "Ball 4", "Descriptions, pronouns, to be, and family possessives", 5),
+      ball("a-part-1f-v1", 5, "Ball 5", "Translation, possessives, and describing people", 5)
+    ]
   },
   {
     id: "part-3",
@@ -64,7 +78,10 @@ const SECTION_ONE_PARTS = [
     lessons: lessonList(
       "Greeting words",
       "Simple greeting review"
-    )
+    ),
+    balls: [
+      ball("a-part-2", 1, "Ball 1", "Greetings, welcome words, and polite phrases", 2)
+    ]
   },
   {
     id: "part-4",
@@ -83,7 +100,13 @@ const SECTION_ONE_PARTS = [
       "Short review quiz",
       "Final meaning review",
       "Sentence building and wrap-up"
-    )
+    ),
+    balls: [
+      ball("b-part-1", 1, "Ball 1", "Drinks, food, and welcome words", 2),
+      ball("b-part-2", 2, "Ball 2", "Phrases, listening, and matching", 2),
+      ball("b-part-3", 3, "Ball 3", "Yes, no, and review practice", 2),
+      ball("b-part-4", 4, "Ball 4", "Final review and sentence building", 2)
+    ]
   },
   {
     id: "part-5",
@@ -92,7 +115,8 @@ const SECTION_ONE_PARTS = [
     summary: "Work, roles, and describing what people do.",
     icon: "💼",
     accent: "violet",
-    lessons: []
+    lessons: [],
+    balls: []
   },
   {
     id: "part-6",
@@ -109,7 +133,12 @@ const SECTION_ONE_PARTS = [
       "Ball sentence review",
       "House vocabulary",
       "House sentence review"
-    )
+    ),
+    balls: [
+      ball("d-part-1", 1, "Ball 1", "Book lesson", 2),
+      ball("d-part-2", 2, "Ball 2", "Ball lesson", 2),
+      ball("d-part-3", 3, "Ball 3", "House lesson", 2)
+    ]
   },
   {
     id: "part-7",
@@ -118,7 +147,8 @@ const SECTION_ONE_PARTS = [
     summary: "Free time, likes, and fun activities.",
     icon: "⚽",
     accent: "gold",
-    lessons: []
+    lessons: [],
+    balls: []
   },
   {
     id: "part-8",
@@ -133,7 +163,11 @@ const SECTION_ONE_PARTS = [
       "Cat review",
       "Dog lesson",
       "Dog review"
-    )
+    ),
+    balls: [
+      ball("e-part-7", 1, "Ball 1", "Cat lesson", 2),
+      ball("e-part-8", 2, "Ball 2", "Dog lesson", 2)
+    ]
   },
   {
     id: "part-9",
@@ -158,7 +192,13 @@ const SECTION_ONE_PARTS = [
       "Match the meaning",
       "Fill in the missing word",
       "Boss level review"
-    )
+    ),
+    balls: [
+      ball("f-part-1", 1, "Ball 1", "This, that, these, and those", 4),
+      ball("f-part-2a", 2, "Ball 2", "Apple and apples review", 3),
+      ball("f-part-2b", 3, "Ball 3", "This, that, these, and those with colors", 6),
+      ball("f-part-3", 4, "Ball 4", "Question review and boss level", 5)
+    ]
   },
   {
     id: "part-10",
@@ -167,7 +207,8 @@ const SECTION_ONE_PARTS = [
     summary: "A final checkpoint for everything learned in Section 1.",
     icon: "🏆",
     accent: "violet",
-    lessons: []
+    lessons: [],
+    balls: []
   }
 ];
 

@@ -159,14 +159,32 @@ const SECTION_ONE_PARTS = [
     icon: "🐶",
     accent: "orange",
     lessons: lessonList(
-      "Cat lesson",
-      "Cat review",
-      "Dog lesson",
-      "Dog review"
+      "Person meaning practice",
+      "Person missing-word review",
+      "Kes meaning practice",
+      "Kes missing-word review",
+      "Man meaning practice",
+      "Man missing-word review",
+      "Woman meaning practice",
+      "Woman missing-word review",
+      "Boy meaning practice",
+      "Boy missing-word review",
+      "Girl meaning practice",
+      "Girl missing-word review",
+      "Cat meaning practice",
+      "Cat missing-word review",
+      "Dog meaning practice",
+      "Dog missing-word review"
     ),
     balls: [
-      ball("e-part-7", 1, "Ball 1", "Cat lesson", 2),
-      ball("e-part-8", 2, "Ball 2", "Dog lesson", 2)
+      ball("e-part-1", 1, "Ball 1", "Person lesson", 2),
+      ball("e-part-2", 2, "Ball 2", "Kes lesson", 2),
+      ball("e-part-3", 3, "Ball 3", "Man lesson", 2),
+      ball("e-part-4", 4, "Ball 4", "Woman lesson", 2),
+      ball("e-part-5", 5, "Ball 5", "Boy lesson", 2),
+      ball("e-part-6", 6, "Ball 6", "Girl lesson", 2),
+      ball("e-part-7", 7, "Ball 7", "Cat lesson", 2),
+      ball("e-part-8", 8, "Ball 8", "Dog lesson", 2)
     ]
   },
   {
@@ -195,9 +213,9 @@ const SECTION_ONE_PARTS = [
     ),
     balls: [
       ball("f-part-1", 1, "Ball 1", "This, that, these, and those", 4),
-      ball("f-part-2a", 2, "Ball 2", "Apple and apples review", 3),
-      ball("f-part-2b", 3, "Ball 3", "This, that, these, and those with colors", 6),
-      ball("f-part-3", 4, "Ball 4", "Question review and boss level", 5)
+      ball("f-part-2a", 2, "Ball 2", "Color sentences, endings, and true-or-false review", 5),
+      ball("f-part-2b", 3, "Ball 3", "Pair matching and listening challenge", 2),
+      ball("f-part-3", 4, "Ball 4", "Question review and boss level", 3)
     ]
   },
   {

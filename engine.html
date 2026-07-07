@@ -393,22 +393,33 @@ button{
 .part-group-list{
   margin-top:20px;
   display:grid;
-  gap:18px;
+  gap:26px;
 }
 
 .part-group-card{
   position:relative;
-  border-radius:28px;
-  padding:18px 16px 16px;
-  background:rgba(255,255,255,0.82);
-  border:1px solid rgba(210,224,241,0.94);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.75),
-    0 10px 24px rgba(44,66,104,0.08);
+  padding:0 0 18px;
+  background:transparent;
+  border:none;
+  box-shadow:none;
 }
 
 .part-group-card.locked{
   opacity:0.82;
+}
+
+.part-group-card::after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:1px;
+  background:linear-gradient(90deg, rgba(189,205,227,0) 0%, rgba(189,205,227,0.95) 18%, rgba(189,205,227,0.95) 82%, rgba(189,205,227,0) 100%);
+}
+
+.part-group-card:last-child::after{
+  display:none;
 }
 
 .part-group-head{
@@ -432,19 +443,19 @@ button{
   font-weight:1000;
   letter-spacing:0.05em;
   text-transform:uppercase;
-  color:#6a7e98;
+  color:#72839b;
 }
 
 .part-group-title{
   margin:0;
-  font-size:24px;
+  font-size:25px;
   line-height:1.15;
   color:#21324b;
 }
 
 .part-group-summary{
   margin:0;
-  color:#5b6c84;
+  color:#60718a;
   font-size:14px;
   line-height:1.45;
   font-weight:800;
@@ -454,14 +465,15 @@ button{
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  padding:8px 12px;
+  padding:7px 11px;
   border-radius:999px;
-  background:#eef5ff;
-  border:1px solid rgba(198,215,240,0.9);
+  background:rgba(255,255,255,0.92);
+  border:1px solid rgba(198,215,240,0.86);
   color:#47607f;
   font-size:12px;
   font-weight:1000;
   white-space:nowrap;
+  box-shadow:0 3px 0 rgba(223,233,245,0.9);
 }
 
 .part-group-status.current{
@@ -488,6 +500,7 @@ button{
   flex-wrap:wrap;
   gap:18px 16px;
   align-items:flex-start;
+  padding-left:6px;
 }
 
 .part-group-balls .part-orb-button{
@@ -1203,7 +1216,7 @@ const COURSE_PART_SECTION_MAP = {
   greetings:["a-part-2"],
   "food-drink":["b-part-1","b-part-2","b-part-3","b-part-4"],
   possessions:["d-part-1","d-part-2","d-part-3"],
-  animals:["e-part-7","e-part-8"],
+  animals:["e-part-1","e-part-2","e-part-3","e-part-4","e-part-5","e-part-6","e-part-7","e-part-8"],
   questions:["f-part-1","f-part-2a","f-part-2b","f-part-3"]
 };
 
@@ -1267,7 +1280,26 @@ function getSavedBallLessonCount(ballId){
 }
 
 function getPartBalls(part){
-  return Array.isArray(part?.balls) ? part.balls : [];
+  const flatBalls = [];
+
+  function addBall(entry){
+    if (!entry || typeof entry !== "object") return;
+
+    const nestedBalls = Array.isArray(entry.balls) ? entry.balls : [];
+    const hasOwnLessons = Array.isArray(entry.lessons)
+      ? entry.lessons.length > 0
+      : Number(entry.lessonCount) > 0;
+
+    if (hasOwnLessons || !nestedBalls.length) {
+      const { balls, ...normalBall } = entry;
+      flatBalls.push(normalBall);
+    }
+
+    nestedBalls.forEach(addBall);
+  }
+
+  (Array.isArray(part?.balls) ? part.balls : []).forEach(addBall);
+  return flatBalls;
 }
 
 function getDirectBallProgress(ball){

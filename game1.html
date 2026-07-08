@@ -4026,9 +4026,23 @@ function allPartsComplete(){
     return completedParts.length >= gameParts.length;
 }
 
+function isDirectSingleBallRoute(index){
+    const sections = sectionsForPart(index);
+    return !!(
+        activeCoursePartRoute &&
+        activeCoursePartRoute.gamePartIndex === index &&
+        sections.length === 1 &&
+        lessonsForSection(index, 0).length === 1
+    );
+}
+
 function startPart(index){
     activeLesson = null;
     if(sectionsForPart(index).length) {
+        if(isDirectSingleBallRoute(index)) {
+            startSection(index, 0);
+            return;
+        }
         showSectionSelect(index);
         return;
     }
@@ -4105,6 +4119,11 @@ function showLessonSelect(index, sectionIndex, message){
         return;
     }
 
+    if(isDirectSingleBallRoute(index)) {
+        startSection(index, sectionIndex);
+        return;
+    }
+
     const lessons = lessonsForSection(index, sectionIndex);
     const progress = sectionLessonProgress(index, sectionIndex);
 
@@ -4178,6 +4197,11 @@ function showSectionSelect(index, message){
     const sections = sectionsForPart(index);
     if(!sections.length) {
         startPart(index);
+        return;
+    }
+
+    if(isDirectSingleBallRoute(index)) {
+        startSection(index, 0);
         return;
     }
 
@@ -4404,6 +4428,10 @@ function load(){
     updateProgress();
     if(activeLesson) {
         setTopBackButton("← Back", () => {
+            if(isDirectSingleBallRoute(partIndex)) {
+                window.location.href = "engine.html";
+                return;
+            }
             if(sectionsForPart(partIndex).length) {
                 showSectionSelect(partIndex, "Tap a ball to continue from the next unfinished lesson.");
                 return;
@@ -4982,6 +5010,11 @@ function completeStep(){
             hearts = window.Engine?.addHeart ? Engine.addHeart(1) : Math.min(5, hearts + 1);
             renderHearts();
 
+            if(isDirectSingleBallRoute(partIndex)) {
+                window.location.href = "engine.html";
+                return;
+            }
+
             if(nextSection) {
                 showSectionSelect(partIndex, "❤️ +1 heart • " + nextSection.label + " is now unlocked");
                 return;
@@ -4994,6 +5027,11 @@ function completeStep(){
             }
             markPartComplete(partIndex);
             showPartComplete(partIndex);
+            return;
+        }
+
+        if(isDirectSingleBallRoute(partIndex)) {
+            window.location.href = "engine.html";
             return;
         }
 

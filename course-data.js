@@ -57,14 +57,20 @@ const SECTION_ONE_PARTS = [
       "Type the Correct English Sentence",
       "Put the Words in Order",
       "Family & Possessives",
-      "Describing people and jobs"
+      "Describing people and jobs",
+      "Match the Pairs",
+      "Match the Pairs",
+      "Match the Pairs",
+      "Select the Correct Meaning",
+      "Write in English"
     ),
     balls: [
       ball("a-part-1b", 1, "Ball 1", "Family words and basic family practice", 4),
       ball("a-part-1c", 2, "Ball 2", "Family sentence translation and sentence building", 2),
       ball("a-part-1d-v3", 3, "Ball 3", "Extended family members, family groups, and quizzes", 6),
       ball("a-part-1e-v2", 4, "Ball 4", "Descriptions, pronouns, to be, and family possessives", 5),
-      ball("a-part-1f-v1", 5, "Ball 5", "Translation, possessives, and describing people", 5)
+      ball("a-part-1f-v1", 5, "Ball 5", "Translation, possessives, and describing people", 5),
+      ball("a-part-1g-v1", 6, "Ball 6", "Traits, animals, and writing family descriptions", 5)
     ]
   },
   {

@@ -1,6 +1,7 @@
 const PilingoAudio = (() => {
   let audioContext = null;
   let buttonSoundInstalled = false;
+  let audioUnlockInstalled = false;
   let lastTapAt = 0;
 
   function getContext(){
@@ -9,6 +10,24 @@ const PilingoAudio = (() => {
     if(!audioContext) audioContext = new AudioContext();
     if(audioContext.state === "suspended") audioContext.resume().catch(() => {});
     return audioContext;
+  }
+
+  function unlockAudioContext(){
+    const ctx = getContext();
+    if(!ctx) return;
+
+    const gain = ctx.createGain();
+    gain.gain.value = 0.00001;
+    gain.connect(ctx.destination);
+
+    const oscillator = ctx.createOscillator();
+    oscillator.type = "sine";
+    oscillator.frequency.value = 440;
+    oscillator.connect(gain);
+
+    const startAt = ctx.currentTime;
+    oscillator.start(startAt);
+    oscillator.stop(startAt + 0.01);
   }
 
   function tone(frequency, start, duration, options = {}){
@@ -75,8 +94,9 @@ const PilingoAudio = (() => {
     if(!canPlayEffects()) return;
 
     [
-      { frequency:1180, start:0.0, duration:0.055, type:"triangle", volume:0.022, filter:3000, slideTo:980 },
-      { frequency:760, start:0.018, duration:0.072, type:"sine", volume:0.014, filter:2200, slideTo:620 }
+      { frequency:1020, start:0.0, duration:0.05, type:"triangle", volume:0.034, filter:2500, slideTo:860 },
+      { frequency:620, start:0.014, duration:0.082, type:"sine", volume:0.022, filter:1800, slideTo:520 },
+      { frequency:1480, start:0.008, duration:0.032, type:"triangle", volume:0.012, filter:3200, slideTo:1240 }
     ].forEach((note) => {
       tone(note.frequency, note.start, note.duration, {
         type:note.type,
@@ -366,10 +386,30 @@ const PilingoAudio = (() => {
     }, true);
   }
 
+  function installAudioUnlock(){
+    if(audioUnlockInstalled || typeof document === "undefined") return;
+    audioUnlockInstalled = true;
+
+    const unlock = () => {
+      unlockAudioContext();
+      document.removeEventListener("pointerdown", unlock, true);
+      document.removeEventListener("touchstart", unlock, true);
+      document.removeEventListener("keydown", unlock, true);
+    };
+
+    document.addEventListener("pointerdown", unlock, true);
+    document.addEventListener("touchstart", unlock, true);
+    document.addEventListener("keydown", unlock, true);
+  }
+
   if(typeof document !== "undefined"){
     if(document.readyState === "loading"){
-      document.addEventListener("DOMContentLoaded", installButtonSounds, { once:true });
+      document.addEventListener("DOMContentLoaded", () => {
+        installAudioUnlock();
+        installButtonSounds();
+      }, { once:true });
     } else {
+      installAudioUnlock();
       installButtonSounds();
     }
   }
@@ -387,6 +427,8 @@ const PilingoAudio = (() => {
     speak,
     getYoungEnglishFemaleVoice,
     getVoiceForLang,
+    unlockAudioContext,
+    installAudioUnlock,
     installButtonSounds
   };
 })();

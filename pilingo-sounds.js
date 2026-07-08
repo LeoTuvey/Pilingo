@@ -393,12 +393,16 @@ const PilingoAudio = (() => {
     const unlock = () => {
       unlockAudioContext();
       document.removeEventListener("pointerdown", unlock, true);
+      document.removeEventListener("pointerup", unlock, true);
       document.removeEventListener("touchstart", unlock, true);
+      document.removeEventListener("touchend", unlock, true);
       document.removeEventListener("keydown", unlock, true);
     };
 
     document.addEventListener("pointerdown", unlock, true);
+    document.addEventListener("pointerup", unlock, true);
     document.addEventListener("touchstart", unlock, true);
+    document.addEventListener("touchend", unlock, true);
     document.addEventListener("keydown", unlock, true);
   }
 

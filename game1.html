@@ -5346,6 +5346,11 @@ function completeStep(){
 
         markLessonComplete(partIndex, sectionIndex, activeLesson.id);
         saveCurrentGradeRecord();
+        const heartsMax = Number(window.Engine?.HEARTS_MAX || 5);
+        const heartsBeforeRestore = window.Engine?.getHearts ? Engine.getHearts() : hearts;
+        const restoredHeart = heartsBeforeRestore < heartsMax;
+        hearts = window.Engine?.addHeart ? Engine.addHeart(1) : Math.min(heartsMax, heartsBeforeRestore + 1);
+        renderHearts();
         const lessonPercent = currentGradePercent();
         const completionCategory = activeLessonIsQuiz() ? "quizComplete" : "lessonComplete";
         const completionScore = activeLessonIsQuiz()
@@ -5375,8 +5380,6 @@ function completeStep(){
         if(nowComplete && !wasComplete) {
             markSectionComplete(partIndex, sectionIndex);
             setReviewLessonIndex(partIndex, sectionIndex, 0);
-            hearts = window.Engine?.addHeart ? Engine.addHeart(1) : Math.min(5, hearts + 1);
-            renderHearts();
             const routeCompleted = syncActiveCoursePartCompletion(partIndex);
 
             if(usesDirectBallFlow(partIndex)) {
@@ -5385,12 +5388,18 @@ function completeStep(){
             }
 
             if(nextSection) {
-                showSectionSelect(partIndex, "❤️ +1 heart • " + nextSection.label + " is now unlocked");
+                showSectionSelect(
+                    partIndex,
+                    (restoredHeart ? "❤️ +1 heart • " : "") + nextSection.label + " is now unlocked"
+                );
                 return;
             }
 
             if(activeCoursePartRoute && routeCompleted) {
-                showSectionSelect(partIndex, "🏆 This course part is completed. You can review these lessons again or go back when you are ready.");
+                showSectionSelect(
+                    partIndex,
+                    (restoredHeart ? "❤️ +1 heart • " : "") + "🏆 This course part is completed. You can review these lessons again or go back when you are ready."
+                );
                 return;
             }
             markPartComplete(partIndex);

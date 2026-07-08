@@ -2009,7 +2009,25 @@ const gameParts = [
                     { english:"Fat", kurmanji:"qelew", group:"fat" },
                     { english:"Beautiful", kurmanji:"ciwan (xweşik / bedew)", group:"beautiful" },
                     { english:"Ugly", kurmanji:"kirêt (nebedew)", group:"ugly" },
-                    { english:"Bad", kurmanji:"xirab", group:"bad" },
+                    { english:"Bad", kurmanji:"xirab", group:"bad" }
+                ],
+                leftHeading:"English",
+                rightHeading:"Kurmanji",
+                leftSide:"first",
+                rightSide:"second",
+                leftSpeakMap:{
+                    "Skinny":"Skinny",
+                    "Fat":"Fat",
+                    "Beautiful":"Beautiful",
+                    "Ugly":"Ugly",
+                    "Bad":"Bad"
+                }
+            },
+            {
+                type:"match",
+                instruction:"🔀 Match the Pairs",
+                prompt:"",
+                pairs:[
                     { english:"Very", kurmanji:"pir (zor)", group:"very" },
                     { english:"Thick", kurmanji:"stûr", group:"thick" },
                     { english:"Thin", kurmanji:"zirav", group:"thin" },
@@ -2041,7 +2059,25 @@ const gameParts = [
                     { english:"Dog", kurmanji:"Se", group:"dog" },
                     { english:"Giraffe", kurmanji:"Zerafe", group:"giraffe" },
                     { english:"Smart", kurmanji:"zîrek", group:"smart" },
-                    { english:"Long", kurmanji:"dirêj", group:"long" },
+                    { english:"Long", kurmanji:"dirêj", group:"long" }
+                ],
+                leftHeading:"English",
+                rightHeading:"Kurmanji",
+                leftSide:"first",
+                rightSide:"second",
+                leftSpeakMap:{
+                    "Cat":"Cat",
+                    "Dog":"Dog",
+                    "Giraffe":"Giraffe",
+                    "Smart":"Smart",
+                    "Long":"Long"
+                }
+            },
+            {
+                type:"match",
+                instruction:"🔀 Match the Pairs",
+                prompt:"",
+                pairs:[
                     { english:"Short", kurmanji:"kurt", group:"short" },
                     { english:"Thick", kurmanji:"stûr", group:"thick" },
                     { english:"Thin", kurmanji:"zirav", group:"thin" },
@@ -2072,7 +2108,24 @@ const gameParts = [
                     { english:"Kind", kurmanji:"dilovan (bi-reĥim / kok)", group:"kind" },
                     { english:"Unkind", kurmanji:"nedilovan (bê-reĥim / nekok)", group:"unkind" },
                     { english:"Young", kurmanji:"ciwan", group:"young" },
-                    { english:"Teenager", kurmanji:"cihêl", group:"teenager" },
+                    { english:"Teenager", kurmanji:"cihêl", group:"teenager" }
+                ],
+                leftHeading:"English",
+                rightHeading:"Kurmanji",
+                leftSide:"first",
+                rightSide:"second",
+                leftSpeakMap:{
+                    "Kind":"Kind",
+                    "Unkind":"Unkind",
+                    "Young":"Young",
+                    "Teenager":"Teenager"
+                }
+            },
+            {
+                type:"match",
+                instruction:"🔀 Match the Pairs",
+                prompt:"",
+                pairs:[
                     { english:"Old", kurmanji:"pîr (kal)", group:"old" },
                     { english:"Very", kurmanji:"gelek(zor)", group:"very" },
                     { english:"And", kurmanji:"û", group:"and" },
@@ -2104,15 +2157,15 @@ const gameParts = [
             choiceStep("Select the Correct Meaning", "qelew", ["fat", "skinny", "young", "short"], "fat"),
             choiceStep("Select the Correct Meaning", "dilovan (bi-reĥim)", ["bad", "funny", "kind", "ugly"], "kind"),
             choiceStep("Select the Correct Meaning", "Nedilovan (bê-reĥim)", ["kind", "unkind", "smart", "tall"], "unkind"),
-            typeStep("✍️ Write in English", "Babê min ê zîrek e.\n\nfather\tMy\tsmart\tis", "My father is smart."),
-            typeStep("✍️ Write in English", "dayika min a dilovan e.\n\nmother\t\tMy\tkind\tis", "My mother is kind."),
-            typeStep("✍️ Write in English", "dayika min a bi-reĥim e.\n\nmother\t\tMy\tkind\tis", "My mother is kind."),
-            typeStep("✍️ Write in English", "Birayê min ê bilind e.\n\nbrother\t\tMy\tis\ttall", "My brother is tall."),
-            typeStep("✍️ Write in English", "pişîka min a xweşik e.\n\ncat\t\tMy\tis\tbeautiful ", "My cat is beautiful."),
-            typeStep("✍️ Write in English", "Kurê min ê ciwan e.\n\nson \tyoung\tMy\tis", "My son is young."),
-            typeStep("✍️ Write in English", "Keça min a zîrek e.\n\nsmart\tdaughter \tis\tMy", "My daughter is smart."),
-            typeStep("✍️ Write in English", "Mêrê min ê qelew e.\n\nMy\t is\t fat\thusband", "My husband is fat."),
-            typeStep("✍️ Write in English", "Jina min a ĥișik e. (zeîf / zirav)\n\nis \twife\tskinny\tMy", "My wife is skinny."),
+            rawBuildStep("Arrange the English Words", "Babê min ê zîrek e.", ["father", "My", "smart", "is"], ["My", "father", "is", "smart."]),
+            rawBuildStep("Arrange the English Words", "dayika min a dilovan e.", ["mother", "My", "kind", "is"], ["My", "mother", "is", "kind."]),
+            rawBuildStep("Arrange the English Words", "dayika min a bi-reĥim e.", ["mother", "My", "kind", "is"], ["My", "mother", "is", "kind."]),
+            rawBuildStep("Arrange the English Words", "Birayê min ê bilind e.", ["brother", "My", "is", "tall"], ["My", "brother", "is", "tall."]),
+            rawBuildStep("Arrange the English Words", "pişîka min a xweşik e.", ["cat", "My", "is", "beautiful"], ["My", "cat", "is", "beautiful."]),
+            rawBuildStep("Arrange the English Words", "Kurê min ê ciwan e.", ["son", "young", "My", "is"], ["My", "son", "is", "young."]),
+            rawBuildStep("Arrange the English Words", "Keça min a zîrek e.", ["smart", "daughter", "is", "My"], ["My", "daughter", "is", "smart."]),
+            rawBuildStep("Arrange the English Words", "Mêrê min ê qelew e.", ["My", "is", "fat", "husband"], ["My", "husband", "is", "fat."]),
+            rawBuildStep("Arrange the English Words", "Jina min a ĥișik e. (zeîf / zirav)", ["is", "wife", "skinny", "My"], ["My", "wife", "is", "skinny."]),
             nextStep("Game One A • Part 1G complete")
         ]
     },
@@ -2924,13 +2977,13 @@ const partSections = {
             label:"Part 1G",
             detail:"Matching traits, animals, and writing family descriptions",
             start:129,
-            end:148,
+            end:151,
             lessons:[
-                { id:"a-part-1g-v1-lesson-1", label:"Lesson 1", detail:"Match the Pairs", start:129, end:129 },
-                { id:"a-part-1g-v1-lesson-2", label:"Lesson 2", detail:"Match the Pairs", start:130, end:130 },
-                { id:"a-part-1g-v1-lesson-3", label:"Lesson 3", detail:"Match the Pairs", start:131, end:131 },
-                { id:"a-part-1g-v1-lesson-4", label:"Lesson 4", detail:"Select the Correct Meaning", start:132, end:138 },
-                { id:"a-part-1g-v1-lesson-5", label:"Lesson 5", detail:"Write in English", start:139, end:147 }
+                { id:"a-part-1g-v1-lesson-1", label:"Lesson 1", detail:"Match the Pairs", start:129, end:130 },
+                { id:"a-part-1g-v1-lesson-2", label:"Lesson 2", detail:"Match the Pairs", start:131, end:132 },
+                { id:"a-part-1g-v1-lesson-3", label:"Lesson 3", detail:"Match the Pairs", start:133, end:134 },
+                { id:"a-part-1g-v1-lesson-4", label:"Lesson 4", detail:"Select the Correct Meaning", start:135, end:141 },
+                { id:"a-part-1g-v1-lesson-5", label:"Lesson 5", detail:"Arrange the English Words", start:142, end:150 }
             ]
         },
         {

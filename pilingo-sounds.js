@@ -3,6 +3,8 @@ const PilingoAudio = (() => {
   let buttonSoundInstalled = false;
   let audioUnlockInstalled = false;
   let sectionMarkerAudio = null;
+  let sectionMarkerBuffer = null;
+  let sectionMarkerBufferPromise = null;
   let lastTapAt = 0;
 
   function getSectionMarkerAudio(){
@@ -24,6 +26,28 @@ const PilingoAudio = (() => {
     return audioContext;
   }
 
+  function preloadSectionMarkerBuffer(){
+    const ctx = getContext();
+    if(!ctx || sectionMarkerBuffer || sectionMarkerBufferPromise || typeof fetch !== "function") return sectionMarkerBufferPromise;
+
+    sectionMarkerBufferPromise = fetch("section-knock.wav?v=2")
+      .then((response) => {
+        if(!response.ok) throw new Error(`Failed to load section knock: ${response.status}`);
+        return response.arrayBuffer();
+      })
+      .then((arrayBuffer) => ctx.decodeAudioData(arrayBuffer.slice(0)))
+      .then((audioBuffer) => {
+        sectionMarkerBuffer = audioBuffer;
+        return audioBuffer;
+      })
+      .catch(() => null)
+      .finally(() => {
+        sectionMarkerBufferPromise = null;
+      });
+
+    return sectionMarkerBufferPromise;
+  }
+
   function unlockAudioContext(){
     const ctx = getContext();
     if(ctx){
@@ -39,6 +63,8 @@ const PilingoAudio = (() => {
       const startAt = ctx.currentTime;
       oscillator.start(startAt);
       oscillator.stop(startAt + 0.01);
+
+      preloadSectionMarkerBuffer();
     }
 
     const audio = getSectionMarkerAudio();
@@ -121,6 +147,22 @@ const PilingoAudio = (() => {
 
   function playSectionMarkerTap(){
     if(!canPlayEffects()) return;
+
+    const ctx = getContext();
+    if(ctx && sectionMarkerBuffer){
+      try {
+        const source = ctx.createBufferSource();
+        const gain = ctx.createGain();
+        source.buffer = sectionMarkerBuffer;
+        gain.gain.value = 0.72;
+        source.connect(gain);
+        gain.connect(ctx.destination);
+        source.start();
+        return;
+      } catch(error) {
+        // fall back below
+      }
+    }
 
     const audio = getSectionMarkerAudio();
     if(audio){

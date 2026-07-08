@@ -340,6 +340,12 @@ body.compact-build-step .answer-bank{
     font-weight:800;
 }
 
+.prompt-blank{
+    color:#1c80cf;
+    font-weight:1000;
+    letter-spacing:1px;
+}
+
 @keyframes movingDemoWord{
     0%, 100%{ transform:translateY(0); }
     35%{ transform:translateY(-3px); }
@@ -1912,86 +1918,86 @@ const gameParts = [
             },
             richChoiceStep(
                 "Family & Possessives",
-                "Ez ê zîrek im.  (ê) male / masculine\n I am ...... .",
-                `Ez ê <span class="moving-demo-word">zîrek</span> im.<span class="prompt-subnote">(ê) male / masculine</span><br> I am ...... .`,
+                "Ez ê zîrek im.  (ê) male / masculine\n I am _____ .",
+                `Ez ê <span class="moving-demo-word">zîrek</span> im.<span class="prompt-subnote">(ê) male / masculine</span><br> I am <span class="prompt-blank">_____</span> .`,
                 ["Stupid", "short", "smart", "tall"],
                 "smart"
             ),
             richChoiceStep(
                 "Family & Possessives",
-                "Ez a zîrek im. (a) female / feminine\n I am ...... .",
-                `Ez a <span class="moving-demo-word">zîrek</span> im.<span class="prompt-subnote">(a) female / feminine</span><br> I am ...... .`,
+                "Ez a zîrek im. (a) female / feminine\n I am _____ .",
+                `Ez a <span class="moving-demo-word">zîrek</span> im.<span class="prompt-subnote">(a) female / feminine</span><br> I am <span class="prompt-blank">_____</span> .`,
                 ["Stupid", "short", "smart", "tall"],
                 "smart"
             ),
             richChoiceStep(
                 "Family & Possessives",
-                "Tu ê tembel î. (ê) male / masculine\n You are ...... .",
-                `Tu ê <span class="moving-demo-word">tembel</span> î.<span class="prompt-subnote">(ê) male / masculine</span><br> You are ...... .`,
-                ["short", "smart", "lazy", "Stupid,"],
+                "Tu ê tembel î. (ê) male / masculine\n You are _____ .",
+                `Tu ê <span class="moving-demo-word">tembel</span> î.<span class="prompt-subnote">(ê) male / masculine</span><br> You are <span class="prompt-blank">_____</span> .`,
+                ["short", "smart", "lazy", "Stupid"],
                 "lazy"
             ),
             richChoiceStep(
                 "Family & Possessives",
-                "Tu a tembel î. (a) female / feminine\n You are ...... .",
-                `Tu a <span class="moving-demo-word">tembel</span> î.<span class="prompt-subnote">(a) female / feminine</span><br> You are ...... .`,
-                ["short", "smart", "lazy", "Stupid,"],
+                "Tu a tembel î. (a) female / feminine\n You are _____ .",
+                `Tu a <span class="moving-demo-word">tembel</span> î.<span class="prompt-subnote">(a) female / feminine</span><br> You are <span class="prompt-blank">_____</span> .`,
+                ["short", "smart", "lazy", "Stupid"],
                 "lazy"
             ),
             richChoiceStep(
                 "Family & Possessives",
-                "Ez xwendevan im.\n I am a ...... . ",
-                `Ez <span class="moving-demo-word">xwendevan</span> im.<br> I am a ...... . `,
-                ["short", "smart", "student", "Stupid,"],
+                "Ez xwendevan im.\n I am a _____ . ",
+                `Ez <span class="moving-demo-word">xwendevan</span> im.<br> I am a <span class="prompt-blank">_____</span> . `,
+                ["short", "smart", "student", "Stupid"],
                 "student"
             ),
             richChoiceStep(
                 "Family & Possessives",
-                "Tu ê bilind î. (ê) male / masculine\nYou are ...... .",
-                `Tu ê <span class="moving-demo-word">bilind</span> î.<span class="prompt-subnote">(ê) male / masculine</span><br>You are ...... .`,
+                "Tu ê bilind î. (ê) male / masculine\nYou are _____ .",
+                `Tu ê <span class="moving-demo-word">bilind</span> î.<span class="prompt-subnote">(ê) male / masculine</span><br>You are <span class="prompt-blank">_____</span> .`,
                 ["Stupid", "short", "smart", "tall"],
                 "tall"
             ),
             richChoiceStep(
                 "Family & Possessives",
-                "Tu a bilind î. (a) female / feminine\nYou are ...... .",
-                `Tu a <span class="moving-demo-word">bilind</span> î.<span class="prompt-subnote">(a) female / feminine</span><br>You are ...... .`,
+                "Tu a bilind î. (a) female / feminine\nYou are _____ .",
+                `Tu a <span class="moving-demo-word">bilind</span> î.<span class="prompt-subnote">(a) female / feminine</span><br>You are <span class="prompt-blank">_____</span> .`,
                 ["Stupid", "short", "smart", "tall"],
                 "tall"
             ),
             richChoiceStep(
                 "Family & Possessives",
-                "Ez gelek ê bilind im. (ê) male / masculine\nI am ...... tall.",
-                `Ez <span class="moving-demo-word">gelek</span> ê bilind im.<span class="prompt-subnote">(ê) male / masculine</span><br>I am ...... tall.`,
-                ["very", "smart", "student", "Stupid,"],
+                "Ez gelek ê bilind im. (ê) male / masculine\nI am _____ tall.",
+                `Ez <span class="moving-demo-word">gelek</span> ê bilind im.<span class="prompt-subnote">(ê) male / masculine</span><br>I am <span class="prompt-blank">_____</span> tall.`,
+                ["very", "smart", "student", "Stupid"],
                 "very"
             ),
             richChoiceStep(
                 "Family & Possessives",
-                "Ez gelek a bilind im. (a) female / feminine\nI am ...... tall.",
-                `Ez <span class="moving-demo-word">gelek</span> a bilind im.<span class="prompt-subnote">(a) female / feminine</span><br>I am ...... tall.`,
-                ["very", "smart", "student", "Stupid,"],
+                "Ez gelek a bilind im. (a) female / feminine\nI am _____ tall.",
+                `Ez <span class="moving-demo-word">gelek</span> a bilind im.<span class="prompt-subnote">(a) female / feminine</span><br>I am <span class="prompt-blank">_____</span> tall.`,
+                ["very", "smart", "student", "Stupid"],
                 "very"
             ),
             richChoiceStep(
                 "Family & Possessives",
-                "Tu zor ê kurt î. (ê) male / masculine\nYou are very ...... .",
-                `Tu zor ê <span class="moving-demo-word">kurt</span> î.<span class="prompt-subnote">(ê) male / masculine</span><br>You are very ...... .`,
-                ["very", "smart", "short", "Stupid,"],
+                "Tu zor ê kurt î. (ê) male / masculine\nYou are very _____ .",
+                `Tu zor ê <span class="moving-demo-word">kurt</span> î.<span class="prompt-subnote">(ê) male / masculine</span><br>You are very <span class="prompt-blank">_____</span> .`,
+                ["very", "smart", "short", "Stupid"],
                 "short"
             ),
             richChoiceStep(
                 "Family & Possessives",
-                "Tu zor a  kurt î. (a) female / feminine\nYou are very ...... .",
-                `Tu zor a <span class="moving-demo-word">kurt</span> î.<span class="prompt-subnote">(a) female / feminine</span><br>You are very ...... .`,
-                ["very", "smart", "short", "Stupid,"],
+                "Tu zor a  kurt î. (a) female / feminine\nYou are very _____ .",
+                `Tu zor a <span class="moving-demo-word">kurt</span> î.<span class="prompt-subnote">(a) female / feminine</span><br>You are very <span class="prompt-blank">_____</span> .`,
+                ["very", "smart", "short", "Stupid"],
                 "short"
             ),
             richChoiceStep(
                 "Family & Possessives",
-                "Tu mamoste î.\nYou are a ...... .",
-                `Tu <span class="moving-demo-word">mamoste</span> î.<br>You are a ...... .`,
-                ["smart", "student", "Stupid,", "Teacher"],
+                "Tu mamoste î.\nYou are a _____ .",
+                `Tu <span class="moving-demo-word">mamoste</span> î.<br>You are a <span class="prompt-blank">_____</span> .`,
+                ["smart", "student", "Stupid", "Teacher"],
                 "Teacher"
             ),
             nextStep("Game One A • Part 1F complete")

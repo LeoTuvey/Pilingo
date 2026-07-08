@@ -985,37 +985,6 @@ button.wrong{
     text-transform:uppercase;
 }
 
-.lesson-egg-percent{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    min-width:48px;
-    padding:4px 8px;
-    border-radius:999px;
-    background:#ffffff;
-    border:1px solid #dfe8f2;
-    box-shadow:0 2px 0 #ebf0f6;
-    color:#4f637e;
-    font-size:11px;
-    font-weight:1000;
-    line-height:1;
-}
-
-.lesson-egg-button.current .lesson-egg-percent{
-    border-color:#f0d27a;
-    color:#9b6b00;
-}
-
-.lesson-egg-button.completed .lesson-egg-percent{
-    border-color:#bde3ad;
-    color:#3d7a22;
-}
-
-.lesson-egg-button.locked .lesson-egg-percent{
-    border-color:#e4eaf2;
-    color:#93a0b4;
-}
-
 .lesson-egg-label{
     width:100%;
     display:flex;
@@ -4159,7 +4128,6 @@ function showLessonSelect(index, sectionIndex, message){
                     const status = lessonPathStatus(index, sectionIndex, lessonIndex);
                     const lessonProgress = lessonStepProgress(index, sectionIndex, lessonIndex);
                     const progressDeg = Math.round(Math.max(0, Math.min(lessonProgress.percent, 1)) * 360);
-                    const progressPercent = Math.round(Math.max(0, Math.min(lessonProgress.percent, 1)) * 100);
                     const progressText = completed
                         ? "Finished"
                         : `${lessonProgress.completed}/${lessonProgress.total} done`;
@@ -4176,7 +4144,6 @@ function showLessonSelect(index, sectionIndex, message){
                                     <span class="lesson-egg-core">
                                         <span class="lesson-egg-symbol">${lessonNodeSymbol(status)}</span>
                                         <span class="lesson-egg-index">Egg ${lessonIndex + 1}</span>
-                                        <span class="lesson-egg-percent">${progressPercent}%</span>
                                     </span>
                                 </span>
                                 <span class="lesson-egg-label">
@@ -4243,7 +4210,6 @@ function showSectionSelect(index, message){
                     const status = sectionNodeStatus(index, sectionIndex);
                     const progress = sectionLessonProgress(index, sectionIndex);
                     const progressDeg = Math.round(Math.max(0, Math.min(progress.total ? progress.completed / progress.total : 0, 1)) * 360);
-                    const progressPercent = Math.round(Math.max(0, Math.min(progress.total ? progress.completed / progress.total : 0, 1)) * 100);
                     const progressText = completed
                         ? "Finished"
                         : `${progress.completed}/${progress.total} done`;
@@ -4260,7 +4226,6 @@ function showSectionSelect(index, message){
                                     <span class="lesson-egg-core">
                                         <span class="lesson-egg-symbol">${lessonNodeSymbol(status)}</span>
                                         <span class="lesson-egg-index">Ball ${section.ballNumber || (sectionIndex + 1)}</span>
-                                        <span class="lesson-egg-percent">${progressPercent}%</span>
                                     </span>
                                 </span>
                                 <span class="lesson-egg-label">

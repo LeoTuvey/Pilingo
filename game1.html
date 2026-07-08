@@ -286,6 +286,40 @@ body{
     line-height:1.3;
 }
 
+body.compact-build-step #instruction{
+    font-size:13px;
+    min-height:16px;
+    margin:0 0 2px;
+    line-height:1.15;
+}
+
+body.compact-build-step #question{
+    margin:4px auto 8px;
+    font-size:22px;
+    line-height:1.1;
+    max-width:94%;
+}
+
+body.compact-build-step #question.rich-prompt{
+    line-height:1.14;
+}
+
+body.compact-build-step .answer-bank{
+    margin:6px auto 8px;
+    min-height:44px;
+    padding:7px;
+}
+
+body.compact-build-step .word-bank{
+    margin:6px auto 8px;
+    gap:7px;
+}
+
+body.compact-build-step .answer-bank{
+    overflow-y:auto;
+    overscroll-behavior:contain;
+}
+
 .moving-demo-word{
     display:inline-block;
     text-decoration:underline;
@@ -1152,11 +1186,89 @@ button.wrong{
     font-weight:900;
 }
 
-@media (max-width:520px){
+@media (max-width:520px), (max-device-width:520px){
     body{padding:12px;}
     .card{padding:18px 14px;}
     #question{font-size:25px; max-width:100%;}
     button{width:96%;}
+    #hearts{
+        font-size:20px;
+        margin:2px 0 8px;
+    }
+    #progress{
+        height:10px;
+        margin-bottom:10px;
+    }
+    .grade-panel{
+        gap:6px !important;
+        margin:0 0 8px !important;
+        padding:5px 8px !important;
+        border-radius:14px;
+    }
+    .grade-main{
+        gap:1px;
+    }
+    .grade-label{
+        font-size:8px;
+    }
+    .grade-value{
+        font-size:15px;
+    }
+    .grade-score,
+    .grade-note{
+        font-size:10px;
+        line-height:1.1;
+    }
+    .lesson-mascot-slot{
+        width:42px !important;
+        min-width:42px !important;
+        transform:scale(0.68);
+        transform-origin:center right;
+    }
+    .lesson-top{
+        min-height:28px;
+        margin-bottom:1px;
+        gap:4px;
+    }
+    #partLabel{
+        margin-bottom:4px;
+        padding:6px 10px;
+        font-size:12px;
+    }
+    body.compact-build-step #instruction{
+        font-size:12px;
+        min-height:14px;
+        margin:0 0 1px;
+    }
+    body.compact-build-step #question{
+        margin:2px auto 6px;
+        font-size:20px;
+        line-height:1.06;
+    }
+    body.compact-build-step #question.rich-prompt{
+        line-height:1.1;
+    }
+    body.compact-build-step .answer-bank{
+        max-height:84px;
+        min-height:38px;
+        margin:4px auto 6px;
+        padding:6px;
+    }
+    body.compact-build-step .word-bank{
+        margin:4px auto 6px;
+        gap:6px;
+    }
+    body.compact-build-step .word-bank button,
+    body.compact-build-step .answer-bank button{
+        min-width:72px;
+        min-height:42px;
+        padding:10px 12px;
+        font-size:14px;
+        margin:0;
+    }
+    body.compact-build-step .answer-bank + .word-bank + button{
+        margin-top:6px;
+    }
     .part-selector{
         width:100%;
     }
@@ -4415,6 +4527,7 @@ function load(){
     const step = currentStep();
     ensureGradeState();
     applyPageTheme(partIndex);
+    document.body.classList.toggle("compact-build-step", step.type === "build");
 
     selectedWords = [];
     matchedKeys = [];
@@ -5182,7 +5295,7 @@ setTopBackButton("← Back", () => goBackToGames());
 
 if(window.PilingoMascot){
     PilingoMascot.mount("#lessonMascot", {
-        size: 94,
+        size: window.innerWidth <= 520 ? 62 : 94,
         screen: "quiz",
         compact: true,
         float: false,

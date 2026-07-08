@@ -4025,6 +4025,13 @@ function isDirectSingleBallRoute(index){
     );
 }
 
+function usesDirectBallFlow(index){
+    return !!(
+        activeCoursePartRoute &&
+        activeCoursePartRoute.gamePartIndex === index
+    );
+}
+
 function startPart(index){
     activeLesson = null;
     if(sectionsForPart(index).length) {
@@ -4050,7 +4057,7 @@ function startSection(index, sectionIndex){
     if(!section || !isSectionUnlocked(index, sectionIndex)) return;
     const lessons = lessonsForSection(index, sectionIndex);
 
-    if(isSectionComplete(index, sectionIndex) && lessons.length > 1) {
+    if(!usesDirectBallFlow(index) && isSectionComplete(index, sectionIndex) && lessons.length > 1) {
         showLessonSelect(index, sectionIndex, "Choose any lesson or quiz in this completed ball to review.");
         return;
     }
@@ -4080,6 +4087,10 @@ function startLesson(index, sectionIndex, lessonIndex){
     if(!section || !isSectionUnlocked(index, sectionIndex)) return;
     if(!lesson) return;
     if(!isLessonUnlocked(index, sectionIndex, lessonIndex)) {
+        if(usesDirectBallFlow(index)) {
+            showSectionSelect(index, "Finish the previous lesson in this ball first to unlock the next one.");
+            return;
+        }
         showLessonSelect(index, sectionIndex, "Finish the egg above first to unlock this one.");
         return;
     }
@@ -4108,7 +4119,7 @@ function showLessonSelect(index, sectionIndex, message){
         return;
     }
 
-    if(isDirectSingleBallRoute(index)) {
+    if(usesDirectBallFlow(index)) {
         startSection(index, sectionIndex);
         return;
     }
@@ -4413,7 +4424,7 @@ function load(){
     updateProgress();
     if(activeLesson) {
         setTopBackButton("← Back", () => {
-            if(isDirectSingleBallRoute(partIndex)) {
+            if(usesDirectBallFlow(partIndex)) {
                 window.location.href = "engine.html";
                 return;
             }
@@ -4996,7 +5007,7 @@ function completeStep(){
             renderHearts();
             const routeCompleted = syncActiveCoursePartCompletion(partIndex);
 
-            if(isDirectSingleBallRoute(partIndex)) {
+            if(usesDirectBallFlow(partIndex)) {
                 window.location.href = "engine.html";
                 return;
             }
@@ -5015,7 +5026,7 @@ function completeStep(){
             return;
         }
 
-        if(isDirectSingleBallRoute(partIndex)) {
+        if(usesDirectBallFlow(partIndex)) {
             window.location.href = "engine.html";
             return;
         }
@@ -5184,7 +5195,7 @@ if(activeCoursePartRoute) {
     if(initialBallId) {
         startSectionById(activeCoursePartRoute.gamePartIndex, initialBallId);
     } else {
-        showSectionSelect(activeCoursePartRoute.gamePartIndex, "Tap a ball to start or continue the next lesson inside it");
+        window.location.href = "engine.html";
     }
 } else {
     showPartSelect();

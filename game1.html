@@ -4046,6 +4046,12 @@ function startSection(index, sectionIndex){
     const sections = sectionsForPart(index);
     const section = sections[sectionIndex];
     if(!section || !isSectionUnlocked(index, sectionIndex)) return;
+
+    if(isSectionComplete(index, sectionIndex)) {
+        showLessonSelect(index, sectionIndex, "Choose any lesson or quiz in this completed ball to review.");
+        return;
+    }
+
     startLesson(index, sectionIndex, nextLessonIndexForSection(index, sectionIndex));
 }
 

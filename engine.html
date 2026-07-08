@@ -1536,12 +1536,66 @@ function showToast(message){
   toastTimer = window.setTimeout(() => toast.classList.remove("show"), 2600);
 }
 
+let markerCollisionRaf = 0;
+let activeMarkerContacts = new Set();
+let lastMarkerTapAt = 0;
+
+function measureSectionMarkerContacts(){
+  markerCollisionRaf = 0;
+
+  const markers = Array.from(document.querySelectorAll(".section-marker"));
+  if(markers.length < 2){
+    activeMarkerContacts.clear();
+    return;
+  }
+
+  const nextContacts = new Set();
+
+  for(let index = 0; index < markers.length - 1; index++) {
+    const current = markers[index];
+    const next = markers[index + 1];
+    const currentRect = current.getBoundingClientRect();
+    const nextRect = next.getBoundingClientRect();
+
+    if(currentRect.bottom < 0 || nextRect.top > window.innerHeight) continue;
+
+    const overlap = currentRect.bottom - nextRect.top;
+    const nearContact = overlap >= -3;
+    if(!nearContact) continue;
+
+    const pairKey = `${index}-${index + 1}`;
+    nextContacts.add(pairKey);
+
+    if(!activeMarkerContacts.has(pairKey)){
+      const now = performance.now();
+      if(now - lastMarkerTapAt > 140){
+        lastMarkerTapAt = now;
+        window.PilingoAudio?.playSectionMarkerTap?.();
+      }
+    }
+  }
+
+  activeMarkerContacts = nextContacts;
+}
+
+function requestSectionMarkerContactCheck(){
+  if(markerCollisionRaf) return;
+  markerCollisionRaf = window.requestAnimationFrame(measureSectionMarkerContacts);
+}
+
+function installSectionMarkerContactSound(){
+  requestSectionMarkerContactCheck();
+  window.addEventListener("scroll", requestSectionMarkerContactCheck, { passive:true });
+  window.addEventListener("resize", requestSectionMarkerContactCheck, { passive:true });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   Engine.init();
   Engine.setCourse("en-ku");
   renderStructure();
   renderStats();
   renderMap();
+  installSectionMarkerContactSound();
   if(window.PilingoMascot){
     PilingoMascot.mount("#engineMascot", {
       size: 104,

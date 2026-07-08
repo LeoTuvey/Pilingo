@@ -71,6 +71,22 @@ const PilingoAudio = (() => {
     });
   }
 
+  function playSectionMarkerTap(){
+    if(!canPlayEffects()) return;
+
+    [
+      { frequency:1180, start:0.0, duration:0.055, type:"triangle", volume:0.022, filter:3000, slideTo:980 },
+      { frequency:760, start:0.018, duration:0.072, type:"sine", volume:0.014, filter:2200, slideTo:620 }
+    ].forEach((note) => {
+      tone(note.frequency, note.start, note.duration, {
+        type:note.type,
+        volume:note.volume,
+        filter:note.filter,
+        slideTo:note.slideTo
+      });
+    });
+  }
+
   function playCorrect(){
     [
       { frequency:587.33, start:0.00, duration:0.18, type:"sine", volume:0.032, filter:3600 },
@@ -361,6 +377,7 @@ const PilingoAudio = (() => {
   return {
     canPlayEffects,
     playButtonTap,
+    playSectionMarkerTap,
     playCorrect,
     playWrong,
     playLessonComplete,

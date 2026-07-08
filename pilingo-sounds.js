@@ -94,9 +94,9 @@ const PilingoAudio = (() => {
     if(!canPlayEffects()) return;
 
     [
-      { frequency:1020, start:0.0, duration:0.05, type:"triangle", volume:0.034, filter:2500, slideTo:860 },
-      { frequency:620, start:0.014, duration:0.082, type:"sine", volume:0.022, filter:1800, slideTo:520 },
-      { frequency:1480, start:0.008, duration:0.032, type:"triangle", volume:0.012, filter:3200, slideTo:1240 }
+      { frequency:240, start:0.0, duration:0.055, type:"triangle", volume:0.03, filter:950, slideTo:190 },
+      { frequency:180, start:0.01, duration:0.075, type:"sine", volume:0.018, filter:760, slideTo:145 },
+      { frequency:420, start:0.006, duration:0.028, type:"triangle", volume:0.008, filter:1200, slideTo:320 }
     ].forEach((note) => {
       tone(note.frequency, note.start, note.duration, {
         type:note.type,

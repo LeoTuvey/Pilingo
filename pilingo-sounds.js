@@ -2,7 +2,19 @@ const PilingoAudio = (() => {
   let audioContext = null;
   let buttonSoundInstalled = false;
   let audioUnlockInstalled = false;
+  let sectionMarkerAudio = null;
   let lastTapAt = 0;
+
+  function getSectionMarkerAudio(){
+    if(typeof Audio === "undefined") return null;
+    if(!sectionMarkerAudio){
+      sectionMarkerAudio = new Audio("section-knock.wav?v=1");
+      sectionMarkerAudio.preload = "auto";
+      sectionMarkerAudio.volume = 0.34;
+      sectionMarkerAudio.playsInline = true;
+    }
+    return sectionMarkerAudio;
+  }
 
   function getContext(){
     const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -14,20 +26,37 @@ const PilingoAudio = (() => {
 
   function unlockAudioContext(){
     const ctx = getContext();
-    if(!ctx) return;
+    if(ctx){
+      const gain = ctx.createGain();
+      gain.gain.value = 0.00001;
+      gain.connect(ctx.destination);
 
-    const gain = ctx.createGain();
-    gain.gain.value = 0.00001;
-    gain.connect(ctx.destination);
+      const oscillator = ctx.createOscillator();
+      oscillator.type = "sine";
+      oscillator.frequency.value = 440;
+      oscillator.connect(gain);
 
-    const oscillator = ctx.createOscillator();
-    oscillator.type = "sine";
-    oscillator.frequency.value = 440;
-    oscillator.connect(gain);
+      const startAt = ctx.currentTime;
+      oscillator.start(startAt);
+      oscillator.stop(startAt + 0.01);
+    }
 
-    const startAt = ctx.currentTime;
-    oscillator.start(startAt);
-    oscillator.stop(startAt + 0.01);
+    const audio = getSectionMarkerAudio();
+    if(audio){
+      const previousMuted = audio.muted;
+      const previousTime = audio.currentTime || 0;
+      audio.muted = true;
+      audio.currentTime = 0;
+      audio.play()
+        .then(() => {
+          audio.pause();
+          audio.currentTime = previousTime;
+          audio.muted = previousMuted;
+        })
+        .catch(() => {
+          audio.muted = previousMuted;
+        });
+    }
   }
 
   function tone(frequency, start, duration, options = {}){
@@ -92,6 +121,34 @@ const PilingoAudio = (() => {
 
   function playSectionMarkerTap(){
     if(!canPlayEffects()) return;
+
+    const audio = getSectionMarkerAudio();
+    if(audio){
+      try {
+        audio.pause();
+        audio.currentTime = 0;
+        const playback = audio.play();
+        if(playback && typeof playback.catch === "function"){
+          playback.catch(() => {
+            [
+              { frequency:240, start:0.0, duration:0.055, type:"triangle", volume:0.03, filter:950, slideTo:190 },
+              { frequency:180, start:0.01, duration:0.075, type:"sine", volume:0.018, filter:760, slideTo:145 },
+              { frequency:420, start:0.006, duration:0.028, type:"triangle", volume:0.008, filter:1200, slideTo:320 }
+            ].forEach((note) => {
+              tone(note.frequency, note.start, note.duration, {
+                type:note.type,
+                volume:note.volume,
+                filter:note.filter,
+                slideTo:note.slideTo
+              });
+            });
+          });
+        }
+        return;
+      } catch(error) {
+        // fall back to generated sound below
+      }
+    }
 
     [
       { frequency:240, start:0.0, duration:0.055, type:"triangle", volume:0.03, filter:950, slideTo:190 },

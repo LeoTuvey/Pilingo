@@ -655,37 +655,6 @@ button{
   text-transform:uppercase;
 }
 
-.part-orb-percent{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  min-width:48px;
-  padding:4px 8px;
-  border-radius:999px;
-  background:#ffffff;
-  border:1px solid #dfe8f2;
-  box-shadow:0 2px 0 #ebf0f6;
-  color:#4f637e;
-  font-size:11px;
-  font-weight:1000;
-  line-height:1;
-}
-
-.part-orb-button.current .part-orb-percent{
-  border-color:#f0d27a;
-  color:#9b6b00;
-}
-
-.part-orb-button.completed .part-orb-percent{
-  border-color:#bde3ad;
-  color:#3d7a22;
-}
-
-.part-orb-button.locked .part-orb-percent{
-  border-color:#e4eaf2;
-  color:#93a0b4;
-}
-
 .part-orb-copy{
   width:100%;
   display:flex;
@@ -1302,9 +1271,17 @@ function getPartBalls(part){
   return flatBalls;
 }
 
-function getDirectBallProgress(ball){
+function getDirectBallProgress(ball, sectionId = "", partId = ""){
   const total = Number(ball?.lessonCount) || 0;
-  const completed = Math.min(total, getSavedBallLessonCount(ball?.id));
+  let completed = Math.min(total, getSavedBallLessonCount(ball?.id));
+
+  if (!completed && total && sectionId && partId) {
+    const enginePartDone = Engine.isPartCompleted(sectionId, partId);
+    if (enginePartDone) {
+      completed = total;
+    }
+  }
+
   return {
     completed,
     total,
@@ -1312,8 +1289,8 @@ function getDirectBallProgress(ball){
   };
 }
 
-function isBallCompleted(ball){
-  const progress = getDirectBallProgress(ball);
+function isBallCompleted(ball, sectionId = "", partId = ""){
+  const progress = getDirectBallProgress(ball, sectionId, partId);
   return progress.total > 0 && progress.completed >= progress.total;
 }
 
@@ -1322,7 +1299,7 @@ function isBallUnlocked(sectionId, part, ballIndex){
   const balls = getPartBalls(part);
   if (!balls.length) return false;
   if (ballIndex === 0) return true;
-  return balls.slice(0, ballIndex).every((ball) => isBallCompleted(ball));
+  return balls.slice(0, ballIndex).every((ball) => isBallCompleted(ball, sectionId, part.id));
 }
 
 function getPartStatus(sectionId, part){
@@ -1400,7 +1377,7 @@ function renderMap(){
             const balls = getPartBalls(part);
             const unlocked = Engine.isPartUnlocked(section.id, part.id);
             const completed = Engine.isPartCompleted(section.id, part.id);
-            const completedBalls = balls.filter((ball) => isBallCompleted(ball)).length;
+            const completedBalls = balls.filter((ball) => isBallCompleted(ball, section.id, part.id)).length;
 
             return `
               <div class="part-group-card ${unlocked ? "" : "locked"}">
@@ -1416,10 +1393,9 @@ function renderMap(){
                   <div class="part-group-balls">
                     ${balls.map((ball, ballIndex) => {
                       const ballUnlocked = isBallUnlocked(section.id, part, ballIndex);
-                      const ballCompleted = isBallCompleted(ball);
-                      const ballProgress = getDirectBallProgress(ball);
+                      const ballCompleted = isBallCompleted(ball, section.id, part.id);
+                      const ballProgress = getDirectBallProgress(ball, section.id, part.id);
                       const progressDeg = Math.round(Math.max(0, Math.min(ballProgress.percent, 1)) * 360);
-                      const progressPercent = Math.round(Math.max(0, Math.min(ballProgress.percent, 1)) * 100);
                       const actionLabel = ballCompleted
                         ? "Finished"
                         : (ballUnlocked ? (ballProgress.completed > 0 ? "Continue" : "Start") : "Locked");
@@ -1435,7 +1411,6 @@ function renderMap(){
                               <span class="part-orb-core">
                                 <span class="part-orb-icon">${part.icon}</span>
                                 <span class="part-orb-index">${ball.title}</span>
-                                <span class="part-orb-percent">${progressPercent}%</span>
                               </span>
                             </span>
                           <span class="part-orb-copy">

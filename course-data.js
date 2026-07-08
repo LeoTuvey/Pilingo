@@ -24,7 +24,7 @@ const SECTION_ONE_PARTS = [
       "Letter sounds and example names"
     ),
     balls: [
-      ball("a-part-1a", 1, "Ball 1", "Alphabet, Sorani script, and letter sounds", 2)
+      ball("a-part-1a", 1, "Ball 1", "Alphabet, Sorani script, and letter sounds", 1)
     ]
   },
   {

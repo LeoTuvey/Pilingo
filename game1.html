@@ -3648,6 +3648,15 @@ function isActiveCoursePartComplete(index){
     return sections.every((section, sectionIndex) => isSectionComplete(index, sectionIndex));
 }
 
+function syncActiveCoursePartCompletion(index){
+    if(!activeCoursePartRoute) return false;
+    if(activeCoursePartRoute.gamePartIndex !== index) return false;
+    if(!isActiveCoursePartComplete(index)) return false;
+
+    completeEnginePartForRoute();
+    return true;
+}
+
 function isLessonComplete(index, sectionIndex, lessonId){
     return completedLessonSteps(index, sectionIndex).includes(lessonId);
 }
@@ -4974,6 +4983,7 @@ function completeStep(){
             markSectionComplete(partIndex, sectionIndex);
             hearts = window.Engine?.addHeart ? Engine.addHeart(1) : Math.min(5, hearts + 1);
             renderHearts();
+            const routeCompleted = syncActiveCoursePartCompletion(partIndex);
 
             if(isDirectSingleBallRoute(partIndex)) {
                 window.location.href = "engine.html";
@@ -4985,8 +4995,7 @@ function completeStep(){
                 return;
             }
 
-            if(activeCoursePartRoute) {
-                completeEnginePartForRoute();
+            if(activeCoursePartRoute && routeCompleted) {
                 showSectionSelect(partIndex, "🏆 This course part is completed. You can review these lessons again or go back when you are ready.");
                 return;
             }
@@ -5016,7 +5025,7 @@ function completeStep(){
     }
 
     if(activeCoursePartRoute) {
-        completeEnginePartForRoute();
+        syncActiveCoursePartCompletion(partIndex);
     }
     markPartComplete(partIndex);
     showPartComplete(partIndex);

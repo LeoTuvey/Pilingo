@@ -1442,6 +1442,7 @@ let completedSections = loadCompletedSections();
 let completedLessons = loadCompletedLessons();
 let completedLessonStepMap = loadCompletedLessonStepMap();
 let lessonStatuses = loadLessonStatuses();
+let reviewLessonCursors = loadReviewLessonCursors();
 let gradebook = loadGradebook();
 let gradeState = null;
 let pendingAdvanceTimer = null;
@@ -3570,6 +3571,19 @@ function saveCompletedLessonStepMap(){
     localStorage.setItem("pilingo_game1_completed_lesson_steps", JSON.stringify(completedLessonStepMap));
 }
 
+function loadReviewLessonCursors(){
+    try {
+        const saved = JSON.parse(localStorage.getItem("pilingo_game1_review_lesson_cursors") || "{}");
+        return saved && typeof saved === "object" ? saved : {};
+    } catch(error) {
+        return {};
+    }
+}
+
+function saveReviewLessonCursors(){
+    localStorage.setItem("pilingo_game1_review_lesson_cursors", JSON.stringify(reviewLessonCursors));
+}
+
 function loadLessonStatuses(){
     try {
         const saved = JSON.parse(localStorage.getItem("pilingo_game1_lesson_statuses") || "{}");
@@ -3752,6 +3766,41 @@ function sectionLessonProgress(index, sectionIndex){
     const total = lessonsForSection(index, sectionIndex).length;
     const completed = Math.min(completedLessonSteps(index, sectionIndex).length, total);
     return { completed:completed, total:total };
+}
+
+function sectionCursorKey(index, sectionIndex){
+    const section = sectionsForPart(index)[sectionIndex];
+    return section ? section.id : "";
+}
+
+function reviewLessonIndexForSection(index, sectionIndex){
+    const lessons = lessonsForSection(index, sectionIndex);
+    if(!lessons.length) return 0;
+
+    const key = sectionCursorKey(index, sectionIndex);
+    const saved = Number(reviewLessonCursors[key]);
+    if(Number.isInteger(saved) && saved >= 0 && saved < lessons.length) {
+        return saved;
+    }
+
+    return 0;
+}
+
+function setReviewLessonIndex(index, sectionIndex, lessonIndex){
+    const lessons = lessonsForSection(index, sectionIndex);
+    const key = sectionCursorKey(index, sectionIndex);
+    if(!key || !lessons.length) return;
+
+    const clampedIndex = Math.max(0, Math.min(lessonIndex, lessons.length - 1));
+    reviewLessonCursors[key] = clampedIndex;
+    saveReviewLessonCursors();
+}
+
+function advanceReviewLessonIndex(index, sectionIndex, currentLessonIndex){
+    const lessons = lessonsForSection(index, sectionIndex);
+    if(!lessons.length) return;
+    const nextIndex = (currentLessonIndex + 1) % lessons.length;
+    setReviewLessonIndex(index, sectionIndex, nextIndex);
 }
 
 function completeEnginePartForRoute(){
@@ -4164,6 +4213,11 @@ function startSection(index, sectionIndex){
     if(!section || !isSectionUnlocked(index, sectionIndex)) return;
     const lessons = lessonsForSection(index, sectionIndex);
 
+    if(usesDirectBallFlow(index) && isSectionComplete(index, sectionIndex) && lessons.length > 1) {
+        startLesson(index, sectionIndex, reviewLessonIndexForSection(index, sectionIndex));
+        return;
+    }
+
     if(!usesDirectBallFlow(index) && isSectionComplete(index, sectionIndex) && lessons.length > 1) {
         showLessonSelect(index, sectionIndex, "Choose any lesson or quiz in this completed ball to review.");
         return;
@@ -4208,6 +4262,7 @@ function startLesson(index, sectionIndex, lessonIndex){
     activeLesson = {
         ...lesson,
         sectionIndex:sectionIndex,
+        lessonIndex:lessonIndex,
         scopeLabel:displayPartTitle(index) + " • " + section.label + " • " + lesson.label,
         stepOrder:nextOrder.length ? nextOrder : buildLessonStepOrder(index, lesson.start, lesson.end),
         orderPosition:0
@@ -5073,6 +5128,7 @@ function completeStep(){
     const sections = sectionsForPart(partIndex);
     const sectionIndex = currentSectionIndex();
     if(activeLesson && sections.length && sectionIndex >= 0) {
+        const completedLessonIndex = activeLesson.lessonIndex;
         markLessonStepComplete(activeLesson.id, currentStepActualIndex());
         const wasComplete = isSectionComplete(partIndex, sectionIndex);
         if(Array.isArray(activeLesson.stepOrder) && activeLesson.orderPosition < activeLesson.stepOrder.length - 1) {
@@ -5111,6 +5167,7 @@ function completeStep(){
 
         if(nowComplete && !wasComplete) {
             markSectionComplete(partIndex, sectionIndex);
+            setReviewLessonIndex(partIndex, sectionIndex, 0);
             hearts = window.Engine?.addHeart ? Engine.addHeart(1) : Math.min(5, hearts + 1);
             renderHearts();
             const routeCompleted = syncActiveCoursePartCompletion(partIndex);
@@ -5132,6 +5189,10 @@ function completeStep(){
             markPartComplete(partIndex);
             showPartComplete(partIndex);
             return;
+        }
+
+        if(nowComplete && wasComplete && typeof completedLessonIndex === "number") {
+            advanceReviewLessonIndex(partIndex, sectionIndex, completedLessonIndex);
         }
 
         if(usesDirectBallFlow(partIndex)) {

@@ -4220,7 +4220,7 @@ function startSection(index, sectionIndex){
     const lessons = lessonsForSection(index, sectionIndex);
 
     if(usesDirectBallFlow(index) && isSectionComplete(index, sectionIndex) && lessons.length > 1) {
-        startLesson(index, sectionIndex, reviewLessonIndexForSection(index, sectionIndex));
+        startLesson(index, sectionIndex, 0, true);
         return;
     }
 
@@ -4247,7 +4247,7 @@ function startSectionById(index, sectionId){
     startSection(index, sectionIndex);
 }
 
-function startLesson(index, sectionIndex, lessonIndex){
+function startLesson(index, sectionIndex, lessonIndex, reviewMode = false){
     const sections = sectionsForPart(index);
     const section = sections[sectionIndex];
     const lesson = lessonsForSection(index, sectionIndex)[lessonIndex];
@@ -4269,6 +4269,7 @@ function startLesson(index, sectionIndex, lessonIndex){
         ...lesson,
         sectionIndex:sectionIndex,
         lessonIndex:lessonIndex,
+        reviewMode:Boolean(reviewMode),
         scopeLabel:displayPartTitle(index) + " • " + section.label + " • " + lesson.label,
         stepOrder:nextOrder.length ? nextOrder : buildLessonStepOrder(index, lesson.start, lesson.end),
         orderPosition:0
@@ -5135,6 +5136,7 @@ function completeStep(){
     const sectionIndex = currentSectionIndex();
     if(activeLesson && sections.length && sectionIndex >= 0) {
         const completedLessonIndex = activeLesson.lessonIndex;
+        const wasReviewMode = !!activeLesson.reviewMode;
         markLessonStepComplete(activeLesson.id, currentStepActualIndex());
         const wasComplete = isSectionComplete(partIndex, sectionIndex);
         if(Array.isArray(activeLesson.stepOrder) && activeLesson.orderPosition < activeLesson.stepOrder.length - 1) {
@@ -5194,6 +5196,18 @@ function completeStep(){
             }
             markPartComplete(partIndex);
             showPartComplete(partIndex);
+            return;
+        }
+
+        if(nowComplete && wasComplete && wasReviewMode && typeof completedLessonIndex === "number") {
+            const sectionLessons = lessonsForSection(partIndex, sectionIndex);
+            const nextReviewLessonIndex = completedLessonIndex + 1;
+            if(nextReviewLessonIndex < sectionLessons.length) {
+                startLesson(partIndex, sectionIndex, nextReviewLessonIndex, true);
+                return;
+            }
+
+            window.location.href = "engine.html";
             return;
         }
 

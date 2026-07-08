@@ -10,9 +10,9 @@ const PilingoAudio = (() => {
   function getSectionMarkerAudio(){
     if(typeof Audio === "undefined") return null;
     if(!sectionMarkerAudio){
-      sectionMarkerAudio = new Audio("section-knock.wav?v=2");
+      sectionMarkerAudio = new Audio("section-knock.wav?v=3");
       sectionMarkerAudio.preload = "auto";
-      sectionMarkerAudio.volume = 0.72;
+      sectionMarkerAudio.volume = 1;
       sectionMarkerAudio.playsInline = true;
     }
     return sectionMarkerAudio;
@@ -30,7 +30,7 @@ const PilingoAudio = (() => {
     const ctx = getContext();
     if(!ctx || sectionMarkerBuffer || sectionMarkerBufferPromise || typeof fetch !== "function") return sectionMarkerBufferPromise;
 
-    sectionMarkerBufferPromise = fetch("section-knock.wav?v=2")
+    sectionMarkerBufferPromise = fetch("section-knock.wav?v=3")
       .then((response) => {
         if(!response.ok) throw new Error(`Failed to load section knock: ${response.status}`);
         return response.arrayBuffer();
@@ -154,7 +154,7 @@ const PilingoAudio = (() => {
         const source = ctx.createBufferSource();
         const gain = ctx.createGain();
         source.buffer = sectionMarkerBuffer;
-        gain.gain.value = 0.72;
+        gain.gain.value = 1.18;
         source.connect(gain);
         gain.connect(ctx.destination);
         source.start();
@@ -173,9 +173,9 @@ const PilingoAudio = (() => {
         if(playback && typeof playback.catch === "function"){
           playback.catch(() => {
             [
-              { frequency:210, start:0.0, duration:0.07, type:"triangle", volume:0.055, filter:980, slideTo:170 },
-              { frequency:155, start:0.012, duration:0.095, type:"sine", volume:0.038, filter:780, slideTo:132 },
-              { frequency:360, start:0.006, duration:0.032, type:"triangle", volume:0.014, filter:1280, slideTo:280 }
+              { frequency:210, start:0.0, duration:0.075, type:"triangle", volume:0.085, filter:980, slideTo:170 },
+              { frequency:155, start:0.012, duration:0.105, type:"sine", volume:0.056, filter:780, slideTo:132 },
+              { frequency:360, start:0.006, duration:0.036, type:"triangle", volume:0.022, filter:1280, slideTo:280 }
             ].forEach((note) => {
               tone(note.frequency, note.start, note.duration, {
                 type:note.type,
@@ -193,9 +193,9 @@ const PilingoAudio = (() => {
     }
 
     [
-      { frequency:210, start:0.0, duration:0.07, type:"triangle", volume:0.055, filter:980, slideTo:170 },
-      { frequency:155, start:0.012, duration:0.095, type:"sine", volume:0.038, filter:780, slideTo:132 },
-      { frequency:360, start:0.006, duration:0.032, type:"triangle", volume:0.014, filter:1280, slideTo:280 }
+      { frequency:210, start:0.0, duration:0.075, type:"triangle", volume:0.085, filter:980, slideTo:170 },
+      { frequency:155, start:0.012, duration:0.105, type:"sine", volume:0.056, filter:780, slideTo:132 },
+      { frequency:360, start:0.006, duration:0.036, type:"triangle", volume:0.022, filter:1280, slideTo:280 }
     ].forEach((note) => {
       tone(note.frequency, note.start, note.duration, {
         type:note.type,

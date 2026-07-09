@@ -62,7 +62,13 @@ const SECTION_ONE_PARTS = [
       "Match the Pairs",
       "Match the Pairs",
       "Select the Correct Meaning",
-      "Write in English"
+      "Write in English",
+      "Possessive brothers",
+      "Fill in the missing English word",
+      "Write in English",
+      "Write in English",
+      "Write in English",
+      "Pick the Correct Phrase"
     ),
     balls: [
       ball("a-part-1b", 1, "Ball 1", "Family words and basic family practice", 4),
@@ -70,7 +76,8 @@ const SECTION_ONE_PARTS = [
       ball("a-part-1d-v3", 3, "Ball 3", "Extended family members, family groups, and quizzes", 6),
       ball("a-part-1e-v2", 4, "Ball 4", "Descriptions, pronouns, to be, and family possessives", 5),
       ball("a-part-1f-v1", 5, "Ball 5", "Translation, possessives, and describing people", 5),
-      ball("a-part-1g-v1", 6, "Ball 6", "Traits, animals, and writing family descriptions", 5)
+      ball("a-part-1g-v1", 6, "Ball 6", "Traits, animals, and writing family descriptions", 5),
+      ball("a-part-1h-v1", 7, "Ball 7", "Possessives, writing practice, and correct phrases", 5)
     ]
   },
   {

@@ -2183,7 +2183,70 @@ const gameParts = [
             rawBuildStep("Arrange the English Words", "Keça min a zîrek e.", ["smart", "daughter", "is", "My"], ["My", "daughter", "is", "smart."]),
             rawBuildStep("Arrange the English Words", "Mêrê min ê qelew e.", ["My", "is", "fat", "husband"], ["My", "husband", "is", "fat."]),
             rawBuildStep("Arrange the English Words", "Jina min a ĥișik e. (zeîf / zirav)", ["is", "wife", "skinny", "My"], ["My", "wife", "is", "skinny."]),
-            nextStep("Game One A • Part 1G complete")
+            {
+                type:"match",
+                instruction:"Possessives",
+                prompt:"",
+                pairs:[
+                    ["My brother", "Bira-ê min"],
+                    { english:"Your brother", kurmanji:"Bira-ê te", group:"your-brother" },
+                    ["His brother", "Bira-ê wî"],
+                    ["Her brother", "Bira-ê wê"],
+                    ["Our brother", "Bira-ê me"],
+                    { english:"Your brother", kurmanji:"Bira-ê we (hingo)", group:"your-brother" },
+                    ["Their brother", "Bira-ê wan"]
+                ],
+                leftHeading:"English",
+                rightHeading:"Kurmanji",
+                leftSide:"first",
+                rightSide:"second",
+                leftSpeakMap:{
+                    "My brother":"My brother",
+                    "Your brother":"Your brother",
+                    "His brother":"His brother",
+                    "Her brother":"Her brother",
+                    "Our brother":"Our brother",
+                    "Their brother":"Their brother"
+                }
+            },
+            { type:"type", instruction:"Fill in the missing English word", prompt:"Bira-ê min\n_____ ", answer:"My brother" },
+            { type:"type", instruction:"Fill in the missing English word", prompt:"Bira-ê te\n_____ ", answer:"Your brother" },
+            { type:"type", instruction:"Fill in the missing English word", prompt:"Bira-ê wî\n_____ ", answer:"His brother" },
+            { type:"type", instruction:"Fill in the missing English word", prompt:"Bira-ê wê\n_____ ", answer:"Her brother" },
+            { type:"type", instruction:"Fill in the missing English word", prompt:"Bira-ê me\n_____ ", answer:"Our brother" },
+            { type:"type", instruction:"Fill in the missing English word", prompt:"Bira-ê we (hingo)\n_____ ", answer:"Your brother" },
+            { type:"type", instruction:"Fill in the missing English word", prompt:"Bira-ê wan\n_____ ", answer:"Their brother" },
+            { type:"type", instruction:"✍️ Write in English", prompt:"Bab-ê min", answer:"My father" },
+            { type:"type", instruction:"✍️ Write in English", prompt:"dayik-a te", answer:"Your mother" },
+            { type:"type", instruction:"✍️ Write in English", prompt:"Se-ê me", answer:"Our dog" },
+            { type:"type", instruction:"✍️ Write in English", prompt:"Bira-ê min", answer:"My brother" },
+            { type:"type", instruction:"✍️ Write in English", prompt:"pişîk-a we (hingo)", answer:"Your cat" },
+            { type:"type", instruction:"✍️ Write in English", prompt:"Kur-ê wî", answer:"His son" },
+            { type:"type", instruction:"✍️ Write in English", prompt:"Keç-a wî", answer:"His daughter" },
+            { type:"type", instruction:"✍️ Write in English", prompt:"Mêr-ê wê", answer:"Her husband" },
+            { type:"type", instruction:"✍️ Write in English", prompt:"Jin-a wî", answer:"his wife" },
+            { type:"type", instruction:"✍️ Write in English", prompt:"Babê min ê zîrek e.\nMy father ______ .", answer:"is smart." },
+            { type:"type", instruction:"✍️ Write in English", prompt:"dayika min a dilovan e.\nMy mother ______ .", answer:"is kind." },
+            { type:"type", instruction:"✍️ Write in English", prompt:"dayika min a bi-reĥim e.\nMy mother ______ .", answer:"is kind." },
+            { type:"type", instruction:"✍️ Write in English", prompt:"Bira ê min ê bilind e.\nMy brother ______ .", answer:"is tall." },
+            { type:"type", instruction:"✍️ Write in English", prompt:"pişîka me a xweşik e.\n Our cat______ .", answer:"is beautiful." },
+            { type:"type", instruction:"✍️ Write in English", prompt:"Kurê wan ê ciwan(kiçkok) e.\ntheir son ______ .", answer:"is young." },
+            { type:"type", instruction:"✍️ Write in English", prompt:"Keça min a zîrek e.\nMy daughter ______ .", answer:"is smart." },
+            { type:"type", instruction:"✍️ Write in English", prompt:"Mêrê wê ê qelew e.\n Her husband______ .", answer:"is fat." },
+            { type:"type", instruction:"✍️ Write in English", prompt:"Jina wî a zirav e. (zeîf / ĥișik)\nHis wife ______ .", answer:"is skinny." },
+            { type:"type", instruction:"✍️ Write in English", prompt:"Bab ê min ê zîrek e.\n______ father is smart.", answer:"My." },
+            { type:"type", instruction:"✍️ Write in English", prompt:"Dayik a min a dilovan e.\n______ mother is kind", answer:"My." },
+            { type:"type", instruction:"✍️ Write in English", prompt:"Dayik a te a bi-reĥim e.\n______ mother is kind", answer:"Your." },
+            { type:"type", instruction:"✍️ Write in English", prompt:"Bira ê wê ê bilind e.\n______ brother is tall.", answer:"Her" },
+            { type:"type", instruction:"✍️ Write in English", prompt:"Pişîk a me a xweşik e.\n ______ cat is beautiful.", answer:"Our" },
+            { type:"type", instruction:"✍️ Write in English", prompt:"Kur ê wan ê ciwan(kiçkok) e.\n______  son is young.", answer:"Their" },
+            { type:"type", instruction:"✍️ Write in English", prompt:"Keç a min a zîrek e.\n______  daughter is smart.", answer:"My" },
+            { type:"type", instruction:"✍️ Write in English", prompt:"Mêr ê wê ê qelew e.\n ______  husband is fat.", answer:"Her" },
+            { type:"type", instruction:"✍️ Write in English", prompt:"Jin a wî a zirav e. (zeîf / ĥișik)\n______  wife is skinny.", answer:"His" },
+            choiceStep("Pick the Correct Phrase", "This is a car. 🚗\nDerk-a wê a girtî e.", ["It’s a door", "It is a door", "Its door"], "Its door"),
+            choiceStep("Pick the Correct Phrase", "This is a plane. ✈️\nPer-et wê dirêj in.", ["It’s wings", "Its wings", "It is wings"], "Its wings"),
+            choiceStep("Pick the Correct Phrase", "This is a bus.🚌\nReng-ê wê ê zere.", ["Its color", "It’s color", "It is color"], "Its color"),
+            nextStep("Game One A • Part 1H complete")
         ]
     },
     {
@@ -2713,7 +2776,7 @@ const coursePartRoutes = {
         slug:"family",
         title:"👨‍👩‍👧‍👦 Describe Your Family",
         gamePartIndex:0,
-        sectionIds:["a-part-1b", "a-part-1c", "a-part-1d-v3", "a-part-1e-v2", "a-part-1f-v1", "a-part-1g-v1"],
+        sectionIds:["a-part-1b", "a-part-1c", "a-part-1d-v3", "a-part-1e-v2", "a-part-1f-v1", "a-part-1g-v1", "a-part-1h-v1"],
         enginePartId:"part-2"
     },
     greetings:{
@@ -2995,7 +3058,7 @@ const partSections = {
             label:"Part 1G",
             detail:"Matching traits, animals, and writing family descriptions",
             start:130,
-            end:152,
+            end:151,
             lessons:[
                 { id:"a-part-1g-v1-lesson-1", label:"Lesson 1", detail:"Match the Pairs", start:130, end:131 },
                 { id:"a-part-1g-v1-lesson-2", label:"Lesson 2", detail:"Match the Pairs", start:132, end:133 },
@@ -3005,14 +3068,29 @@ const partSections = {
             ]
         },
         {
+            id:"a-part-1h-v1",
+            ballNumber:7,
+            label:"Part 1H",
+            detail:"Possessives, writing practice, and correct phrases",
+            start:152,
+            end:193,
+            lessons:[
+                { id:"a-part-1h-v1-lesson-1", label:"Lesson 1", detail:"Possessives", start:152, end:152 },
+                { id:"a-part-1h-v1-lesson-2", label:"Lesson 2", detail:"Fill in the missing English word", start:153, end:159 },
+                { id:"a-part-1h-v1-lesson-3", label:"Lesson 3", detail:"Write in English", start:160, end:168 },
+                { id:"a-part-1h-v1-lesson-4", label:"Lesson 4", detail:"Write in English", start:169, end:177 },
+                { id:"a-part-1h-v1-lesson-5", label:"Lesson 5", detail:"Write in English and Pick the Correct Phrase", start:178, end:192 }
+            ]
+        },
+        {
             id:"a-part-2",
             label:"Part 2",
             detail:"Greetings, welcome words, and polite phrases",
-            start:162,
-            end:171,
+            start:203,
+            end:212,
             lessons:[
-                { id:"a-part-2-lesson-1", label:"Lesson 1", detail:"Hello and welcome basics", start:162, end:166 },
-                { id:"a-part-2-lesson-2", label:"Lesson 2", detail:"Yes, no, bye, and greeting review", start:167, end:171 }
+                { id:"a-part-2-lesson-1", label:"Lesson 1", detail:"Hello and welcome basics", start:203, end:207 },
+                { id:"a-part-2-lesson-2", label:"Lesson 2", detail:"Yes, no, bye, and greeting review", start:208, end:212 }
             ]
         }
     ],

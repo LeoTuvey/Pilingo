@@ -13,8 +13,12 @@ if (window.location.protocol === "file:") {
   window.location.replace(target);
 } else {
   const params = new URLSearchParams(window.location.search);
-  if (params.get("coursePart") === "family" && (params.get("v") === "lessonpath11" || params.get("v") === "lessonpath12")) {
-    params.set("v", "lessonpath13");
+  if (params.get("coursePart") === "family" && (
+    params.get("v") === "lessonpath11" ||
+    params.get("v") === "lessonpath12" ||
+    params.get("v") === "lessonpath13"
+  )) {
+    params.set("v", "lessonpath14");
     const nextUrl = "game1.html?" + params.toString() + window.location.hash;
     window.location.replace(nextUrl);
   }
@@ -4818,6 +4822,11 @@ function showSectionSelect(index, message){
 
     if(isDirectSingleBallRoute(index)) {
         startSection(index, 0);
+        return;
+    }
+
+    if(usesDirectBallFlow(index) && initialBallId) {
+        startSectionById(index, initialBallId);
         return;
     }
 

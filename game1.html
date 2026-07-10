@@ -4645,7 +4645,7 @@ function startSection(index, sectionIndex){
     const lessons = lessonsForSection(index, sectionIndex);
 
     if(usesDirectBallFlow(index) && isSectionComplete(index, sectionIndex) && lessons.length > 1) {
-        startLesson(index, sectionIndex, 0, true);
+        startCompletedSectionReview(index, sectionIndex);
         return;
     }
 
@@ -4655,6 +4655,19 @@ function startSection(index, sectionIndex){
     }
 
     startLesson(index, sectionIndex, nextLessonIndexForSection(index, sectionIndex));
+}
+
+function startCompletedSectionReview(index, sectionIndex){
+    const lessons = lessonsForSection(index, sectionIndex);
+    if(!lessons.length) {
+        showSectionSelect(index, "Tap a ball to start or continue learning.");
+        return;
+    }
+
+    setReviewLessonIndex(index, sectionIndex, 0);
+    gradeState = null;
+    activeLesson = null;
+    startLesson(index, sectionIndex, 0, true);
 }
 
 function startSectionById(index, sectionId){
@@ -4688,15 +4701,26 @@ function startLesson(index, sectionIndex, lessonIndex, reviewMode = false){
     }
 
     const nextOrder = remainingLessonStepOrder(index, sectionIndex, lessonIndex);
+    const fallbackOrder = buildLessonStepOrder(index, lesson.start, lesson.end);
+    const lessonOrder = nextOrder.length ? nextOrder : fallbackOrder;
+    if(!lessonOrder.length) {
+        if(reviewMode || isSectionComplete(index, sectionIndex)) {
+            startCompletedSectionReview(index, sectionIndex);
+            return;
+        }
+        showSectionSelect(index, "This ball could not load correctly. Please open it again.");
+        return;
+    }
+
     partIndex = index;
-    stepIndex = nextOrder.length ? nextOrder[0] : lesson.start;
+    stepIndex = lessonOrder[0];
     activeLesson = {
         ...lesson,
         sectionIndex:sectionIndex,
         lessonIndex:lessonIndex,
         reviewMode:Boolean(reviewMode),
         scopeLabel:displayPartTitle(index) + " • " + section.label + " • " + lesson.label,
-        stepOrder:nextOrder.length ? nextOrder : buildLessonStepOrder(index, lesson.start, lesson.end),
+        stepOrder:lessonOrder,
         orderPosition:0
     };
     hearts = Engine.getHearts();

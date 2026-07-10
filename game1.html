@@ -3225,14 +3225,14 @@ const partSections = {
             ballNumber:8,
             label:"Part 1I",
             detail:"Age words, is/are practice, and correct phrases",
-            start:194,
-            end:216,
+            start:191,
+            end:213,
             lessons:[
-                { id:"a-part-1i-v1-lesson-1", label:"Lesson 1", detail:"Age words and life stages", start:194, end:198 },
-                { id:"a-part-1i-v1-lesson-2", label:"Lesson 2", detail:"Is, are, and sibling basics", start:199, end:205 },
-                { id:"a-part-1i-v1-lesson-3", label:"Lesson 3", detail:"Parents, family, and blanks", start:206, end:211 },
-                { id:"a-part-1i-v1-lesson-4", label:"Lesson 4", detail:"You and I sentences", start:212, end:213 },
-                { id:"a-part-1i-v1-lesson-5", label:"Lesson 5", detail:"Which Sentence Is Correct?", start:214, end:215 }
+                { id:"a-part-1i-v1-lesson-1", label:"Lesson 1", detail:"Age words and life stages", start:191, end:195 },
+                { id:"a-part-1i-v1-lesson-2", label:"Lesson 2", detail:"Is, are, and sibling basics", start:196, end:202 },
+                { id:"a-part-1i-v1-lesson-3", label:"Lesson 3", detail:"Parents, family, and blanks", start:203, end:208 },
+                { id:"a-part-1i-v1-lesson-4", label:"Lesson 4", detail:"You and I sentences", start:209, end:210 },
+                { id:"a-part-1i-v1-lesson-5", label:"Lesson 5", detail:"Which Sentence Is Correct?", start:211, end:212 }
             ]
         },
         {
@@ -4158,7 +4158,9 @@ function lessonProgressIds(index, sectionIndex){
     const lessons = lessonsForSection(index, sectionIndex);
     if(!lessons.length) return [];
 
-    if(isLegacySectionComplete(index, sectionIndex)) {
+    const section = sectionsForPart(index)[sectionIndex];
+    const requiresCurrentLessonIds = section?.id === "a-part-1i-v1";
+    if(!requiresCurrentLessonIds && isLegacySectionComplete(index, sectionIndex)) {
         return lessons.map(lesson => lesson.id);
     }
 
@@ -4171,6 +4173,13 @@ function lessonProgressIds(index, sectionIndex){
 
     lessons.forEach((lesson) => {
         if(savedIds.includes(lesson.id)) {
+            if(requiresCurrentLessonIds) {
+                const gradableSteps = gradableStepsInRange(index, lesson.start, lesson.end);
+                const savedLessonSteps = savedCompletedStepsForLesson(lesson.id);
+                if(!gradableSteps.length || !gradableSteps.every(step => savedLessonSteps.includes(step))) {
+                    return;
+                }
+            }
             lessonIds.push(lesson.id);
             return;
         }
@@ -4220,6 +4229,24 @@ function reviewLessonIndexForSection(index, sectionIndex){
     }
 
     return 0;
+}
+
+function firstPlayableLessonIndex(index, sectionIndex, preferredIndex = 0){
+    const lessons = lessonsForSection(index, sectionIndex);
+    if(!lessons.length) return -1;
+
+    const normalizedStart = Number.isInteger(preferredIndex)
+        ? Math.max(0, Math.min(preferredIndex, lessons.length - 1))
+        : 0;
+
+    for(let offset = 0; offset < lessons.length; offset++) {
+        const lessonIndex = (normalizedStart + offset) % lessons.length;
+        if(gradableStepsForLesson(index, sectionIndex, lessonIndex).length) {
+            return lessonIndex;
+        }
+    }
+
+    return -1;
 }
 
 function setReviewLessonIndex(index, sectionIndex, lessonIndex){
@@ -4284,13 +4311,30 @@ function markLessonComplete(index, sectionIndex, lessonId){
 }
 
 function isSectionComplete(index, sectionIndex){
-    if(isLegacySectionComplete(index, sectionIndex)) return true;
-
+    const section = sectionsForPart(index)[sectionIndex];
     const progress = sectionLessonProgress(index, sectionIndex);
+    if(section?.id === "a-part-1i-v1") {
+        return progress.total > 0 && progress.completed >= progress.total;
+    }
+
+    if(isLegacySectionComplete(index, sectionIndex)) return true;
     return progress.total > 0 && progress.completed >= progress.total;
 }
 
 function isSectionUnlocked(index, sectionIndex){
+    const section = sectionsForPart(index)[sectionIndex];
+    if(
+        activeCoursePartRoute?.slug === "family" &&
+        (
+            initialBallId === "a-part-1g-v1" ||
+            initialBallId === "a-part-1h-v1" ||
+            initialBallId === "a-part-1i-v1"
+        ) &&
+        section?.id === initialBallId
+    ) {
+        return true;
+    }
+
     if(sectionIndex === 0) return true;
     return isSectionComplete(index, sectionIndex - 1);
 }
@@ -4669,10 +4713,16 @@ function startCompletedSectionReview(index, sectionIndex){
         return;
     }
 
-    setReviewLessonIndex(index, sectionIndex, 0);
+    const lessonIndex = firstPlayableLessonIndex(index, sectionIndex, 0);
+    if(lessonIndex < 0) {
+        showSectionSelect(index, "This ball could not load correctly. Please open it again.");
+        return;
+    }
+
+    setReviewLessonIndex(index, sectionIndex, lessonIndex);
     gradeState = null;
     activeLesson = null;
-    startLesson(index, sectionIndex, 0, true);
+    startLesson(index, sectionIndex, lessonIndex, true);
 }
 
 function startSectionById(index, sectionId){
@@ -4709,10 +4759,18 @@ function startLesson(index, sectionIndex, lessonIndex, reviewMode = false){
     const fallbackOrder = buildLessonStepOrder(index, lesson.start, lesson.end);
     const lessonOrder = nextOrder.length ? nextOrder : fallbackOrder;
     if(!lessonOrder.length) {
-        if(reviewMode || isSectionComplete(index, sectionIndex)) {
-            startCompletedSectionReview(index, sectionIndex);
+        const retryFromStart = Boolean(reviewMode) || isSectionComplete(index, sectionIndex);
+        const fallbackLessonIndex = firstPlayableLessonIndex(
+            index,
+            sectionIndex,
+            retryFromStart ? 0 : lessonIndex + 1
+        );
+
+        if(fallbackLessonIndex >= 0 && fallbackLessonIndex !== lessonIndex) {
+            startLesson(index, sectionIndex, fallbackLessonIndex, retryFromStart);
             return;
         }
+
         showSectionSelect(index, "This ball could not load correctly. Please open it again.");
         return;
     }
@@ -5046,17 +5104,46 @@ function load(){
             const sectionIndex = Number.isInteger(activeLesson.sectionIndex) ? activeLesson.sectionIndex : currentSectionIndex();
             if(sectionIndex >= 0) {
                 const restartFromBeginning = Boolean(activeLesson.reviewMode) || isSectionComplete(partIndex, sectionIndex);
-                startLesson(
+                const fallbackLessonIndex = firstPlayableLessonIndex(
                     partIndex,
                     sectionIndex,
-                    restartFromBeginning ? 0 : nextLessonIndexForSection(partIndex, sectionIndex),
-                    restartFromBeginning
+                    restartFromBeginning ? 0 : nextLessonIndexForSection(partIndex, sectionIndex)
                 );
+                if(fallbackLessonIndex >= 0) {
+                    startLesson(
+                        partIndex,
+                        sectionIndex,
+                        fallbackLessonIndex,
+                        restartFromBeginning
+                    );
+                    return;
+                }
+
+                showSectionSelect(partIndex, "This ball could not load correctly. Please open it again.");
                 return;
             }
         }
 
         if(usesDirectBallFlow(partIndex) && initialBallId) {
+            const directSectionIndex = sectionsForPart(partIndex).findIndex((section) => section.id === initialBallId);
+            if(directSectionIndex >= 0) {
+                const restartFromBeginning = isSectionComplete(partIndex, directSectionIndex);
+                const fallbackLessonIndex = firstPlayableLessonIndex(
+                    partIndex,
+                    directSectionIndex,
+                    restartFromBeginning ? 0 : nextLessonIndexForSection(partIndex, directSectionIndex)
+                );
+                if(fallbackLessonIndex >= 0) {
+                    startLesson(
+                        partIndex,
+                        directSectionIndex,
+                        fallbackLessonIndex,
+                        restartFromBeginning
+                    );
+                    return;
+                }
+            }
+
             startSectionById(partIndex, initialBallId);
             return;
         }

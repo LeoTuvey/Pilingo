@@ -5046,6 +5046,11 @@ function load(){
             }
         }
 
+        if(usesDirectBallFlow(partIndex) && initialBallId) {
+            startSectionById(partIndex, initialBallId);
+            return;
+        }
+
         if(sectionsForPart(partIndex).length) {
             showSectionSelect(partIndex, "Tap a ball to start or continue learning.");
             return;

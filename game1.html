@@ -5006,7 +5006,30 @@ function showPartLabel(text){
 
 function load(){
     const part = gameParts[partIndex];
-    const step = currentStep();
+    let step = currentStep();
+    if(!step) {
+        if(activeLesson && sectionsForPart(partIndex).length) {
+            const sectionIndex = Number.isInteger(activeLesson.sectionIndex) ? activeLesson.sectionIndex : currentSectionIndex();
+            if(sectionIndex >= 0) {
+                const restartFromBeginning = Boolean(activeLesson.reviewMode) || isSectionComplete(partIndex, sectionIndex);
+                startLesson(
+                    partIndex,
+                    sectionIndex,
+                    restartFromBeginning ? 0 : nextLessonIndexForSection(partIndex, sectionIndex),
+                    restartFromBeginning
+                );
+                return;
+            }
+        }
+
+        if(sectionsForPart(partIndex).length) {
+            showSectionSelect(partIndex, "Tap a ball to start or continue learning.");
+            return;
+        }
+
+        showPartSelect();
+        return;
+    }
     ensureGradeState();
     applyPageTheme(partIndex);
     document.body.classList.toggle("compact-build-step", step.type === "build");

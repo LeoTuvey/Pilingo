@@ -2384,7 +2384,27 @@ const gameParts = [
             richChoiceStep("", "Ez û Tu ciĥêl  ___ .", 'Ez û Tu ciĥêl <span class="prompt-blank">___</span> .', ["e", "in", "an"], "in"),
             choiceStep("Which Sentence Is Correct?", "", ["I and You are young.", "You and I are young."], "You and I are young."),
             choiceStep("Which Sentence Is Correct?", "", ["Tu û Ez ciĥêl in.", "Ez û Tu ciĥêl in."], "Ez û Tu ciĥêl in."),
-            nextStep("Game One A • Part 1I complete")
+            {
+                type:"match",
+                instruction:"🔀 Match the Pairs",
+                prompt:"",
+                pairs:[
+                    { english:"My father-in-law", kurmanji:"Xezûrê min" },
+                    { english:"Your mother-in-law", kurmanji:"Xesûya te" },
+                    { english:"My in-laws", kurmanji:"Xezûr û xesûya min" },
+                    { english:"Your in-laws", kurmanji:"Xezûr û xesûya te" }
+                ],
+                leftHeading:"English",
+                rightHeading:"Kurmanji",
+                leftSide:"first",
+                rightSide:"second",
+                leftSpeakMap:{
+                    "My father-in-law":"My father-in-law",
+                    "Your mother-in-law":"Your mother-in-law",
+                    "My in-laws":"My in-laws",
+                    "Your in-laws":"Your in-laws"
+                }
+            }
         ]
     },
     {
@@ -3232,7 +3252,8 @@ const partSections = {
                 { id:"a-part-1i-v1-lesson-2", label:"Lesson 2", detail:"Is, are, and sibling basics", start:196, end:202 },
                 { id:"a-part-1i-v1-lesson-3", label:"Lesson 3", detail:"Parents, family, and blanks", start:203, end:208 },
                 { id:"a-part-1i-v1-lesson-4", label:"Lesson 4", detail:"You and I sentences", start:209, end:210 },
-                { id:"a-part-1i-v1-lesson-5", label:"Lesson 5", detail:"Which Sentence Is Correct?", start:211, end:212 }
+                { id:"a-part-1i-v1-lesson-5", label:"Lesson 5", detail:"Which Sentence Is Correct?", start:211, end:212 },
+                { id:"a-part-1i-v1-lesson-6", label:"Lesson 6", detail:"Match the Pairs: In-laws", start:213, end:213 }
             ]
         },
         {

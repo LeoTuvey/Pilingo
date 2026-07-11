@@ -84,7 +84,16 @@ const SECTION_ONE_PARTS = [
       ball("a-part-1f-v1", 5, "Ball 5", "Translation, possessives, and describing people", 5),
       ball("a-part-1g-v1", 6, "Ball 6", "Traits, animals, and writing family descriptions", 5),
       ball("a-part-1h-v1", 7, "Ball 7", "Possessives, writing practice, and correct phrases", 5),
-      ball("a-part-1i-v1", 8, "Ball 8", "Age words, is/are practice, and correct phrases", 6)
+      ball("a-part-1i-v1", 8, "Ball 8", "Age words, is/are practice, and correct phrases", 6),
+      {
+        id: "a-part-1j-final",
+        number: 9,
+        title: "Ball 9",
+        summary: "Final Exam of Describe Your Family",
+        lessonCount: 0,
+        icon: "🏆",
+        comingSoon: true
+      }
     ]
   },
   {

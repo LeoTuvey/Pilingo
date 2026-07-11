@@ -1298,6 +1298,7 @@ function isBallUnlocked(sectionId, part, ballIndex){
   if (!Engine.isPartUnlocked(sectionId, part.id)) return false;
   const balls = getPartBalls(part);
   if (!balls.length) return false;
+  if (balls[ballIndex]?.comingSoon) return false;
   if (ballIndex === 0) return true;
   return balls.slice(0, ballIndex).every((ball) => isBallCompleted(ball, sectionId, part.id));
 }
@@ -1396,7 +1397,9 @@ function renderMap(){
                       const ballCompleted = isBallCompleted(ball, section.id, part.id);
                       const ballProgress = getDirectBallProgress(ball, section.id, part.id);
                       const progressDeg = Math.round(Math.max(0, Math.min(ballProgress.percent, 1)) * 360);
-                      const actionLabel = ballCompleted
+                      const actionLabel = ball.comingSoon
+                        ? "Final exam coming later"
+                        : ballCompleted
                         ? "Finished"
                         : (ballUnlocked ? (ballProgress.completed > 0 ? "Continue" : "Start") : "Locked");
 
@@ -1409,14 +1412,14 @@ function renderMap(){
                           ${ballUnlocked ? "" : "disabled"}>
                             <span class="part-orb-ring" style="--part-progress:${progressDeg}deg">
                               <span class="part-orb-core">
-                                <span class="part-orb-icon">${part.icon}</span>
+                                <span class="part-orb-icon">${ball.icon || part.icon}</span>
                                 <span class="part-orb-index">${ball.title}</span>
                               </span>
                             </span>
                           <span class="part-orb-copy">
                             <span class="part-orb-title">${ball.title}</span>
                             <span class="part-orb-summary">${ball.summary}</span>
-                            <span class="part-orb-progress">${ballUnlocked ? "▶" : "🔒"} ${actionLabel} • ${ballProgress.completed}/${ballProgress.total} done</span>
+                            <span class="part-orb-progress">${ball.comingSoon ? "🏆" : (ballUnlocked ? "▶" : "🔒")} ${actionLabel}${ball.comingSoon ? "" : ` • ${ballProgress.completed}/${ballProgress.total} done`}</span>
                           </span>
                         </button>
                       `;

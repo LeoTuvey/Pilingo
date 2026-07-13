@@ -2414,8 +2414,8 @@ const gameParts = [
             {
                 type:"type",
                 instruction:"Fill the sentence",
-                prompt:"Bab-ê min-ê dirêj e.\nMy father __ ____ .",
-                promptHtml:'Bab-ê min-ê <span class="moving-demo-word">dirêj e</span>.<br>My father __ ____ .',
+                prompt:"Bab-ê min-ê bilind e.\nMy father __ ____ .",
+                promptHtml:'Bab-ê min-ê <span class="moving-demo-word">bilind e</span>.<br>My father __ ____ .',
                 answer:"is tall"
             },
             {
@@ -5796,7 +5796,12 @@ function selectMatch(buttonIndex, side, key){
 
 function normalize(value){
     return String(value)
+        .normalize("NFC")
         .toLowerCase()
+        .normalize("NFC")
+        .replace(/[\u00ad\u0307\u034f\u061c\u180e\u200b-\u200f\u202a-\u202e\u2060-\u206f\ufeff]/g, "")
+        .replace(/[\u2010-\u2015\u2212\ufe58\ufe63\uff0d]/g, "-")
+        .replace(/\s+/g, " ")
         .replace(/[!?.،,]/g, "")
         .trim();
 }

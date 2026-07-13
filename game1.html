@@ -2403,7 +2403,91 @@ const gameParts = [
                     "My father-in-law":"My father-in-law",
                     "Your mother-in-law":"Your mother-in-law"
                 }
-            }
+            },
+            typeStep("✍️ Write in English", "Babê min", "My father"),
+            typeStep("✍️ Write in English", "Dayika te", "Your mother"),
+            typeStep("✍️ Write in English", "Bira-ê wan", "Their brother"),
+            typeStep("✍️ Write in English", "Xezûr-ê we (hingo)", "Your father-in-law"),
+            typeStep("✍️ Write in English", "Xesû-a wî", "His mother-in-law"),
+            typeStep("✍️ Write in English", "Dayik û bab-êt wê", "Her parents"),
+            typeStep("✍️ Write in English", "Xwişk û bira-êt me", "Our siblings"),
+            {
+                type:"type",
+                instruction:"Fill the sentence",
+                prompt:"Bab-ê min-ê dirêj e.\nMy father __ ____ .",
+                promptHtml:'Bab-ê min-ê <span class="moving-demo-word">dirêj e</span>.<br>My father __ ____ .',
+                answer:"is tall"
+            },
+            {
+                type:"type",
+                instruction:"Fill the sentence",
+                prompt:"Dayik-a te-a dilovan e. (bi-rehim)\nYour mother __ ____ .",
+                promptHtml:'Dayik-a te-a <span class="moving-demo-word">dilovan e</span>. <span class="prompt-subnote">(bi-rehim)</span><br>Your mother __ ____ .',
+                answer:"is kind"
+            },
+            {
+                type:"type",
+                instruction:"Fill the sentence",
+                prompt:"Bira-ê wan-ê kurt e.\nTheir brother __ ____ .",
+                promptHtml:'Bira-ê wan-ê <span class="moving-demo-word">kurt e</span>.<br>Their brother __ ____ .',
+                answer:"is short"
+            },
+            {
+                type:"type",
+                instruction:"Fill the sentence",
+                prompt:"Xezûr-ê we (hingo) ê pîr e.\nYour father-in-law __ ____ .",
+                promptHtml:'Xezûr-ê we (hingo) ê <span class="moving-demo-word">pîr e</span>.<br>Your father-in-law __ ____ .',
+                answer:"is old"
+            },
+            {
+                type:"type",
+                instruction:"Fill the sentence",
+                prompt:"Met-a wî-a qelew e.\nHis aunt __ _____ .",
+                promptHtml:'Met-a wî-a <span class="moving-demo-word">qelew e</span>.<br>His aunt __ _____ .',
+                answer:"is fat"
+            },
+            {
+                type:"type",
+                instruction:"Fill the sentence",
+                prompt:"Dayik û bab-êt wê-t ĥiŝk in. (zeîf / zirav)\nHer parents ___ _____ .",
+                promptHtml:'Dayik û bab-êt wê-t <span class="moving-demo-word">ĥiŝk in</span>. <span class="prompt-subnote">(zeîf / zirav)</span><br>Her parents ___ _____ .',
+                answer:"are skinny"
+            },
+            {
+                type:"type",
+                instruction:"Fill the sentence",
+                prompt:"Xwişk û bira-êt me cihêl in.\nOur siblings ___ ________.",
+                promptHtml:'Xwişk û bira-êt me <span class="moving-demo-word">cihêl in</span>.<br>Our siblings ___ ________.',
+                answer:["are teenagers", "are teenagers."]
+            },
+            richChoiceStep("Fill in the Missing Word", "My parents ___ kind.", 'My parents <span class="moving-demo-word">___</span> kind.', ["is", "are", "am"], "are"),
+            richChoiceStep("Fill in the Missing Word", "My family ___ big.", 'My family <span class="moving-demo-word">___</span> big.', ["are", "is", "am"], "is"),
+            richChoiceStep("Fill in the Missing Word", "Her brother ___ tall.", 'Her brother <span class="moving-demo-word">___</span> tall.', ["are", "am", "is"], "is"),
+            richChoiceStep("Fill in the Missing Word", "Our siblings ___ young.", 'Our siblings <span class="moving-demo-word">___</span> young.', ["is", "are", "am"], "are"),
+            richChoiceStep("Fill in the Missing Word", "Their uncle ___ old.", 'Their uncle <span class="moving-demo-word">___</span> old.', ["are", "is", "am"], "is"),
+            richChoiceStep("Fill in the Missing Word", "Their parents ___ kind.", 'Their parents <span class="moving-demo-word">___</span> kind.', ["is", "am", "are"], "are"),
+            rawBuildStep("Arrange the English Words", "Bab-ê min-ê zîrek e.", ["Father", "My", "smart", "is"], ["My", "Father", "is", "smart"]),
+            rawBuildStep("Arrange the English Words", "Xalet-a min-a dilovan e.", ["aunt", "kind", "My", "is"], ["My", "aunt", "is", "kind"]),
+            rawBuildStep("Arrange the English Words", "Kur-ê wan-ê ciwan(kiçkûk) e.", ["Their", "son", "young", "is"], ["Their", "son", "is", "young"]),
+            rawBuildStep("Arrange the English Words", "Mam-ê min-ê zirav e.", ["uncle", "slim", "My", "is"], ["My", "uncle", "is", "slim"]),
+            rawBuildStep("Arrange the English Words", "Mêr-ê min-ê qelew e.", ["My", "fat", "is", "husband"], ["My", "husband", "is", "fat"]),
+            { type:"type", instruction:"Fill in the Missing Words", prompt:"My family is big.\nMalbat-a min-a ____ __.", answer:"mezin e" },
+            { type:"type", instruction:"Fill in the Missing Words", prompt:"My parents are kind.\nDayik û bab-êt min _____ __.", answer:"dilovan in" },
+            { type:"type", instruction:"Fill in the Missing Words", prompt:"My brother is lazy.\nBira-ê min-ê _____ __.", answer:"tembel e" },
+            { type:"type", instruction:"Fill in the Missing Words", prompt:"My sister is beautiful.\nXwişk-a min-a _____ __.", answer:["xweşik e", "ciwan e"] },
+            { type:"type", instruction:"Fill in the Missing Words", prompt:"His Parents-in-law are tall.\nXezûr û Xesû-êt wî ______ __.", answer:"bilind in" },
+            { type:"type", instruction:"Fill in the Missing Words", prompt:"Their daughter-in-law is fat.\nBûk-a wan-a ______ __.", answer:"qelew e" },
+            { type:"type", instruction:"Fill in the Missing Words", prompt:"Your son-in-law is stupid.\nZava-ê we (hingo) ê ______ __.", answer:["bê-eqil e", "bêeqil e", "bê eqil e", "gêl e"] },
+            choiceStep("Which Sentence Is Correct?", "", ["I and You are young.", "You and I are young."], "You and I are young."),
+            choiceStep("Which Sentence Is Correct?", "", ["Tu û Ez ciwan(ciĥel) in.", "Ez û Tu ciwan(ciĥel) in."], "Ez û Tu ciwan(ciĥel) in."),
+            choiceStep("🎯 Select the Correct Meaning", "baş", ["bad", "beautiful", "good", "smart"], "good"),
+            choiceStep("🎯 Select the Correct Meaning", "xirab", ["good", "beautiful", "rich", "bad"], "bad"),
+            choiceStep("🎯 Select the Correct Meaning", "xweşik (bedew)", ["ugly", "happy", "beautiful", "tall"], "beautiful"),
+            choiceStep("🎯 Select the Correct Meaning", "kirêt (nebedew)", ["beautiful", "strong", "clean", "ugly"], "ugly"),
+            choiceStep("🎯 Select the Correct Meaning", "zîrek (jîr)", ["stupid", "fat", "smart", "old"], "smart"),
+            choiceStep("🎯 Select the Correct Meaning", "bê-aqil (gêl)", ["smart", "rich", "happy", "stupid"], "stupid"),
+            choiceStep("🎯 Select the Correct Meaning", "dilovan (bi-reĥim)", ["bad", "ugly", "poor", "kind"], "kind"),
+            choiceStep("🎯 Select the Correct Meaning", "nedilovan (bê-reĥim)", ["kind", "beautiful", "unkind", "young"], "unkind")
         ]
     },
     {
@@ -2933,7 +3017,7 @@ const coursePartRoutes = {
         slug:"family",
         title:"👨‍👩‍👧‍👦 Describe Your Family",
         gamePartIndex:0,
-        sectionIds:["a-part-1b", "a-part-1c", "a-part-1d-v3", "a-part-1e-v2", "a-part-1f-v1", "a-part-1g-v1", "a-part-1h-v1", "a-part-1i-v1"],
+        sectionIds:["a-part-1b", "a-part-1c", "a-part-1d-v3", "a-part-1e-v2", "a-part-1f-v1", "a-part-1g-v1", "a-part-1h-v1", "a-part-1i-v1", "a-part-1j-final"],
         enginePartId:"part-2"
     },
     greetings:{
@@ -3253,6 +3337,23 @@ const partSections = {
                 { id:"a-part-1i-v1-lesson-4", label:"Lesson 4", detail:"You and I sentences", start:209, end:210 },
                 { id:"a-part-1i-v1-lesson-5", label:"Lesson 5", detail:"Which Sentence Is Correct?", start:211, end:212 },
                 { id:"a-part-1i-v1-lesson-6", label:"Lesson 6", detail:"Match the Pairs: In-laws", start:213, end:213 }
+            ]
+        },
+        {
+            id:"a-part-1j-final",
+            ballNumber:9,
+            label:"Final Exam",
+            detail:"🏆 Final Exam of Describe Your Family",
+            start:214,
+            end:255,
+            lessons:[
+                { id:"a-part-1j-final-quiz-1", label:"Quiz 1", detail:"Write in English", start:214, end:220 },
+                { id:"a-part-1j-final-quiz-2", label:"Quiz 2", detail:"Fill the sentence", start:221, end:227 },
+                { id:"a-part-1j-final-quiz-3", label:"Quiz 3", detail:"Fill in the Missing Word", start:228, end:233 },
+                { id:"a-part-1j-final-quiz-4", label:"Quiz 4", detail:"Arrange the English Words", start:234, end:238 },
+                { id:"a-part-1j-final-quiz-5", label:"Quiz 5", detail:"Fill in the Missing Words", start:239, end:245 },
+                { id:"a-part-1j-final-quiz-6", label:"Quiz 6", detail:"Which Sentence Is Correct?", start:246, end:247 },
+                { id:"a-part-1j-final-quiz-7", label:"Quiz 7", detail:"Select the Correct Meaning", start:248, end:255 }
             ]
         },
         {
@@ -4348,7 +4449,8 @@ function isSectionUnlocked(index, sectionIndex){
         (
             initialBallId === "a-part-1g-v1" ||
             initialBallId === "a-part-1h-v1" ||
-            initialBallId === "a-part-1i-v1"
+            initialBallId === "a-part-1i-v1" ||
+            initialBallId === "a-part-1j-final"
         ) &&
         section?.id === initialBallId
     ) {

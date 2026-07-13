@@ -74,7 +74,14 @@ const SECTION_ONE_PARTS = [
       "Siblings and parents",
       "Family sentence blanks",
       "Which sentence is correct",
-      "In-laws matching"
+      "In-laws matching",
+      "Final Exam: Write in English",
+      "Final Exam: Fill the sentence",
+      "Final Exam: Fill in the Missing Word",
+      "Final Exam: Arrange the English Words",
+      "Final Exam: Fill in the Missing Words",
+      "Final Exam: Which Sentence Is Correct?",
+      "Final Exam: Select the Correct Meaning"
     ),
     balls: [
       ball("a-part-1b", 1, "Ball 1", "Family words and basic family practice", 4),
@@ -90,9 +97,8 @@ const SECTION_ONE_PARTS = [
         number: 9,
         title: "Ball 9",
         summary: "Final Exam of Describe Your Family",
-        lessonCount: 0,
-        icon: "🏆",
-        comingSoon: true
+        lessonCount: 7,
+        icon: "🏆"
       }
     ]
   },

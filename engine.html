@@ -1275,7 +1275,8 @@ function getDirectBallProgress(ball, sectionId = "", partId = ""){
   const total = Number(ball?.lessonCount) || 0;
   let completed = Math.min(total, getSavedBallLessonCount(ball?.id));
 
-  if (!completed && total && sectionId && partId) {
+  const canUseLegacyPartCompletion = ball?.id !== "a-part-1j-final";
+  if (!completed && total && sectionId && partId && canUseLegacyPartCompletion) {
     const enginePartDone = Engine.isPartCompleted(sectionId, partId);
     if (enginePartDone) {
       completed = total;

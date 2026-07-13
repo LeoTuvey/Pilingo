@@ -5653,6 +5653,10 @@ function isCorrectChoice(step, value){
     return answersForStep(step).some(answer => normalize(value) === normalize(answer));
 }
 
+function isAcceptedTypedAnswer(step, value){
+    return answersForStep(step).some(answer => normalize(value) === normalize(answer));
+}
+
 function checkChoice(value, button){
     const step = currentStep();
     if(isCorrectChoice(step, value)){
@@ -5727,7 +5731,7 @@ function checkTyped(button){
     const input = document.getElementById("typedAnswer");
     const value = input ? input.value : "";
 
-    if(answersForStep(step).some(answer => normalize(value) === normalize(answer))){
+    if(isAcceptedTypedAnswer(step, value)){
         showButtonResult(button, "correct");
         markCorrect();
         return;

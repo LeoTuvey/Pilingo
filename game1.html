@@ -2642,8 +2642,8 @@ const gameParts = [
             { type:"choice", instruction:"", prompt:"You (p.)", spoken:"You", options:["Hûn (hing)", "Ez", "Ew"], answer:"Hûn (hing)" },
             { ...rawBuildStep("You are Kurdish.", "You are Kurdish.", ["kurd", "in", "Hûn"], ["Hûn", "kurd", "in."]), spoken:"You are Kurdish." },
             { ...rawBuildStep("You are teachers.", "You are teachers.", ["mamoste", "Hûn", "ne"], ["Hûn", "mamoste", "ne."]), spoken:"You are teachers." },
-            choiceStep("", "Tu", ["î / yî", "in/ ne"], "î / yî"),
-            choiceStep("", "Hûn(hing)", ["î / yî", "in/ ne"], "in/ ne")
+            choiceStep("", "You are. → Tu (/)", ["î / yî", "in/ ne"], "î / yî"),
+            choiceStep("", "You are. → Hûn(hing) (/)", ["î / yî", "in/ ne"], "in/ ne")
         ]
     },
     {

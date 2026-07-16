@@ -1275,7 +1275,10 @@ function getDirectBallProgress(ball, sectionId = "", partId = ""){
   const total = Number(ball?.lessonCount) || 0;
   let completed = Math.min(total, getSavedBallLessonCount(ball?.id));
 
-  const canUseLegacyPartCompletion = ball?.id !== "a-part-1j-final";
+  const canUseLegacyPartCompletion = ![
+    "a-part-1j-final",
+    "a-part-2-greetings-v1"
+  ].includes(ball?.id);
   if (!completed && total && sectionId && partId && canUseLegacyPartCompletion) {
     const enginePartDone = Engine.isPartCompleted(sectionId, partId);
     if (enginePartDone) {
@@ -1396,6 +1399,7 @@ function renderMap(){
                     ${balls.map((ball, ballIndex) => {
                       const ballUnlocked = isBallUnlocked(section.id, part, ballIndex);
                       const ballCompleted = isBallCompleted(ball, section.id, part.id);
+                      const keepCompletedRingVisible = ballCompleted && ball.id === "a-part-2-greetings-v1";
                       const ballProgress = getDirectBallProgress(ball, section.id, part.id);
                       const progressDeg = Math.round(Math.max(0, Math.min(ballProgress.percent, 1)) * 360);
                       const actionLabel = ball.comingSoon
@@ -1406,7 +1410,7 @@ function renderMap(){
 
                       return `
                         <button
-                          class="part-orb-button ${ballCompleted ? "completed" : ""} ${ballUnlocked && !ballCompleted ? "current" : ""} ${ballUnlocked ? "" : "locked"}"
+                          class="part-orb-button ${ballCompleted ? "completed" : ""} ${ballUnlocked && !ballCompleted ? "current" : ""} ${ballUnlocked || keepCompletedRingVisible ? "" : "locked"}"
                           type="button"
                           style="--part-top:${partColors.top}; --part-bottom:${partColors.bottom}; --part-shadow:${partColors.shadow};"
                           onclick="openPartBall('${section.id}','${part.id}','${ball.id}')"

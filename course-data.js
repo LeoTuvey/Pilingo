@@ -112,8 +112,20 @@ const SECTION_ONE_PARTS = [
     href: "game1.html?coursePart=greetings&v=lessonpath2",
     icon: "👋",
     accent: "sky",
-    lessons: [],
-    balls: []
+    lessons: lessonList(
+      "Subject Pronouns",
+      "Times of the Day",
+      "Basic Greetings",
+      "Basic Conversation Words",
+      "I",
+      "He",
+      "You (s.)",
+      "You (p.)",
+      "Tu and Hûn endings"
+    ),
+    balls: [
+      ball("a-part-2-greetings-v1", 1, "Ball 1", "Subject pronouns, times of day, greetings, and basic conversation", 9)
+    ]
   },
   {
     id: "part-4",

@@ -2525,7 +2525,124 @@ const gameParts = [
             choiceStep("🎯 Select the Correct Meaning", "zîrek (jîr)", ["stupid", "fat", "smart", "old"], "smart"),
             choiceStep("🎯 Select the Correct Meaning", "bê-aqil (gêl)", ["smart", "rich", "happy", "stupid"], "stupid"),
             choiceStep("🎯 Select the Correct Meaning", "dilovan (bi-reĥim)", ["bad", "ugly", "poor", "kind"], "kind"),
-            choiceStep("🎯 Select the Correct Meaning", "nedilovan (bê-reĥim)", ["kind", "beautiful", "unkind", "young"], "unkind")
+            choiceStep("🎯 Select the Correct Meaning", "nedilovan (bê-reĥim)", ["kind", "beautiful", "unkind", "young"], "unkind"),
+            {
+                type:"match",
+                instruction:"Subject Pronouns",
+                prompt:"",
+                pairs:[
+                    { english:"I", kurmanji:"Ez", group:"ez" },
+                    { english:"You", kurmanji:"Tu", group:"you-singular" },
+                    { english:"He", kurmanji:"Ew", group:"ew-pronoun" },
+                    { english:"It", kurmanji:"Ew", group:"ew-pronoun" },
+                    { english:"She", kurmanji:"Ew", group:"ew-pronoun" },
+                    { english:"We", kurmanji:"Em", group:"em" },
+                    { english:"You", kurmanji:"Hûn (Hing)", group:"you-plural" },
+                    { english:"They", kurmanji:"Ew", group:"ew-pronoun" }
+                ],
+                leftHeading:"English",
+                rightHeading:"Kurmanji",
+                leftSide:"first",
+                rightSide:"second",
+                leftSpeakMap:{
+                    "I":"I",
+                    "You":"You",
+                    "He":"He",
+                    "It":"It",
+                    "She":"She",
+                    "We":"We",
+                    "They":"They"
+                }
+            },
+            {
+                type:"match",
+                instruction:"Times of the Day",
+                prompt:"",
+                pairs:[
+                    { english:"🌅 Dawn", kurmanji:"berspêde", group:"dawn" },
+                    { english:"🌄 Morning", kurmanji:"sibeh (spêde)", group:"morning" },
+                    { english:"☀️ Noon (Midday)", kurmanji:"nîvro", group:"noon" },
+                    { english:"🌇 Afternoon", kurmanji:"paşnîvro", group:"afternoon" },
+                    { english:"🌆 Evening", kurmanji:"îvarî (êvari)", group:"evening" },
+                    { english:"🌙 Night", kurmanji:"şev", group:"night" }
+                ],
+                leftHeading:"English",
+                rightHeading:"Kurmanji",
+                leftSide:"first",
+                rightSide:"second",
+                leftSpeakMap:{
+                    "🌅 Dawn":"Dawn",
+                    "🌄 Morning":"Morning",
+                    "☀️ Noon (Midday)":"Noon. Midday.",
+                    "🌇 Afternoon":"Afternoon",
+                    "🌆 Evening":"Evening",
+                    "🌙 Night":"Night"
+                }
+            },
+            {
+                type:"match",
+                instruction:"Basic Greetings",
+                prompt:"",
+                pairs:[
+                    { english:"day", kurmanji:"roj", group:"day" },
+                    { english:"night", kurmanji:"şev", group:"night" },
+                    { english:"hello", kurmanji:"silav", group:"hello" },
+                    { english:"good", kurmanji:"baş", group:"good" },
+                    { english:"good morning", kurmanji:"sibeh(spêde) baş", group:"good-morning" },
+                    { english:"good evening", kurmanji:"îvarî (êvari) baş", group:"good-evening" }
+                ],
+                leftHeading:"English",
+                rightHeading:"Kurmanji",
+                leftSide:"first",
+                rightSide:"second",
+                leftSpeakMap:{
+                    "day":"day",
+                    "night":"night",
+                    "hello":"hello",
+                    "good":"good",
+                    "good morning":"good morning",
+                    "good evening":"good evening"
+                }
+            },
+            {
+                type:"match",
+                instruction:"Basic Conversation Words",
+                prompt:"",
+                pairs:[
+                    { english:"am", kurmanji:"im / me", group:"am" },
+                    { english:"is", kurmanji:"e / ye", group:"is" },
+                    { english:"are", kurmanji:"î / yî / in / ne", group:"are" },
+                    { english:"you", kurmanji:"Tu / hûn(hing)", group:"you" },
+                    { english:"how", kurmanji:"çawa (çitû)", group:"how" }
+                ],
+                leftHeading:"English",
+                rightHeading:"Kurmanji",
+                leftSide:"first",
+                rightSide:"second",
+                leftSpeakMap:{
+                    "am":"am",
+                    "is":"is",
+                    "are":"are",
+                    "you":"you",
+                    "how":"how"
+                }
+            },
+            { type:"choice", instruction:"", prompt:"I", spoken:"I", options:["Tu", "Ez", "Ew"], answer:"Ez" },
+            { type:"choice", instruction:"", prompt:"am", spoken:"am", options:["im / me", "e / ye"], answer:"im / me" },
+            { ...rawBuildStep("I am Kurdish.", "I am Kurdish.", ["im", "kurd", "Ez"], ["Ez", "kurd", "im."]), spoken:"I am Kurdish." },
+            { ...rawBuildStep("I am a teacher.", "I am a teacher.", ["Ez", "me", "mamoste"], ["Ez", "mamoste", "me."]), spoken:"I am a teacher." },
+            { type:"choice", instruction:"", prompt:"He", spoken:"He", options:["Tu", "Ez", "Ew"], answer:"Ew" },
+            { type:"choice", instruction:"", prompt:"is", spoken:"is", options:["im / me", "e / ye"], answer:"e / ye" },
+            { ...rawBuildStep("He is Kurdish.", "He is Kurdish.", ["kurd", "Ew", "e"], ["Ew", "kurd", "e."]), spoken:"He is Kurdish." },
+            { ...rawBuildStep("He is a teacher.", "He is a teacher.", ["mamoste", "Ew", "ye"], ["Ew", "mamoste", "ye."]), spoken:"He is a teacher." },
+            { type:"choice", instruction:"", prompt:"You (s.)", spoken:"You", options:["Tu", "Ez", "Ew"], answer:"Tu" },
+            { ...rawBuildStep("You are Kurdish.", "You are Kurdish.", ["kurd", "î", "Tu"], ["Tu", "kurd", "î."]), spoken:"You are Kurdish." },
+            { ...rawBuildStep("You are a teacher.", "You are a teacher.", ["mamoste", "Tu", "yî"], ["Tu", "mamoste", "yî."]), spoken:"You are a teacher." },
+            { type:"choice", instruction:"", prompt:"You (p.)", spoken:"You", options:["Hûn (hing)", "Ez", "Ew"], answer:"Hûn (hing)" },
+            { ...rawBuildStep("You are Kurdish.", "You are Kurdish.", ["kurd", "in", "Hûn"], ["Hûn", "kurd", "in."]), spoken:"You are Kurdish." },
+            { ...rawBuildStep("You are teachers.", "You are teachers.", ["mamoste", "Hûn", "ne"], ["Hûn", "mamoste", "ne."]), spoken:"You are teachers." },
+            choiceStep("", "Tu", ["î / yî", "in/ ne"], "î / yî"),
+            choiceStep("", "Hûn(hing)", ["î / yî", "in/ ne"], "in/ ne")
         ]
     },
     {
@@ -3062,7 +3179,7 @@ const coursePartRoutes = {
         slug:"greetings",
         title:"👋 Greet People",
         gamePartIndex:0,
-        sectionIds:[],
+        sectionIds:["a-part-2-greetings-v1"],
         enginePartId:"part-3"
     },
     "food-drink":{
@@ -3394,6 +3511,25 @@ const partSections = {
                 { id:"a-part-1j-final-quiz-5", label:"Quiz 5", detail:"Fill in the Missing Words", start:239, end:245 },
                 { id:"a-part-1j-final-quiz-6", label:"Quiz 6", detail:"Which Sentence Is Correct?", start:246, end:247 },
                 { id:"a-part-1j-final-quiz-7", label:"Quiz 7", detail:"Select the Correct Meaning", start:248, end:255 }
+            ]
+        },
+        {
+            id:"a-part-2-greetings-v1",
+            ballNumber:1,
+            label:"Ball 1",
+            detail:"Subject pronouns, times of day, greetings, and basic conversation",
+            start:256,
+            end:275,
+            lessons:[
+                { id:"a-part-2-greetings-v1-lesson-1", label:"Lesson 1", detail:"Subject Pronouns", start:256, end:256 },
+                { id:"a-part-2-greetings-v1-lesson-2", label:"Lesson 2", detail:"Times of the Day", start:257, end:257 },
+                { id:"a-part-2-greetings-v1-lesson-3", label:"Lesson 3", detail:"Basic Greetings", start:258, end:258 },
+                { id:"a-part-2-greetings-v1-lesson-4", label:"Lesson 4", detail:"Basic Conversation Words", start:259, end:259 },
+                { id:"a-part-2-greetings-v1-quiz-1", label:"Quiz 1", detail:"I", start:260, end:263 },
+                { id:"a-part-2-greetings-v1-quiz-2", label:"Quiz 2", detail:"He", start:264, end:267 },
+                { id:"a-part-2-greetings-v1-quiz-3", label:"Quiz 3", detail:"You (s.)", start:268, end:270 },
+                { id:"a-part-2-greetings-v1-quiz-4", label:"Quiz 4", detail:"You (p.)", start:271, end:273 },
+                { id:"a-part-2-greetings-v1-quiz-5", label:"Quiz 5", detail:"Tu and Hûn endings", start:274, end:275 }
             ]
         }
     ],

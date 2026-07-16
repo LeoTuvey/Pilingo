@@ -75,6 +75,8 @@ const SECTION_ONE_PARTS = [
       "Family sentence blanks",
       "Which sentence is correct",
       "In-laws matching",
+      "Greeting words",
+      "Simple greeting review",
       "Final Exam: Write in English",
       "Final Exam: Fill the sentence",
       "Final Exam: Fill in the Missing Word",
@@ -91,7 +93,7 @@ const SECTION_ONE_PARTS = [
       ball("a-part-1f-v1", 5, "Ball 5", "Translation, possessives, and describing people", 5),
       ball("a-part-1g-v1", 6, "Ball 6", "Traits, animals, and writing family descriptions", 5),
       ball("a-part-1h-v1", 7, "Ball 7", "Possessives, writing practice, and correct phrases", 5),
-      ball("a-part-1i-v1", 8, "Ball 8", "Age words, is/are practice, and correct phrases", 6),
+      ball("a-part-1i-v1", 8, "Ball 8", "Age words, is/are practice, and correct phrases", 8),
       {
         id: "a-part-1j-final",
         number: 9,
@@ -110,13 +112,8 @@ const SECTION_ONE_PARTS = [
     href: "game1.html?coursePart=greetings&v=lessonpath2",
     icon: "👋",
     accent: "sky",
-    lessons: lessonList(
-      "Greeting words",
-      "Simple greeting review"
-    ),
-    balls: [
-      ball("a-part-2", 1, "Ball 1", "Greetings, welcome words, and polite phrases", 2)
-    ]
+    lessons: [],
+    balls: []
   },
   {
     id: "part-4",

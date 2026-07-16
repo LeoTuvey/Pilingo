@@ -1472,6 +1472,42 @@ const coursePartSlug = urlParams.get("coursePart") || "";
 const initialBallId = urlParams.get("ballId") || "";
 const FAMILY_BALL3_PROGRESS_VERSION = "family-ball3-v4";
 
+function preserveMovedGreetingProgress(){
+    const sourceSectionId = "a-part-2";
+    const destinationSectionId = "a-part-1i-v1";
+    const movedLessons = [
+        { id:"a-part-2-lesson-1", start:217, end:221 },
+        { id:"a-part-2-lesson-2", start:222, end:226 }
+    ];
+    const sourceLessonIds = Array.isArray(completedLessons[sourceSectionId])
+        ? completedLessons[sourceSectionId].filter(value => typeof value === "string")
+        : [];
+    const sourceSectionComplete = Object.values(completedSections || {}).some(values =>
+        Array.isArray(values) && values.includes(sourceSectionId)
+    );
+    const completedMovedIds = movedLessons
+        .filter(lesson => sourceSectionComplete || sourceLessonIds.includes(lesson.id))
+        .map(lesson => lesson.id);
+
+    if(!completedMovedIds.length) return;
+
+    const destinationLessonIds = Array.isArray(completedLessons[destinationSectionId])
+        ? completedLessons[destinationSectionId].filter(value => typeof value === "string")
+        : [];
+    completedLessons[destinationSectionId] = [...new Set([...destinationLessonIds, ...completedMovedIds])];
+
+    movedLessons.forEach((lesson) => {
+        if(!completedMovedIds.includes(lesson.id)) return;
+        completedLessonStepMap[lesson.id] = Array.from(
+            { length:lesson.end - lesson.start + 1 },
+            (_, offset) => lesson.start + offset
+        );
+    });
+
+    saveCompletedLessons();
+    saveCompletedLessonStepMap();
+}
+
 function resetFamilyBall3Progress(){
     const legacySectionIds = new Set(["a-part-1d", "a-part-1d-v2", "a-part-1d-v3"]);
     const legacyLessonPrefixes = ["a-part-1d-", "a-part-1d-v2-", "a-part-1d-v3-"];
@@ -1519,6 +1555,8 @@ if(localStorage.getItem(FAMILY_BALL3_PROGRESS_VERSION) !== "done"){
     resetFamilyBall3Progress();
     localStorage.setItem(FAMILY_BALL3_PROGRESS_VERSION, "done");
 }
+
+preserveMovedGreetingProgress();
 
 const emoji = {
     coffee:"☕",
@@ -3024,7 +3062,7 @@ const coursePartRoutes = {
         slug:"greetings",
         title:"👋 Greet People",
         gamePartIndex:0,
-        sectionIds:["a-part-2"],
+        sectionIds:[],
         enginePartId:"part-3"
     },
     "food-drink":{
@@ -3329,14 +3367,16 @@ const partSections = {
             label:"Part 1I",
             detail:"Age words, is/are practice, and correct phrases",
             start:191,
-            end:213,
+            end:226,
             lessons:[
                 { id:"a-part-1i-v1-lesson-1", label:"Lesson 1", detail:"Age words and life stages", start:191, end:195 },
                 { id:"a-part-1i-v1-lesson-2", label:"Lesson 2", detail:"Is, are, and sibling basics", start:196, end:202 },
                 { id:"a-part-1i-v1-lesson-3", label:"Lesson 3", detail:"Parents, family, and blanks", start:203, end:208 },
                 { id:"a-part-1i-v1-lesson-4", label:"Lesson 4", detail:"You and I sentences", start:209, end:210 },
                 { id:"a-part-1i-v1-lesson-5", label:"Lesson 5", detail:"Which Sentence Is Correct?", start:211, end:212 },
-                { id:"a-part-1i-v1-lesson-6", label:"Lesson 6", detail:"Match the Pairs: In-laws", start:213, end:213 }
+                { id:"a-part-1i-v1-lesson-6", label:"Lesson 6", detail:"Match the Pairs: In-laws", start:213, end:213 },
+                { id:"a-part-2-lesson-1", label:"Lesson 1", detail:"Hello and welcome basics", start:217, end:221 },
+                { id:"a-part-2-lesson-2", label:"Lesson 2", detail:"Yes, no, bye, and greeting review", start:222, end:226 }
             ]
         },
         {
@@ -3354,17 +3394,6 @@ const partSections = {
                 { id:"a-part-1j-final-quiz-5", label:"Quiz 5", detail:"Fill in the Missing Words", start:239, end:245 },
                 { id:"a-part-1j-final-quiz-6", label:"Quiz 6", detail:"Which Sentence Is Correct?", start:246, end:247 },
                 { id:"a-part-1j-final-quiz-7", label:"Quiz 7", detail:"Select the Correct Meaning", start:248, end:255 }
-            ]
-        },
-        {
-            id:"a-part-2",
-            label:"Part 2",
-            detail:"Greetings, welcome words, and polite phrases",
-            start:217,
-            end:226,
-            lessons:[
-                { id:"a-part-2-lesson-1", label:"Lesson 1", detail:"Hello and welcome basics", start:217, end:221 },
-                { id:"a-part-2-lesson-2", label:"Lesson 2", detail:"Yes, no, bye, and greeting review", start:222, end:226 }
             ]
         }
     ],
@@ -6107,7 +6136,9 @@ if(window.PilingoMascot){
 }
 
 if(activeCoursePartRoute) {
-    if(initialBallId) {
+    if(!activeCoursePartRoute.sectionIds.length) {
+        window.location.href = "engine.html";
+    } else if(initialBallId) {
         startSectionById(activeCoursePartRoute.gamePartIndex, initialBallId);
     } else {
         window.location.href = "engine.html";

@@ -121,10 +121,22 @@ const SECTION_ONE_PARTS = [
       "He",
       "You (s.)",
       "You (p.)",
-      "Tu and Hûn endings"
+      "Tu and Hûn endings",
+      "So, you, and thanks",
+      "Go, have, yes, how, and home",
+      "Go home and how are you",
+      "Susan greeting conversation",
+      "Nina and Adam greeting conversation",
+      "To be ending note",
+      "Plural greeting conversation",
+      "We are good conversation",
+      "Kurmanji typing practice",
+      "Greeting word review",
+      "Listen and choose"
     ),
     balls: [
-      ball("a-part-2-greetings-v1", 1, "Ball 1", "Subject pronouns, times of day, greetings, and basic conversation", 9)
+      ball("a-part-2-greetings-v1", 1, "Ball 1", "Subject pronouns, times of day, greetings, and basic conversation", 9),
+      ball("a-part-2-greetings-v2", 2, "Ball 2", "Greeting conversations, grammar endings, typing, and listening", 11)
     ]
   },
   {

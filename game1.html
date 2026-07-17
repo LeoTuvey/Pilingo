@@ -2643,7 +2643,139 @@ const gameParts = [
             { ...rawBuildStep("You are Kurdish.", "You are Kurdish.", ["kurd", "in", "Hûn"], ["Hûn", "kurd", "in."]), spoken:"You are Kurdish." },
             { ...rawBuildStep("You are teachers.", "You are teachers.", ["mamoste", "Hûn", "ne"], ["Hûn", "mamoste", "ne."]), spoken:"You are teachers." },
             choiceStep("", "You are. → Tu (/)", ["î / yî", "in/ ne"], "î / yî"),
-            choiceStep("", "You are. → Hûn(hing) (/)", ["î / yî", "in/ ne"], "in/ ne")
+            choiceStep("", "You are. → Hûn(hing) (/)", ["î / yî", "in/ ne"], "in/ ne"),
+            {
+                type:"match",
+                instruction:"",
+                prompt:"",
+                pairs:[
+                    { english:"So", kurmanji:"Herê", group:"so" },
+                    { english:"You(s.)", kurmanji:"Tu", group:"you-singular" },
+                    { english:"You(p.)", kurmanji:"Hûn (Hing)", group:"you-plural" },
+                    { english:"see you", kurmanji:"dê te bînim", group:"see-you" },
+                    { english:"how", kurmanji:"çawa (çitû)", group:"how" },
+                    { english:"Thanks", kurmanji:"spas", group:"thanks" }
+                ],
+                leftHeading:"English",
+                rightHeading:"Kurmanji",
+                leftSide:"first",
+                rightSide:"second",
+                leftSpeakMap:{
+                    "So":"So",
+                    "You(s.)":"You",
+                    "You(p.)":"You",
+                    "see you":"see you",
+                    "how":"how",
+                    "Thanks":"Thanks"
+                }
+            },
+            {
+                type:"match",
+                instruction:"",
+                prompt:"",
+                pairs:[
+                    { english:"Go!", kurmanji:"Here!", group:"go" },
+                    { english:"have", kurmanji:"Heye", group:"have" },
+                    { english:"has", kurmanji:"Heye", group:"has" },
+                    { english:"Yes", kurmanji:"Erê (A)", group:"yes" },
+                    { english:"how", kurmanji:"çawa (çitû)", group:"how" },
+                    { english:"home", kurmanji:"mal", group:"home" }
+                ],
+                leftHeading:"English",
+                rightHeading:"Kurmanji",
+                leftSide:"first",
+                rightSide:"second",
+                leftSpeakMap:{
+                    "Go!":"Go!",
+                    "have":"have",
+                    "has":"has",
+                    "Yes":"Yes",
+                    "how":"how",
+                    "home":"home"
+                }
+            },
+            rawBuildStep("Go home!", "Go home!", ["Mal!", "Here", "Herê"], ["Here", "mal!"]),
+            rawBuildStep("Tu çawa yî? (♀♂)", "Tu çawa yî? (♀♂)", ["you?", "How", "are"], ["How", "are", "you?"]),
+            { type:"choice", instruction:"", prompt:"So", spoken:"So", options:["here", "erê", "herê"], answer:"herê" },
+            rawBuildStep("Hello Susan!", "Hello Susan!", ["Susan", "Silav", "baş"], ["Silav,", "Susan"]),
+            rawBuildStep("Herê, tu çawa yî? (♀♂)", "Herê, tu çawa yî? (♀♂)", ["So,", "you?", "are", "how"], ["So,", "how", "are", "you?"]),
+            rawBuildStep("Ez baş im, spas! (♀♂)", "Ez baş im, spas! (♀♂)", ["I", "thanks!", "am", "good"], ["I", "am", "good", "thanks!"]),
+            rawBuildStep("Hello Nina!", "Hello Nina!", ["Nina", "Silav", "baş"], ["Silav,", "Nina"]),
+            rawBuildStep("Herê, tu ya çawa yî? (ya ♀)", "Herê, tu ya çawa yî? (ya ♀)", ["So,", "are", "you?", "how"], ["So,", "how", "are", "you?"]),
+            { type:"choice", instruction:"", prompt:"So", spoken:"So", options:["here", "erê", "herê"], answer:"herê" },
+            rawBuildStep("Herê, Adam, tu yê çawa yî? (yê ♂)", "Herê, Adam, tu yê çawa yî? (yê ♂)", ["So,", "Adam,", "you?", "how", "are"], ["So,", "Adam,", "how", "are", "you?"]),
+            rawBuildStep("Herê, Adam, tu çawa yî?", "Herê, Adam, tu çawa yî?", ["So,", "Adam,", "you?", "how", "are"], ["So,", "Adam,", "how", "are", "you?"]),
+            rawBuildStep("Ez baş im, spas! (♀♂)", "Ez baş im, spas! (♀♂)", ["good,", "Thanks!", "I", "am"], ["I", "am", "good,", "Thanks!"]),
+            {
+                type:"match",
+                instruction:"💡 Note",
+                prompt:"Consonants+im\nVowels+me\n\nConsonants+e\nVowels+ye\n\nConsonants+î\nVowels+yî\n\nConsonants+in\nVowels+ne",
+                pairs:[
+                    { english:"am", kurmanji:"im / me", group:"am" },
+                    { english:"is", kurmanji:"e / ye", group:"is" },
+                    { english:"are(s.)", kurmanji:"î / yî", group:"are-singular" },
+                    { english:"are(p.)", kurmanji:"in / ne", group:"are-plural" },
+                    { english:"you", kurmanji:"Tu / hûn(hing)", group:"you" },
+                    { english:"how", kurmanji:"çawa (çitû)", group:"how" }
+                ],
+                leftHeading:"English",
+                rightHeading:"Kurmanji",
+                leftSide:"first",
+                rightSide:"second",
+                leftSpeakMap:{
+                    "am":"am",
+                    "is":"is",
+                    "are(s.)":"are",
+                    "are(p.)":"are",
+                    "you":"you",
+                    "how":"how"
+                }
+            },
+            { type:"choice", instruction:"", prompt:"So", spoken:"So", options:["here", "erê", "herê"], answer:"herê" },
+            { type:"choice", instruction:"", prompt:"Are", spoken:"Are", options:["im", "e", "ne"], answer:"ne" },
+            rawBuildStep("Herê, hûn (hing) çawa ne? (Plural ♀♂)", "Herê, hûn (hing) çawa ne? (Plural ♀♂)", ["are", "you?", "how", "So,"], ["So,", "how", "are", "you?"]),
+            { type:"choice", instruction:"", prompt:"We", spoken:"We", options:["Em", "Hûn(hing)", "Ew"], answer:"Em" },
+            { type:"choice", instruction:"", prompt:"Are", spoken:"Are", options:["im", "e", "in"], answer:"in" },
+            rawBuildStep("Em baș in, spas!", "Em baș in, spas!", ["good,", "We", "thanks!", "are"], ["We", "are", "good,", "thanks!"]),
+            { type:"type", instruction:"Type this sentence in Kurmanji", prompt:"Go Home!", answer:"Here mal!" },
+            { type:"type", instruction:"Type the missing word", prompt:"So", answer:"Herê" },
+            {
+                type:"match",
+                instruction:"",
+                prompt:"",
+                pairs:[
+                    { english:"So", kurmanji:"Herê", group:"so" },
+                    { english:"have", kurmanji:"heye", group:"have" },
+                    { english:"has", kurmanji:"heye", group:"has" },
+                    { english:"see you", kurmanji:"dê te bînim", group:"see-you" },
+                    { english:"how", kurmanji:"çawa (çitû)", group:"how" },
+                    { english:"Thanks", kurmanji:"spas", group:"thanks" }
+                ],
+                leftHeading:"English",
+                rightHeading:"Kurmanji",
+                leftSide:"first",
+                rightSide:"second",
+                leftSpeakMap:{
+                    "So":"So",
+                    "have":"have",
+                    "has":"has",
+                    "see you":"see you",
+                    "how":"how",
+                    "Thanks":"Thanks"
+                }
+            },
+            {
+                type:"audioMatch",
+                instruction:"🎧 Listen and choose the correct answer",
+                prompt:"",
+                pairs:[
+                    ["So", "Herê"],
+                    ["Thnaks", "spas"],
+                    ["have", "heye"],
+                    ["has", "heye"],
+                    ["Go!", "Here"]
+                ]
+            }
         ]
     },
     {
@@ -3180,7 +3312,7 @@ const coursePartRoutes = {
         slug:"greetings",
         title:"👋 Greet People",
         gamePartIndex:0,
-        sectionIds:["a-part-2-greetings-v1"],
+        sectionIds:["a-part-2-greetings-v1", "a-part-2-greetings-v2"],
         enginePartId:"part-3"
     },
     "food-drink":{
@@ -3531,6 +3663,27 @@ const partSections = {
                 { id:"a-part-2-greetings-v1-quiz-3", label:"Quiz 3", detail:"You (s.)", start:268, end:270 },
                 { id:"a-part-2-greetings-v1-quiz-4", label:"Quiz 4", detail:"You (p.)", start:271, end:273 },
                 { id:"a-part-2-greetings-v1-quiz-5", label:"Quiz 5", detail:"Tu and Hûn endings", start:274, end:275 }
+            ]
+        },
+        {
+            id:"a-part-2-greetings-v2",
+            ballNumber:2,
+            label:"Ball 2",
+            detail:"Greeting conversations, grammar endings, typing, and listening",
+            start:276,
+            end:300,
+            lessons:[
+                { id:"a-part-2-greetings-v2-lesson-1", label:"Lesson 1", detail:"So, you, and thanks", start:276, end:276 },
+                { id:"a-part-2-greetings-v2-lesson-2", label:"Lesson 2", detail:"Go, have, yes, how, and home", start:277, end:277 },
+                { id:"a-part-2-greetings-v2-quiz-1", label:"Quiz 1", detail:"Go home and how are you", start:278, end:279 },
+                { id:"a-part-2-greetings-v2-quiz-2", label:"Quiz 2", detail:"Susan greeting conversation", start:280, end:283 },
+                { id:"a-part-2-greetings-v2-quiz-3", label:"Quiz 3", detail:"Nina and Adam greeting conversation", start:284, end:289 },
+                { id:"a-part-2-greetings-v2-lesson-3", label:"Lesson 3", detail:"To be ending note", start:290, end:290 },
+                { id:"a-part-2-greetings-v2-quiz-4", label:"Quiz 4", detail:"Plural greeting conversation", start:291, end:293 },
+                { id:"a-part-2-greetings-v2-quiz-5", label:"Quiz 5", detail:"We are good conversation", start:294, end:296 },
+                { id:"a-part-2-greetings-v2-quiz-6", label:"Quiz 6", detail:"Kurmanji typing practice", start:297, end:298 },
+                { id:"a-part-2-greetings-v2-lesson-4", label:"Lesson 4", detail:"Greeting word review", start:299, end:299 },
+                { id:"a-part-2-greetings-v2-quiz-7", label:"Quiz 7", detail:"Listen and choose", start:300, end:300 }
             ]
         }
     ],
@@ -6108,6 +6261,13 @@ function completeStep(){
         }
 
         if(usesDirectBallFlow(partIndex)) {
+            if(sections[sectionIndex]?.id === "a-part-2-greetings-v2" && typeof completedLessonIndex === "number") {
+                const nextLessonIndex = completedLessonIndex + 1;
+                if(nextLessonIndex < lessonsForSection(partIndex, sectionIndex).length) {
+                    startLesson(partIndex, sectionIndex, nextLessonIndex);
+                    return;
+                }
+            }
             window.location.href = "engine.html";
             return;
         }

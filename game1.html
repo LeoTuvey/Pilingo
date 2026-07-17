@@ -2675,8 +2675,8 @@ const gameParts = [
                 prompt:"",
                 pairs:[
                     { english:"Go!", kurmanji:"Here!", group:"go" },
-                    { english:"have", kurmanji:"Heye", group:"have" },
-                    { english:"has", kurmanji:"Heye", group:"has" },
+                    { english:"have", kurmanji:"heye(hey)", group:"have-has" },
+                    { english:"has", kurmanji:"heye(hey)", group:"have-has" },
                     { english:"Yes", kurmanji:"Erê (A)", group:"yes" },
                     { english:"how", kurmanji:"çawa (çitû)", group:"how" },
                     { english:"home", kurmanji:"mal", group:"home" }
@@ -2710,6 +2710,7 @@ const gameParts = [
                 type:"match",
                 instruction:"💡 Note",
                 prompt:"Consonants+im\nVowels+me\n\nConsonants+e\nVowels+ye\n\nConsonants+î\nVowels+yî\n\nConsonants+in\nVowels+ne",
+                promptHtml:'<span class="prompt-subnote">Not very important for now.<br>Consonants+im<br>Vowels+me<br><br>Consonants+e<br>Vowels+ye<br><br>Consonants+î<br>Vowels+yî<br><br>Consonants+in<br>Vowels+ne</span>',
                 pairs:[
                     { english:"am", kurmanji:"im / me", group:"am" },
                     { english:"is", kurmanji:"e / ye", group:"is" },
@@ -2745,8 +2746,8 @@ const gameParts = [
                 prompt:"",
                 pairs:[
                     { english:"So", kurmanji:"Herê", group:"so" },
-                    { english:"have", kurmanji:"heye", group:"have" },
-                    { english:"has", kurmanji:"heye", group:"has" },
+                    { english:"have", kurmanji:"heye(hey)", group:"have-has" },
+                    { english:"has", kurmanji:"heye(hey)", group:"have-has" },
                     { english:"see you", kurmanji:"dê te bînim", group:"see-you" },
                     { english:"how", kurmanji:"çawa (çitû)", group:"how" },
                     { english:"Thanks", kurmanji:"spas", group:"thanks" }
@@ -2771,8 +2772,8 @@ const gameParts = [
                 pairs:[
                     ["So", "Herê"],
                     ["Thnaks", "spas"],
-                    ["have", "heye"],
-                    ["has", "heye"],
+                    ["have", "heye(hey)", "have-has"],
+                    ["has", "heye(hey)", "have-has"],
                     ["Go!", "Here"]
                 ]
             }
@@ -5827,8 +5828,9 @@ function renderAudioMatchStep(step){
     const kurmanjiCards = [];
 
     step.pairs.forEach((pair, index) => {
-        soundCards.push({ spoken:pair[0], key:index, id:"sound-" + index });
-        kurmanjiCards.push({ text:pair[1], key:index, id:"ku-audio-" + index });
+        const matchGroup = pair[2] === undefined ? index : pair[2];
+        soundCards.push({ spoken:pair[0], key:matchGroup, id:"sound-" + index });
+        kurmanjiCards.push({ text:pair[1], key:matchGroup, id:"ku-audio-" + index });
     });
 
     shuffleCards(soundCards, "audio-sound");
@@ -5839,7 +5841,7 @@ function renderAudioMatchStep(step){
             <div class="match-column">
                 <div class="match-heading">Hear</div>
                 ${soundCards.map((card) => `
-                    <button class="secondary" id="match-${card.id}" onclick="selectAudioMatch('${card.id}', ${card.key}, '${escapeHtml(card.spoken)}')" aria-label="Hear word">
+                    <button class="secondary" id="match-${card.id}" onclick="selectAudioMatch('${card.id}', ${matchKeyLiteral(card.key)}, '${escapeHtml(card.spoken)}')" aria-label="Hear word">
                         🔊
                     </button>
                 `).join("")}
@@ -5847,7 +5849,7 @@ function renderAudioMatchStep(step){
             <div class="match-column">
                 <div class="match-heading">Kurmanji</div>
                 ${kurmanjiCards.map((card) => `
-                    <button class="secondary" id="match-${card.id}" onclick="selectMatch('${card.id}', 'kurmanji', ${card.key})">
+                    <button class="secondary" id="match-${card.id}" onclick="selectMatch('${card.id}', 'kurmanji', ${matchKeyLiteral(card.key)})">
                         ${escapeHtml(card.text)}
                     </button>
                 `).join("")}

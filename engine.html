@@ -1182,7 +1182,7 @@ const PART_COLORS = {
 const COURSE_PART_SECTION_MAP = {
   alphabets:["a-part-1a"],
   family:["a-part-1b","a-part-1c","a-part-1d-v3","a-part-1e-v2","a-part-1f-v1","a-part-1g-v1","a-part-1h-v1","a-part-1i-v1","a-part-1j-final"],
-  greetings:["a-part-2-greetings-v1","a-part-2-greetings-v2","a-part-2-greetings-v3"],
+  greetings:["a-part-2-greetings-v1","a-part-2-greetings-v2"],
   "food-drink":["b-part-1","b-part-2","b-part-3","b-part-4"],
   possessions:["d-part-1","d-part-2","d-part-3"],
   animals:["e-part-1","e-part-2","e-part-3","e-part-4","e-part-5","e-part-6","e-part-7","e-part-8"],
@@ -1278,8 +1278,7 @@ function getDirectBallProgress(ball, sectionId = "", partId = ""){
   const canUseLegacyPartCompletion = ![
     "a-part-1j-final",
     "a-part-2-greetings-v1",
-    "a-part-2-greetings-v2",
-    "a-part-2-greetings-v3"
+    "a-part-2-greetings-v2"
   ].includes(ball?.id);
   if (!completed && total && sectionId && partId && canUseLegacyPartCompletion) {
     const enginePartDone = Engine.isPartCompleted(sectionId, partId);
@@ -1304,8 +1303,7 @@ function isBallUnlocked(sectionId, part, ballIndex){
   const balls = getPartBalls(part);
   if (!balls.length) return false;
   if (balls[ballIndex]?.comingSoon) return false;
-  const isGreetingsBall3 = balls[ballIndex]?.id === "a-part-2-greetings-v3";
-  if (!Engine.isPartUnlocked(sectionId, part.id) && !isGreetingsBall3) return false;
+  if (!Engine.isPartUnlocked(sectionId, part.id)) return false;
   if (ballIndex === 0) return true;
   return balls.slice(0, ballIndex).every((ball) => isBallCompleted(ball, sectionId, part.id));
 }
@@ -1402,7 +1400,7 @@ function renderMap(){
                     ${balls.map((ball, ballIndex) => {
                       const ballUnlocked = isBallUnlocked(section.id, part, ballIndex);
                       const ballCompleted = isBallCompleted(ball, section.id, part.id);
-                      const keepCompletedRingVisible = ballCompleted && ["a-part-2-greetings-v1", "a-part-2-greetings-v2", "a-part-2-greetings-v3"].includes(ball.id);
+                      const keepCompletedRingVisible = ballCompleted && ["a-part-2-greetings-v1", "a-part-2-greetings-v2"].includes(ball.id);
                       const ballProgress = getDirectBallProgress(ball, section.id, part.id);
                       const progressDeg = Math.round(Math.max(0, Math.min(ballProgress.percent, 1)) * 360);
                       const actionLabel = ball.comingSoon

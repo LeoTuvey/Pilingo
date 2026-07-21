@@ -336,6 +336,11 @@ body.compact-build-step .answer-bank{
     animation:movingDemoWord 1.8s ease-in-out infinite;
 }
 
+body.ball-3-static-blue .moving-demo-word{
+    animation:none;
+    transform:none;
+}
+
 .prompt-subnote{
     display:block;
     margin-top:6px;
@@ -1470,6 +1475,7 @@ let currentBuildOptions = [];
 const urlParams = new URLSearchParams(window.location.search);
 const coursePartSlug = urlParams.get("coursePart") || "";
 const initialBallId = urlParams.get("ballId") || "";
+document.body.classList.toggle("ball-3-static-blue", initialBallId === "a-part-2-greetings-v3");
 const FAMILY_BALL3_PROGRESS_VERSION = "family-ball3-v4";
 
 function preserveMovedGreetingProgress(){

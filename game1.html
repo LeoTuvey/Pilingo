@@ -352,6 +352,10 @@ body.compact-build-step .answer-bank{
     user-select:none;
     -webkit-user-select:none;
     -webkit-user-drag:none;
+    position:static !important;
+    margin:0;
+    padding:0;
+    vertical-align:baseline;
 }
 
 body.ball-3-static-blue .moving-demo-word,
@@ -2830,12 +2834,12 @@ const gameParts = [
                 promptHtml:'<span class="prompt-subnote">Note: When a noun ends with a vowel<br>(a, e, ê, i, Î, o, u, û) + <span class="static-blue-word">yek</span>.</span>',
                 pairs:[
                     { english:"a dog 🐶", englishHtml:'<span class="static-blue-word">a</span> dog 🐶', kurmanji:"seyek", kurmanjiHtml:'se<span class="static-blue-word">yek</span>' },
-                    { english:"a woodpecker 🐧", englishHtml:'<span class="static-blue-word">a</span> woodpecker 🐧', kurmanji:"danîkukeyek (darçikek)", kurmanjiHtml:'danîkuke<span class="static-blue-word">yek</span> (darçik<span class="static-blue-word">ek</span>)' },
-                    { english:"a squirrel 🐿️", englishHtml:'<span class="static-blue-word">a</span> squirrel 🐿️', kurmanji:"smorek (⚠️)", kurmanjiHtml:'smor<span class="static-blue-word">ek</span> (⚠️)' },
+                    { english:"a woodpecker 🐧", englishHtml:'<span class="static-blue-word">a</span> woodpecker 🐧', kurmanji:"danîkukeyek (darçikek)", kurmanjiHtml:'danîkuke<span class="static-blue-word">yek</span><span class="match-subnote">(darçik<span class="static-blue-word">ek</span>)</span>' },
+                    { english:"a squirrel 🐿️", englishHtml:'<span class="static-blue-word">a</span> squirrel 🐿️', kurmanji:"smorek (⚠️)", kurmanjiHtml:'smor<span class="static-blue-word">ek</span><span class="match-subnote">(⚠️)</span>' },
                     { english:"a duck 🦆", englishHtml:'<span class="static-blue-word">a</span> duck 🦆', kurmanji:"mirawîyek", kurmanjiHtml:'mirawî<span class="static-blue-word">yek</span>' },
                     { english:"a fish 🐟", englishHtml:'<span class="static-blue-word">a</span> fish 🐟', kurmanji:"masîyek", kurmanjiHtml:'masî<span class="static-blue-word">yek</span>' },
                     { english:"a fox 🦊", englishHtml:'<span class="static-blue-word">a</span> fox 🦊', kurmanji:"rîvîyek / rovîyek", kurmanjiHtml:'rîvî<span class="static-blue-word">yek</span> / rovî<span class="static-blue-word">yek</span>' },
-                    { english:"an ant 🐜", englishHtml:'<span class="static-blue-word">an</span> ant 🐜', kurmanji:"mêrûyek (mêrîyek)", kurmanjiHtml:'mêrû<span class="static-blue-word">yek</span> (mêrî<span class="static-blue-word">yek</span>)' }
+                    { english:"an ant 🐜", englishHtml:'<span class="static-blue-word">an</span> ant 🐜', kurmanji:"mêrûyek (mêrîyek)", kurmanjiHtml:'mêrû<span class="static-blue-word">yek</span><span class="match-subnote">(mêrî<span class="static-blue-word">yek</span>)</span>' }
                 ],
                 leftHeading:"English", rightHeading:"Kurmanji", leftSide:"first", rightSide:"second"
             },
@@ -2882,15 +2886,15 @@ const gameParts = [
             { type:"choice", instruction:"", prompt:"has", spoken:"has", options:["hey / hene", "hebû", "hebûn"], answer:"hey / hene" },
             { type:"choice", instruction:"", prompt:"home", spoken:"home", options:["mal", "malek"], answer:"mal" },
             { type:"choice", instruction:"", prompt:"a home", spoken:"a home", options:["mal", "malek"], answer:"malek" },
-            richChoiceStep("", "🦉Bimek (kûndek)\n____ owl", '🦉Bim<span class="static-blue-word">ek</span> (kûnd<span class="static-blue-word">ek</span>)<br><span class="static-blue-word">____</span> owl', ["A", "An"], "An"),
+            richChoiceStep("", "🦉Bimek (kûndek)\n____ owl", '🦉Bim<span class="static-blue-word">ek</span><span class="prompt-subnote">(kûnd<span class="static-blue-word">ek</span>)</span><br><span class="static-blue-word">____</span> owl', ["A", "An"], "An"),
             richChoiceStep("", "🦅Bazek\n____ eagle", '🦅Baz<span class="static-blue-word">ek</span><br><span class="static-blue-word">____</span> eagle', ["A", "An"], "An"),
-            richChoiceStep("", "🐜mêrûyek(mêrîyek)\n____ ant", '🐜mêrû<span class="static-blue-word">yek</span>(mêrî<span class="static-blue-word">yek</span>)<br><span class="static-blue-word">____</span> ant', ["A", "An"], "An"),
+            richChoiceStep("", "🐜mêrûyek(mêrîyek)\n____ ant", '🐜mêrû<span class="static-blue-word">yek</span><span class="prompt-subnote">(mêrî<span class="static-blue-word">yek</span>)</span><br><span class="static-blue-word">____</span> ant', ["A", "An"], "An"),
             richChoiceStep("", "🐜mêrû___", '🐜mêrû<span class="static-blue-word">___</span>', ["ek", "yek"], "yek"),
             { type:"choice", instruction:"", prompt:"a", spoken:"a", options:["ek / yek", "2", "3"], answer:"ek / yek" },
             { type:"choice", instruction:"", prompt:"a rabbit", spoken:"a rabbit", options:["kêvrûşkek", "kêvrûşk"], answer:"kêvrûşkek" },
             richChoiceStep("", "I have a rabbit. (There is a rabbit of mine.)\n_____ a min heye.", 'I have <span class="static-blue-word">a rabbit</span>. <span class="prompt-subnote">(There is a rabbit of mine.)</span><br><span class="static-blue-word">_____</span> a min heye.', ["kêvrûşkek", "kêvrûşk"], "kêvrûşkek"),
             { type:"choice", instruction:"", prompt:"an", spoken:"an", options:["ek / yek", "2", "3"], answer:"ek / yek" },
-            richChoiceStep("", "🦉Bimek (kûndek)\n____ owl", '🦉Bim<span class="static-blue-word">ek</span> (kûnd<span class="static-blue-word">ek</span>)<br><span class="static-blue-word">____</span> owl', ["A", "An"], "An"),
+            richChoiceStep("", "🦉Bimek (kûndek)\n____ owl", '🦉Bim<span class="static-blue-word">ek</span><span class="prompt-subnote">(kûnd<span class="static-blue-word">ek</span>)</span><br><span class="static-blue-word">____</span> owl', ["A", "An"], "An"),
             richChoiceStep("", "🦉Bim__", '🦉Bim<span class="static-blue-word">__</span>', ["ek", "yek"], "ek"),
             richChoiceStep("", "🦉kûnd __", '🦉kûnd <span class="static-blue-word">__</span>', ["ek", "yek"], "ek"),
             richChoiceStep("", "___ owl🦉", '<span class="static-blue-word">___</span> owl🦉', ["A", "An"], "An"),

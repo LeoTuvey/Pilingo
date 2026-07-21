@@ -4941,6 +4941,14 @@ function isSectionComplete(index, sectionIndex){
 function isSectionUnlocked(index, sectionIndex){
     const section = sectionsForPart(index)[sectionIndex];
     if(
+        activeCoursePartRoute?.slug === "greetings" &&
+        initialBallId === "a-part-2-greetings-v3" &&
+        section?.id === initialBallId
+    ) {
+        return true;
+    }
+
+    if(
         activeCoursePartRoute?.slug === "family" &&
         (
             initialBallId === "a-part-1g-v1" ||

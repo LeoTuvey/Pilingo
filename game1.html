@@ -1503,6 +1503,7 @@ const coursePartSlug = urlParams.get("coursePart") || "";
 const initialBallId = urlParams.get("ballId") || "";
 document.body.classList.toggle("ball-3-static-blue", initialBallId === "a-part-2-greetings-v3");
 const FAMILY_BALL3_PROGRESS_VERSION = "family-ball3-v4";
+const GREETINGS_BALL3_CONTENT_VERSION = "greetings-ball3-exact-v1";
 
 function preserveMovedGreetingProgress(){
     const sourceSectionId = "a-part-2";
@@ -1583,9 +1584,42 @@ function resetFamilyBall3Progress(){
     saveGradebook();
 }
 
+function resetGreetingsBall3Progress(){
+    const sectionId = "a-part-2-greetings-v3";
+    const lessonPrefix = sectionId + "-";
+
+    Object.keys(completedSections || {}).forEach((key) => {
+        const values = Array.isArray(completedSections[key]) ? completedSections[key] : [];
+        completedSections[key] = values.filter((value) => value !== sectionId);
+    });
+
+    delete completedLessons[sectionId];
+    delete reviewLessonCursors[sectionId];
+
+    [completedLessonStepMap, lessonStatuses, gradebook].forEach((records) => {
+        Object.keys(records || {}).forEach((key) => {
+            if(key === sectionId || key.startsWith(lessonPrefix)) {
+                delete records[key];
+            }
+        });
+    });
+
+    saveCompletedSections();
+    saveCompletedLessons();
+    saveCompletedLessonStepMap();
+    saveReviewLessonCursors();
+    saveLessonStatuses();
+    saveGradebook();
+}
+
 if(localStorage.getItem(FAMILY_BALL3_PROGRESS_VERSION) !== "done"){
     resetFamilyBall3Progress();
     localStorage.setItem(FAMILY_BALL3_PROGRESS_VERSION, "done");
+}
+
+if(localStorage.getItem(GREETINGS_BALL3_CONTENT_VERSION) !== "done"){
+    resetGreetingsBall3Progress();
+    localStorage.setItem(GREETINGS_BALL3_CONTENT_VERSION, "done");
 }
 
 preserveMovedGreetingProgress();

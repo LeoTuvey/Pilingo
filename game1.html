@@ -348,6 +348,10 @@ body.compact-build-step .answer-bank{
     translate:none !important;
     transition:none !important;
     will-change:auto;
+    pointer-events:none;
+    user-select:none;
+    -webkit-user-select:none;
+    -webkit-user-drag:none;
 }
 
 body.ball-3-static-blue .moving-demo-word,
@@ -357,12 +361,6 @@ body.ball-3-static-blue .prompt-blank{
     translate:none !important;
     transition:none !important;
     will-change:auto;
-}
-
-body.ball-3-static-blue #activity button:hover,
-body.ball-3-static-blue #activity button:active,
-body.ball-3-static-blue #activity button.is-pressed{
-    transform:none !important;
 }
 
 .prompt-subnote{
@@ -2870,8 +2868,8 @@ const gameParts = [
             { type:"choice", instruction:"", prompt:"of mine", spoken:"of mine", options:["____a/e te", "____a/e wî", "____a/e min"], answer:"____a/e min" },
             richChoiceStep("", "You have a cat. (There is a cat of yours.)\n______ a te hey e.", 'You have <span class="static-blue-word">a cat</span>. <span class="prompt-subnote">(There is a cat of yours.)</span><br><span class="static-blue-word">______</span> a te hey e.', ["kitik", "pișîkek", "pișîk"], "pișîkek"),
             richChoiceStep("", "You have a cat. (There is a cat of yours.)\n______ e te hey e.", 'You have <span class="static-blue-word">a cat</span>. <span class="prompt-subnote">(There is a cat of yours.)</span><br><span class="static-blue-word">______</span> e te hey e.', ["kitik", "pișîkek", "pișîk"], "pișîkek"),
-            richChoiceStep("", "of mine", '<span class="static-blue-word">of</span> mine', ["Te   (___) a", "Wî  (___) a", "Min (___) a"], "Min (___) a"),
-            richChoiceStep("", "of yours", '<span class="static-blue-word">of</span> yours', ["Te   (___) a", "Wî  (___) a", "Min (___) a"], "Te   (___) a"),
+            richChoiceStep("", "of mine", '<span class="static-blue-word">of mine</span>', ["Te   (___) a", "Wî  (___) a", "Min (___) a"], "Min (___) a"),
+            richChoiceStep("", "of yours", '<span class="static-blue-word">of yours</span>', ["Te   (___) a", "Wî  (___) a", "Min (___) a"], "Te   (___) a"),
             { type:"choice", instruction:"", prompt:"have", spoken:"have", options:["hebûn", "hebû", "hey / hene"], answer:"hey / hene" },
             richChoiceStep("", "A cat of mine", '<span class="static-blue-word">A cat</span> of mine', ["kitik", "kitikek"], "kitikek"),
             richChoiceStep("", "A cat of mine\nMin ___ a", '<span class="static-blue-word">A cat</span> of mine<br>Min <span class="static-blue-word">___</span> a', ["kitik", "kitikek"], "kitikek"),
@@ -2884,15 +2882,15 @@ const gameParts = [
             { type:"choice", instruction:"", prompt:"has", spoken:"has", options:["hey / hene", "hebû", "hebûn"], answer:"hey / hene" },
             { type:"choice", instruction:"", prompt:"home", spoken:"home", options:["mal", "malek"], answer:"mal" },
             { type:"choice", instruction:"", prompt:"a home", spoken:"a home", options:["mal", "malek"], answer:"malek" },
-            richChoiceStep("", "🦉Bimek (kûndek)\n____ owl", '🦉Bim<span class="static-blue-word">ek</span> (kûndek)<br><span class="static-blue-word">____</span> owl', ["A", "An"], "An"),
+            richChoiceStep("", "🦉Bimek (kûndek)\n____ owl", '🦉Bim<span class="static-blue-word">ek</span> (kûnd<span class="static-blue-word">ek</span>)<br><span class="static-blue-word">____</span> owl', ["A", "An"], "An"),
             richChoiceStep("", "🦅Bazek\n____ eagle", '🦅Baz<span class="static-blue-word">ek</span><br><span class="static-blue-word">____</span> eagle', ["A", "An"], "An"),
-            richChoiceStep("", "🐜mêrûyek(mêrîyek)\n____ ant", '🐜mêrû<span class="static-blue-word">yek</span>(mêrîyek)<br><span class="static-blue-word">____</span> ant', ["A", "An"], "An"),
+            richChoiceStep("", "🐜mêrûyek(mêrîyek)\n____ ant", '🐜mêrû<span class="static-blue-word">yek</span>(mêrî<span class="static-blue-word">yek</span>)<br><span class="static-blue-word">____</span> ant', ["A", "An"], "An"),
             richChoiceStep("", "🐜mêrû___", '🐜mêrû<span class="static-blue-word">___</span>', ["ek", "yek"], "yek"),
             { type:"choice", instruction:"", prompt:"a", spoken:"a", options:["ek / yek", "2", "3"], answer:"ek / yek" },
             { type:"choice", instruction:"", prompt:"a rabbit", spoken:"a rabbit", options:["kêvrûşkek", "kêvrûşk"], answer:"kêvrûşkek" },
             richChoiceStep("", "I have a rabbit. (There is a rabbit of mine.)\n_____ a min heye.", 'I have <span class="static-blue-word">a rabbit</span>. <span class="prompt-subnote">(There is a rabbit of mine.)</span><br><span class="static-blue-word">_____</span> a min heye.', ["kêvrûşkek", "kêvrûşk"], "kêvrûşkek"),
             { type:"choice", instruction:"", prompt:"an", spoken:"an", options:["ek / yek", "2", "3"], answer:"ek / yek" },
-            richChoiceStep("", "🦉Bimek (kûndek)\n____ owl", '🦉Bim<span class="static-blue-word">ek</span> (kûndek)<br><span class="static-blue-word">____</span> owl', ["A", "An"], "An"),
+            richChoiceStep("", "🦉Bimek (kûndek)\n____ owl", '🦉Bim<span class="static-blue-word">ek</span> (kûnd<span class="static-blue-word">ek</span>)<br><span class="static-blue-word">____</span> owl', ["A", "An"], "An"),
             richChoiceStep("", "🦉Bim__", '🦉Bim<span class="static-blue-word">__</span>', ["ek", "yek"], "ek"),
             richChoiceStep("", "🦉kûnd __", '🦉kûnd <span class="static-blue-word">__</span>', ["ek", "yek"], "ek"),
             richChoiceStep("", "___ owl🦉", '<span class="static-blue-word">___</span> owl🦉', ["A", "An"], "An"),

@@ -63,6 +63,11 @@ if (window.location.protocol === "file:") {
     const nextUrl = "game1.html?" + params.toString() + window.location.hash;
     window.location.replace(nextUrl);
   }
+  if (params.get("coursePart") === "greetings" && params.get("v") === "lessonpath10") {
+    params.set("v", "lessonpath11");
+    const nextUrl = "game1.html?" + params.toString() + window.location.hash;
+    window.location.replace(nextUrl);
+  }
   if (!params.get("coursePart")) {
     const target = "engine.html" + window.location.search + window.location.hash;
     window.location.replace(target);
@@ -429,6 +434,19 @@ body.ball-3-static-blue .prompt-blank{
     color:#1c80cf;
     font-weight:1000;
     letter-spacing:1px;
+}
+
+.choice-fly-token{
+    position:fixed;
+    z-index:10000;
+    margin:0;
+    padding:10px 18px;
+    border-radius:14px;
+    background:#1cb0f6;
+    color:#fff;
+    font-weight:1000;
+    box-shadow:0 8px 20px rgba(28,128,207,0.3);
+    pointer-events:none;
 }
 
 @keyframes movingDemoWord{
@@ -1514,7 +1532,7 @@ button.wrong{
     <div id="feedback"></div>
 </div>
 
-<script src="course-data.js?v=24"></script>
+<script src="course-data.js?v=25"></script>
 <script src="engine-core.js?v=15"></script>
 <script src="pilingo-sounds.js?v=5"></script>
 <script src="pilingo-mascot.js"></script>
@@ -2947,7 +2965,7 @@ const gameParts = [
             { type:"choice", instruction:"", prompt:"a", spoken:"a", options:["ek / yek", "2", "3"], answer:"ek / yek" },
             { type:"choice", instruction:"", prompt:"a cat", spoken:"a cat", options:["kitik", "pișîk", "kitik ek"], answer:"kitik ek" },
             { type:"choice", instruction:"", prompt:"of mine", spoken:"of mine", options:["____a te", "____a wî", "____a min"], answer:"____a min" },
-            richChoiceStep("", "a cat of mine\n____a min", '<span class="static-blue-word">a cat</span> of mine<br><span class="prompt-blank">____</span>a min', ["kitik", "kitik ek", "pișîk"], "kitik ek"),
+            { ...richChoiceStep("", "a cat of mine\n____a min", '<span class="static-blue-word">a cat</span> of mine<br><span class="prompt-blank" data-choice-answer-target>____</span>a min', ["kitik", "kitik ek", "pișîk"], "kitik ek"), moveCorrectToBlank:true },
             richChoiceStep("", "a cat of mine\nkitik ek __ ____", 'a cat <span class="static-blue-word">of mine</span><br>kitik ek <span class="prompt-blank">__ ____</span>', ["a te", "a wî", "a min"], "a min"),
             { type:"choice", instruction:"", prompt:"have", spoken:"have", options:["hebûn", "hebû (hey)", "ê/a-hey / heye / hene"], answer:"ê/a-hey / heye / hene" },
             richChoiceStep("", "I have a cat.\nMin ______ ahey.", 'I have <span class="static-blue-word">a cat</span>.<br>Min <span class="prompt-blank">______</span> ahey.', ["kitik", "kitik ek", "pișîk"], "kitik ek"),
@@ -6263,12 +6281,51 @@ function checkChoice(value, button){
     if(isCorrectChoice(step, value)){
         revealCorrectEmoji(button, step, value);
         showButtonResult(button, "correct");
+        if(moveCorrectChoiceIntoBlank(step, value, button)) return;
         markCorrect();
         return;
     }
 
     showButtonResult(button, "wrong");
     markWrong();
+}
+
+function moveCorrectChoiceIntoBlank(step, value, button){
+    if(!step?.moveCorrectToBlank || !button) return false;
+
+    const target = document.querySelector("[data-choice-answer-target]");
+    if(!target) return false;
+
+    document.querySelectorAll("#activity button").forEach((entry) => {
+        entry.disabled = true;
+    });
+
+    const start = button.getBoundingClientRect();
+    const finish = target.getBoundingClientRect();
+    const token = document.createElement("span");
+    token.className = "choice-fly-token";
+    token.textContent = value;
+    token.style.left = start.left + "px";
+    token.style.top = start.top + "px";
+    document.body.appendChild(token);
+
+    const deltaX = finish.left - start.left;
+    const deltaY = finish.top - start.top;
+    const animation = token.animate([
+        { transform:"translate(0, 0) scale(1)", opacity:1 },
+        { transform:`translate(${deltaX}px, ${deltaY}px) scale(0.82)`, opacity:1 }
+    ], {
+        duration:520,
+        easing:"cubic-bezier(.2,.8,.2,1)",
+        fill:"forwards"
+    });
+
+    animation.finished.finally(() => {
+        target.textContent = value;
+        token.remove();
+        markCorrect();
+    });
+    return true;
 }
 
 function selectWord(index){

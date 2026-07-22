@@ -48,6 +48,11 @@ if (window.location.protocol === "file:") {
     const nextUrl = "game1.html?" + params.toString() + window.location.hash;
     window.location.replace(nextUrl);
   }
+  if (params.get("coursePart") === "greetings" && params.get("v") === "lessonpath7") {
+    params.set("v", "lessonpath8");
+    const nextUrl = "game1.html?" + params.toString() + window.location.hash;
+    window.location.replace(nextUrl);
+  }
   if (!params.get("coursePart")) {
     const target = "engine.html" + window.location.search + window.location.hash;
     window.location.replace(target);
@@ -1499,7 +1504,7 @@ button.wrong{
     <div id="feedback"></div>
 </div>
 
-<script src="course-data.js?v=21"></script>
+<script src="course-data.js?v=22"></script>
 <script src="engine-core.js?v=15"></script>
 <script src="pilingo-sounds.js?v=5"></script>
 <script src="pilingo-mascot.js"></script>
@@ -2898,6 +2903,34 @@ const gameParts = [
             { type:"choice", instruction:"", prompt:"🐧 danîkuke yek / darçik ek", options:["a fox", "an ant", "a woodpecker"], answer:"a woodpecker" },
             { type:"choice", instruction:"", prompt:"🦊 rîvî yek / rovî yek", options:["a woodpecker", "an ant", "a fox"], answer:"a fox" },
             { type:"choice", instruction:"", prompt:"🐜 mêrû yek / mêrî yek", options:["a woodpecker", "an ant", "a fox"], answer:"an ant" },
+            {
+                type:"match",
+                instruction:'The Verb "To Have"',
+                prompt:"",
+                pairs:[
+                    { english:"to have", kurmanji:"hebûn", group:"to-have" },
+                    { english:"have / has", kurmanji:"êhey / ahey / hene", group:"have-has" },
+                    { english:"had", kurmanji:"hebû (hey)", group:"had" },
+                    { english:"had", kurmanji:"hebûy", group:"had" }
+                ],
+                leftHeading:"English",
+                rightHeading:"Kurmanji",
+                leftSide:"first",
+                rightSide:"second",
+                leftSpeakMap:{
+                    "to have":"to have",
+                    "have / has":"have, has",
+                    "had":"had"
+                }
+            },
+            {
+                type:"type",
+                instruction:'The Verb "To Have" • Type in Kurmanji',
+                prompt:"had",
+                spoken:"had",
+                answer:"hebû (hey)",
+                acceptedAnswers:["hebû (hey)", "hebûy"]
+            },
         ]
     },
     {
@@ -3812,9 +3845,9 @@ const partSections = {
             id:"a-part-2-greetings-v3",
             ballNumber:3,
             label:"Ball 3",
-            detail:"A and an with singular and plural animal nouns",
+            detail:"Animal nouns, a and an, and the verb to have",
             start:301,
-            end:316,
+            end:318,
             lessons:[
                 { id:"a-part-2-greetings-v3-quiz-1", label:"Quiz 1", detail:"A or an", start:301, end:301 },
                 { id:"a-part-2-greetings-v3-quiz-2", label:"Quiz 2", detail:"Cats", start:302, end:302 },
@@ -3831,7 +3864,9 @@ const partSections = {
                 { id:"a-part-2-greetings-v3-quiz-11", label:"Quiz 11", detail:"bim ek or kûnd ek", start:313, end:313 },
                 { id:"a-part-2-greetings-v3-quiz-12", label:"Quiz 12", detail:"danîkuke yek or darçik ek", start:314, end:314 },
                 { id:"a-part-2-greetings-v3-quiz-13", label:"Quiz 13", detail:"rîvî yek or rovî yek", start:315, end:315 },
-                { id:"a-part-2-greetings-v3-quiz-14", label:"Quiz 14", detail:"mêrû yek or mêrî yek", start:316, end:316 }
+                { id:"a-part-2-greetings-v3-quiz-14", label:"Quiz 14", detail:"mêrû yek or mêrî yek", start:316, end:316 },
+                { id:"a-part-2-greetings-v3-lesson-3", label:"Lesson 3", detail:'The Verb "To Have"', start:317, end:317 },
+                { id:"a-part-2-greetings-v3-quiz-15", label:"Quiz 15", detail:"Type the Kurmanji word for had", start:318, end:318 }
             ]
         }
     ],

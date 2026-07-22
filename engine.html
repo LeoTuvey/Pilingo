@@ -1404,7 +1404,7 @@ function renderMap(){
                       const ballProgress = getDirectBallProgress(ball, section.id, part.id);
                       const progressDeg = Math.round(Math.max(0, Math.min(ballProgress.percent, 1)) * 360);
                       const actionLabel = ball.comingSoon
-                        ? "Final exam coming later"
+                        ? "Lessons and quizzes coming soon"
                         : ballCompleted
                         ? "Finished"
                         : (ballUnlocked ? (ballProgress.completed > 0 ? "Continue" : "Start") : "Locked");
@@ -1425,7 +1425,7 @@ function renderMap(){
                           <span class="part-orb-copy">
                             <span class="part-orb-title">${ball.title}</span>
                             <span class="part-orb-summary">${ball.summary}</span>
-                            <span class="part-orb-progress">${ball.comingSoon ? "🏆" : (ballUnlocked ? "▶" : "🔒")} ${actionLabel}${ball.comingSoon ? "" : ` • ${ballProgress.completed}/${ballProgress.total} done`}</span>
+                            <span class="part-orb-progress">${ball.comingSoon ? "🛠️" : (ballUnlocked ? "▶" : "🔒")} ${actionLabel}${ball.comingSoon ? "" : ` • ${ballProgress.completed}/${ballProgress.total} done`}</span>
                           </span>
                         </button>
                       `;

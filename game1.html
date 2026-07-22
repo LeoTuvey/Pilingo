@@ -28,6 +28,11 @@ if (window.location.protocol === "file:") {
     const nextUrl = "game1.html?" + params.toString() + window.location.hash;
     window.location.replace(nextUrl);
   }
+  if (params.get("coursePart") === "greetings" && params.get("v") === "lessonpath3") {
+    params.set("v", "lessonpath4");
+    const nextUrl = "game1.html?" + params.toString() + window.location.hash;
+    window.location.replace(nextUrl);
+  }
   if (!params.get("coursePart")) {
     const target = "engine.html" + window.location.search + window.location.hash;
     window.location.replace(target);
@@ -1479,7 +1484,7 @@ button.wrong{
     <div id="feedback"></div>
 </div>
 
-<script src="course-data.js?v=17"></script>
+<script src="course-data.js?v=18"></script>
 <script src="engine-core.js?v=15"></script>
 <script src="pilingo-sounds.js?v=5"></script>
 <script src="pilingo-mascot.js"></script>
@@ -2820,6 +2825,57 @@ const gameParts = [
             { type:"choice", instruction:"", prompt:"dogs", spoken:"dogs", options:["se", "seyek"], answer:"se" },
             { type:"choice", instruction:"", prompt:"a dog", spoken:"a dog", options:["se", "seyek"], answer:"seyek" },
             { type:"choice", instruction:"", prompt:"a / an", spoken:"a, an", options:["ek / yek", "2", "3"], answer:"ek / yek" },
+            {
+                type:"match",
+                instruction:"Animal nouns with ek",
+                prompt:"",
+                pairs:[
+                    { english:"a cat 🐈", kurmanji:"kitik ek", group:"cat-ek" },
+                    { english:"a rabbit 🐇", kurmanji:"Kêrûşik ek", group:"rabbit-ek" },
+                    { english:"a turtle 🐢", kurmanji:"kûsel ek", group:"turtle-ek" },
+                    { english:"an owl 🦉", kurmanji:"bim ek", group:"owl-ek" },
+                    { english:"an eagle 🦅", kurmanji:"baz ek", group:"eagle-ek" },
+                    { english:"an elephant 🐘", kurmanji:"fîl ek", group:"elephant-ek" }
+                ],
+                leftHeading:"English",
+                rightHeading:"Kurmanji",
+                leftSide:"first",
+                rightSide:"second",
+                leftSpeakMap:{
+                    "a cat 🐈":"a cat",
+                    "a rabbit 🐇":"a rabbit",
+                    "a turtle 🐢":"a turtle",
+                    "an owl 🦉":"an owl",
+                    "an eagle 🦅":"an eagle",
+                    "an elephant 🐘":"an elephant"
+                }
+            },
+            {
+                type:"match",
+                instruction:"Animal nouns with yek",
+                prompt:"When a noun ends with a vowel (a, e, ê, i, î, o, u, û) + yek.",
+                promptHtml:'<span class="prompt-subnote"><strong>Note:</strong> When a noun ends with a vowel<br>(a, e, ê, i, î, o, u, û) + yek.</span>',
+                pairs:[
+                    { english:"a dog 🐶", kurmanji:"sey ek", group:"dog-yek" },
+                    { english:"a squirrel 🐿️", kurmanji:"smor ek (⚠️)", group:"squirrel-ek" },
+                    { english:"a duck 🦆", kurmanji:"mirawî yek", group:"duck-yek" },
+                    { english:"a fish 🐟", kurmanji:"masî yek", group:"fish-yek" },
+                    { english:"a fox 🦊", kurmanji:"rîvî yek", group:"fox-yek" },
+                    { english:"an ant 🐜", kurmanji:"mêrû yek", group:"ant-yek" }
+                ],
+                leftHeading:"English",
+                rightHeading:"Kurmanji",
+                leftSide:"first",
+                rightSide:"second",
+                leftSpeakMap:{
+                    "a dog 🐶":"a dog",
+                    "a squirrel 🐿️":"a squirrel",
+                    "a duck 🦆":"a duck",
+                    "a fish 🐟":"a fish",
+                    "a fox 🦊":"a fox",
+                    "an ant 🐜":"an ant"
+                }
+            },
         ]
     },
     {
@@ -3734,9 +3790,9 @@ const partSections = {
             id:"a-part-2-greetings-v3",
             ballNumber:3,
             label:"Ball 3",
-            detail:"A and an with singular and plural cats and dogs",
+            detail:"A and an with singular and plural animal nouns",
             start:301,
-            end:307,
+            end:309,
             lessons:[
                 { id:"a-part-2-greetings-v3-quiz-1", label:"Quiz 1", detail:"A or an", start:301, end:301 },
                 { id:"a-part-2-greetings-v3-quiz-2", label:"Quiz 2", detail:"Cats", start:302, end:302 },
@@ -3744,7 +3800,9 @@ const partSections = {
                 { id:"a-part-2-greetings-v3-quiz-4", label:"Quiz 4", detail:"A cat: pişîkek", start:304, end:304 },
                 { id:"a-part-2-greetings-v3-quiz-5", label:"Quiz 5", detail:"Dogs", start:305, end:305 },
                 { id:"a-part-2-greetings-v3-quiz-6", label:"Quiz 6", detail:"A dog", start:306, end:306 },
-                { id:"a-part-2-greetings-v3-quiz-7", label:"Quiz 7", detail:"A or an review", start:307, end:307 }
+                { id:"a-part-2-greetings-v3-quiz-7", label:"Quiz 7", detail:"A or an review", start:307, end:307 },
+                { id:"a-part-2-greetings-v3-lesson-1", label:"Lesson 1", detail:"Animal nouns with ek", start:308, end:308 },
+                { id:"a-part-2-greetings-v3-lesson-2", label:"Lesson 2", detail:"Vowel-ending animal nouns with yek", start:309, end:309 }
             ]
         }
     ],

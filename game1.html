@@ -58,6 +58,11 @@ if (window.location.protocol === "file:") {
     const nextUrl = "game1.html?" + params.toString() + window.location.hash;
     window.location.replace(nextUrl);
   }
+  if (params.get("coursePart") === "greetings" && params.get("v") === "lessonpath9") {
+    params.set("v", "lessonpath10");
+    const nextUrl = "game1.html?" + params.toString() + window.location.hash;
+    window.location.replace(nextUrl);
+  }
   if (!params.get("coursePart")) {
     const target = "engine.html" + window.location.search + window.location.hash;
     window.location.replace(target);
@@ -1509,7 +1514,7 @@ button.wrong{
     <div id="feedback"></div>
 </div>
 
-<script src="course-data.js?v=23"></script>
+<script src="course-data.js?v=24"></script>
 <script src="engine-core.js?v=15"></script>
 <script src="pilingo-sounds.js?v=5"></script>
 <script src="pilingo-mascot.js"></script>
@@ -2914,7 +2919,7 @@ const gameParts = [
                 prompt:"",
                 pairs:[
                     { english:"to have", kurmanji:"hebûn", group:"to-have" },
-                    { english:"have / has", kurmanji:"êhey / ahey / hene", group:"have-has" },
+                    { english:"have / has", kurmanji:"ê/a-hey / heye / hene", group:"have-has" },
                     { english:"had", kurmanji:"hebû (hey)", group:"had" },
                     { english:"had", kurmanji:"hebûy", group:"had" }
                 ],
@@ -2944,7 +2949,7 @@ const gameParts = [
             { type:"choice", instruction:"", prompt:"of mine", spoken:"of mine", options:["____a te", "____a wî", "____a min"], answer:"____a min" },
             richChoiceStep("", "a cat of mine\n____a min", '<span class="static-blue-word">a cat</span> of mine<br><span class="prompt-blank">____</span>a min', ["kitik", "kitik ek", "pișîk"], "kitik ek"),
             richChoiceStep("", "a cat of mine\nkitik ek __ ____", 'a cat <span class="static-blue-word">of mine</span><br>kitik ek <span class="prompt-blank">__ ____</span>', ["a te", "a wî", "a min"], "a min"),
-            { type:"choice", instruction:"", prompt:"have", spoken:"have", options:["hebûn", "hebû (hey)", "êhey / ahey / hene"], answer:"êhey / ahey / hene" },
+            { type:"choice", instruction:"", prompt:"have", spoken:"have", options:["hebûn", "hebû (hey)", "ê/a-hey / heye / hene"], answer:"ê/a-hey / heye / hene" },
             richChoiceStep("", "I have a cat.\nMin ______ ahey.", 'I have <span class="static-blue-word">a cat</span>.<br>Min <span class="prompt-blank">______</span> ahey.', ["kitik", "kitik ek", "pișîk"], "kitik ek"),
             { type:"choice", instruction:"", prompt:"of mine", spoken:"of mine", options:["____e te", "____e wî", "____e min"], answer:"____e min" },
             richChoiceStep("", "I have a cat.\nmin ______ ehey.", 'I have <span class="static-blue-word">a cat</span>.<br>min <span class="prompt-blank">______</span> ehey.', ["kitik", "kitik ek", "pișîk"], "kitik ek"),
@@ -2954,18 +2959,18 @@ const gameParts = [
             richChoiceStep("", "You have an owl.\nTe ______ ahey.", 'You have <span class="static-blue-word">an owl</span>.<br>Te <span class="prompt-blank">______</span> ahey.', ["kûd", "bim ek", "bim"], "bim ek"),
             { type:"choice", instruction:"", prompt:"of mine", spoken:"of mine", options:["___ a te", "___ a wî", "___ a min"], answer:"___ a min" },
             { type:"choice", instruction:"", prompt:"of yours", spoken:"of yours", options:["___ a te", "___ a wî", "___ a min"], answer:"___ a te" },
-            { type:"choice", instruction:"", prompt:"have", spoken:"have", options:["hebûn", "hebû (hey)", "êhey / ahey / hene"], answer:"êhey / ahey / hene" },
+            { type:"choice", instruction:"", prompt:"have", spoken:"have", options:["hebûn", "hebû (hey)", "ê/a-hey / heye / hene"], answer:"ê/a-hey / heye / hene" },
             richChoiceStep("", "A cat of mine", '<span class="static-blue-word">A cat</span> of mine', ["kitik", "kitik ek"], "kitik ek"),
             richChoiceStep("", "A cat of mine\n___ a min", '<span class="static-blue-word">A cat</span> of mine<br><span class="prompt-blank">___</span> a min', ["kitik", "kitik ek"], "kitik ek"),
             toHaveMatchStep(),
             hadTypingStep(),
-            { type:"choice", instruction:"", prompt:"have", spoken:"have", options:["hebûn", "hebû (hey)", "êhey / ahey / hene"], answer:"êhey / ahey / hene" },
+            { type:"choice", instruction:"", prompt:"have", spoken:"have", options:["hebûn", "hebû (hey)", "ê/a-hey / heye / hene"], answer:"ê/a-hey / heye / hene" },
             { type:"choice", instruction:"", prompt:"dogs", spoken:"dogs", options:["se", "se yek"], answer:"se" },
             { type:"choice", instruction:"", prompt:"a dog", spoken:"a dog", options:["se", "se yek"], answer:"se yek" },
-            { type:"choice", instruction:"", prompt:"to have", spoken:"to have", options:["êhey / ahey / hene", "hebû (hey)", "hebûn"], answer:"hebûn" },
+            { type:"choice", instruction:"", prompt:"to have", spoken:"to have", options:["ê/a-hey / heye / hene", "hebû (hey)", "hebûn"], answer:"hebûn" },
             { type:"choice", instruction:"", prompt:"a / an", spoken:"a, an", options:["ek / yek", "2", "3"], answer:"ek / yek" },
-            { type:"choice", instruction:"", prompt:"have", spoken:"have", options:["hebûn", "hebû (hey)", "êhey / ahey / hene"], answer:"êhey / ahey / hene" },
-            { type:"choice", instruction:"", prompt:"has", spoken:"has", options:["hebûn", "hebû (hey)", "êhey / ahey / hene"], answer:"êhey / ahey / hene" },
+            { type:"choice", instruction:"", prompt:"have", spoken:"have", options:["hebûn", "hebû (hey)", "ê/a-hey / heye / hene"], answer:"ê/a-hey / heye / hene" },
+            { type:"choice", instruction:"", prompt:"has", spoken:"has", options:["hebûn", "hebû (hey)", "ê/a-hey / heye / hene"], answer:"ê/a-hey / heye / hene" },
             { type:"choice", instruction:"", prompt:"home", spoken:"home", options:["mal", "mal ek"], answer:"mal" },
             { type:"choice", instruction:"", prompt:"a home", spoken:"a home", options:["mal", "mal ek"], answer:"mal ek" },
             richChoiceStep("", "🦉 Bim ek (kûnd ek)\n____ owl", '🦉 Bim <span class="static-blue-word">ek</span> (kûnd ek)<br><span class="prompt-blank">____</span> owl', ["A", "An"], "An"),
@@ -4215,7 +4220,7 @@ function toHaveMatchStep(){
         prompt:"",
         pairs:[
             { english:"to have", kurmanji:"hebûn", group:"to-have" },
-            { english:"have / has", kurmanji:"êhey / ahey / hene", group:"have-has" },
+            { english:"have / has", kurmanji:"ê/a-hey / heye / hene", group:"have-has" },
             { english:"had", kurmanji:"hebû (hey)", group:"had" },
             { english:"had", kurmanji:"hebûy", group:"had" }
         ],

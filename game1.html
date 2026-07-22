@@ -33,6 +33,11 @@ if (window.location.protocol === "file:") {
     const nextUrl = "game1.html?" + params.toString() + window.location.hash;
     window.location.replace(nextUrl);
   }
+  if (params.get("coursePart") === "greetings" && params.get("v") === "lessonpath4") {
+    params.set("v", "lessonpath5");
+    const nextUrl = "game1.html?" + params.toString() + window.location.hash;
+    window.location.replace(nextUrl);
+  }
   if (!params.get("coursePart")) {
     const target = "engine.html" + window.location.search + window.location.hash;
     window.location.replace(target);
@@ -1484,7 +1489,7 @@ button.wrong{
     <div id="feedback"></div>
 </div>
 
-<script src="course-data.js?v=18"></script>
+<script src="course-data.js?v=19"></script>
 <script src="engine-core.js?v=15"></script>
 <script src="pilingo-sounds.js?v=5"></script>
 <script src="pilingo-mascot.js"></script>
@@ -2831,7 +2836,7 @@ const gameParts = [
                 prompt:"",
                 pairs:[
                     { english:"a cat 🐈", kurmanji:"kitik ek", group:"cat-ek" },
-                    { english:"a rabbit 🐇", kurmanji:"Kêrûşik ek", group:"rabbit-ek" },
+                    { english:"a rabbit 🐇", kurmanji:"Kêrûşk ek", group:"rabbit-ek" },
                     { english:"a turtle 🐢", kurmanji:"kûsel ek", group:"turtle-ek" },
                     { english:"an owl 🦉", kurmanji:"bim ek", group:"owl-ek" },
                     { english:"an eagle 🦅", kurmanji:"baz ek", group:"eagle-ek" },
@@ -2853,11 +2858,11 @@ const gameParts = [
             {
                 type:"match",
                 instruction:"Animal nouns with yek",
-                prompt:"When a noun ends with a vowel (a, e, ê, i, î, o, u, û) + yek.",
-                promptHtml:'<span class="prompt-subnote"><strong>Note:</strong> When a noun ends with a vowel<br>(a, e, ê, i, î, o, u, û) + yek.</span>',
+                prompt:"When a noun ends with a vowel (a, e, ê, i, Î, o, u, û) + yek.",
+                promptHtml:'<span class="prompt-subnote"><strong>Note:</strong> When a noun ends with a vowel<br>(a, e, ê, i, Î, o, u, û) + yek.</span>',
                 pairs:[
                     { english:"a dog 🐶", kurmanji:"sey ek", group:"dog-yek" },
-                    { english:"a squirrel 🐿️", kurmanji:"smor ek (⚠️)", group:"squirrel-ek" },
+                    { english:"a squirrel 🐿️", kurmanji:"smore ek (⚠️)", group:"squirrel-ek" },
                     { english:"a duck 🦆", kurmanji:"mirawî yek", group:"duck-yek" },
                     { english:"a fish 🐟", kurmanji:"masî yek", group:"fish-yek" },
                     { english:"a fox 🦊", kurmanji:"rîvî yek", group:"fox-yek" },

@@ -43,6 +43,11 @@ if (window.location.protocol === "file:") {
     const nextUrl = "game1.html?" + params.toString() + window.location.hash;
     window.location.replace(nextUrl);
   }
+  if (params.get("coursePart") === "greetings" && params.get("v") === "lessonpath6") {
+    params.set("v", "lessonpath7");
+    const nextUrl = "game1.html?" + params.toString() + window.location.hash;
+    window.location.replace(nextUrl);
+  }
   if (!params.get("coursePart")) {
     const target = "engine.html" + window.location.search + window.location.hash;
     window.location.replace(target);
@@ -1494,7 +1499,7 @@ button.wrong{
     <div id="feedback"></div>
 </div>
 
-<script src="course-data.js?v=20"></script>
+<script src="course-data.js?v=21"></script>
 <script src="engine-core.js?v=15"></script>
 <script src="pilingo-sounds.js?v=5"></script>
 <script src="pilingo-mascot.js"></script>
@@ -2886,6 +2891,13 @@ const gameParts = [
                     "an ant 🐜":"an ant"
                 }
             },
+            { type:"choice", instruction:"", prompt:"🐇 Kêrûşk ek", options:["a turtle", "an owl", "a rabbit"], answer:"a rabbit" },
+            { type:"choice", instruction:"", prompt:"🐇 kêvrûşk ek", options:["a turtle", "an owl", "a rabbit"], answer:"a rabbit" },
+            { type:"choice", instruction:"", prompt:"🐢 kûsel ek / kûsik ek", options:["an ant", "a fox", "a turtle"], answer:"a turtle" },
+            { type:"choice", instruction:"", prompt:"🦉 bim ek / kûnd ek", options:["a fox", "a woodpecker", "an owl"], answer:"an owl" },
+            { type:"choice", instruction:"", prompt:"🐧 danîkuke yek / darçik ek", options:["a fox", "an ant", "a woodpecker"], answer:"a woodpecker" },
+            { type:"choice", instruction:"", prompt:"🦊 rîvî yek / rovî yek", options:["a woodpecker", "an ant", "a fox"], answer:"a fox" },
+            { type:"choice", instruction:"", prompt:"🐜 mêrû yek / mêrî yek", options:["a woodpecker", "an ant", "a fox"], answer:"an ant" },
         ]
     },
     {
@@ -3802,7 +3814,7 @@ const partSections = {
             label:"Ball 3",
             detail:"A and an with singular and plural animal nouns",
             start:301,
-            end:309,
+            end:316,
             lessons:[
                 { id:"a-part-2-greetings-v3-quiz-1", label:"Quiz 1", detail:"A or an", start:301, end:301 },
                 { id:"a-part-2-greetings-v3-quiz-2", label:"Quiz 2", detail:"Cats", start:302, end:302 },
@@ -3812,7 +3824,14 @@ const partSections = {
                 { id:"a-part-2-greetings-v3-quiz-6", label:"Quiz 6", detail:"A dog", start:306, end:306 },
                 { id:"a-part-2-greetings-v3-quiz-7", label:"Quiz 7", detail:"A or an review", start:307, end:307 },
                 { id:"a-part-2-greetings-v3-lesson-1", label:"Lesson 1", detail:"Animal nouns with ek", start:308, end:308 },
-                { id:"a-part-2-greetings-v3-lesson-2", label:"Lesson 2", detail:"Vowel-ending animal nouns with yek", start:309, end:309 }
+                { id:"a-part-2-greetings-v3-lesson-2", label:"Lesson 2", detail:"Vowel-ending animal nouns with yek", start:309, end:309 },
+                { id:"a-part-2-greetings-v3-quiz-8", label:"Quiz 8", detail:"Kêrûşk ek", start:310, end:310 },
+                { id:"a-part-2-greetings-v3-quiz-9", label:"Quiz 9", detail:"kêvrûşk ek", start:311, end:311 },
+                { id:"a-part-2-greetings-v3-quiz-10", label:"Quiz 10", detail:"kûsel ek or kûsik ek", start:312, end:312 },
+                { id:"a-part-2-greetings-v3-quiz-11", label:"Quiz 11", detail:"bim ek or kûnd ek", start:313, end:313 },
+                { id:"a-part-2-greetings-v3-quiz-12", label:"Quiz 12", detail:"danîkuke yek or darçik ek", start:314, end:314 },
+                { id:"a-part-2-greetings-v3-quiz-13", label:"Quiz 13", detail:"rîvî yek or rovî yek", start:315, end:315 },
+                { id:"a-part-2-greetings-v3-quiz-14", label:"Quiz 14", detail:"mêrû yek or mêrî yek", start:316, end:316 }
             ]
         }
     ],

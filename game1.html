@@ -23,6 +23,11 @@ if (window.location.protocol === "file:") {
     const nextUrl = "game1.html?" + params.toString() + window.location.hash;
     window.location.replace(nextUrl);
   }
+  if (params.get("coursePart") === "greetings" && params.get("v") === "lessonpath2") {
+    params.set("v", "lessonpath3");
+    const nextUrl = "game1.html?" + params.toString() + window.location.hash;
+    window.location.replace(nextUrl);
+  }
   if (!params.get("coursePart")) {
     const target = "engine.html" + window.location.search + window.location.hash;
     window.location.replace(target);
@@ -1474,7 +1479,7 @@ button.wrong{
     <div id="feedback"></div>
 </div>
 
-<script src="course-data.js?v=16"></script>
+<script src="course-data.js?v=17"></script>
 <script src="engine-core.js?v=15"></script>
 <script src="pilingo-sounds.js?v=5"></script>
 <script src="pilingo-mascot.js"></script>
@@ -2808,6 +2813,13 @@ const gameParts = [
                     ["Go!", "Here"]
                 ]
             },
+            { type:"choice", instruction:"", prompt:"a / an", spoken:"a, an", options:["ek / yek", "2", "3"], answer:"ek / yek" },
+            { type:"choice", instruction:"", prompt:"Cats", spoken:"Cats", options:["kitikek", "kitik"], answer:"kitik" },
+            { type:"choice", instruction:"", prompt:"a cat", spoken:"a cat", options:["kitik", "pişîk", "kitikek"], answer:"kitikek" },
+            { type:"choice", instruction:"", prompt:"a cat", spoken:"a cat", options:["kitik", "pişîkek", "pişîk"], answer:"pişîkek" },
+            { type:"choice", instruction:"", prompt:"dogs", spoken:"dogs", options:["se", "seyek"], answer:"se" },
+            { type:"choice", instruction:"", prompt:"a dog", spoken:"a dog", options:["se", "seyek"], answer:"seyek" },
+            { type:"choice", instruction:"", prompt:"a / an", spoken:"a, an", options:["ek / yek", "2", "3"], answer:"ek / yek" },
         ]
     },
     {
@@ -3344,7 +3356,7 @@ const coursePartRoutes = {
         slug:"greetings",
         title:"👋 Greet People",
         gamePartIndex:0,
-        sectionIds:["a-part-2-greetings-v1", "a-part-2-greetings-v2"],
+        sectionIds:["a-part-2-greetings-v1", "a-part-2-greetings-v2", "a-part-2-greetings-v3"],
         enginePartId:"part-3"
     },
     "food-drink":{
@@ -3716,6 +3728,23 @@ const partSections = {
                 { id:"a-part-2-greetings-v2-quiz-6", label:"Quiz 6", detail:"Kurmanji typing practice", start:297, end:298 },
                 { id:"a-part-2-greetings-v2-lesson-4", label:"Lesson 4", detail:"Greeting word review", start:299, end:299 },
                 { id:"a-part-2-greetings-v2-quiz-7", label:"Quiz 7", detail:"Listen and choose", start:300, end:300 }
+            ]
+        },
+        {
+            id:"a-part-2-greetings-v3",
+            ballNumber:3,
+            label:"Ball 3",
+            detail:"A and an with singular and plural cats and dogs",
+            start:301,
+            end:307,
+            lessons:[
+                { id:"a-part-2-greetings-v3-quiz-1", label:"Quiz 1", detail:"A or an", start:301, end:301 },
+                { id:"a-part-2-greetings-v3-quiz-2", label:"Quiz 2", detail:"Cats", start:302, end:302 },
+                { id:"a-part-2-greetings-v3-quiz-3", label:"Quiz 3", detail:"A cat: kitikek", start:303, end:303 },
+                { id:"a-part-2-greetings-v3-quiz-4", label:"Quiz 4", detail:"A cat: pişîkek", start:304, end:304 },
+                { id:"a-part-2-greetings-v3-quiz-5", label:"Quiz 5", detail:"Dogs", start:305, end:305 },
+                { id:"a-part-2-greetings-v3-quiz-6", label:"Quiz 6", detail:"A dog", start:306, end:306 },
+                { id:"a-part-2-greetings-v3-quiz-7", label:"Quiz 7", detail:"A or an review", start:307, end:307 }
             ]
         }
     ],
@@ -6295,7 +6324,7 @@ function completeStep(){
         }
 
         if(usesDirectBallFlow(partIndex)) {
-            if(sections[sectionIndex]?.id === "a-part-2-greetings-v2" && typeof completedLessonIndex === "number") {
+            if(["a-part-2-greetings-v2", "a-part-2-greetings-v3"].includes(sections[sectionIndex]?.id) && typeof completedLessonIndex === "number") {
                 const nextLessonIndex = completedLessonIndex + 1;
                 if(nextLessonIndex < lessonsForSection(partIndex, sectionIndex).length) {
                     startLesson(partIndex, sectionIndex, nextLessonIndex);

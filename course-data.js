@@ -109,7 +109,7 @@ const SECTION_ONE_PARTS = [
     number: 3,
     title: "👋 Greet People",
     summary: "Greetings, introductions, and polite phrases.",
-    href: "game1.html?coursePart=greetings&v=lessonpath2",
+    href: "game1.html?coursePart=greetings&v=lessonpath3",
     icon: "👋",
     accent: "sky",
     lessons: lessonList(
@@ -132,19 +132,19 @@ const SECTION_ONE_PARTS = [
       "We are good conversation",
       "Kurmanji typing practice",
       "Greeting word review",
-      "Listen and choose"
+      "Listen and choose",
+      "A or an",
+      "Cats",
+      "A cat: kitikek",
+      "A cat: pişîkek",
+      "Dogs",
+      "A dog",
+      "A or an review"
     ),
     balls: [
       ball("a-part-2-greetings-v1", 1, "Ball 1", "Subject pronouns, times of day, greetings, and basic conversation", 9),
       ball("a-part-2-greetings-v2", 2, "Ball 2", "Greeting conversations, grammar endings, typing, and listening", 11),
-      {
-        id: "a-part-2-greetings-v3",
-        number: 3,
-        title: "Ball 3",
-        summary: "New greeting lessons and quizzes will be added here.",
-        lessonCount: 0,
-        comingSoon: true
-      }
+      ball("a-part-2-greetings-v3", 3, "Ball 3", "A and an with singular and plural cats and dogs", 7)
     ]
   },
   {

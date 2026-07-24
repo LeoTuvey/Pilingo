@@ -88,6 +88,11 @@ if (window.location.protocol === "file:") {
     const nextUrl = "game1.html?" + params.toString() + window.location.hash;
     window.location.replace(nextUrl);
   }
+  if (params.get("coursePart") === "greetings" && params.get("v") === "lessonpath15") {
+    params.set("v", "lessonpath16");
+    const nextUrl = "game1.html?" + params.toString() + window.location.hash;
+    window.location.replace(nextUrl);
+  }
   if (!params.get("coursePart")) {
     const target = "engine.html" + window.location.search + window.location.hash;
     window.location.replace(target);
@@ -1552,7 +1557,7 @@ button.wrong{
     <div id="feedback"></div>
 </div>
 
-<script src="course-data.js?v=29"></script>
+<script src="course-data.js?v=30"></script>
 <script src="engine-core.js?v=15"></script>
 <script src="pilingo-sounds.js?v=5"></script>
 <script src="pilingo-mascot.js"></script>
@@ -2988,11 +2993,11 @@ const gameParts = [
             movingRichChoiceStep("", "a cat of mine\n____a min", '<span class="static-blue-word">a cat</span> of mine<br><span class="prompt-blank">____</span>a min', ["kitik", "kitik ek", "pișîk"], "kitik ek"),
             movingRichChoiceStep("", "a cat of mine\nkitik ek __ ____", 'a cat <span class="static-blue-word">of mine</span><br>kitik ek <span class="prompt-blank">__ ____</span>', ["a te", "a wî", "a min"], "a min"),
             { type:"choice", instruction:"", prompt:"have", spoken:"have", options:["hebûn", "hebû / hebûn (heî)", "hebe / hey / heye / hene"], answer:"hebe / hey / heye / hene" },
-            movingRichChoiceStep("", "I have a cat.\nMin ______ ahey.", 'I have <span class="static-blue-word">a cat</span>.<br>Min <span class="prompt-blank">______</span> ahey.', ["kitik", "kitik ek", "pișîk"], "kitik ek"),
+            movingRichChoiceStep("", "I have a cat.\nMin ______ a hey.", 'I have <span class="static-blue-word">a cat</span>.<br>Min <span class="prompt-blank">______</span> a hey.', ["kitik", "kitik ek", "pișîk"], "kitik ek"),
             { type:"choice", instruction:"", prompt:"of mine", spoken:"of mine", options:["____e te", "____e wî", "____a min"], answer:"____a min" },
             movingRichChoiceStep("", "I have a cat.\nmin ______ ê hey.", 'I have <span class="static-blue-word">a cat</span>.<br>min <span class="prompt-blank">______</span> ê hey.', ["kitik", "kitik ek", "pișîk"], "kitik ek"),
             { type:"choice", instruction:"", prompt:"of mine", spoken:"of mine", options:["____a/e te", "____a/e wî", "____a/ê min"], answer:"____a/ê min" },
-            movingRichChoiceStep("", "You have a cat.\nTe ______ ahey.", 'You have <span class="static-blue-word">a cat</span>.<br>Te <span class="prompt-blank">______</span> ahey.', ["kitik", "pișîk ek", "pișîk"], "pișîk ek"),
+            movingRichChoiceStep("", "You have a cat.\nTe ______ a hey.", 'You have <span class="static-blue-word">a cat</span>.<br>Te <span class="prompt-blank">______</span> a hey.', ["pișîk", "pișîk ek", "kitik"], "pișîk ek"),
             movingRichChoiceStep("", "You have an owl.\nTe ______ ê hey.", 'You have <span class="static-blue-word">an owl</span>.<br>Te <span class="prompt-blank">______</span> ê hey.', ["kûd", "kûd ek", "bim"], "kûd ek"),
             movingRichChoiceStep("", "You have an owl.\nTe ______ ê hey.", 'You have <span class="static-blue-word">an owl</span>.<br>Te <span class="prompt-blank">______</span> ê hey.', ["kûd", "bim ek", "bim"], "bim ek"),
             { type:"choice", instruction:"", prompt:"of mine", spoken:"of mine", options:["___ a te", "___ a wî", "___ a min"], answer:"___ a min" },
@@ -3017,7 +3022,7 @@ const gameParts = [
             movingRichChoiceStep("", "🐜 mêrû___", '🐜 mêrû<span class="prompt-blank">___</span>', ["ek", "yek"], "yek"),
             { type:"choice", instruction:"", prompt:"a", spoken:"a", options:["ek / yek", "2", "3"], answer:"ek / yek" },
             { type:"choice", instruction:"", prompt:"a rabbit", spoken:"a rabbit", options:["kêvrûşk ek", "kêvrûşk"], answer:"kêvrûşk ek" },
-            movingRichChoiceStep("", "I have a rabbit.\nmin _____ ahey.", 'I have <span class="static-blue-word">a rabbit</span>.<br>min <span class="prompt-blank">_____</span> ahey.', ["kêvrûşk ek", "kêvrûşk"], "kêvrûşk ek"),
+            movingRichChoiceStep("", "I have a rabbit.\nmin _____ a hey.", 'I have <span class="static-blue-word">a rabbit</span>.<br>min <span class="prompt-blank">_____</span> a hey.', ["kêvrûşk ek", "kêvrûşk"], "kêvrûşk ek"),
             { type:"choice", instruction:"", prompt:"an", spoken:"an", options:["ek / yek", "2", "3"], answer:"ek / yek" },
             movingRichChoiceStep("", "🦉 Bim ek (kûnd ek)\n____ owl", '🦉 Bim <span class="static-blue-word">ek</span> (kûnd ek)<br><span class="prompt-blank">____</span> owl', ["A", "An"], "An"),
             movingRichChoiceStep("", "🦉 Bim__", '🦉 Bim<span class="prompt-blank">__</span>', ["ek", "yek"], "ek"),
